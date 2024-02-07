@@ -10,10 +10,9 @@ public class Account {
     public Account() {
     }
 
-    public Account(int id, String username, String password, int staff_id, int role_id) {
+    public Account(int id, String username, int staff_id, int role_id) {
         this.id = id;
         this.username = username;
-        this.password = password;
         this.staff_id = staff_id;
         this.role_id = role_id;
     }

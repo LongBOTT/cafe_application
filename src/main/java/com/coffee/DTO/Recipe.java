@@ -4,16 +4,14 @@ public class Recipe {
     private int product_id;
     private int material_id;
     private double quantity;
-    private boolean deleted;
 
     public Recipe() {
     }
 
-    public Recipe(int product_id, int material_id, double quantity, boolean deleted) {
+    public Recipe(int product_id, int material_id, double quantity) {
         this.product_id = product_id;
         this.material_id = material_id;
         this.quantity = quantity;
-        this.deleted = deleted;
     }
 
     public int getProduct_id() {
@@ -40,19 +38,10 @@ public class Recipe {
         this.quantity = quantity;
     }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     @Override
     public String toString() {
         return product_id + " | " +
                 material_id + " | " +
-                quantity + " | " +
-                deleted;
+                quantity;
     }
 }
