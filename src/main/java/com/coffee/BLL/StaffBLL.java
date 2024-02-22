@@ -127,7 +127,7 @@ public class StaffBLL extends Manager<Staff>{
 
 
     public Pair<Boolean, String> exists(Staff newStaff){
-        List<Staff> staffs = staffDAL.searchStaffs("no = '" + newStaff.getPhone() + "'", "deleted = 0");
+        List<Staff> staffs = staffDAL.searchStaffs("no = '" + newStaff.getStaffNo() + "'", "deleted = 0");
         if(!staffs.isEmpty()){
             return new Pair<>(true, "Số căn cước công dân của nhân viên đã tồn tại.");
         }
