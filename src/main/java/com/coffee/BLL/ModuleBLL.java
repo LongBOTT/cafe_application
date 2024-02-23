@@ -4,6 +4,8 @@ import com.coffee.DAL.ModuleDAL;
 import com.coffee.DTO.Decentralization;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Module;
+import com.coffee.DTO.Supplier;
+import com.coffee.utils.VNString;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -30,10 +32,8 @@ public class ModuleBLL extends Manager<Module>{
     }
 
     public Pair<Boolean, String> addModule(Module module) {
-        Pair<Boolean, String> result;
-
-        result = exists(module);
-        if(result.getKey()){
+        Pair<Boolean, String> result = validateModuleAll(module);
+        if(!result.getKey()){
             return new Pair<>(false,result.getValue());
         }
 
@@ -44,6 +44,10 @@ public class ModuleBLL extends Manager<Module>{
     }
 
     public Pair<Boolean, String> updateModule(Module module) {
+        Pair<Boolean, String> result = validateModuleAll(module);
+        if(!result.getKey()){
+            return new Pair<>(false,result.getValue());
+        }
         if (moduleDAL.updateModule(module) == 0)
             return new Pair<>(false, "Cập nhật module không thành công.");
 
@@ -85,7 +89,29 @@ public class ModuleBLL extends Manager<Module>{
             modules = findObjectsBy(entry.getKey(), entry.getValue(), modules);
         return modules;
     }
+    public Pair<Boolean, String> validateModuleAll(Module module) {
+        Pair<Boolean, String> result;
 
+        result = validateName(module.getName());
+        if(!result.getKey()){
+            return new Pair<>(false,result.getValue());
+        }
+        result = exists(module);
+        if(result.getKey()){
+            return new Pair<>(false,result.getValue());
+        }
+
+        return new Pair<>(true,"");
+    }
+    private static Pair<Boolean, String> validateName(String name) {
+        if (name.isBlank())
+            return new Pair<>(false, "Tên module không được để trống.");
+        if (VNString.containsSpecial(name))
+            return new Pair<>(false, "Tên nmodule không được chứa ký tự đặc biệt.");
+        if (VNString.containsNumber(name))
+            return new Pair<>(false, "Tên nmodule không được chứa số.");
+        return new Pair<>(true, "");
+    }
     public Pair<Boolean, String> exists(Module module) {
         List<Module> modules = findModulesBy(Map.of(
                 "name", module.getName()

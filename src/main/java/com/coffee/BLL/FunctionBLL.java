@@ -5,6 +5,7 @@ import com.coffee.DAL.FunctionDAL;
 import com.coffee.DTO.Decentralization;
 import com.coffee.DTO.Export_Detail;
 import com.coffee.DTO.Function;
+import com.coffee.utils.VNString;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -31,10 +32,9 @@ public class FunctionBLL extends Manager<Function>{
     }
 
     public Pair<Boolean, String> addFunction(Function function) {
-        Pair<Boolean, String> result;
+        Pair<Boolean, String> result = checkFunctionAll(function);
 
-        result = exists(function);
-        if(result.getKey()){
+        if(!result.getKey()){
             return new Pair<>(false,result.getValue());
         }
 
@@ -45,7 +45,11 @@ public class FunctionBLL extends Manager<Function>{
     }
 
     public Pair<Boolean, String> updateFunction(Function function) {
+        Pair<Boolean, String> result = checkFunctionAll(function);
 
+        if(!result.getKey()){
+            return new Pair<>(false,result.getValue());
+        }
         if (functionDAL.updateFunction(function) == 0)
             return new Pair<>(false, "Cập nhật chức năng không thành công.");
 
@@ -87,7 +91,31 @@ public class FunctionBLL extends Manager<Function>{
             functions = findObjectsBy(entry.getKey(), entry.getValue(), functions);
         return functions;
     }
+    public  Pair<Boolean, String> checkFunctionAll(Function function) {
+        Pair<Boolean, String> result;
+        result = validateName(function.getName());
+        if (!result.getKey()) {
+            return new Pair<>(false, result.getValue());
+        }
 
+        result = exists(function);
+        if (result.getKey()) {
+            return new Pair<>(false, result.getValue());
+        }
+
+        return new Pair<>(true,"");
+
+    }
+
+    private static Pair<Boolean, String> validateName(String name) {
+        if (name.isBlank())
+            return new Pair<>(false, "Tên chức năng không được để trống.");
+        if (VNString.containsSpecial(name))
+            return new Pair<>(false, "Tên chức năng không được chứa ký tự đặc biệt.");
+        if (VNString.containsNumber(name))
+            return new Pair<>(false, "Tên chức năng không được chứa số.");
+        return new Pair<>(true, name);
+    }
     public Pair<Boolean, String> exists(Function function) {
         List<Function> functions = findFunctionsBy(Map.of(
                 "name", function.getName()

@@ -4,6 +4,7 @@ import com.coffee.DAL.MaterialDAL;
 import com.coffee.DTO.*;
 import com.coffee.DTO.Material;
 import com.coffee.DTO.Module;
+import com.coffee.utils.VNString;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -87,7 +88,15 @@ public class MaterialBLL extends Manager<Material>{
             materials = findObjectsBy(entry.getKey(), entry.getValue(), materials);
         return materials;
     }
-
+    private static Pair<Boolean, String> validateName(String name) {
+        if (name.isBlank())
+            return new Pair<>(false, "Tên nguyên liệu được để trống.");
+        if (VNString.containsSpecial(name))
+            return new Pair<>(false, "Tên nguyên liêu không được chứa ký tự đặc biệt.");
+        if (VNString.containsNumber(name))
+            return new Pair<>(false, "Tên nguyên liệu không được chứa số.");
+        return new Pair<>(true, name);
+    }
     public Pair<Boolean, String> exists(Material newMaterial){
         List<Material> materials = materialDAL.searchMaterials("name = '" + newMaterial.getName() + "'");
         if(!materials.isEmpty()){
