@@ -29,24 +29,8 @@ public class SupplierBLL extends Manager<Supplier>{
     }
 
     public Pair<Boolean, String> addSupplier(Supplier supplier) {
-        Pair<Boolean, String> result;
-
-        result = validateName(supplier.getName());
+        Pair<Boolean, String> result = validateSupplierAll(supplier);
         if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
-
-        result = validatePhone(supplier.getPhone());
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
-
-        result = validateEmail(supplier.getEmail());
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
-        result = exists(supplier);
-        if (result.getKey()) {
             return new Pair<>(false,result.getValue());
         }
 
@@ -58,22 +42,12 @@ public class SupplierBLL extends Manager<Supplier>{
     }
 
     public Pair<Boolean, String>  updateSupplier(Supplier supplier) {
-        Pair<Boolean, String> result;
+        Pair<Boolean, String> result = validateSupplierAll(supplier);
 
-        result = validateName(supplier.getName());
         if(!result.getKey()){
             return new Pair<>(false,result.getValue());
         }
 
-        result = validatePhone(supplier.getPhone());
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
-
-        result = validateEmail(supplier.getEmail());
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
         if (supplierDAL.updateSupplier(supplier) == 0)
             return new Pair<>(false, "Cập nhật nhà cung cấp không thành công.");
 
@@ -109,7 +83,29 @@ public class SupplierBLL extends Manager<Supplier>{
             suppliers = findObjectsBy(entry.getKey(), entry.getValue(), suppliers);
         return suppliers;
     }
+    public Pair<Boolean, String> validateSupplierAll(Supplier supplier){
+        Pair<Boolean, String> result;
 
+        result = validateName(supplier.getName());
+        if(!result.getKey()){
+            return new Pair<>(false,result.getValue());
+        }
+
+        result = validatePhone(supplier.getPhone());
+        if(!result.getKey()){
+            return new Pair<>(false,result.getValue());
+        }
+
+        result = validateEmail(supplier.getEmail());
+        if(!result.getKey()){
+            return new Pair<>(false,result.getValue());
+        }
+        result = exists(supplier);
+        if (result.getKey()) {
+            return new Pair<>(false,result.getValue());
+        }
+        return new Pair<>(true,"");
+    }
     public Pair<Boolean, String> exists(Supplier newSupplier){
         List<Supplier> suppliers = supplierDAL.searchSuppliers("phone = '" + newSupplier.getPhone() + "'", "deleted = 0");
         if(!suppliers.isEmpty()){
@@ -170,6 +166,6 @@ public class SupplierBLL extends Manager<Supplier>{
         supplierBLL.addSupplier(supplier);
 //        supplier.setName("xyz");
 //        supplierBLL.updateSupplier(supplier);
-        supplierBLL.deleteSupplier(supplier);
+//        supplierBLL.deleteSupplier(supplier);
     }
 }
