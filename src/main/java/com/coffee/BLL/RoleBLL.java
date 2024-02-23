@@ -131,10 +131,12 @@ public class RoleBLL extends Manager<Role>{
 
     public static void main(String[] args) {
         RoleBLL roleBLL = new RoleBLL();
-        Role role = new Role(15, "abc");
+//        Role role = new Role(15, "abc");
 //        roleBLL.addRole(role);
 //        role.setName("xyz");
 //        roleBLL.updateRole(role);
-        roleBLL.deleteRole(role);
+//        roleBLL.deleteRole(role);
+
+        System.out.println(roleBLL.searchRoles());
     }
 }
