@@ -4,6 +4,7 @@ import com.coffee.DAL.Receipt_DetailDAL;
 import com.coffee.DTO.Export_Detail;
 import com.coffee.DTO.Receipt;
 import com.coffee.DTO.Receipt_Detail;
+import com.coffee.utils.VNString;
 import javafx.util.Pair;
 
 import java.sql.Date;
