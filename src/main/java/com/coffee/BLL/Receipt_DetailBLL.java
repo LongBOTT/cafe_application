@@ -34,6 +34,11 @@ public class Receipt_DetailBLL extends Manager<Receipt_Detail>{
     public Pair<Boolean, String> addReceipt_Detail(Receipt_Detail receipt_Detail) {
         Pair<Boolean, String> result;
 
+        result = validateQuantity(String.valueOf(receipt_Detail.getQuantity()));
+        if(!result.getKey()){
+            return new Pair<>(false,result.getValue());
+        }
+
         result = exists(receipt_Detail);
         if(result.getKey()){
             return new Pair<>(false,result.getValue());
@@ -78,7 +83,13 @@ public class Receipt_DetailBLL extends Manager<Receipt_Detail>{
         }
         return new Pair<>(false, "");
     }
-
+    private Pair<Boolean, String> validateQuantity(String quantity){
+        if(quantity.isBlank())
+            return new Pair<>(false,"Số lượng không được để trống");
+        if(!VNString.checkUnsignedNumber(quantity))
+            return new Pair<>(false,"Số lượng phải là số lớn hơn không");
+        return new Pair<>(true,"Số lượng hợp lệ");
+    }
     @Override
     public Object getValueByKey(Receipt_Detail receipt_Detail, String key) {
         return switch (key) {

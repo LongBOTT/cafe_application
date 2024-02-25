@@ -31,17 +31,7 @@ public class ProductBLL extends Manager<Product>{
     public Pair<Boolean, String> addProduct(Product product) {
         Pair<Boolean, String> result;
 
-        result = validateName(product.getName());
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
-
-        result = exists(product);
-        if(result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
-
-        result = validatePrice(String.valueOf(product.getPrice()));
+        result = validateProductAll(product);
         if(!result.getKey()){
             return new Pair<>(false,result.getValue());
         }
@@ -55,15 +45,11 @@ public class ProductBLL extends Manager<Product>{
     public Pair<Boolean, String> updateProduct(Product product) {
         Pair<Boolean, String> result;
 
-        result = validateName(product.getName());
+        result = validateProductAll(product);
         if(!result.getKey()){
             return new Pair<>(false,result.getValue());
         }
 
-        result = validatePrice(String.valueOf(product.getPrice()));
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
         if (productDAL.updateProduct(product) == 0)
             return new Pair<>(false, "Cập nhật sản phẩm không thành công.");
 
@@ -100,18 +86,47 @@ public class ProductBLL extends Manager<Product>{
     }
 
     public Pair<Boolean, String> exists(Product newProduct){
-        List<Product> products = productDAL.searchProducts("name = '" + newProduct.getId() + "'", "deleted = 0");
+        List<Product> products = productDAL.searchProducts("name = '" + newProduct.getName() + "'", "deleted = 0");
         if(!products.isEmpty()){
             return new Pair<>(true, "Sản phẩm đã tồn tại.");
         }
         return new Pair<>(false, "");
     }
+    private Pair<Boolean, String> validateProductAll(Product product){
+        Pair<Boolean, String> result;
 
+        result = validateName(product.getName());
+        if(!result.getKey()){
+            return new Pair<>(false,result.getValue());
+        }
+
+        result = exists(product);
+        if(result.getKey()){
+            return new Pair<>(false,result.getValue());
+        }
+        result = validateCategory(product.getCategory());
+        if(!result.getKey()){
+            return new Pair<>(false,result.getValue());
+        }
+
+        result = validatePrice(String.valueOf(product.getPrice()));
+        if(!result.getKey()){
+            return new Pair<>(false,result.getValue());
+        }
+        return new Pair<>(true,"");
+    }
     private Pair<Boolean, String> validateName(String name) {
         if (name.isBlank())
             return new Pair<>(false, "Tên sản phẩm không được để trống.");
         if (VNString.containsSpecial(name))
             return new Pair<>(false, "Tên sản phẩm không được chứa ký tự đặc biệt.");
+        return new Pair<>(true, "");
+    }
+    private Pair<Boolean, String> validateCategory(String category) {
+        if (category.isBlank())
+            return new Pair<>(false, "Thể loại không được để trống.");
+        if (VNString.containsSpecial(category))
+            return new Pair<>(false, "Thể loại không được chứa ký tự đặc biệt.");
         return new Pair<>(true, "");
     }
 

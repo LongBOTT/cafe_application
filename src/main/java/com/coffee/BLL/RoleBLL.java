@@ -98,7 +98,7 @@ public class RoleBLL extends Manager<Role>{
         }
         return new Pair<>(false, "");
     }
-    private static Pair<Boolean, String> validateName(String name) {
+    private  Pair<Boolean, String> validateName(String name) {
         if (name.isBlank())
             return new Pair<>(false, "Tên chức vụ không được để trống.");
         if (VNString.containsSpecial(name))
