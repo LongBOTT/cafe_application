@@ -12,8 +12,7 @@ public class AccountDAL extends Manager{
         super("account",
                 List.of("id",
                         "username",
-                        "staff_id",
-                        "role_id"));
+                        "staff_id"));
     }
 
     public List<Account> convertToAccounts(List<List<String>> data) {
@@ -22,8 +21,7 @@ public class AccountDAL extends Manager{
                 return new Account(
                         Integer.parseInt(row.get(0)), // id
                         row.get(1), // username
-                        Integer.parseInt(row.get(3)), // staff_id
-                        Integer.parseInt(row.get(4)) // role_id
+                        Integer.parseInt(row.get(3)) // staff_id
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in AccountDAL.convertToAccounts(): " + e.getMessage());
@@ -37,8 +35,7 @@ public class AccountDAL extends Manager{
             System.out.println(account.getPassword());
             return create(account.getId(),
                     account.getUsername(),
-                    account.getStaff_id(),
-                    account.getRole_id()
+                    account.getStaff_id()
             );
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in AccountDAL.addAccount(): " + e.getMessage());
@@ -52,7 +49,6 @@ public class AccountDAL extends Manager{
             updateValues.add(account.getId());
             updateValues.add(account.getUsername());
             updateValues.add(account.getStaff_id());
-            updateValues.add(account.getRole_id());
             return update(updateValues, "id = " + account.getId());
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in AccountDAL.updateAccount(): " + e.getMessage());

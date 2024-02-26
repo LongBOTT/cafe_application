@@ -97,14 +97,13 @@ public class Receipt_DetailBLL extends Manager<Receipt_Detail>{
             case "product_id" -> receipt_Detail.getProduct_id();
             case "quantity" -> receipt_Detail.getQuantity();
             case "price" -> receipt_Detail.getPrice();
-            case "discount_id" -> receipt_Detail.getDiscount_id();
             default -> null;
         };
     }
 
     public static void main(String[] args) {
         Receipt_DetailBLL receiptNoteBLL = new Receipt_DetailBLL();
-        Receipt_Detail receiptNote = new Receipt_Detail(1, 2, 0, 0, 0);
+        Receipt_Detail receiptNote = new Receipt_Detail(1, 2, 0, 0);
         receiptNoteBLL.addReceipt_Detail(receiptNote);
     }
 }

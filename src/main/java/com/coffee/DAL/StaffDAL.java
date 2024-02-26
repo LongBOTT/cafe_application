@@ -19,7 +19,6 @@ public class StaffDAL extends Manager{
                         "phone",
                         "address",
                         "email",
-                        "hourly_wage",
                         "deleted"));
     }
 
@@ -35,8 +34,7 @@ public class StaffDAL extends Manager{
                         row.get(5), // phone
                         row.get(6), // address
                         row.get(7), // email
-                        Double.parseDouble(row.get(8)), // hourly_wage
-                        Boolean.parseBoolean(row.get(9))    // deleted
+                        Boolean.parseBoolean(row.get(8)) // deleted
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in StaffDAL.convertToStaffs(): " + e.getMessage());
@@ -55,7 +53,6 @@ public class StaffDAL extends Manager{
                     staff.getPhone(),
                     staff.getAddress(),
                     staff.getEmail(),
-                    staff.getHourlyWage(),
                     false
             ); // staff khi tạo mặc định deleted = 0
         } catch (SQLException | IOException e) {
@@ -75,7 +72,6 @@ public class StaffDAL extends Manager{
             updateValues.add(staff.getPhone());
             updateValues.add(staff.getAddress());
             updateValues.add(staff.getEmail());
-            updateValues.add(staff.getHourlyWage());
             updateValues.add(staff.isDeleted());
             return update(updateValues, "id = " + staff.getId());
         } catch (SQLException | IOException e) {

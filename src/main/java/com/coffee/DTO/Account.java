@@ -5,16 +5,14 @@ public class Account {
     private String username;
     private String password;
     private int staff_id;
-    private int role_id;
 
     public Account() {
     }
 
-    public Account(int id, String username, int staff_id, int role_id) {
+    public Account(int id, String username, int staff_id) {
         this.id = id;
         this.username = username;
         this.staff_id = staff_id;
-        this.role_id = role_id;
     }
 
     public int getId() {
@@ -49,19 +47,10 @@ public class Account {
         this.staff_id = staff_id;
     }
 
-    public int getRole_id() {
-        return role_id;
-    }
-
-    public void setRole_id(int role_id) {
-        this.role_id = role_id;
-    }
-
     @Override
     public String toString() {
         return id + " | " +
                 username + " | " +
-                staff_id + " | " +
-                role_id;
+                staff_id;
     }
 }
