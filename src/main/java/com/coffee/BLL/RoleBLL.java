@@ -5,6 +5,7 @@ import com.coffee.DTO.Account;
 import com.coffee.DTO.Decentralization;
 import com.coffee.DTO.Module;
 import com.coffee.DTO.Role;
+import com.coffee.utils.VNString;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -97,7 +98,15 @@ public class RoleBLL extends Manager<Role>{
         }
         return new Pair<>(false, "");
     }
-
+    private  Pair<Boolean, String> validateName(String name) {
+        if (name.isBlank())
+            return new Pair<>(false, "Tên chức vụ không được để trống.");
+        if (VNString.containsSpecial(name))
+            return new Pair<>(false, "Tên chức vụ không được chứa ký tự đặc biệt.");
+        if (VNString.containsNumber(name))
+            return new Pair<>(false, "Tên chức vụ không được chứa số.");
+        return new Pair<>(true, name);
+    }
     public Pair<Boolean, String> checkDecentralization(Role role) {
         DecentralizationBLL decentralizationBLL = new DecentralizationBLL();
         List<Decentralization> decentralizationss = decentralizationBLL.findDecentralizationsBy(Map.of(
@@ -131,10 +140,12 @@ public class RoleBLL extends Manager<Role>{
 
     public static void main(String[] args) {
         RoleBLL roleBLL = new RoleBLL();
-        Role role = new Role(15, "abc");
+//        Role role = new Role(15, "abc");
 //        roleBLL.addRole(role);
 //        role.setName("xyz");
 //        roleBLL.updateRole(role);
-        roleBLL.deleteRole(role);
+//        roleBLL.deleteRole(role);
+
+        System.out.println(roleBLL.searchRoles());
     }
 }

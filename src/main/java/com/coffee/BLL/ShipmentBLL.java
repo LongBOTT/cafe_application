@@ -5,6 +5,7 @@ import com.coffee.DTO.Module;
 import com.coffee.DTO.Role;
 import com.coffee.DTO.Shipment;
 import com.coffee.DTO.Supplier;
+import com.coffee.utils.VNString;
 import javafx.util.Pair;
 
 import java.time.LocalDate;
@@ -30,6 +31,13 @@ public class ShipmentBLL extends Manager<Shipment>{
 
     public Pair<Boolean, String> addShipment(Shipment shipment) {
         Pair<Boolean, String> result;
+        result = validateQuantity(String.valueOf(shipment.getQuantity()));
+        if(!result.getKey())
+            return  new Pair<>(false, result.getValue());
+
+        result = validatePrice(String.valueOf(shipment.getUnit_price()));
+        if(!result.getKey())
+            return new Pair<>(false,result.getValue());
 
         result = exists(shipment);
         if(result.getKey()){
@@ -49,6 +57,14 @@ public class ShipmentBLL extends Manager<Shipment>{
 
     public Pair<Boolean, String> updateShipment(Shipment shipment) {
         Pair<Boolean, String> result;
+        result = validateQuantity(String.valueOf(shipment.getQuantity()));
+        if(!result.getKey())
+            return  new Pair<>(false, result.getValue());
+
+        result = validatePrice(String.valueOf(shipment.getUnit_price()));
+        if(!result.getKey())
+            return new Pair<>(false,result.getValue());
+
         result = validateDate(shipment.getMfg(), shipment.getExp());
         if (!result.getKey()) {
             return new Pair<>(false,result.getValue());
@@ -99,13 +115,26 @@ public class ShipmentBLL extends Manager<Shipment>{
             return new Pair<>(false, "Ngày sản xuất không được để trống.");
         if (exp == null)
             return new Pair<>(false, "Ngày hết hạn không được để trống.");
-        if (mfg.before(java.sql.Date.valueOf(LocalDate.now())))
-            return new Pair<>(false, "Ngày sản xuất phải sau ngày hiện tại.");
+//        if (mfg.before(java.sql.Date.valueOf(LocalDate.now())))
+//            return new Pair<>(false, "Ngày sản xuất phải sau ngày hiện tại.");
         if (mfg.after(exp))
             return new Pair<>(false, "Ngày sản xuất phải trước ngày hết hạn.");
         return new Pair<>(true, "Hạn sử dụng hợp lệ.");
     }
-
+    private Pair<Boolean, String> validatePrice(String price){
+        if(price.isBlank())
+            return new Pair<>(false,"Giá nhập không được để trống");
+        if(!VNString.checkUnsignedNumber(price))
+            return new Pair<>(false,"Giá nhập phải là số lớn hơn không");
+        return new Pair<>(true,"Giá nhập hợp lệ");
+    }
+    private Pair<Boolean, String> validateQuantity(String quantity){
+        if(quantity.isBlank())
+            return new Pair<>(false,"Số lượng không được để trống");
+        if(!VNString.checkUnsignedNumber(quantity))
+            return new Pair<>(false,"Số lượng phải là số lớn hơn không");
+        return new Pair<>(true,"Số lượng hợp lệ");
+    }
     @Override
     public Object getValueByKey(Shipment shipment, String key) {
         return switch (key) {
