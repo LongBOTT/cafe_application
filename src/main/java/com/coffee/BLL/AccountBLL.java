@@ -53,19 +53,19 @@ public class AccountBLL extends Manager<Account>{
         return new Pair<>(true,"Thêm tài khoản thành công.");
     }
 
-    public Pair<Boolean, String> updateAccount(Account account) {
-        Pair<Boolean, String> result;
-
-        result = validateUserName(account.getUsername());
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
-
-        if (accountDAL.updateAccount(account) == 0)
-            return new Pair<>(false, "Cập nhật tài khoản không thành công.");
-
-        return new Pair<>(true,"Cập nhật tài khoản thành công.");
-    }
+//    public Pair<Boolean, String> updateAccount(Account account) {
+//        Pair<Boolean, String> result;
+//
+//        result = validateUserName(account.getUsername());
+//        if(!result.getKey()){
+//            return new Pair<>(false,result.getValue());
+//        }
+//
+//        if (accountDAL.updateAccount(account) == 0)
+//            return new Pair<>(false, "Cập nhật tài khoản không thành công.");
+//
+//        return new Pair<>(true,"Cập nhật tài khoản thành công.");
+//    }
 
     public Pair<Boolean, String> updateAccountPassword(Account account, String password) {
         Pair<Boolean, String> result;
@@ -83,12 +83,12 @@ public class AccountBLL extends Manager<Account>{
         return new Pair<>(true,"Thay đổi mật khẩu thành công.");
     }
 
-    public Pair<Boolean, String> deleteAccount(Account account) {
-        if (accountDAL.deleteAccount("id = " + account.getId()) == 0)
-            return new Pair<>(false, "Xoá tài khoản không thành công.");
-
-        return new Pair<>(true,"Xoá tài khoản thành công.");
-    }
+//    public Pair<Boolean, String> deleteAccount(Account account) {
+//        if (accountDAL.deleteAccount("id = " + account.getId()) == 0)
+//            return new Pair<>(false, "Xoá tài khoản không thành công.");
+//
+//        return new Pair<>(true,"Xoá tài khoản thành công.");
+//    }
 
     public List<Account> searchAccounts(String... conditions) {
         return accountDAL.searchAccounts(conditions);

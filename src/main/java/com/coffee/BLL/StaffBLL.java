@@ -209,7 +209,7 @@ public class StaffBLL extends Manager<Staff> {
     public static void main(String[] args) {
         StaffBLL staffBLL = new StaffBLL();
 
-        Staff staff = new Staff(14, "078203023644", "a", false, java.sql.Date.valueOf("2003-08-30"), "0963333984", "4", "colung3008@gmail.com", false);
+        Staff staff = new Staff(staffBLL.getAutoID(staffBLL.searchStaffs("deleted = 0")), "078203023644", "a", false, java.sql.Date.valueOf("2003-08-30"), "0963333984", "4", "colung3008@gmail.com", false);
 
         System.out.println(staffBLL.addStaff(staff));
 

@@ -43,18 +43,18 @@ public class AccountDAL extends Manager{
         return 0;
     }
 
-    public int updateAccount(Account account) {
-        try {
-            List<Object> updateValues = new ArrayList<>();
-            updateValues.add(account.getId());
-            updateValues.add(account.getUsername());
-            updateValues.add(account.getStaff_id());
-            return update(updateValues, "id = " + account.getId());
-        } catch (SQLException | IOException e) {
-            System.out.println("Error occurred in AccountDAL.updateAccount(): " + e.getMessage());
-        }
-        return 0;
-    }
+//    public int updateAccount(Account account) {
+//        try {
+//            List<Object> updateValues = new ArrayList<>();
+//            updateValues.add(account.getId());
+//            updateValues.add(account.getUsername());
+//            updateValues.add(account.getStaff_id());
+//            return update(updateValues, "id = " + account.getId());
+//        } catch (SQLException | IOException e) {
+//            System.out.println("Error occurred in AccountDAL.updateAccount(): " + e.getMessage());
+//        }
+//        return 0;
+//    }
 
     public int updateAccountPassword(Account account) {
         try {
@@ -66,14 +66,14 @@ public class AccountDAL extends Manager{
         return 0;
     }
 
-    public int deleteAccount(String... conditions) {
-        try {
-            return delete(conditions);
-        } catch (SQLException | IOException e) {
-            System.out.println("Error occurred in AccountDAL.deleteAccount(): " + e.getMessage());
-        }
-        return 0;
-    }
+//    public int deleteAccount(String... conditions) {
+//        try {
+//            return delete(conditions);
+//        } catch (SQLException | IOException e) {
+//            System.out.println("Error occurred in AccountDAL.deleteAccount(): " + e.getMessage());
+//        }
+//        return 0;
+//    }
 
     public List<Account> searchAccounts(String... conditions) {
         try {

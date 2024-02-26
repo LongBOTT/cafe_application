@@ -39,10 +39,10 @@ public class Receipt_DetailBLL extends Manager<Receipt_Detail>{
             return new Pair<>(false,result.getValue());
         }
 
-        result = exists(receipt_Detail);
-        if(result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
+//        result = exists(receipt_Detail);
+//        if(result.getKey()){
+//            return new Pair<>(false,result.getValue());
+//        }
 
         if (receipt_DetailDAL.addReceipt_Detail(receipt_Detail) == 0)
             return new Pair<>(false, "Thêm sản phẩm vào hoá đơn không thành công.");
