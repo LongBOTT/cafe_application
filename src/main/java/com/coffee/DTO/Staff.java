@@ -11,14 +11,13 @@ public class Staff {
     private String phone;
     private String address;
     private String email;
-    private double hourlyWage;
     private boolean deleted;
 
     public Staff() {
     }
 
     public Staff(int id, String staffNo, String name, boolean gender, Date birthdate, String phone,
-                 String address, String email, double hourlyWage, boolean deleted) {
+                 String address, String email, boolean deleted) {
         this.id = id;
         this.staffNo = staffNo;
         this.name = name;
@@ -27,7 +26,6 @@ public class Staff {
         this.phone = phone;
         this.address = address;
         this.email = email;
-        this.hourlyWage = hourlyWage;
         this.deleted = deleted;
     }
 
@@ -95,14 +93,6 @@ public class Staff {
         this.email = email;
     }
 
-    public double getHourlyWage() {
-        return hourlyWage;
-    }
-
-    public void setHourlyWage(double hourlyWage) {
-        this.hourlyWage = hourlyWage;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -122,7 +112,6 @@ public class Staff {
                 phone + " | " +
                 address + " | " +
                 email + " | " +
-                hourlyWage + " | " +
                 deleted;
     }
 }

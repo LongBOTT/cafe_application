@@ -198,14 +198,13 @@ public class StaffBLL extends Manager<Staff>{
             case "phone" -> staff.getPhone();
             case "address" -> staff.getAddress();
             case "email" -> staff.getEmail();
-            case "hourly_wage" -> staff.getHourlyWage();
             default -> null;
         };
     }
 
     public static void main(String[] args) {
         StaffBLL staffBLL = new StaffBLL();
-        Staff staff = new Staff(14, "078203023644", "a", false, Date.valueOf("2003-08-30"), "0963333984", "4", "colung3008@gmail.com", 50, false);
+        Staff staff = new Staff(14, "078203023644", "a", false, Date.valueOf("2003-08-30"), "0963333984", "4", "colung3008@gmail.com", false);
 
         System.out.println(staffBLL.addStaff(staff));
 

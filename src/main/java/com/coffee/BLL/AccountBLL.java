@@ -153,7 +153,6 @@ public class AccountBLL extends Manager<Account>{
             case "id" -> account.getId();
             case "username" -> account.getUsername();
             case "staff_id" -> account.getStaff_id();
-            case "role_id" -> account.getRole_id();
             default -> null;
         };
 
@@ -161,13 +160,14 @@ public class AccountBLL extends Manager<Account>{
 
     public static void main(String[] args) {
         AccountBLL accountBLL = new AccountBLL();
-        Account account = new Account(accountBLL.getAutoID(accountBLL.searchAccounts()), "longbott", 1, 4);
-        accountBLL.addAccount(account);
-
-        account.setStaff_id(8);
-        accountBLL.updateAccount(account);
-
-        accountBLL.deleteAccount(account);
+//        Account account = new Account(accountBLL.getAutoID(accountBLL.searchAccounts()), "longbott", 1, 4);
+//        accountBLL.addAccount(account);
+//
+//        account.setStaff_id(8);
+//        accountBLL.updateAccount(account);
+//
+//        accountBLL.deleteAccount(account);
+        System.out.println(accountBLL.searchAccounts());
 
     }
 }
