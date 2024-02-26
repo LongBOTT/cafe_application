@@ -108,9 +108,11 @@ public class VNString {
         try {
             return Double.parseDouble(str) > 0;
         } catch (Exception e) {
-            return true;
+            return false;
         }
     }
+
+
 
     public static void main(String[] args) {
         String inputString = "078203023644";
