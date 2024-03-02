@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th3 02, 2024 lúc 01:37 PM
+-- Thời gian đã tạo: Th3 02, 2024 lúc 04:10 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.0.30
 
@@ -434,7 +434,7 @@ INSERT INTO `product` (`id`, `name`, `category`, `price`, `image`, `deleted`, `S
 (8, 'Bánh Chuối', 'BÁNH', 29, 'SP08', b'1', '0'),
 (9, 'Bánh Su Kem', 'BÁNH', 29, 'SP09', b'1', '0'),
 (10, 'Phô Mai Chanh Dây', 'BÁNH', 29, 'SP10', b'1', '0'),
-(11, 'Phô Mai Trà Xanh', 'BÁNH', 29, 'SP10', b'1', '0'),
+(11, 'Phô Mai Trà Xanh', 'BÁNH', 29, 'SP11', b'1', '0'),
 (12, 'PhinDi Hạnh Nhân', 'PHINDI', 55, 'SP12', b'1', 'L'),
 (12, 'PhinDi Hạnh Nhân', 'PHINDI', 49, 'SP12', b'1', 'M'),
 (12, 'Phindi Hạnh Nhân', 'PHINDI', 45, 'SP12', b'1', 'S'),
