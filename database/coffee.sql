@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 03, 2024 at 08:40 AM
+-- Generation Time: Feb 26, 2024 at 02:36 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.29
 
@@ -39,11 +39,7 @@ CREATE TABLE `account` (
 --
 
 INSERT INTO `account` (`id`, `username`, `password`, `staff_id`) VALUES
-(1, 'admin', 'first$2a$12$a0qkUZYDrS3jA..bHc.NQe1EL9mtrI9cbs/QN5JdHDv8QQq2BSlu6', 1),
-(2, 'longbott', 'first$2a$12$/7d6bBM2mhTtEqSqGXUxz.9ZNTQENFLasGNLibfDJ/UUqIcjw5qb.', 2),
-(3, 'ngminhthuan', 'first$2a$12$90R6qSbOd4mDtlFVNqMAaOBvn092WZgPlBUHJvoYEqiEelE6zGbzm', 3),
-(4, 'vminhthuan', 'first$2a$12$ZvUQ7fdYIKZCFIM2Q0kA0eP1nXafaQ38QnLLTySHV2beWuR.7PXey', 4),
-(5, 'ducanh', 'first$2a$12$UO7S87UDtPc3zRlon23nI.Qf1mbcx8DYrrjOu5fg1LJ5Fxbvwcude', 5);
+(1, 'longbott', '$2a$12$mQ/t9HUWSBZ2/I7Ff3qFAOajpfYqFyZxLZ9VDiFGYSbITcvoGxzre', 1);
 
 -- --------------------------------------------------------
 
@@ -64,60 +60,95 @@ CREATE TABLE `decentralization` (
 INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 (0, 1, 1),
 (0, 2, 1),
+(0, 2, 5),
 (0, 3, 1),
 (0, 4, 1),
 (0, 5, 1),
 (0, 6, 1),
+(0, 6, 5),
 (0, 7, 1),
+(0, 7, 2),
+(0, 7, 5),
 (0, 8, 1),
+(0, 8, 2),
+(0, 8, 5),
 (0, 9, 1),
+(0, 9, 2),
+(0, 9, 3),
+(0, 9, 4),
+(0, 9, 5),
 (0, 10, 1),
+(0, 10, 2),
+(0, 10, 3),
+(0, 10, 4),
+(0, 10, 5),
+(0, 10, 6),
+(0, 10, 7),
 (0, 11, 1),
+(0, 11, 2),
+(0, 11, 3),
+(0, 11, 4),
+(0, 11, 5),
+(0, 11, 6),
+(0, 11, 7),
 (0, 12, 1),
+(0, 12, 2),
+(0, 12, 3),
+(0, 12, 4),
+(0, 12, 5),
 (0, 13, 1),
-(0, 14, 1),
-(0, 15, 1),
-(0, 16, 1),
-(0, 17, 1),
-(1, 10, 1),
-(1, 11, 1),
+(0, 13, 2),
+(0, 13, 3),
+(0, 13, 4),
 (1, 12, 1),
-(1, 16, 1),
-(1, 16, 2),
-(1, 16, 3),
-(1, 16, 4),
+(1, 12, 2),
+(1, 12, 3),
+(1, 12, 4),
+(1, 12, 5),
+(1, 13, 1),
+(1, 13, 2),
+(1, 13, 3),
+(1, 13, 4),
+(2, 1, 1),
+(2, 2, 1),
+(2, 2, 5),
+(2, 3, 1),
 (2, 4, 1),
 (2, 5, 1),
 (2, 6, 1),
-(2, 6, 2),
-(2, 6, 3),
-(2, 12, 1),
-(2, 12, 2),
-(2, 12, 3),
-(2, 12, 4),
-(2, 13, 1),
-(2, 13, 2),
-(2, 13, 3),
-(2, 13, 4),
-(2, 14, 1),
-(2, 14, 2),
-(2, 14, 3),
-(2, 14, 4),
-(3, 8, 1),
-(3, 8, 2),
+(2, 6, 5),
+(2, 7, 1),
+(2, 7, 2),
+(2, 7, 5),
+(2, 8, 1),
+(2, 8, 2),
+(2, 8, 5),
+(2, 9, 1),
+(2, 9, 2),
+(2, 9, 3),
+(2, 9, 4),
+(2, 9, 5),
+(2, 10, 1),
+(2, 10, 2),
+(2, 10, 3),
+(2, 10, 4),
+(2, 10, 5),
+(2, 10, 6),
+(2, 10, 7),
+(2, 11, 1),
+(2, 11, 2),
+(2, 11, 3),
+(2, 11, 4),
+(2, 11, 5),
+(2, 11, 6),
+(2, 11, 7),
+(3, 1, 1),
+(3, 4, 1),
+(3, 5, 1),
+(3, 6, 1),
+(3, 6, 5),
 (3, 9, 1),
-(3, 9, 2),
-(3, 11, 1),
-(3, 11, 2),
-(3, 11, 3),
-(3, 11, 4),
-(3, 17, 1),
-(3, 17, 2),
-(3, 17, 3),
-(3, 17, 4),
-(4, 1, 1),
-(4, 10, 1),
-(4, 13, 1);
+(3, 9, 5);
 
 -- --------------------------------------------------------
 
@@ -285,23 +316,20 @@ CREATE TABLE `module` (
 --
 
 INSERT INTO `module` (`id`, `name`) VALUES
-(1, 'Bán hàng'),
-(2, 'Kho hàng'),
-(3, 'Thống kê kinh doanh'),
-(4, 'Thống kê lương'),
-(5, 'Thống kê nhân sự'),
-(6, 'Giảm giá'),
-(7, 'Hóa đơn'),
-(8, 'Phiếu xuất'),
-(9, 'Phiếu nhập'),
-(10, 'Sản phẩm'),
-(11, 'Nhà cung cấp'),
-(12, 'Nhân viên'),
-(13, 'Công thức'),
-(14, 'Đơn nghỉ phép'),
-(15, 'Tài khoản'),
-(16, 'Phân quyền'),
-(17, 'Nguyên liệu');
+(1, 'homepage'),
+(2, 'sale'),
+(3, 'warehouse'),
+(4, 'statistics'),
+(5, 'discounts'),
+(6, 'receipts'),
+(7, 'export_notes'),
+(8, 'import_notes'),
+(9, 'products'),
+(10, 'suppliers'),
+(11, 'recipe'),
+(12, 'staffs'),
+(13, 'accounts'),
+(14, 'decentralization');
 
 -- --------------------------------------------------------
 
@@ -341,12 +369,8 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`id`, `name`, `category`, `price`, `unit`, `image`, `deleted`) VALUES
-(1, 'PHIN SỮA ĐÁ', 'Cà phê', 25000, 'Ly', 'asc', b'0'),
-(2, 'PHIN ĐEN ĐÁ', 'Cà phê', 25000, 'Ly', 'aaa', b'0'),
-(3, 'FREEZE TRÀ XANH', 'Đá xay', 30000, 'Ly', 'áds', b'0'),
-(4, 'TRÀ SEN VÀNG', 'Trà', 28000, 'Ly', 'acvv', b'0'),
-(5, 'TRÀ SỮA BẠC HÀ', 'Thức uống khác', 20000, 'Ly', 'aaa', b'0'),
-(6, 'TIRAMISU', 'Bánh', 24000, 'Chiếc', 'a', b'0');
+(1, 'abc', 'abc', 2, 'ad', 'asc', b'1'),
+(2, 'long', 'abc', 50, 'd', 'aaa', b'1');
 
 -- --------------------------------------------------------
 
@@ -421,9 +445,8 @@ CREATE TABLE `role` (
 INSERT INTO `role` (`id`, `name`) VALUES
 (0, 'Super Admin'),
 (1, 'Admin'),
-(2, 'Quản lý'),
-(3, 'Nhân viên kho'),
-(4, 'Nhân viên bán hàng');
+(2, 'Quản lý cửa hàng'),
+(3, 'Nhân viên bán hàng');
 
 -- --------------------------------------------------------
 
@@ -438,17 +461,6 @@ CREATE TABLE `role_detail` (
   `salary` float DEFAULT NULL,
   `hourly_wage` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `role_detail`
---
-
-INSERT INTO `role_detail` (`role_id`, `staff_id`, `entry_date`, `salary`, `hourly_wage`) VALUES
-(1, 1, '2024-02-27', 0, 0),
-(2, 2, '2024-02-28', 5000000, 0),
-(2, 3, '2024-02-28', 5000000, 0),
-(3, 4, '2024-02-28', 0, 20000),
-(4, 5, '2024-02-28', 0, 25000);
 
 -- --------------------------------------------------------
 
@@ -497,11 +509,7 @@ CREATE TABLE `staff` (
 --
 
 INSERT INTO `staff` (`id`, `no`, `name`, `gender`, `birthdate`, `phone`, `address`, `email`, `deleted`) VALUES
-(1, '079203023641', 'Admin', b'0', '2003-08-30', '0961234946', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'admin@gmail.com', b'0'),
-(2, '079203023644', 'Nguyễn Hoàng Long', b'0', '2003-08-30', '0963333946', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'colong30082003@gmail.com', b'0'),
-(3, '079203023642', 'Nguyễn Minh Thuận', b'0', '2003-08-30', '0964512947', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'nguyenminhthuan@gmail.com', b'0'),
-(4, '079203023643', 'Vũ Minh Thuận', b'0', '2003-08-30', '0964512941', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'vmiinhthuan@gmail.com', b'0'),
-(5, '079203023645', 'Trần Huỳnh Đức Anh', b'0', '2003-08-30', '0964512940', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'ducanh@gmail.com', b'0');
+(1, '079203023644', 'Admin', b'0', '2003-08-30', '0963333946', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'admin2003@gmail.com', b'0');
 
 -- --------------------------------------------------------
 
@@ -700,7 +708,7 @@ ALTER TABLE `function`
 -- AUTO_INCREMENT for table `module`
 --
 ALTER TABLE `module`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Constraints for dumped tables
