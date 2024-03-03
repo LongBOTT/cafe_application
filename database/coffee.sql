@@ -39,7 +39,7 @@ CREATE TABLE `account` (
 --
 
 INSERT INTO `account` (`id`, `username`, `password`, `staff_id`) VALUES
-(1, 'longbott', '$2a$12$mQ/t9HUWSBZ2/I7Ff3qFAOajpfYqFyZxLZ9VDiFGYSbITcvoGxzre', 1);
+(1, 'longbott', '$2a$12$mQ/t9HUWSBZ2/I7Ff3qFAOajpfYqFyZxLZ9VDiFGYSbITcvoGxzre', 1); 
 
 -- --------------------------------------------------------
 
