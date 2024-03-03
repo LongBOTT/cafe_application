@@ -12,6 +12,7 @@ public class AccountDAL extends Manager{
         super("account",
                 List.of("id",
                         "username",
+                        "password",
                         "staff_id"));
     }
 
@@ -21,6 +22,7 @@ public class AccountDAL extends Manager{
                 return new Account(
                         Integer.parseInt(row.get(0)), // id
                         row.get(1), // username
+                        row.get(2), // password
                         Integer.parseInt(row.get(3)) // staff_id
                 );
             } catch (Exception e) {
@@ -35,6 +37,7 @@ public class AccountDAL extends Manager{
             System.out.println(account.getPassword());
             return create(account.getId(),
                     account.getUsername(),
+                    "",
                     account.getStaff_id()
             );
         } catch (SQLException | IOException e) {
@@ -48,6 +51,7 @@ public class AccountDAL extends Manager{
             List<Object> updateValues = new ArrayList<>();
             updateValues.add(account.getId());
             updateValues.add(account.getUsername());
+            updateValues.add(account.getPassword());
             updateValues.add(account.getStaff_id());
             return update(updateValues, "id = " + account.getId());
         } catch (SQLException | IOException e) {

@@ -1,5 +1,4 @@
-package com.supermarket.GUI.components;
-
+package com.coffee.GUI.components;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 

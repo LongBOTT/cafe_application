@@ -151,6 +151,10 @@ public class ProductBLL extends Manager<Product>{
         };
     }
 
+    public List<String> getCategories() {
+        return productDAL.getCategories();
+    }
+
     public static void main(String[] args) {
         ProductBLL productBLL = new ProductBLL();
         Product product = new Product(productBLL.getAutoID(productBLL.searchProducts()), "xyz", "abc", 50, "d", "aaa", false);
@@ -158,7 +162,6 @@ public class ProductBLL extends Manager<Product>{
 //
 //        product.setName("long");
 //        productBLL.updateProduct(product);
-        product.setId(2);
-        productBLL.deleteProduct(product);
+//        System.out.println(productBLL.getCategories());
     }
 }

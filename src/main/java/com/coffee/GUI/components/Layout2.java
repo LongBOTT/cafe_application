@@ -1,5 +1,4 @@
-package com.supermarket.GUI.components;
-
+package com.coffee.GUI.components;
 import net.miginfocom.swing.MigLayout;
 
 import java.awt.*;

@@ -35,9 +35,6 @@ public class AccountBLL extends Manager<Account>{
             return new Pair<>(false,result.getValue());
         }
 
-        String password = Password.generateRandomPassword(8);
-        System.out.println(password);
-
         if (accountDAL.addAccount(account) == 0)
             return new Pair<>(false, "Thêm tài khoản không thành công.");
 
@@ -47,8 +44,11 @@ public class AccountBLL extends Manager<Account>{
 //            String emailBody = "Không được cung cấp mật khẩu này cho bất cứ ai: " + password;
 //            Email.sendOTP(staff.getEmail(), emailSubject, emailBody);
 //        }).start();
+
+        String password = Password.generateRandomPassword(8);
+        System.out.println(password);
         String hashedPassword = Password.hashPassword(password);
-        account.setPassword(hashedPassword);
+        account.setPassword("first" + hashedPassword);
         accountDAL.updateAccountPassword(account);
         return new Pair<>(true,"Thêm tài khoản thành công.");
     }
@@ -71,11 +71,10 @@ public class AccountBLL extends Manager<Account>{
         Pair<Boolean, String> result;
         result = validatePassWord(password);
         if(!result.getKey()){
-//            SmallDialog.showResult(result.getValue());
             return new Pair<>(false,result.getValue());
         }
         String hashedPassword = Password.hashPassword(password);
-        account.setPassword(hashedPassword);
+        account.setPassword("first" + hashedPassword);
 
         if (accountDAL.updateAccountPassword(account) == 0)
             return new Pair<>(false, "Thay đổi mật khẩu không thành công.");
@@ -157,11 +156,10 @@ public class AccountBLL extends Manager<Account>{
         };
 
     }
-
     public static void main(String[] args) {
         AccountBLL accountBLL = new AccountBLL();
-//        Account account = new Account(accountBLL.getAutoID(accountBLL.searchAccounts()), "longbott", 1, 4);
-//        accountBLL.addAccount(account);
+        Account account = new Account(accountBLL.getAutoID(accountBLL.searchAccounts()), "ducanh", 4);
+        accountBLL.addAccount(account);
 //
 //        account.setStaff_id(8);
 //        accountBLL.updateAccount(account);

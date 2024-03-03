@@ -1,4 +1,4 @@
-package com.supermarket.GUI.components;
+package com.coffee.GUI.components;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
@@ -6,8 +6,11 @@ import java.awt.geom.RoundRectangle2D;
 public class RoundedScrollPane extends JScrollPane {
     public RoundedScrollPane(Component view, int vsbPolicy, int hsbPolicy) {
         super(view,vsbPolicy, hsbPolicy);
-        getViewport().setBackground(new Color(0xFFFFFF));
-        getVerticalScrollBar().setUnitIncrement(30);
+        getViewport().setBackground(new Color(255, 255, 255));
+        getViewport().setScrollMode(JViewport.BLIT_SCROLL_MODE);
+        getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
+        getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+        getVerticalScrollBar().setUnitIncrement(20);
     }
 
     @Override

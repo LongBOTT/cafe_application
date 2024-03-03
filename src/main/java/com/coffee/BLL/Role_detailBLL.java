@@ -65,7 +65,7 @@ public class Role_detailBLL extends Manager<Role_detail>{
     }
 
     public List<Role_detail> findRole_detailsBy(Map<String, Object> conditions) {
-        List<Role_detail> role_details =role_detailDAL.searchRole_details();
+        List<Role_detail> role_details = role_detailDAL.searchRole_details();
         for (Map.Entry<String, Object> entry : conditions.entrySet())
             role_details = findObjectsBy(entry.getKey(), entry.getValue(), role_details);
         return role_details;
