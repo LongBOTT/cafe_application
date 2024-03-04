@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 03, 2024 at 09:17 AM
+-- Generation Time: Mar 04, 2024 at 04:54 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.29
 
@@ -154,13 +154,6 @@ CREATE TABLE `discount_detail` (
   `percent` double DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `discount_detail`
---
-
-INSERT INTO `discount_detail` (`discount_id`, `product_id`, `percent`) VALUES
-(1, 1, 20);
-
 -- --------------------------------------------------------
 
 --
@@ -173,13 +166,6 @@ CREATE TABLE `export_detail` (
   `quantity` double DEFAULT NULL,
   `reason` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `export_detail`
---
-
-INSERT INTO `export_detail` (`export_id`, `shipment_id`, `quantity`, `reason`) VALUES
-(1, 1, 20, 'Ban');
 
 -- --------------------------------------------------------
 
@@ -266,8 +252,45 @@ CREATE TABLE `material` (
 --
 
 INSERT INTO `material` (`id`, `name`, `supplier_id`, `remain`, `unit`, `deleted`) VALUES
-(1, 'abc', 1, 3, 'd', b'1'),
-(2, 'xzy', 1, 51, 'd', b'1');
+(3, 'Cà phê bột truyền thống', 2, 10, 'kg', b'0'),
+(4, 'Đường túi', 2, 50, 'Túi', b'0'),
+(5, 'Bánh cookie', 2, 100, 'Cái', b'0'),
+(6, 'Đá viên', 2, 20000, 'g', b'0'),
+(7, 'Sữa đặc', 1, 100, 'ml', b'0'),
+(8, 'Nước nóng', 1, 100, 'ml', b'0'),
+(9, 'Syrup hạnh nhân', 4, 100, 'ml', b'0'),
+(10, 'Sữa tươi', 2, 100, 'ml', b'0'),
+(11, 'Sữa Béo (NDC)', 4, 100, 'ml', b'0'),
+(12, 'Thạch Cà Phê', 4, 500, 'g', b'0'),
+(13, 'Milk foam', 1, 200, 'ml', b'0'),
+(14, 'Bột chocolate trang trí', 2, 50, 'g', b'0'),
+(15, 'Sốt chocolate', 1, 200, 'ml', b'0'),
+(16, 'Cà phê đen pha sẵn', 3, 500, 'ml', b'0'),
+(18, 'Đường nước ', 2, 100, 'g', b'0'),
+(19, 'Trà đào pha sẵn ', 1, 100, 'ml', b'0'),
+(20, 'Đào lát', 3, 100, 'g', b'0'),
+(21, 'Hạt sen', 1, 200, 'g', b'0'),
+(22, 'Củ năng', 2, 500, 'g', b'0'),
+(23, 'Syrup vải', 1, 200, 'ml', b'0'),
+(24, 'Nước vải ngâm', 1, 500, 'ml', b'0'),
+(25, 'Vải trái', 1, 200, 'trái', b'0'),
+(26, 'Thạch vải ', 3, 100, 'g', b'0'),
+(27, 'Bột freeze mix', 3, 200, 'g', b'0'),
+(28, 'Whipping cream ', 2, 50, 'g', b'0'),
+(29, 'Bột cà phê espresso', 2, 1, 'lít', b'0'),
+(30, 'Bột green tea mix mới ', 2, 100, 'g', b'0'),
+(31, 'Thạch trà xanh ', 2, 500, 'g', b'0'),
+(32, 'Bột trà xanh trang trí', 2, 200, 'g', b'0'),
+(33, 'Hỗn hợp sữa pha sẵn', 3, 500, 'ml', b'0'),
+(34, 'Bột chocolate ', 3, 200, 'g', b'0'),
+(35, 'Sốt chocolate trang trí', 2, 50, 'ml', b'0'),
+(36, 'Cà phê sữa pha sẵn', 1, 500, 'ml', b'0'),
+(37, 'Thạch cà phê', 3, 300, 'g', b'0'),
+(38, 'Trà oolong pha sẵn ', 1, 200, 'ml', b'0'),
+(39, 'Thạch Đào', 2, 200, 'g', b'0'),
+(40, 'Syrup Đào', 3, 100, 'ml', b'0'),
+(41, 'Syrup sả', 2, 100, 'ml', b'0'),
+(42, 'Sốt caramel', 2, 100, 'ml', b'0');
 
 -- --------------------------------------------------------
 
@@ -329,9 +352,9 @@ CREATE TABLE `payroll` (
 CREATE TABLE `product` (
   `id` bigint(20) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
+  `size` varchar(255) NOT NULL,
   `category` varchar(255) DEFAULT NULL,
   `price` double DEFAULT NULL,
-  `unit` varchar(255) DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL,
   `deleted` bit(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -340,13 +363,53 @@ CREATE TABLE `product` (
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`id`, `name`, `category`, `price`, `unit`, `image`, `deleted`) VALUES
-(1, 'PHIN SỮA ĐÁ', 'Cà phê', 25000, 'Ly', 'asc', b'0'),
-(2, 'PHIN ĐEN ĐÁ', 'Cà phê', 25000, 'Ly', 'aaa', b'0'),
-(3, 'FREEZE TRÀ XANH', 'Đá xay', 30000, 'Ly', 'áds', b'0'),
-(4, 'TRÀ SEN VÀNG', 'Trà', 28000, 'Ly', 'acvv', b'0'),
-(5, 'TRÀ SỮA BẠC HÀ', 'Thức uống khác', 20000, 'Ly', 'aaa', b'0'),
-(6, 'TIRAMISU', 'Bánh', 24000, 'Chiếc', 'a', b'0');
+INSERT INTO `product` (`id`, `name`, `size`, `category`, `price`, `image`, `deleted`) VALUES
+(1, 'Phin Đen Đá', 'L', 'CÀ PHÊ PHIN', 39, 'SP01', b'0'),
+(1, 'Phin Đen Đá', 'M', 'CÀ PHÊ PHIN', 35, 'SP01', b'0'),
+(1, 'Phin Đen Đá', 'S', 'CÀ PHÊ PHIN', 29, 'SP01', b'0'),
+(2, 'Phin Sữa Đá', 'L', 'CÀ PHÊ PHIN', 45, 'SP02', b'0'),
+(2, 'Phin Sữa Đá', 'M', 'CÀ PHÊ PHIN', 39, 'SP02', b'0'),
+(2, 'Phin Sữa Đá', 'S', 'CÀ PHÊ PHIN', 29, 'SP02', b'0'),
+(3, 'Bạc Xỉu', 'L', 'CÀ PHÊ PHIN', 45, 'SP03', b'0'),
+(3, 'Bạc Xỉu', 'M', 'CÀ PHÊ PHIN', 39, 'SP03', b'0'),
+(3, 'Bạc Xỉu', 'S', 'CÀ PHÊ PHIN', 29, 'SP03', b'0'),
+(4, 'Trà Sen Vàng', 'L', 'TRÀ', 65, 'SP04', b'0'),
+(4, 'Trà Sen Vàng', 'M', 'TRÀ', 55, 'SP04', b'0'),
+(4, 'Trà Sen Vàng', 'S', 'TRÀ', 45, 'SP04', b'0'),
+(5, 'Trà Thạch Đào', 'L', 'TRÀ', 65, 'SP05', b'0'),
+(5, 'Trà Thạch Đào', 'M', 'TRÀ', 55, 'SP05', b'0'),
+(5, 'Trà Thạch Đào', 'S', 'TRÀ', 45, 'SP05', b'0'),
+(6, 'Trà Thanh Đào', 'L', 'TRÀ', 65, 'SP06', b'0'),
+(6, 'Trà Thanh Đào', 'M', 'TRÀ', 55, 'SP06', b'0'),
+(6, 'Trà Thanh Đào', 'S', 'TRÀ', 45, 'SP06', b'0'),
+(7, 'Trà Thạch Vãi', 'L', 'TRÀ', 65, 'SP07', b'0'),
+(7, 'Trà Thạch Vãi', 'M', 'TRÀ', 55, 'SP07', b'0'),
+(7, 'Trà Thạch Vãi', 'S', 'TRÀ', 45, 'SP07', b'0'),
+(8, 'Bánh Chuối', '0', 'BÁNH', 29, 'SP08', b'0'),
+(9, 'Bánh Su Kem', '0', 'BÁNH', 29, 'SP09', b'0'),
+(10, 'Phô Mai Chanh Dây', '0', 'BÁNH', 29, 'SP10', b'0'),
+(11, 'Phô Mai Trà Xanh', '0', 'BÁNH', 29, 'SP11', b'0'),
+(12, 'PhinDi Hạnh Nhân', 'L', 'PHINDI', 55, 'SP12', b'0'),
+(12, 'PhinDi Hạnh Nhân', 'M', 'PHINDI', 49, 'SP12', b'0'),
+(12, 'PhinDi Hạnh Nhân', 'S', 'PHINDI', 45, 'SP12', b'0'),
+(13, 'PhinDi Kem Sữa', 'L', 'PHINDI', 55, 'SP13', b'0'),
+(13, 'PhinDi Kem Sữa', 'M', 'PHINDI', 49, 'SP13', b'0'),
+(13, 'PhinDi Kem Sữa', 'S', 'PHINDI', 45, 'SP13', b'0'),
+(14, 'PhinDi Choco', 'L', 'PHINDI', 55, 'SP14', b'0'),
+(14, 'PhinDi Choco', 'M', 'PHINDI', 49, 'SP14', b'0'),
+(14, 'PhinDi Choco', 'S', 'PHINDI', 45, 'SP14', b'0'),
+(15, 'Freeze Trà Xanh', 'L', 'FREEZE ', 69, 'SP15', b'0'),
+(15, 'Freeze Trà Xanh', 'M', 'FREEZE', 65, 'SP15', b'0'),
+(15, 'Freeze Trà Xanh', 'S', 'FREEZE', 55, 'SP15', b'0'),
+(16, 'Caramel Phin Freeze', 'L', 'FREEZE', 69, 'SP16', b'0'),
+(16, 'Caramel Phin Freeze', 'M', 'FREEZE', 65, 'SP16', b'0'),
+(16, 'Caramel Phin Freeze', 'S', 'FREEZE', 55, 'SP16', b'0'),
+(17, 'Freeze Sô-Cô-La', 'L', 'FREEZE', 69, 'SP17', b'0'),
+(17, 'Freeze Sô-Cô-La', 'M', 'FREEZE', 65, 'SP17', b'0'),
+(17, 'Freeze Sô-Cô-La', 'S', 'FREEZE', 55, 'SP17', b'0'),
+(18, 'Classic Phin Freeze', 'L', 'FREEZE', 69, 'SP18', b'0'),
+(18, 'Classic Phin Freeze', 'M', 'FREEZE', 65, 'SP18', b'0'),
+(18, 'Classic Phin Freeze', 'S', 'FREEZE', 55, 'SP18', b'0');
 
 -- --------------------------------------------------------
 
@@ -383,14 +446,6 @@ CREATE TABLE `receipt_detail` (
   `price` double DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `receipt_detail`
---
-
-INSERT INTO `receipt_detail` (`receipt_id`, `product_id`, `quantity`, `price`) VALUES
-(1, 1, 0, 0),
-(1, 2, 0, 0);
-
 -- --------------------------------------------------------
 
 --
@@ -400,8 +455,211 @@ INSERT INTO `receipt_detail` (`receipt_id`, `product_id`, `quantity`, `price`) V
 CREATE TABLE `recipe` (
   `product_id` bigint(20) NOT NULL,
   `material_id` bigint(20) NOT NULL,
-  `quantity` double DEFAULT NULL
+  `quantity` double DEFAULT NULL,
+  `size` varchar(255) NOT NULL,
+  `unit` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `recipe`
+--
+
+INSERT INTO `recipe` (`product_id`, `material_id`, `quantity`, `size`, `unit`) VALUES
+(1, 6, 400, 'L', 'g'),
+(1, 6, 260, 'M', 'g'),
+(1, 6, 200, 'S', 'g'),
+(1, 16, 60, 'L', 'ml'),
+(1, 16, 50, 'M', 'ml'),
+(1, 16, 40, 'S', 'ml'),
+(1, 18, 25, 'L', 'ml'),
+(1, 18, 20, 'M', 'ml'),
+(1, 18, 15, 'S', 'ml'),
+(2, 6, 400, 'L', 'g'),
+(2, 6, 260, 'M', 'g'),
+(2, 6, 200, 'S', 'g'),
+(2, 16, 30, 'L', 'ml'),
+(2, 16, 25, 'M', 'ml'),
+(2, 16, 50, 'S', 'ml'),
+(2, 36, 75, 'L', 'ml'),
+(2, 36, 65, 'M', 'ml'),
+(2, 36, 50, 'S', 'ml'),
+(3, 6, 400, 'L', 'g'),
+(3, 6, 25, 'M', 'g'),
+(3, 6, 200, 'S', 'g'),
+(3, 7, 60, 'L', 'ml'),
+(3, 7, 50, 'M', 'ml'),
+(3, 7, 40, 'S', 'ml'),
+(3, 16, 30, 'L', 'ml'),
+(3, 16, 25, 'M', 'ml'),
+(3, 16, 20, 'S', 'ml'),
+(4, 6, 220, 'L', 'g'),
+(4, 6, 200, 'M', 'g'),
+(4, 6, 150, 'S', 'g'),
+(4, 13, 75, 'L', 'ml'),
+(4, 13, 65, 'M', 'ml'),
+(4, 13, 50, 'S', 'ml'),
+(4, 18, 45, 'L', 'ml'),
+(4, 18, 40, 'M', 'ml'),
+(4, 18, 30, 'S', 'ml'),
+(4, 21, 30, 'L', 'g'),
+(4, 21, 25, 'M', 'g'),
+(4, 21, 20, 'S', 'g'),
+(4, 22, 25, 'L', 'g'),
+(4, 22, 20, 'M', 'g'),
+(4, 22, 15, 'S', 'g'),
+(4, 38, 150, 'L', 'ml'),
+(4, 38, 130, 'M', 'ml'),
+(4, 38, 100, 'S', 'ml'),
+(5, 6, 220, 'L', 'g'),
+(5, 6, 200, 'M', 'g'),
+(5, 6, 150, 'S', 'g'),
+(5, 18, 45, 'L', 'ml'),
+(5, 18, 40, 'M', 'ml'),
+(5, 18, 30, 'S', 'ml'),
+(5, 19, 100, 'L', 'ml'),
+(5, 19, 80, 'M', 'ml'),
+(5, 19, 50, 'S', 'ml'),
+(5, 20, 40, 'L', 'g'),
+(5, 20, 40, 'M', 'g'),
+(5, 20, 30, 'S', 'g'),
+(5, 39, 75, 'L', 'g'),
+(5, 39, 65, 'M', 'g'),
+(5, 39, 50, 'S', 'g'),
+(6, 6, 300, 'L', 'g'),
+(6, 6, 280, 'M', 'g'),
+(6, 6, 220, 'S', 'g'),
+(6, 20, 40, 'L', 'g'),
+(6, 20, 40, 'M', 'g'),
+(6, 20, 30, 'S', 'g'),
+(6, 40, 25, 'L', 'ml'),
+(6, 40, 20, 'M', 'ml'),
+(6, 40, 15, 'S', 'ml'),
+(6, 41, 20, 'L', 'ml'),
+(6, 41, 15, 'M', 'ml'),
+(6, 41, 15, 'S', 'ml'),
+(7, 6, 320, 'L', 'g'),
+(7, 6, 300, 'M', 'g'),
+(7, 6, 230, 'S', 'g'),
+(7, 23, 30, 'L', 'ml'),
+(7, 23, 25, 'M', 'ml'),
+(7, 23, 20, 'S', 'ml'),
+(7, 24, 15, 'L', 'ml'),
+(7, 24, 10, 'M', 'ml'),
+(7, 24, 10, 'S', 'ml'),
+(7, 25, 5, 'L', 'trái'),
+(7, 25, 4, 'M', 'trái'),
+(7, 25, 3, 'S', 'trái'),
+(7, 26, 30, 'L', 'g'),
+(7, 26, 30, 'M', 'g'),
+(7, 26, 30, 'S', 'g'),
+(12, 6, 220, 'L', 'g'),
+(12, 6, 180, 'M', 'g'),
+(12, 6, 150, 'S', 'g'),
+(12, 9, 20, 'L', 'ml'),
+(12, 9, 15, 'M', 'ml'),
+(12, 9, 10, 'S', 'ml'),
+(12, 10, 80, 'L', 'ml'),
+(12, 10, 70, 'M', 'ml'),
+(12, 10, 50, 'S', 'ml'),
+(12, 16, 30, 'L', 'ml'),
+(12, 16, 25, 'M', 'ml'),
+(12, 16, 20, 'S', 'ml'),
+(12, 18, 15, 'L', 'ml'),
+(12, 18, 10, 'M', 'nl'),
+(12, 18, 10, 'S', 'ml'),
+(12, 37, 50, 'L', 'g'),
+(12, 37, 40, 'M', 'g'),
+(12, 37, 30, 'S', 'g'),
+(13, 6, 200, 'L', 'g'),
+(13, 6, 150, 'M', 'g'),
+(13, 6, 120, 'S', 'g'),
+(13, 7, 20, 'L', 'ml'),
+(13, 7, 15, 'M', 'ml'),
+(13, 7, 10, 'S', 'ml'),
+(13, 10, 120, 'L', 'ml'),
+(13, 10, 90, 'M', 'ml'),
+(13, 10, 70, 'S', 'ml'),
+(13, 13, 45, 'L', 'ml'),
+(13, 13, 40, 'M', 'ml'),
+(13, 13, 30, 'S', 'ml'),
+(13, 16, 30, 'L', 'ml'),
+(13, 16, 25, 'M', 'ml'),
+(13, 16, 20, 'S', 'ml'),
+(13, 37, 50, 'L', 'g'),
+(13, 37, 40, 'M', 'g'),
+(13, 37, 30, 'S', 'g'),
+(14, 6, 270, 'L', 'g'),
+(14, 6, 210, 'M', 'g'),
+(14, 6, 170, 'S', 'g'),
+(14, 7, 15, 'L', 'ml'),
+(14, 7, 10, 'M', 'ml'),
+(14, 7, 10, 'S', 'ml'),
+(14, 10, 60, 'L', 'ml'),
+(14, 10, 50, 'M', 'ml'),
+(14, 10, 30, 'S', 'ml'),
+(14, 11, 20, 'L', 'ml'),
+(14, 11, 15, 'M', 'ml'),
+(14, 11, 10, 'S', 'ml'),
+(14, 15, 20, 'L', 'ml'),
+(14, 15, 15, 'M', 'ml'),
+(14, 15, 10, 'S', 'ml'),
+(14, 16, 30, 'L', 'ml'),
+(14, 16, 25, 'M', 'ml'),
+(14, 16, 20, 'S', 'ml'),
+(15, 6, 250, 'L', 'g'),
+(15, 6, 230, 'M', 'g'),
+(15, 6, 180, 'S', 'g'),
+(15, 7, 25, 'L', 'ml'),
+(15, 7, 20, 'M', 'ml'),
+(15, 7, 15, 'S', 'ml'),
+(15, 10, 55, 'L', 'ml'),
+(15, 10, 50, 'M', 'ml'),
+(15, 10, 40, 'S', 'ml'),
+(15, 18, 25, 'L', 'ml'),
+(15, 18, 20, 'M', 'ml'),
+(15, 18, 15, 's', 'ml'),
+(15, 28, 35, 'L', 'g'),
+(15, 28, 35, 'M', 'g'),
+(15, 28, 30, 'S', 'g'),
+(15, 30, 50, 'L', 'g'),
+(15, 30, 45, 'M', 'g'),
+(15, 30, 35, 'S', 'g'),
+(15, 31, 150, 'L', 'g'),
+(15, 31, 125, 'M', 'g'),
+(15, 31, 100, 'S', 'g'),
+(16, 6, 250, 'L', 'g'),
+(16, 6, 230, 'M', 'g'),
+(16, 6, 200, 'S', 'g'),
+(16, 16, 45, 'L', 'ml'),
+(16, 16, 40, 'M', 'ml'),
+(16, 16, 30, 'S', 'ml'),
+(16, 27, 55, 'L', 'g'),
+(16, 27, 50, 'M', 'g'),
+(16, 27, 40, 'S', 'g'),
+(16, 37, 150, 'L', 'g'),
+(16, 37, 125, 'M', 'g'),
+(16, 37, 100, 'S', 'g'),
+(16, 42, 25, 'L', 'ml'),
+(16, 42, 20, 'M', 'ml'),
+(16, 42, 15, 'S', 'ml'),
+(17, 6, 250, 'L', 'g'),
+(17, 6, 230, 'M', 'g'),
+(17, 6, 180, 'S', 'g'),
+(17, 7, 25, 'L', 'ml'),
+(17, 7, 20, 'M', 'ml'),
+(17, 7, 15, 'S', 'ml'),
+(17, 10, 0, 'L', 'ml'),
+(17, 10, 80, 'M', 'ml'),
+(17, 10, 50, 'S', 'ml'),
+(17, 27, 55, 'L', 'g'),
+(17, 27, 50, 'M', 'g'),
+(17, 27, 40, 'S', 'g'),
+(17, 34, 18, 'L', 'g'),
+(17, 34, 16, 'M', 'g'),
+(17, 34, 12, 'S', 'g'),
+(17, 37, 150, 'L', 'g'),
+(17, 37, 125, 'M', 'g'),
+(17, 37, 100, 'S', 'g');
 
 -- --------------------------------------------------------
 
@@ -466,14 +724,6 @@ CREATE TABLE `shipment` (
   `exp` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `shipment`
---
-
-INSERT INTO `shipment` (`id`, `material_id`, `import_id`, `quantity`, `unit_price`, `mfg`, `exp`) VALUES
-(1, 1, 1, 22, 222, '2024-02-06', '2024-03-01'),
-(2, 2, 1, 50, 0, '2024-02-07', '2024-02-10');
-
 -- --------------------------------------------------------
 
 --
@@ -523,8 +773,10 @@ CREATE TABLE `supplier` (
 --
 
 INSERT INTO `supplier` (`id`, `name`, `phone`, `address`, `email`, `deleted`) VALUES
-(1, 'abc', '2', 'abc', 'c', b'0'),
-(15, 'xyz', '0963333946', '514', 'a@gmail.com', b'1');
+(1, 'Drai Farm', '0917 762 211', 'xã Quảng Hiệp, huyện Cư M’gar, tỉnh DakLak', 'DraiFarmcoffee@gmail.com', b'0'),
+(2, 'Sơn Việt Coffee', '0937442338', '148 Lý Thái Tổ, Thôn 6, DamBri, Bảo Lộc, Lâm Đồng', 'sonvietcoffe@gmail.com', b'0'),
+(3, 'Cà phê Triều Nguyên', '0966770770', '120A Lý Thái Tổ, Đamb’ri, Bảo Lộc, Lâm Đồng', 'trieunguyencoffe@gmail.com', b'0'),
+(4, 'Công ty TNHH SX & TM Hucafood ', '0935551919', 'Tổ 9 Hòa Bắc, Khánh Hòa', 'hucafoodcoffee@gmail.com', b'0');
 
 -- --------------------------------------------------------
 
@@ -623,7 +875,9 @@ ALTER TABLE `payroll`
 -- Indexes for table `product`
 --
 ALTER TABLE `product`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`,`size`) USING BTREE,
+  ADD KEY `id` (`id`),
+  ADD KEY `size` (`size`);
 
 --
 -- Indexes for table `receipt`
@@ -643,8 +897,9 @@ ALTER TABLE `receipt_detail`
 -- Indexes for table `recipe`
 --
 ALTER TABLE `recipe`
-  ADD PRIMARY KEY (`product_id`,`material_id`),
-  ADD KEY `fk_recipe_material` (`material_id`);
+  ADD PRIMARY KEY (`product_id`,`material_id`,`size`) USING BTREE,
+  ADD KEY `fk_recipe_material` (`material_id`),
+  ADD KEY `fk_recipe_size` (`size`);
 
 --
 -- Indexes for table `role`
@@ -776,7 +1031,8 @@ ALTER TABLE `receipt_detail`
 --
 ALTER TABLE `recipe`
   ADD CONSTRAINT `fk_recipe_material` FOREIGN KEY (`material_id`) REFERENCES `material` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_recipe_product` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_recipe_product` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_recipe_size` FOREIGN KEY (`size`) REFERENCES `product` (`size`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `role_detail`
