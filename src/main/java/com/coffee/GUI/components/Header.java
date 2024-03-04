@@ -1,5 +1,4 @@
-package com.supermarket.GUI.components;
-
+package com.coffee.GUI.components;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Area;

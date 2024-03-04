@@ -3,21 +3,21 @@ package com.coffee.DTO;
 public class Product {
     private int id;
     private String name;
+    private String size;
     private String category;
     private double price;
-    private String unit;
     private String image;
     private boolean deleted;
 
     public Product() {
     }
 
-    public Product(int id, String name, String category, double price, String unit, String image, boolean deleted) {
+    public Product(int id, String name, String size, String category, double price, String image, boolean deleted) {
         this.id = id;
         this.name = name;
         this.category = category;
         this.price = price;
-        this.unit = unit;
+        this.size = size;
         this.image = image;
         this.deleted = deleted;
     }
@@ -54,12 +54,12 @@ public class Product {
         this.price = price;
     }
 
-    public String getUnit() {
-        return unit;
+    public String getSize() {
+        return size;
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
+    public void setSize(String size) {
+        this.size = size;
     }
 
     public String getImage() {
@@ -86,7 +86,7 @@ public class Product {
                 name + " | " +
                 category + " | " +
                 price + " | " +
-                unit + " | " +
+                size + " | " +
                 image + " | " +
                 deleted;
     }

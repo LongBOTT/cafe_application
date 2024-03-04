@@ -15,6 +15,13 @@ public class Account {
         this.staff_id = staff_id;
     }
 
+    public Account(int id, String username, String password, int staff_id) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.staff_id = staff_id;
+    }
+
     public int getId() {
         return id;
     }

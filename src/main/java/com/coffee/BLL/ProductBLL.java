@@ -57,7 +57,7 @@ public class ProductBLL extends Manager<Product>{
     }
 
     public Pair<Boolean, String> deleteProduct(Product product) {
-        if (productDAL.deleteProduct("id = " + product.getId()) == 0)
+        if (productDAL.deleteProduct("id = " + product.getId(), "size = '" + product.getSize() + "'") == 0)
             return new Pair<>(false, "Xoá sản phẩm không thành công.");
 
         return new Pair<>(true, "Xoá sản phẩm thành công.");
@@ -86,7 +86,7 @@ public class ProductBLL extends Manager<Product>{
     }
 
     public Pair<Boolean, String> exists(Product newProduct){
-        List<Product> products = productDAL.searchProducts("name = '" + newProduct.getName() + "'", "deleted = 0");
+        List<Product> products = productDAL.searchProducts("name = '" + newProduct.getName() + "'", "size = '" + newProduct.getSize() + "'", "deleted = 0");
         if(!products.isEmpty()){
             return new Pair<>(true, "Sản phẩm đã tồn tại.");
         }
@@ -143,22 +143,25 @@ public class ProductBLL extends Manager<Product>{
         return switch (key) {
             case "id" -> product.getId();
             case "name" -> product.getName();
+            case "size" -> product.getSize();
             case "category" -> product.getCategory();
             case "price" -> product.getPrice();
-            case "unit" -> product.getUnit();
             case "image" -> product.getImage();
             default -> null;
         };
     }
 
+    public List<String> getCategories() {
+        return productDAL.getCategories();
+    }
+
     public static void main(String[] args) {
         ProductBLL productBLL = new ProductBLL();
-        Product product = new Product(productBLL.getAutoID(productBLL.searchProducts()), "xyz", "abc", 50, "d", "aaa", false);
+//        Product product = new Product(productBLL.getAutoID(productBLL.searchProducts()), "xyz", "abc", 50, "d", "aaa", false);
 //        productBLL.addProduct(product);
 //
 //        product.setName("long");
 //        productBLL.updateProduct(product);
-        product.setId(2);
-        productBLL.deleteProduct(product);
+//        System.out.println(productBLL.getCategories());
     }
 }

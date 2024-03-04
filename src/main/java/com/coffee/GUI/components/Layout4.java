@@ -1,5 +1,4 @@
-package com.supermarket.GUI.components;
-
+package com.coffee.GUI.components;
 import java.awt.*;
 
 public class Layout4 extends Layout1{

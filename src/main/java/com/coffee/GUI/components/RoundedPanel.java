@@ -1,5 +1,4 @@
-package com.supermarket.GUI.components;
-
+package com.coffee.GUI.components;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 import javax.swing.*;

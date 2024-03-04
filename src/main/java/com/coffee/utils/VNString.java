@@ -112,8 +112,6 @@ public class VNString {
         }
     }
 
-
-
     public static void main(String[] args) {
         String inputString = "078203023644";
         System.out.println(VNString.containsAlphabet(inputString));

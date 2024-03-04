@@ -4,8 +4,8 @@ import com.coffee.DAL.PayrollDAL;
 import com.coffee.DTO.Payroll;
 import javafx.util.Pair;
 
-import java.util.Calendar;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -83,12 +83,13 @@ public class PayrollBLL extends Manager<Payroll>{
         }
         return new Pair<>(false, "");
     }
+
     public Pair<Boolean, String> validateMonth(String month) {
-    if(month.isBlank())
-        return new Pair<>(false,"Tháng không được để trống");
-    if(!checkMonth(month))
-        return new Pair<>(false,"Tháng phải là số nguyên và nằm trong khoảng từ 1 đến 12");
-    return new Pair<>(true,"Tháng hợp lệ");
+        if(month.isBlank())
+            return new Pair<>(false,"Tháng không được để trống");
+        if(!checkMonth(month))
+            return new Pair<>(false,"Tháng phải là số nguyên và nằm trong khoảng từ 1 đến 12");
+        return new Pair<>(true,"Tháng hợp lệ");
     }
 
     public Pair<Boolean, String> validateYear(String year) {
@@ -115,6 +116,7 @@ public class PayrollBLL extends Manager<Payroll>{
             return false;
         }
     }
+
     @Override
     public Object getValueByKey(Payroll payroll, String key) {
         return switch (key) {

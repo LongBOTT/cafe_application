@@ -5,9 +5,8 @@ import com.coffee.DTO.Staff;
 import com.coffee.utils.VNString;
 import javafx.util.Pair;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -93,10 +92,6 @@ public class StaffBLL extends Manager<Staff> {
         if (!result.getKey())
             return new Pair<>(false, result.getValue());
 
-        result = validateBirthDate(staff.getBirthdate());
-        if (!result.getKey())
-            return new Pair<>(false, result.getValue());
-
         result = validatePhone(staff.getPhone());
         if (!result.getKey())
             return new Pair<>(false, result.getValue());
@@ -173,24 +168,6 @@ public class StaffBLL extends Manager<Staff> {
         return new Pair<>(true, email);
     }
 
-
-        public Pair<Boolean, String> validateBirthDate(Date birthDate) {
-            if (birthDate == null)
-                return new Pair<>(false, "Ngày sinh không được để trống.");
-
-            Calendar currentDate = Calendar.getInstance();
-
-            Calendar minimumBirthDate = Calendar.getInstance();
-            minimumBirthDate.add(Calendar.YEAR, -18);
-
-            if (birthDate.after(minimumBirthDate.getTime())) {
-                return new Pair<>(false, "Nhân viên chưa đủ 18 tuổi.");
-            }
-
-            return new Pair<>(true, "Ngày sinh hợp lệ");
-        }
-
-
     @Override
     public Object getValueByKey(Staff staff, String key) {
         return switch (key) {
@@ -208,8 +185,7 @@ public class StaffBLL extends Manager<Staff> {
 
     public static void main(String[] args) {
         StaffBLL staffBLL = new StaffBLL();
-
-        Staff staff = new Staff(staffBLL.getAutoID(staffBLL.searchStaffs("deleted = 0")), "078203023644", "a", false, java.sql.Date.valueOf("2003-08-30"), "0963333984", "4", "colung3008@gmail.com", false);
+        Staff staff = new Staff(14, "078203023644", "a", false, Date.valueOf("2003-08-30"), "0963333984", "4", "colung3008@gmail.com", false);
 
         System.out.println(staffBLL.addStaff(staff));
 
