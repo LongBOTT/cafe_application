@@ -12,9 +12,9 @@ public class ProductDAL extends Manager{
         super("product",
                 List.of("id",
                         "name",
+                        "size",
                         "category",
                         "price",
-                        "unit",
                         "image",
                         "deleted"));
     }
@@ -24,9 +24,9 @@ public class ProductDAL extends Manager{
                 return new Product(
                         Integer.parseInt(row.get(0)), // id
                         row.get(1), // name
-                        row.get(2), // category
-                        Double.parseDouble(row.get(3)), //price
-                        row.get(4), // unit
+                        row.get(2), // size
+                        row.get(3), // category
+                        Double.parseDouble(row.get(4)), //price
                         row.get(5),//image
                         Boolean.parseBoolean(row.get(6)) //deleted
                 );
@@ -43,7 +43,7 @@ public class ProductDAL extends Manager{
                     product.getName(),
                     product.getCategory(),
                     product.getPrice(),
-                    product.getUnit(),
+                    product.getSize(),
                     product.getImage(),
                     false
             ); // product khi tạo mặc định deleted = 0
@@ -57,12 +57,12 @@ public class ProductDAL extends Manager{
             List<Object> updateValues = new ArrayList<>();
             updateValues.add(product.getId());
             updateValues.add(product.getName());
+            updateValues.add(product.getSize());
             updateValues.add(product.getCategory());
             updateValues.add(product.getPrice());
-            updateValues.add(product.getUnit());
             updateValues.add(product.getImage());
             updateValues.add(product.isDeleted());
-            return update(updateValues, "id = " + product.getId());
+            return update(updateValues, "id = " + product.getId(), "size = '" + product.getSize() + "'");
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in Product.updateProduct(): " + e.getMessage());
         }

@@ -6,10 +6,12 @@ import com.coffee.DTO.Product;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.SalePanel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -28,11 +30,14 @@ public class SaleGUI extends SalePanel {
     private final Account account;
     private RoundedPanel containerSearch;
     private List<RoundedPanel> productPanelList;
-    private List<JLabel> productImageList;
     private JLabel iconSearch;
     private JLabel staffName;
     private JLabel date;
     private List<JLabel> jLabelBill;
+    private List<JLabel> deleteReceiptDetail;
+    private List<JLabel> priceReceiptDetail;
+    private List<JComboBox<String>> sizeReceiptDetail;
+    private List<JTextField> quantityReceiptDetail;
     private JTextField jTextFieldSearch;
     private JTextField jTextFieldCash;
     private JButton jButtonSearch;
@@ -40,10 +45,9 @@ public class SaleGUI extends SalePanel {
     private JButton jButtonCancel;
     private List<String> categoriesName;
     private List<Integer> productIDList;
-    private List<Integer> productIDInCartList;
+    private List<Pair<Object, Object>> productIDInCartList;
     private List<String> productNameList;
     private List<List<Object>> receiptDetailList;
-    private int index = -1;
 
     public SaleGUI(Account account) {
         super();
@@ -55,13 +59,16 @@ public class SaleGUI extends SalePanel {
         containerSearch = new RoundedPanel();
         productPanelList = new ArrayList<>();
         productNameList = new ArrayList<>();
-        productImageList = new ArrayList<>();
         iconSearch = new JLabel();
         staffName = new JLabel("Nhân viên: " + HomeGUI.staff.getName());
         date = new JLabel("Ngày: " + LocalDate.now().toString());
         jTextFieldSearch = new JTextField();
         jTextFieldCash = new JTextField();
         jLabelBill = new ArrayList<>();
+        deleteReceiptDetail = new ArrayList<>();
+        priceReceiptDetail = new ArrayList<>();
+        quantityReceiptDetail = new ArrayList<>();
+        sizeReceiptDetail = new ArrayList<>();
         jButtonSearch = new JButton("Tìm kiếm");
         jButtonPay = new JButton("Thanh toán");
         jButtonCancel = new JButton("Huỷ");
@@ -91,12 +98,7 @@ public class SaleGUI extends SalePanel {
 
         loadCategory();
 
-        List<Product> productList = new ArrayList<>();
-        for (int i=0; i<20; i++) {
-            Product product = new Product();
-            productList.add(product);
-        }
-        loadProduct(productList);
+        loadProduct(productBLL.searchProducts("deleted = 0"));
 
         staffName.setFont((new Font("FlatLaf.style", Font.BOLD, 15)));
         StaffPanel.add(staffName);
@@ -124,7 +126,7 @@ public class SaleGUI extends SalePanel {
                 jLabel.setFont((new Font("FlatLaf.style", Font.PLAIN, 13)));
                 jLabelBill.add(jLabel);
                 ContainerButtons.add(jLabel, "wrap");
-            }else {
+            } else {
                 jTextFieldCash.setPreferredSize(new Dimension(230, 20));
                 jTextFieldCash.setFont((new Font("FlatLaf.style", Font.PLAIN, 13)));
                 jTextFieldCash.addKeyListener(new KeyAdapter() {
@@ -240,6 +242,7 @@ public class SaleGUI extends SalePanel {
         ContainerProduct.removeAll();
         productPanelList.removeAll(productPanelList);
         productIDList.removeAll(productIDList);
+        productNameList.removeAll(productNameList);
 
         for (Product product : products) {
             if (productNameList.contains(product.getName())) {
@@ -266,7 +269,7 @@ public class SaleGUI extends SalePanel {
             productName.setPreferredSize(new Dimension(150, 60));
             productName.setVerticalAlignment(JLabel.CENTER);
             productName.setHorizontalAlignment(JLabel.CENTER);
-            productName.setText("<html>" + "Trà sen vàng" + "</html>");
+            productName.setText("<html>" + product.getName() + "</html>");
             productName.setFont((new Font("FlatLaf.style", Font.PLAIN, 13)));
             panel.add(productName);
 
@@ -274,12 +277,12 @@ public class SaleGUI extends SalePanel {
             productPrice.setPreferredSize(new Dimension(150, 30));
             productPrice.setVerticalAlignment(JLabel.CENTER);
             productPrice.setHorizontalAlignment(JLabel.CENTER);
-            productPrice.setText("25.000 vnđ");
+            productPrice.setText(String.valueOf(product.getPrice()));
             productPrice.setFont((new Font("FlatLaf.style", Font.BOLD, 10)));
             panel.add(productPrice);
 
-//            productNameList.add(product.getName());
-//            productIDList.add(product.getId());
+            productNameList.add(product.getName());
+            productIDList.add(product.getId());
         }
 
         for (RoundedPanel panel : productPanelList) {
@@ -288,9 +291,7 @@ public class SaleGUI extends SalePanel {
                 public void mousePressed(MouseEvent e) {
                     for (int i = 0;  i < productPanelList.size(); i++) {
                         if (productPanelList.get(i) == e.getComponent()) {
-//                            index = productIDList.get(i);
-//                            addProductToCart(productBLL.findProductsBy(Map.of("id", index)).get(0));
-                            addProductToCart(new Product());
+                            addProductToCart(productBLL.findProductsBy(Map.of("id", productIDList.get(i))).get(0));
                         }
                     }
                 }
@@ -301,26 +302,34 @@ public class SaleGUI extends SalePanel {
             ContainerProduct.add(panel);
         }
 
-        ContainerProduct.setPreferredSize(new Dimension(690, 260*products.size()/4));
+        ContainerProduct.setPreferredSize(new Dimension(690, productNameList.size()%4==0?
+                260*productNameList.size()/4 :
+                260*(productNameList.size()+(4-productNameList.size()%4))/4));
         ContainerProduct.repaint();
         ContainerProduct.revalidate();
     }
 
     private void addProductToCart(Product product) {
         List<Object> receiptDetail = new ArrayList<>();
-//        receiptDetail.add(product.getName());
-        receiptDetail.add("Trà sen vàng");
-        receiptDetail.add("");
+        receiptDetail.add(product.getName());
+        for (Product product1 : productBLL.findProductsBy(Map.of("name", product.getName()))) {
+            receiptDetail.add(product1.getSize());
+        }
         receiptDetail.add(Integer.parseInt("1"));
-//        receiptDetail.add(product.getPrice());
-        receiptDetail.add(25000);
-
+        receiptDetail.add(product.getPrice());
         receiptDetailList.add(receiptDetail);
+        productIDInCartList.add(new Pair<>(product.getName(), product.getSize()));
+
         loadCartShopping();
     }
 
     public void loadCartShopping() {
         Bill_detailPanel.removeAll();
+        deleteReceiptDetail = new ArrayList<>();
+        priceReceiptDetail = new ArrayList<>();
+        quantityReceiptDetail = new ArrayList<>();
+        sizeReceiptDetail = new ArrayList<>();
+        productIDInCartList = new ArrayList<>();
 
         for (List<Object> receipt : receiptDetailList) {
             JLabel productName = new JLabel("<html>" + receipt.get(0) + "</html>");
@@ -328,35 +337,117 @@ public class SaleGUI extends SalePanel {
             productName.setPreferredSize(new Dimension(200   , 40));
             Bill_detailPanel.add(productName);
 
-            JComboBox productSize = new JComboBox<>();
-//            for (Product product1 : productBLL.findProductsBy(Map.of("name", receipt.get(0)))) {
-//                productSize.add(product1.getSize());
-//            }
-            productSize.addItem("S");
-            productSize.addItem("M");
-            productSize.addItem("L");
-            productSize.setPreferredSize(new Dimension(40   , 40));
-            productSize.setFont(new Font("FlatLaf.style", Font.PLAIN, 8));
-            Bill_detailPanel.add(productSize);
+            String[] items = new String[0];
+            for (int i = 1; i<receipt.size()-2; i++) {
+                items = Arrays.copyOf(items, items.length+1);
+                items[items.length-1] = String.valueOf(receipt.get(i));
+            }
 
-            JTextField productQuantity = new JTextField(String.valueOf(receipt.get(2)));
+            if (!items[0].equals("0")) {
+                JComboBox<String> productSize = new JComboBox<>(items);
+//                productSize.setSelectedItem(); ...
+                productSize.setPreferredSize(new Dimension(40   , 40));
+                productSize.setFont(new Font("FlatLaf.style", Font.PLAIN, 8));
+                sizeReceiptDetail.add(productSize);
+                productSize.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        for (int i = 0;  i < sizeReceiptDetail.size(); i++) {
+                            if (sizeReceiptDetail.get(i) == e.getComponent()) {
+                                saveChanged(i);
+                                return;
+                            }
+                        }
+
+                    }
+                });
+                Bill_detailPanel.add(productSize);
+            } else {
+                JLabel panel = new JLabel();
+                panel.setFont(new Font("FlatLaf.style", Font.PLAIN, 8));
+                panel.setPreferredSize(new Dimension(40   , 40));
+                Bill_detailPanel.add(panel);
+            }
+
+            JTextField productQuantity = new JTextField(String.valueOf(receipt.get(receipt.size()-2)));
             productQuantity.setFont(new Font("FlatLaf.style", Font.PLAIN, 10));
             productQuantity.setPreferredSize(new Dimension(40   , 40));
+            productQuantity.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    if (!Character.isDigit(e.getKeyChar())) {
+                        e.consume();
+                    }
+                }
+
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                        for (int i = 0;  i < quantityReceiptDetail.size(); i++) {
+                            if (quantityReceiptDetail.get(i) == e.getComponent()) {
+                                saveChanged(i);
+                                return;
+                            }
+                        }
+                    }
+                }
+            });
+            quantityReceiptDetail.add(productQuantity);
             Bill_detailPanel.add(productQuantity);
 
-            JLabel productPrice = new JLabel(String.valueOf(receipt.get(3)));
+            JLabel productPrice = new JLabel(String.valueOf(receipt.get(receipt.size()-1)));
             productPrice.setFont(new Font("FlatLaf.style", Font.PLAIN, 12));
             productPrice.setPreferredSize(new Dimension(90   , 40));
+            priceReceiptDetail.add(productPrice);
             Bill_detailPanel.add(productPrice);
 
             JLabel deleteProduct = new JLabel("Xoá");
             deleteProduct.setFont(new Font("FlatLaf.style", Font.PLAIN, 12));
             deleteProduct.setPreferredSize(new Dimension(40   , 40));
+            deleteProduct.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            deleteProduct.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    for (int i = 0;  i < deleteReceiptDetail.size(); i++) {
+                        if (deleteReceiptDetail.get(i) == e.getComponent()) {
+                            deleteProductInCart(i);
+                            return;
+                        }
+                    }
+
+                }
+            });
+            deleteReceiptDetail.add(deleteProduct);
             Bill_detailPanel.add(deleteProduct);
+
         }
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
         Bill_detailPanel.setPreferredSize(new Dimension(450, Math.max(400, 45*receiptDetailList.size())));
+        System.out.println(productIDInCartList);
+        System.out.println(receiptDetailList);
+    }
+
+    private void saveChanged(int index) {
+        List<Object> receipt = new ArrayList<>();
+        receipt = receiptDetailList.get(index);
+        receipt.set(receipt.size()-2, Integer.parseInt(quantityReceiptDetail.get(index).getText()));
+
+        Pair<Object, Object> productIDInCart = new Pair<>(productIDInCartList.get(index).getKey(), sizeReceiptDetail.get(index).getSelectedItem());
+        productIDInCartList.set(index, productIDInCart);
+
+        int quantity = Integer.parseInt(quantityReceiptDetail.get(index).getText());
+        double price = productBLL.findProductsBy(Map.of("name", productIDInCartList.get(index).getKey(),
+                "size", productIDInCartList.get(index).getValue())).get(0).getPrice();
+        receipt.set(receipt.size()-1, quantity*price);
+
+        receiptDetailList.set(index, receipt);
+    }
+
+    private void deleteProductInCart(int index) {
+        receiptDetailList.remove(index);
+        productIDInCartList.remove(index);
+        loadCartShopping();
     }
 
     private void checkRemainProduct() {}

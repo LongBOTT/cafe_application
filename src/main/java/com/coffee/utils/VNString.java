@@ -108,7 +108,7 @@ public class VNString {
         try {
             return Double.parseDouble(str) > 0;
         } catch (Exception e) {
-            return true;
+            return false;
         }
     }
 
