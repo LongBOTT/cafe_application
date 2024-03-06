@@ -35,7 +35,7 @@ public class Cafe_Application {
         Thread thread = new Thread(() -> homeGUI = new HomeGUI());
         thread.start();
         loginGUI = new LoginGUI();
-//        loginGUI.setVisible(true);
+//        loginGUI.setVisible(true); //test
     }
 
     public static void exit(int status) {

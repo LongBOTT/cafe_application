@@ -1,6 +1,7 @@
 package com.coffee.GUI.components;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -24,6 +25,8 @@ public class DataTable extends JTable {
         setFont(new Font("Public Sans", Font.PLAIN, 15));
         setAutoCreateRowSorter(false);
         setRowHeight(20);
+        setSelectionBackground(new Color(220, 221, 225, 221));
+        setSelectionForeground(Color.BLACK);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         addMouseListener(new MouseAdapter() {
             @Override
@@ -53,6 +56,9 @@ public class DataTable extends JTable {
                 }
             }
         });
+
+        JTableHeader jTableHeader = getTableHeader();
+        jTableHeader.setBackground(new Color(217,217,217));
     }
 
     public DataTable(Object[][] data, Object[] columnNames, ActionListener actionListener, int checkbox) {

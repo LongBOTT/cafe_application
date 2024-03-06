@@ -13,10 +13,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
@@ -34,6 +31,7 @@ public class SaleGUI extends SalePanel {
     private JLabel staffName;
     private JLabel date;
     private List<JLabel> jLabelBill;
+    private List<JLabel> nameReceiptDetail;
     private List<JLabel> deleteReceiptDetail;
     private List<JLabel> priceReceiptDetail;
     private List<JComboBox<String>> sizeReceiptDetail;
@@ -45,10 +43,9 @@ public class SaleGUI extends SalePanel {
     private JButton jButtonCancel;
     private List<String> categoriesName;
     private List<Integer> productIDList;
-    private List<Pair<Object, Object>> productIDInCartList;
     private List<String> productNameList;
     private List<List<Object>> receiptDetailList;
-
+    private String categoryName = "TẤT CẢ";
     public SaleGUI(Account account) {
         super();
         this.account = account;
@@ -65,6 +62,7 @@ public class SaleGUI extends SalePanel {
         jTextFieldSearch = new JTextField();
         jTextFieldCash = new JTextField();
         jLabelBill = new ArrayList<>();
+        nameReceiptDetail = new ArrayList<>();
         deleteReceiptDetail = new ArrayList<>();
         priceReceiptDetail = new ArrayList<>();
         quantityReceiptDetail = new ArrayList<>();
@@ -74,7 +72,6 @@ public class SaleGUI extends SalePanel {
         jButtonCancel = new JButton("Huỷ");
         categoriesName = new ArrayList<>();
         productIDList = new ArrayList<>();
-        productIDInCartList = new ArrayList<>();
         receiptDetailList = new ArrayList<>();
 
         containerSearch.setLayout(new MigLayout("", "10[]20[]10", ""));
@@ -89,11 +86,30 @@ public class SaleGUI extends SalePanel {
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập tên sản phẩm");
         jTextFieldSearch.setPreferredSize(new Dimension(550, 30));
+        jTextFieldSearch.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    searchProducts();
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
         containerSearch.add(jTextFieldSearch);
 
         jButtonSearch.setBackground(new Color(29,78, 216));
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(100, 30));
+        jButtonSearch.addActionListener(e -> searchProducts());
         SearchPanel.add(jButtonSearch);
 
         loadCategory();
@@ -197,6 +213,15 @@ public class SaleGUI extends SalePanel {
 
     }
 
+    private void searchProducts() {
+        if (jTextFieldSearch.getText().isEmpty()) {
+            loadProduct(productBLL.searchProducts("deleted = 0"));
+        } else {
+            loadProduct(productBLL.findProducts("name", jTextFieldSearch.getText()));
+        }
+        categoryName = "";
+    }
+
     private static JLabel getjLabel(String tittle) {
         JLabel jLabel = new JLabel(tittle);
         jLabel.setFont(new Font("FlatLaf.style", Font.BOLD, 13));
@@ -216,13 +241,25 @@ public class SaleGUI extends SalePanel {
     public void loadCategory () {
         Category.removeAll();
         categoriesName.removeAll(categoriesName);
-        categoriesName.add("Tất cả");
+        categoriesName.add("TẤT CẢ");
         categoriesName.addAll(productBLL.getCategories());
         for (String category: categoriesName) {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new FlowLayout());
             roundedPanel.setBackground(new Color(253,143,143));
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            roundedPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    RoundedPanel roundedPanel = (RoundedPanel) e.getComponent();
+                    JLabel jLabel = (JLabel) roundedPanel.getComponent(0);
+                    if (!categoryName.equals(jLabel.getText())) {
+                        categoryName = jLabel.getText();
+                        searchCategory();
+//                        System.out.println(jLabel.getText());
+                    }
+                }
+            });
             Category.add(roundedPanel);
 
             JLabel jLabel = new JLabel(category);
@@ -236,6 +273,14 @@ public class SaleGUI extends SalePanel {
         }
         Category.repaint();
         Category.revalidate();
+    }
+
+    private void searchCategory() {
+        if (categoryName.equals("TẤT CẢ"))
+            loadProduct(productBLL.searchProducts("deleted = 0"));
+        else
+            loadProduct(productBLL.findProductsBy(Map.of("category", categoryName)));
+        jTextFieldSearch.setText("");
     }
 
     public void loadProduct (List<Product> products) {
@@ -312,142 +357,167 @@ public class SaleGUI extends SalePanel {
     private void addProductToCart(Product product) {
         List<Object> receiptDetail = new ArrayList<>();
         receiptDetail.add(product.getName());
-        for (Product product1 : productBLL.findProductsBy(Map.of("name", product.getName()))) {
-            receiptDetail.add(product1.getSize());
-        }
+        receiptDetail.add(product.getSize());
         receiptDetail.add(Integer.parseInt("1"));
         receiptDetail.add(product.getPrice());
         receiptDetailList.add(receiptDetail);
-        productIDInCartList.add(new Pair<>(product.getName(), product.getSize()));
+        nameReceiptDetail.add(new JLabel());
+        sizeReceiptDetail.add(new JComboBox<>());
+        quantityReceiptDetail.add(new JTextField());
+        priceReceiptDetail.add(new JLabel());
+        deleteReceiptDetail.add(new JLabel());
 
-        loadCartShopping();
-    }
+        int index = receiptDetailList.size()-1;
 
-    public void loadCartShopping() {
-        Bill_detailPanel.removeAll();
-        deleteReceiptDetail = new ArrayList<>();
-        priceReceiptDetail = new ArrayList<>();
-        quantityReceiptDetail = new ArrayList<>();
-        sizeReceiptDetail = new ArrayList<>();
-        productIDInCartList = new ArrayList<>();
+        nameReceiptDetail.get(index).setFont(new Font("FlatLaf.style", Font.PLAIN, 12));
+        nameReceiptDetail.get(index).setText("<html>" + receiptDetailList.get(index).get(0) + "</html>");
+        nameReceiptDetail.get(index).setPreferredSize(new Dimension(200, 40));
+        Bill_detailPanel.add(nameReceiptDetail.get(index));
 
-        for (List<Object> receipt : receiptDetailList) {
-            JLabel productName = new JLabel("<html>" + receipt.get(0) + "</html>");
-            productName.setFont(new Font("FlatLaf.style", Font.PLAIN, 12));
-            productName.setPreferredSize(new Dimension(200   , 40));
-            Bill_detailPanel.add(productName);
-
-            String[] items = new String[0];
-            for (int i = 1; i<receipt.size()-2; i++) {
-                items = Arrays.copyOf(items, items.length+1);
-                items[items.length-1] = String.valueOf(receipt.get(i));
+        if (!product.getSize().equals("0")) {
+            for (Product product1 : productBLL.findProductsBy(Map.of("name", receiptDetailList.get(index).get(0)))) {
+                sizeReceiptDetail.get(index).addItem(product1.getSize());
             }
-
-            if (!items[0].equals("0")) {
-                JComboBox<String> productSize = new JComboBox<>(items);
-//                productSize.setSelectedItem(); ...
-                productSize.setPreferredSize(new Dimension(40   , 40));
-                productSize.setFont(new Font("FlatLaf.style", Font.PLAIN, 8));
-                sizeReceiptDetail.add(productSize);
-                productSize.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        for (int i = 0;  i < sizeReceiptDetail.size(); i++) {
-                            if (sizeReceiptDetail.get(i) == e.getComponent()) {
-                                saveChanged(i);
-                                return;
-                            }
-                        }
-
-                    }
-                });
-                Bill_detailPanel.add(productSize);
-            } else {
-                JLabel panel = new JLabel();
-                panel.setFont(new Font("FlatLaf.style", Font.PLAIN, 8));
-                panel.setPreferredSize(new Dimension(40   , 40));
-                Bill_detailPanel.add(panel);
-            }
-
-            JTextField productQuantity = new JTextField(String.valueOf(receipt.get(receipt.size()-2)));
-            productQuantity.setFont(new Font("FlatLaf.style", Font.PLAIN, 10));
-            productQuantity.setPreferredSize(new Dimension(40   , 40));
-            productQuantity.addKeyListener(new KeyAdapter() {
-                @Override
-                public void keyTyped(KeyEvent e) {
-                    if (!Character.isDigit(e.getKeyChar())) {
-                        e.consume();
-                    }
-                }
-
-                @Override
-                public void keyPressed(KeyEvent e) {
-                    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                        for (int i = 0;  i < quantityReceiptDetail.size(); i++) {
-                            if (quantityReceiptDetail.get(i) == e.getComponent()) {
-                                saveChanged(i);
-                                return;
-                            }
-                        }
-                    }
-                }
-            });
-            quantityReceiptDetail.add(productQuantity);
-            Bill_detailPanel.add(productQuantity);
-
-            JLabel productPrice = new JLabel(String.valueOf(receipt.get(receipt.size()-1)));
-            productPrice.setFont(new Font("FlatLaf.style", Font.PLAIN, 12));
-            productPrice.setPreferredSize(new Dimension(90   , 40));
-            priceReceiptDetail.add(productPrice);
-            Bill_detailPanel.add(productPrice);
-
-            JLabel deleteProduct = new JLabel("Xoá");
-            deleteProduct.setFont(new Font("FlatLaf.style", Font.PLAIN, 12));
-            deleteProduct.setPreferredSize(new Dimension(40   , 40));
-            deleteProduct.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            deleteProduct.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    for (int i = 0;  i < deleteReceiptDetail.size(); i++) {
-                        if (deleteReceiptDetail.get(i) == e.getComponent()) {
-                            deleteProductInCart(i);
+            sizeReceiptDetail.get(index).setPreferredSize(new Dimension(40, 40));
+            sizeReceiptDetail.get(index).setFont(new Font("FlatLaf.style", Font.PLAIN, 8));
+            sizeReceiptDetail.get(index).setSelectedItem(receiptDetailList.get(index).get(1));
+            sizeReceiptDetail.get(index).addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    for (int j = 0; j < sizeReceiptDetail.size(); j++) {
+                        if (sizeReceiptDetail.get(j) == e.getSource()) {
+                            saveSizeChanged(j);
                             return;
                         }
                     }
-
                 }
             });
-            deleteReceiptDetail.add(deleteProduct);
-            Bill_detailPanel.add(deleteProduct);
-
+            Bill_detailPanel.add(sizeReceiptDetail.get(index));
+        } else {
+            sizeReceiptDetail.get(index).addItem("0");
+            JLabel panel = new JLabel();
+            panel.setFont(new Font("FlatLaf.style", Font.PLAIN, 8));
+            panel.setPreferredSize(new Dimension(40, 40));
+            Bill_detailPanel.add(panel);
         }
+
+        quantityReceiptDetail.get(index).setFont(new Font("FlatLaf.style", Font.PLAIN, 10));
+        quantityReceiptDetail.get(index).setPreferredSize(new Dimension(40, 40));
+        quantityReceiptDetail.get(index).setText(receiptDetailList.get(index).get(2).toString());
+
+        quantityReceiptDetail.get(index).addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (!Character.isDigit(e.getKeyChar())) {
+                    e.consume();
+                }
+            }
+
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    for (int i = 0;  i < quantityReceiptDetail.size(); i++) {
+                        if (quantityReceiptDetail.get(i) == e.getComponent()) {
+                            saveQuantityChanged(i);
+                            return;
+                        }
+                    }
+                }
+            }
+        });
+        Bill_detailPanel.add(quantityReceiptDetail.get(index));
+
+        priceReceiptDetail.get(index).setText(receiptDetailList.get(index).get(3).toString());
+        priceReceiptDetail.get(index).setFont(new Font("FlatLaf.style", Font.PLAIN, 12));
+        priceReceiptDetail.get(index).setPreferredSize(new Dimension(90, 40));
+        Bill_detailPanel.add(priceReceiptDetail.get(index));
+
+        deleteReceiptDetail.get(index).setFont(new Font("FlatLaf.style", Font.PLAIN, 12));
+        deleteReceiptDetail.get(index).setPreferredSize(new Dimension(40, 40));
+        deleteReceiptDetail.get(index).setCursor(new Cursor(Cursor.HAND_CURSOR));
+        deleteReceiptDetail.get(index).setText("Xoá");
+        deleteReceiptDetail.get(index).addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                for (int j = 0; j < deleteReceiptDetail.size(); j++) {
+                    if (deleteReceiptDetail.get(j) == e.getComponent()) {
+                        deleteProductInCart(j);
+                        return;
+                    }
+                }
+
+            }
+        });
+        Bill_detailPanel.add(deleteReceiptDetail.get(index));
+
+        Bill_detailPanel.setPreferredSize(new Dimension(450, Math.max(400, 45*receiptDetailList.size())));
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
-        Bill_detailPanel.setPreferredSize(new Dimension(450, Math.max(400, 45*receiptDetailList.size())));
-        System.out.println(productIDInCartList);
         System.out.println(receiptDetailList);
     }
 
-    private void saveChanged(int index) {
-        List<Object> receipt = new ArrayList<>();
-        receipt = receiptDetailList.get(index);
-        receipt.set(receipt.size()-2, Integer.parseInt(quantityReceiptDetail.get(index).getText()));
-
-        Pair<Object, Object> productIDInCart = new Pair<>(productIDInCartList.get(index).getKey(), sizeReceiptDetail.get(index).getSelectedItem());
-        productIDInCartList.set(index, productIDInCart);
+    private void saveSizeChanged(int index) {
+        List<Object> receipt = receiptDetailList.get(index);
+        receipt.set(1, sizeReceiptDetail.get(index).getSelectedItem());
 
         int quantity = Integer.parseInt(quantityReceiptDetail.get(index).getText());
-        double price = productBLL.findProductsBy(Map.of("name", productIDInCartList.get(index).getKey(),
-                "size", productIDInCartList.get(index).getValue())).get(0).getPrice();
-        receipt.set(receipt.size()-1, quantity*price);
+        double price = productBLL.findProductsBy(Map.of("name", receipt.get(0),
+                "size", Objects.requireNonNull(sizeReceiptDetail.get(index).getSelectedItem()))).get(0).getPrice();
+        receipt.set(3, quantity*price);
 
         receiptDetailList.set(index, receipt);
+
+        sizeReceiptDetail.get(index).setSelectedItem(receipt.get(1));
+        priceReceiptDetail.get(index).setText(receipt.get(3).toString());
+        Bill_detailPanel.repaint();
+        Bill_detailPanel.revalidate();
+    }
+
+    private void saveQuantityChanged(int index) {
+        List<Object> receipt = receiptDetailList.get(index);
+        receipt.set(2, Integer.parseInt(quantityReceiptDetail.get(index).getText()));
+
+        int quantity = Integer.parseInt(quantityReceiptDetail.get(index).getText());
+        double price = productBLL.findProductsBy(Map.of("name", receipt.get(0),
+                "size", Objects.requireNonNull(sizeReceiptDetail.get(index).getSelectedItem()))).get(0).getPrice();
+        receipt.set(3, quantity*price);
+
+        receiptDetailList.set(index, receipt);
+        priceReceiptDetail.get(index).setText(receipt.get(3).toString());
+        Bill_detailPanel.repaint();
+        Bill_detailPanel.revalidate();
     }
 
     private void deleteProductInCart(int index) {
         receiptDetailList.remove(index);
-        productIDInCartList.remove(index);
-        loadCartShopping();
+        nameReceiptDetail.remove(index);
+        sizeReceiptDetail.remove(index);
+        quantityReceiptDetail.remove(index);
+        priceReceiptDetail.remove(index);
+        deleteReceiptDetail.remove(index);
+
+        loadProductInCart();
+    }
+
+    private void loadProductInCart() {
+        Bill_detailPanel.removeAll();
+
+        for (int i=0; i<receiptDetailList.size(); i++) {
+            Bill_detailPanel.add(nameReceiptDetail.get(i));
+            if (receiptDetailList.get(i).get(1).equals("0")) {
+                JLabel panel = new JLabel();
+                panel.setFont(new Font("FlatLaf.style", Font.PLAIN, 8));
+                panel.setPreferredSize(new Dimension(40, 40));
+                Bill_detailPanel.add(panel);
+            } else {
+                Bill_detailPanel.add(sizeReceiptDetail.get(i));
+            }
+            Bill_detailPanel.add(quantityReceiptDetail.get(i));
+            Bill_detailPanel.add(priceReceiptDetail.get(i));
+            Bill_detailPanel.add(deleteReceiptDetail.get(i));
+        }
+
+        Bill_detailPanel.setPreferredSize(new Dimension(450, Math.max(400, 45*receiptDetailList.size())));
+        Bill_detailPanel.repaint();
+        Bill_detailPanel.revalidate();
     }
 
     private void checkRemainProduct() {}

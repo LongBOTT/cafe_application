@@ -4,6 +4,9 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
 public class RoundedScrollPane extends JScrollPane {
+    public RoundedScrollPane() {
+    }
+
     public RoundedScrollPane(Component view, int vsbPolicy, int hsbPolicy) {
         super(view,vsbPolicy, hsbPolicy);
         getViewport().setBackground(new Color(255, 255, 255));

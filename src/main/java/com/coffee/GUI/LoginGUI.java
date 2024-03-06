@@ -55,23 +55,15 @@ public class LoginGUI extends JFrame {
         contentPane.setBackground(new Color(232,206,180));
         setContentPane(contentPane);
 
-        progressBar = new JProgressBar();
-        progressBar.setStringPainted(true);
-        progressBar.setFont(new Font("FlatLaf.style", Font.BOLD, 15));
-        progressBar.setForeground(new Color(0x97B4EA));
-        progressBar.setUI(new FlatProgressBarUI());
-        contentPane.add(progressBar, BorderLayout.SOUTH);
-        Thread threadProgress = new Thread(this::progress);
-        threadProgress.start();
-        dispose();
-
         formLogin = new JPanel(new FlowLayout());
         formLogin.setBackground(new Color(217,217,217));
         formLogin.setPreferredSize(new Dimension(400,500));
+        contentPane.add(formLogin, BorderLayout.WEST);
 
         jPanelLogo = new JPanel(new BorderLayout());
         jPanelLogo.setBackground(new Color(232,206,180));
         jPanelLogo.setPreferredSize(new Dimension(300,500));
+        contentPane.add(jPanelLogo, BorderLayout.EAST);
 
         labelLogo = new JLabel();
         labelLogo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -177,24 +169,29 @@ public class LoginGUI extends JFrame {
     }
 
     private void progress() {
+        progressBar = new JProgressBar();
+        progressBar.setStringPainted(true);
+        progressBar.setFont(new Font("FlatLaf.style", Font.BOLD, 15));
+        progressBar.setForeground(new Color(0x97B4EA));
+        progressBar.setUI(new FlatProgressBarUI());
+        contentPane.add(progressBar, BorderLayout.SOUTH);
+        contentPane.repaint();
+        contentPane.revalidate();
         int i = 0;
         while (i <= 100){
             i++;
             progressBar.setValue(i);
             try {
-                sleep(15);
+                sleep(30);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
         }
-        try {
-            sleep(500);
-        } catch (InterruptedException e) {
-            System.out.println(e.getMessage());
-        }
-        contentPane.removeAll();
-        contentPane.add(formLogin, BorderLayout.WEST);
-        contentPane.add(jPanelLogo, BorderLayout.EAST);
+        JOptionPane.showMessageDialog(this, "Đăng nhập thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        dispose();
+        System.gc();
+        Cafe_Application.homeGUI.setVisible(true);
+        contentPane.remove(progressBar);
         contentPane.repaint();
         contentPane.revalidate();
     }
@@ -225,21 +222,12 @@ public class LoginGUI extends JFrame {
             return;
         }
         Account account = accountList.get(0);
-        System.out.println(account);
         try {
             Thread thread = new Thread(() -> Cafe_Application.homeGUI.setAccount(account));
             thread.start();
-            JOptionPane.showMessageDialog(this, "Đăng nhập thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            thread.join();
-            dispose();
-            System.gc();
-            Cafe_Application.homeGUI.setVisible(true);
-//            if (account.getPassword().startsWith("first")) {
-//                ChangePasswordGUI forgotPasswordGUI = new ChangePasswordGUI();
-//                forgotPasswordGUI.setAccount(account);
-//                forgotPasswordGUI.toStep(3);
-//                forgotPasswordGUI.setVisible(true);
-//            }
+//            thread.join();
+            Thread threadProgress = new Thread(this::progress);
+            threadProgress.start();
         } catch (Exception ignored) {
 
         }

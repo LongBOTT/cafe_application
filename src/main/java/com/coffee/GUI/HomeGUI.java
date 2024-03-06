@@ -225,7 +225,6 @@ public class HomeGUI extends JFrame {
         Pair<List<Module>, List<List<Function>>> result = getModulesAndFunctionsFromRole(role.getId());
         List<Module> moduleList = result.getKey();
         List<List<Function>> function2D = result.getValue();
-//        List<Module> moduleList = new ModuleBLL().searchModules();
 
         allPanelModules = new RoundedPanel[moduleList.size()];
         modules = new RoundedPanel[moduleList.size()];
@@ -321,8 +320,7 @@ public class HomeGUI extends JFrame {
 
     public JPanel getPanelModule(int id, List<Function> functions) {
         return switch (id) {
-//            case 0 -> home();
-//            case 1 -> new SaleGUI(account);
+            case 1 -> new SaleGUI(account);
 //            case 2 -> new ShipmentGUI(functions);
 //            case 3 -> new StatisticGUI();
 //            case 4, 5 -> new DiscountGUI(functions);
@@ -330,11 +328,11 @@ public class HomeGUI extends JFrame {
 //            case 7 -> new ExportGUI(functions);
 //            case 8 -> new ImportGUI(functions);
 //            case 9 -> new ProductGUI(functions);
-            case 10 -> new SaleGUI(account);
+//            case 10 -> new SaleGUI(account);
 //            case 11 -> new StaffGUI(functions);
-//            case 12 -> new AccountGUI(functions);
 //            case 13 -> new DecentralizationGUI(functions);
-            default -> null;
+            case 15 -> new AccountGUI(functions);
+            default -> new RoundedPanel();
         };
     }
 
@@ -356,14 +354,6 @@ public class HomeGUI extends JFrame {
         Disable();
         currentModule = module;
         module.setBackground(colorOver);
-    }
-
-    private void OpenChildForm(JPanel panel) {
-        content.removeAll();
-        content.add(panel, BorderLayout.CENTER);
-        content.repaint();
-        content.revalidate();
-        right.add(content);
     }
 
     private void exit() {
