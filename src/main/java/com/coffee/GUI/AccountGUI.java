@@ -5,11 +5,11 @@ import com.coffee.BLL.StaffBLL;
 import com.coffee.DTO.Account;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Staff;
-import com.coffee.GUI.DialogGUI.AddAccountGUI;
-import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddAccountGUI;
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.Layout;
 import com.coffee.GUI.components.RoundedPanel;
+import com.coffee.GUI.components.RoundedScrollPane;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
 
@@ -29,12 +29,14 @@ import java.util.Objects;
 public class AccountGUI extends Layout {
     private RoundedPanel containerSearch;
     private JLabel iconSearch;
-    private static JTextField jTextFieldSearch;
+    private JTextField jTextFieldSearch;
     private JButton jButtonSearch;
-    private static JComboBox<String> jComboBoxSearch;
+    private JComboBox<String> jComboBoxSearch;
     private List<Function> functions;
-    private static StaffBLL staffBLL = new StaffBLL();
-    private static AccountBLL accountBLL = new AccountBLL();
+    private StaffBLL staffBLL = new StaffBLL();
+    private AccountBLL accountBLL = new AccountBLL();
+    private DataTable dataTable;
+    private RoundedScrollPane scrollPane;
 
     public AccountGUI(List<Function> functions) {
         super();
@@ -49,13 +51,11 @@ public class AccountGUI extends Layout {
         jButtonSearch = new JButton("Tìm kiếm");
         jComboBoxSearch = new JComboBox<>(new String[]{"Tài khoản", "Nhân viên"});
         dataTable = new DataTable(new Object[][]{},
-                new String[]{"Mã tài khoản", "Tên tài khoản", "Nhân viên"},
-                e -> {
-                });
+                new String[]{"Mã tài khoản", "Tên tài khoản", "Nhân viên"});
+        scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-        scrollPane.setViewportView(dataTable);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setPreferredSize(new Dimension(1165, 680));
+        bottom.add(scrollPane, BorderLayout.CENTER);
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
         containerSearch.setBackground(new Color(245, 246, 250));
@@ -129,6 +129,7 @@ public class AccountGUI extends Layout {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     new AddAccountGUI();
+                    refresh();
                 }
             });
             FunctionPanel.add(roundedPanel);
@@ -138,35 +139,35 @@ public class AccountGUI extends Layout {
             panel.setIcon(new FlatSVGIcon("icon/add.svg"));
             roundedPanel.add(panel);
         }
-        if (functions.stream().anyMatch(f -> f.getName().equals("excel"))) {
-            RoundedPanel roundedPanel = new RoundedPanel();
-            roundedPanel.setLayout(new GridBagLayout());
-            roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
-            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            FunctionPanel.add(roundedPanel);
-
-            JLabel panel = new JLabel("Xuất Excel");
-            panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-            panel.setIcon(new FlatSVGIcon("icon/excel.svg"));
-            roundedPanel.add(panel);
-        }
-        if (functions.stream().anyMatch(f -> f.getName().equals("pdf"))) {
-            RoundedPanel roundedPanel = new RoundedPanel();
-            roundedPanel.setLayout(new GridBagLayout());
-            roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
-            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            FunctionPanel.add(roundedPanel);
-
-            JLabel panel = new JLabel("Xuất PDF");
-            panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-            panel.setIcon(new FlatSVGIcon("icon/pdf.svg"));
-            roundedPanel.add(panel);
-        }
+//        if (functions.stream().anyMatch(f -> f.getName().equals("excel"))) {
+//            RoundedPanel roundedPanel = new RoundedPanel();
+//            roundedPanel.setLayout(new GridBagLayout());
+//            roundedPanel.setPreferredSize(new Dimension(130, 40));
+//            roundedPanel.setBackground(new Color(217, 217, 217));
+//            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+//            FunctionPanel.add(roundedPanel);
+//
+//            JLabel panel = new JLabel("Xuất Excel");
+//            panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+//            panel.setIcon(new FlatSVGIcon("icon/excel.svg"));
+//            roundedPanel.add(panel);
+//        }
+//        if (functions.stream().anyMatch(f -> f.getName().equals("pdf"))) {
+//            RoundedPanel roundedPanel = new RoundedPanel();
+//            roundedPanel.setLayout(new GridBagLayout());
+//            roundedPanel.setPreferredSize(new Dimension(130, 40));
+//            roundedPanel.setBackground(new Color(217, 217, 217));
+//            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+//            FunctionPanel.add(roundedPanel);
+//
+//            JLabel panel = new JLabel("Xuất PDF");
+//            panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+//            panel.setIcon(new FlatSVGIcon("icon/pdf.svg"));
+//            roundedPanel.add(panel);
+//        }
     }
 
-    public static void refresh() {
+    public void refresh() {
         jTextFieldSearch.setText("");
         jComboBoxSearch.setSelectedIndex(0);
         loadDataTable(accountBLL.getData(accountBLL.searchAccounts()));
@@ -198,7 +199,7 @@ public class AccountGUI extends Layout {
         loadDataTable(accountBLL.getData(accountList));
     }
 
-    public static void loadDataTable(Object[][] objects) {
+    public void loadDataTable(Object[][] objects) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         for (Object[] object : objects) {
             int staffId = Integer.parseInt(object[2].toString());

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 04, 2024 at 04:54 AM
+-- Generation Time: Mar 07, 2024 at 06:08 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.29
 
@@ -68,7 +68,6 @@ INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 (0, 4, 1),
 (0, 5, 1),
 (0, 6, 1),
-(0, 7, 1),
 (0, 8, 1),
 (0, 9, 1),
 (0, 10, 1),
@@ -81,7 +80,8 @@ INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 (0, 17, 1),
 (1, 10, 1),
 (1, 11, 1),
-(1, 12, 1),
+(1, 15, 1),
+(1, 15, 2),
 (1, 16, 1),
 (1, 16, 2),
 (1, 16, 3),
@@ -207,9 +207,8 @@ INSERT INTO `function` (`id`, `name`) VALUES
 (2, 'add'),
 (3, 'edit'),
 (4, 'remove'),
-(5, 'detail'),
-(6, 'excel'),
-(7, 'pdf');
+(5, 'excel'),
+(6, 'pdf');
 
 -- --------------------------------------------------------
 
@@ -314,7 +313,7 @@ INSERT INTO `module` (`id`, `name`) VALUES
 (4, 'Thống kê lương'),
 (5, 'Thống kê nhân sự'),
 (6, 'Giảm giá'),
-(7, 'Hóa đơn'),
+(7, 'Hoá đơn'),
 (8, 'Phiếu xuất'),
 (9, 'Phiếu nhập'),
 (10, 'Sản phẩm'),
@@ -751,7 +750,9 @@ INSERT INTO `staff` (`id`, `no`, `name`, `gender`, `birthdate`, `phone`, `addres
 (2, '079203023644', 'Nguyễn Hoàng Long', b'0', '2003-08-30', '0963333946', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'colong30082003@gmail.com', b'0'),
 (3, '079203023642', 'Nguyễn Minh Thuận', b'0', '2003-08-30', '0964512947', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'nguyenminhthuan@gmail.com', b'0'),
 (4, '079203023643', 'Vũ Minh Thuận', b'0', '2003-08-30', '0964512941', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'vmiinhthuan@gmail.com', b'0'),
-(5, '079203023645', 'Trần Huỳnh Đức Anh', b'0', '2003-08-30', '0964512940', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'ducanh@gmail.com', b'0');
+(5, '079203023645', 'Trần Huỳnh Đức Anh', b'0', '2003-08-30', '0964512940', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'ducanh@gmail.com', b'0'),
+(6, '079203023522', 'Nguyễn Tiến Dũng', b'0', '2003-08-30', '0964512920', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'abc@gmail.com', b'0'),
+(7, '079203023777', 'Nguyễn Tiến Quang', b'0', '2003-08-30', '0964513320', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'abcd@gmail.com', b'0');
 
 -- --------------------------------------------------------
 
@@ -773,7 +774,7 @@ CREATE TABLE `supplier` (
 --
 
 INSERT INTO `supplier` (`id`, `name`, `phone`, `address`, `email`, `deleted`) VALUES
-(1, 'Drai Farm', '0917 762 211', 'xã Quảng Hiệp, huyện Cư M’gar, tỉnh DakLak', 'DraiFarmcoffee@gmail.com', b'0'),
+(1, 'Drai Farm', '0917762211', 'xã Quảng Hiệp, huyện Cư M’gar, tỉnh DakLak', 'DraiFarmcoffee@gmail.com', b'0'),
 (2, 'Sơn Việt Coffee', '0937442338', '148 Lý Thái Tổ, Thôn 6, DamBri, Bảo Lộc, Lâm Đồng', 'sonvietcoffe@gmail.com', b'0'),
 (3, 'Cà phê Triều Nguyên', '0966770770', '120A Lý Thái Tổ, Đamb’ri, Bảo Lộc, Lâm Đồng', 'trieunguyencoffe@gmail.com', b'0'),
 (4, 'Công ty TNHH SX & TM Hucafood ', '0935551919', 'Tổ 9 Hòa Bắc, Khánh Hòa', 'hucafoodcoffee@gmail.com', b'0');

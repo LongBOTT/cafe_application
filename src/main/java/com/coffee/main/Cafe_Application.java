@@ -21,11 +21,11 @@ public class Cafe_Application {
 
         UIManager.put("ProgressBar.selectionForeground", Color.black);
         UIManager.put("ProgressBar.selectionBackground", Color.black);
-        UIManager.put( "ScrollBar.trackArc", 999 );
-        UIManager.put( "ScrollBar.thumbArc", 999 );
-        UIManager.put( "ScrollBar.trackInsets", new Insets( 2, 4, 2, 4 ) );
-        UIManager.put( "ScrollBar.thumbInsets", new Insets( 2, 2, 2, 2 ) );
-        UIManager.put( "ScrollBar.track", new Color(253,143,143, 76) );
+        UIManager.put("ScrollBar.trackArc", 999);
+        UIManager.put("ScrollBar.thumbArc", 999);
+        UIManager.put("ScrollBar.trackInsets", new Insets(2, 4, 2, 4));
+        UIManager.put("ScrollBar.thumbInsets", new Insets(2, 2, 2, 2));
+        UIManager.put("ScrollBar.track", new Color(253, 143, 143, 76));
         UIManager.put("PasswordField.showRevealButton", true);
         UIManager.put("PasswordField.capsLockIcon", new FlatSVGIcon("icon/capslock.svg"));
         UIManager.put("TitlePane.iconSize", new Dimension(25, 25));
@@ -35,7 +35,7 @@ public class Cafe_Application {
         Thread thread = new Thread(() -> homeGUI = new HomeGUI());
         thread.start();
         loginGUI = new LoginGUI();
-//        loginGUI.setVisible(true); //test
+        loginGUI.setVisible(true);
     }
 
     public static void exit(int status) {

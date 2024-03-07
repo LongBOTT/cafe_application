@@ -73,8 +73,6 @@ public class Supplier {
         return id + " | " +
                 name + " | " +
                 phone + " | " +
-                address + " | " +
-                email + " | " +
-                deleted;
+                email;
     }
 }

@@ -6,13 +6,13 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class Layout extends RoundedPanel{
+public class Layout extends RoundedPanel {
     public RoundedPanel top;
     public RoundedPanel bottom;
     public RoundedPanel SearchPanel;
     public RoundedPanel FunctionPanel;
-    public RoundedScrollPane scrollPane;
-    public static DataTable dataTable;
+    public RoundedPanel FunctionTable;
+
     public Layout() {
         initComponents();
         setVisible(true);
@@ -27,7 +27,6 @@ public class Layout extends RoundedPanel{
         bottom = new RoundedPanel();
         SearchPanel = new RoundedPanel();
         FunctionPanel = new RoundedPanel();
-        scrollPane = new RoundedScrollPane();
 
         top.setLayout(new BorderLayout());
         top.setPreferredSize(new Dimension(1165, 50));
@@ -48,9 +47,6 @@ public class Layout extends RoundedPanel{
         FunctionPanel.setBackground(Color.white);
         FunctionPanel.setPreferredSize(new Dimension(620, 50));
         top.add(FunctionPanel, BorderLayout.EAST);
-
-        scrollPane.setPreferredSize(new Dimension(1165, 680));
-        bottom.add(scrollPane, BorderLayout.CENTER);
 
     }
 }

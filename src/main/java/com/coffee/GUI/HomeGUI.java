@@ -54,7 +54,7 @@ public class HomeGUI extends JFrame {
     private boolean pressover;
     private boolean over = false;
 
-    public HomeGUI () {
+    public HomeGUI() {
         initComponents();
     }
 
@@ -73,9 +73,9 @@ public class HomeGUI extends JFrame {
 
         Role_detailBLL roleDetailBLL = new Role_detailBLL();
         List<Role_detail> roleDetails = roleDetailBLL.findRole_detailsBy(Map.of("staff_id", staff.getId()));
-        role = roleBLL.findRolesBy(Map.of("id", roleDetails.get(roleDetails.size()-1).getRole_id())).get(0);
+        role = roleBLL.findRolesBy(Map.of("id", roleDetails.get(roleDetails.size() - 1).getRole_id())).get(0);
         name.setText("<html>" + staff.getName() + "</html>");
-        roleName.setText("<html>Chức vụ: " + role.getName()+ "</html>");
+        roleName.setText("<html>Chức vụ: " + role.getName() + "</html>");
     }
 
     public void initComponents() {
@@ -109,7 +109,7 @@ public class HomeGUI extends JFrame {
         iconLogo = new JLabel();
         iconLogout = new JLabel();
         color = new Color(0xFFFFFF);
-        colorOver = new Color(185,184,184);
+        colorOver = new Color(185, 184, 184);
 
         contentPanel.setLayout(new BorderLayout());
         contentPanel.setBackground(Color.white);
@@ -124,24 +124,24 @@ public class HomeGUI extends JFrame {
         contentPanel.add(right, BorderLayout.CENTER);
 
         infor.setLayout(new MigLayout());
-        infor.setBackground(new Color(232,206,180));
+        infor.setBackground(new Color(232, 206, 180));
         infor.setPreferredSize(new Dimension(250, 150));
         left.add(infor, "span, wrap");
 
-        jPanelLogo.setBackground(new Color(232,206,180));
+        jPanelLogo.setBackground(new Color(232, 206, 180));
         jPanelLogo.setPreferredSize(new Dimension(40, 120));
         infor.add(jPanelLogo);
 
         roleName.setFont(new Font("FlatLaf.style", Font.PLAIN, 15));
         infor.add(roleName, "wrap");
 
-        staffInfo.setBackground(new Color(232,206,180));
+        staffInfo.setBackground(new Color(232, 206, 180));
         staffInfo.setPreferredSize(new Dimension(40, 80));
         infor.add(staffInfo);
 
         ImageIcon icon = new FlatSVGIcon("icon/coffee_logo.svg");
         Image image = icon.getImage();
-        Image newimg = image.getScaledInstance(60, 60,  java.awt.Image.SCALE_SMOOTH);
+        Image newimg = image.getScaledInstance(60, 60, java.awt.Image.SCALE_SMOOTH);
         icon = new ImageIcon(newimg);
         iconLogo.setIcon(icon);
         jPanelLogo.add(iconLogo);
@@ -162,7 +162,7 @@ public class HomeGUI extends JFrame {
         left.add(scrollPane, "span, wrap");
 
         logout.setLayout(new FlowLayout(FlowLayout.CENTER));
-        logout.setBackground(new Color(232,206,180));
+        logout.setBackground(new Color(232, 206, 180));
         logout.setPreferredSize(new Dimension(160, 40));
         logout.setCursor(new Cursor(Cursor.HAND_CURSOR));
         logout.addMouseListener(new MouseAdapter() {
@@ -189,11 +189,11 @@ public class HomeGUI extends JFrame {
 
         center.setLayout(new BorderLayout());
         center.setBackground(Color.white);
-        center.setBorder(BorderFactory.createMatteBorder(10,0,15,10, Color.white));
+        center.setBorder(BorderFactory.createMatteBorder(10, 0, 15, 10, Color.white));
         right.add(center, BorderLayout.CENTER);
 
         content.setLayout(new BorderLayout());
-        content.setBackground(new Color(232,206,180));
+        content.setBackground(new Color(232, 206, 180));
         center.add(content, BorderLayout.CENTER);
 
 //        content.add(new SaleGUI(account), BorderLayout.CENTER);
@@ -321,17 +321,22 @@ public class HomeGUI extends JFrame {
     public JPanel getPanelModule(int id, List<Function> functions) {
         return switch (id) {
             case 1 -> new SaleGUI(account);
-//            case 2 -> new ShipmentGUI(functions);
-//            case 3 -> new StatisticGUI();
-//            case 4, 5 -> new DiscountGUI(functions);
-//            case 6 -> new ReceiptGUI(functions);
-//            case 7 -> new ExportGUI(functions);
-//            case 8 -> new ImportGUI(functions);
-//            case 9 -> new ProductGUI(functions);
-//            case 10 -> new SaleGUI(account);
-//            case 11 -> new StaffGUI(functions);
-//            case 13 -> new DecentralizationGUI(functions);
+            case 2 -> new WareHouseGUI();
+            case 3 -> new StatisticSalesGUI();
+            case 4 -> new StatisticSalaryGUI();
+            case 5 -> new StatisticStaffGUI();
+            case 6 -> new DiscountGUI(functions);
+            case 7 -> new ReceiptGUI();
+            case 8 -> new ExportGUI(functions);
+            case 9 -> new ImportGUI(functions);
+            case 10 -> new ProductGUI(functions);
+            case 11 -> new SupplierGUI(functions);
+            case 12 -> new StaffGUI(functions);
+            case 13 -> new RecipeGUI(functions);
+//            case 14 -> ;
             case 15 -> new AccountGUI(functions);
+            case 16 -> new DecentralizationGUI(functions);
+            case 17 -> new MaterialGUI(functions);
             default -> new RoundedPanel();
         };
     }
