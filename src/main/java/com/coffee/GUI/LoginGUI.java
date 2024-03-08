@@ -203,6 +203,7 @@ public class LoginGUI extends JFrame {
         String userName, passWord;
         userName = jTextFieldUserName.getText();
         passWord = new String(jTextFieldPassword.getPassword());
+        System.out.println(userName+passWord);
         AccountBLL accountBLL = new AccountBLL();
         List<Account> accountList = accountBLL.findAccountsBy(Map.of("username", userName));
         if (userName.isEmpty()) {
