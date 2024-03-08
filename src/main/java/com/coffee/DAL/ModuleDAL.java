@@ -7,11 +7,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModuleDAL extends Manager{
+public class ModuleDAL extends Manager {
     public ModuleDAL() {
-        super("Module", List.of("id", "name"));
+        super("module", List.of("id", "name"));
     }
-    public List<Module> convertToModules(List<List<String>> data ){
+
+    public List<Module> convertToModules(List<List<String>> data) {
         return convert(data, row -> {
             try {
                 return new Module(
@@ -24,6 +25,7 @@ public class ModuleDAL extends Manager{
             return new Module();
         });
     }
+
     public int addModule(Module module) {
         try {
             return create(module.getId(),
@@ -34,6 +36,7 @@ public class ModuleDAL extends Manager{
         }
         return 0;
     }
+
     public int updateModule(Module module) {
         try {
             List<Object> updateValues = new ArrayList<>();
