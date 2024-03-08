@@ -43,6 +43,8 @@ public class SaleGUI extends SalePanel {
     private JButton jButtonSearch;
     private JButton jButtonPay;
     private JButton jButtonCancel;
+    private List<ButtonGroup> buttonGroupsSugar;
+    private List<ButtonGroup> buttonGroupsIce;
     private List<String> categoriesName;
     private List<Integer> productIDList;
     private List<String> productNameList;
@@ -79,6 +81,8 @@ public class SaleGUI extends SalePanel {
         categoriesName = new ArrayList<>();
         productIDList = new ArrayList<>();
         receiptDetailList = new ArrayList<>();
+        buttonGroupsSugar = new ArrayList<>();
+        buttonGroupsIce = new ArrayList<>();
 
         containerSearch.setLayout(new MigLayout("", "10[]20[]10", ""));
         containerSearch.setBackground(new Color(245, 246, 250));
@@ -367,7 +371,7 @@ public class SaleGUI extends SalePanel {
         receiptDetailList.add(receiptDetail);
 
         JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        jPanel.setBackground(new Color(245, 246, 250));
+        jPanel.setBackground(new Color(255, 255, 255));
         jPanel.setPreferredSize(new Dimension(450, 50));
         Bill_detailPanel.add(jPanel);
 
@@ -422,6 +426,9 @@ public class SaleGUI extends SalePanel {
                 }
             });
             jPanel.add(sizeReceiptDetail.get(index));
+
+            receiptDetail.add("100%");
+            receiptDetail.add("100%");
         } else {
             sizeReceiptDetail.get(index).addItem("0");
             JLabel panel = new JLabel();
@@ -478,15 +485,96 @@ public class SaleGUI extends SalePanel {
         });
         jPanel.add(deleteReceiptDetail.get(index));
 
-        JPanel productInCartNote = new JPanel();
+        JPanel productInCartNote = new JPanel(new FlowLayout(FlowLayout.LEFT));
         productInCartNote.setPreferredSize(new Dimension(450, 150));
-        productInCartNote.setBackground(Color.PINK);
+        productInCartNote.setBackground(new Color(255, 255, 255));
+
+        JLabel choosingSugar = new JLabel("Chọn mức đường: ");
+        choosingSugar.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        choosingSugar.setPreferredSize(new Dimension(150, 50));
+        productInCartNote.add(choosingSugar);
+
+        JRadioButton radioSugar1 = new JRadioButton("100%");
+        radioSugar1.setSelected(true);
+        radioSugar1.addActionListener(e -> saveNote(index));
+        JRadioButton radioSugar2 = new JRadioButton("70%");
+        radioSugar2.addActionListener(e -> saveNote(index));
+        JRadioButton radioSugar3 = new JRadioButton("50%");
+        radioSugar3.addActionListener(e -> saveNote(index));
+        JRadioButton radioSugar4 = new JRadioButton("30%");
+        radioSugar4.addActionListener(e -> saveNote(index));
+        JRadioButton radioSugar5 = new JRadioButton("0%");
+        radioSugar5.addActionListener(e -> saveNote(index));
+
+        ButtonGroup bgSugar = new ButtonGroup();
+        bgSugar.add(radioSugar1);
+        bgSugar.add(radioSugar2);
+        bgSugar.add(radioSugar3);
+        bgSugar.add(radioSugar4);
+        bgSugar.add(radioSugar5);
+        buttonGroupsSugar.add(bgSugar);
+
+        productInCartNote.add(radioSugar1);
+        productInCartNote.add(radioSugar2);
+        productInCartNote.add(radioSugar3);
+        productInCartNote.add(radioSugar4);
+        productInCartNote.add(radioSugar5);
+
+        JLabel choosingIce = new JLabel("Chọn mức đá: ");
+        choosingIce.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        choosingIce.setPreferredSize(new Dimension(150, 50));
+        productInCartNote.add(choosingIce);
+
+        JRadioButton radioIce1 = new JRadioButton("100%");
+        radioIce1.setSelected(true);
+        radioIce1.addActionListener(e -> saveNote(index));
+        JRadioButton radioIce2 = new JRadioButton("70%");
+        radioIce2.addActionListener(e -> saveNote(index));
+        JRadioButton radioIce3 = new JRadioButton("50%");
+        radioIce3.addActionListener(e -> saveNote(index));
+        JRadioButton radioIce4 = new JRadioButton("30%");
+        radioIce4.addActionListener(e -> saveNote(index));
+        JRadioButton radioIce5 = new JRadioButton("0%");
+        radioIce5.addActionListener(e -> saveNote(index));
+
+        ButtonGroup bgIce = new ButtonGroup();
+        bgIce.add(radioIce1);
+        bgIce.add(radioIce2);
+        bgIce.add(radioIce3);
+        bgIce.add(radioIce4);
+        bgIce.add(radioIce5);
+        buttonGroupsIce.add(bgIce);
+
+        productInCartNote.add(radioIce1);
+        productInCartNote.add(radioIce2);
+        productInCartNote.add(radioIce3);
+        productInCartNote.add(radioIce4);
+        productInCartNote.add(radioIce5);
+
         productIncartNotelList.add(productInCartNote);
 
-        Bill_detailPanel.setPreferredSize(new Dimension(450, Math.max(400, (55) * receiptDetailList.size())));
+        Bill_detailPanel.setPreferredSize(new Dimension(450, Math.max(400, Bill_detailPanel.getHeight() + 55)));
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
         System.out.println(receiptDetailList);
+    }
+
+    private void saveNote(int index) {
+        for (Enumeration<AbstractButton> buttons = buttonGroupsSugar.get(index).getElements(); buttons.hasMoreElements(); ) {
+            AbstractButton button = buttons.nextElement();
+
+            if (button.isSelected()) {
+                receiptDetailList.get(index).set(4, button.getText());
+            }
+        }
+
+        for (Enumeration<AbstractButton> buttons = buttonGroupsIce.get(index).getElements(); buttons.hasMoreElements(); ) {
+            AbstractButton button = buttons.nextElement();
+
+            if (button.isSelected()) {
+                receiptDetailList.get(index).set(5, button.getText());
+            }
+        }
     }
 
     private void showOption(int index) {
@@ -495,7 +583,7 @@ public class SaleGUI extends SalePanel {
 
         for (int i = 0; i < receiptDetailList.size(); i++) {
             JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-            jPanel.setBackground(new Color(245, 246, 250));
+            jPanel.setBackground(new Color(255, 255, 255));
             jPanel.setPreferredSize(new Dimension(450, 50));
 
             jPanel.add(nameReceiptDetail.get(i));
@@ -564,6 +652,10 @@ public class SaleGUI extends SalePanel {
         priceReceiptDetail.remove(index);
         deleteReceiptDetail.remove(index);
 
+        productIncartNotelList.remove(index);
+
+        buttonGroupsSugar.remove(index);
+        buttonGroupsIce.remove(index);
         loadProductInCart();
     }
 
@@ -573,7 +665,7 @@ public class SaleGUI extends SalePanel {
 
         for (int i = 0; i < receiptDetailList.size(); i++) {
             JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-            jPanel.setBackground(new Color(245, 246, 250));
+            jPanel.setBackground(new Color(255, 255, 255));
             jPanel.setPreferredSize(new Dimension(450, 50));
 
             jPanel.add(nameReceiptDetail.get(i));
