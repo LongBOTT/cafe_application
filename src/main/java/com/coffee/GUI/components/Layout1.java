@@ -1,19 +1,14 @@
 package com.coffee.GUI.components;
 
-import net.miginfocom.swing.MigLayout;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class Layout extends RoundedPanel {
+public class Layout1 extends RoundedPanel {
     public RoundedPanel top;
     public RoundedPanel bottom;
     public RoundedPanel SearchPanel;
     public RoundedPanel FunctionPanel;
-    public RoundedPanel FunctionTable;
 
-    public Layout() {
+    public Layout1() {
         initComponents();
         setVisible(true);
     }
@@ -35,16 +30,16 @@ public class Layout extends RoundedPanel {
 
         bottom.setLayout(new BorderLayout());
         bottom.setPreferredSize(new Dimension(1165, 680));
-        bottom.setBackground(Color.white);
+        bottom.setBackground(new Color(0x7A7A6C));
         add(bottom, BorderLayout.SOUTH);
 
         SearchPanel.setLayout(new GridBagLayout());
-        SearchPanel.setBackground(Color.white);
+        SearchPanel.setBackground(new Color(0x4CFD8F8F, true));
         SearchPanel.setPreferredSize(new Dimension(510, 50));
         top.add(SearchPanel, BorderLayout.WEST);
 
         FunctionPanel.setLayout(new FlowLayout());
-        FunctionPanel.setBackground(Color.white);
+        FunctionPanel.setBackground(new Color(0xC7D9D9D9, true));
         FunctionPanel.setPreferredSize(new Dimension(620, 50));
         top.add(FunctionPanel, BorderLayout.EAST);
 

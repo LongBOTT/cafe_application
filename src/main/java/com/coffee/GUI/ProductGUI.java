@@ -1,12 +1,11 @@
 package com.coffee.GUI;
 
 import com.coffee.DTO.Function;
-import com.coffee.GUI.components.Layout;
+import com.coffee.GUI.components.Layout3;
 
-import javax.swing.*;
 import java.util.List;
 
-public class ProductGUI extends Layout {
+public class ProductGUI extends Layout3 {
     public ProductGUI(List<Function> functions) {
     }
 }

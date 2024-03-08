@@ -21,7 +21,7 @@ import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 
-public class SupplierGUI extends Layout {
+public class SupplierGUI extends Layout1 {
     private RoundedPanel containerSearch;
     private JLabel iconSearch;
     private JTextField jTextFieldSearch;

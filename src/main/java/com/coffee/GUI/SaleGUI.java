@@ -27,6 +27,8 @@ public class SaleGUI extends SalePanel {
     private final Account account;
     private RoundedPanel containerSearch;
     private List<RoundedPanel> productPanelList;
+    private List<JPanel> productIncartPanelList;
+    private List<JPanel> productIncartNotelList;
     private JLabel iconSearch;
     private JLabel staffName;
     private JLabel date;
@@ -46,6 +48,7 @@ public class SaleGUI extends SalePanel {
     private List<String> productNameList;
     private List<List<Object>> receiptDetailList;
     private String categoryName = "TẤT CẢ";
+    private int indexShowOption = -1;
 
     public SaleGUI(Account account) {
         super();
@@ -56,10 +59,12 @@ public class SaleGUI extends SalePanel {
     public void initComponents() {
         containerSearch = new RoundedPanel();
         productPanelList = new ArrayList<>();
+        productIncartPanelList = new ArrayList<>();
+        productIncartNotelList = new ArrayList<>();
         productNameList = new ArrayList<>();
         iconSearch = new JLabel();
         staffName = new JLabel("Nhân viên: " + HomeGUI.staff.getName());
-        date = new JLabel("Ngày: " + LocalDate.now().toString());
+        date = new JLabel("Ngày: " + LocalDate.now());
         jTextFieldSearch = new JTextField();
         jTextFieldCash = new JTextField();
         jLabelBill = new ArrayList<>();
@@ -360,6 +365,13 @@ public class SaleGUI extends SalePanel {
         receiptDetail.add(Integer.parseInt("1"));
         receiptDetail.add(product.getPrice());
         receiptDetailList.add(receiptDetail);
+
+        JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        jPanel.setBackground(new Color(245, 246, 250));
+        jPanel.setPreferredSize(new Dimension(450, 50));
+        Bill_detailPanel.add(jPanel);
+
+        productIncartPanelList.add(new JPanel());
         nameReceiptDetail.add(new JLabel());
         sizeReceiptDetail.add(new JComboBox<>());
         quantityReceiptDetail.add(new JTextField());
@@ -371,7 +383,26 @@ public class SaleGUI extends SalePanel {
         nameReceiptDetail.get(index).setFont(new Font("FlatLaf.style", Font.PLAIN, 12));
         nameReceiptDetail.get(index).setText("<html>" + receiptDetailList.get(index).get(0) + "</html>");
         nameReceiptDetail.get(index).setPreferredSize(new Dimension(200, 40));
-        Bill_detailPanel.add(nameReceiptDetail.get(index));
+        nameReceiptDetail.get(index).addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                for (int j = 0; j < nameReceiptDetail.size(); j++) {
+                    if (nameReceiptDetail.get(j) == e.getComponent()) {
+                        if (j != indexShowOption && !receiptDetailList.get(j).get(1).equals("0")) {
+                            showOption(j);
+                            indexShowOption = j;
+                        } else {
+                            if (j == indexShowOption) {
+                                loadProductInCart();
+                                indexShowOption = -1;
+                            }
+                        }
+
+                    }
+                }
+            }
+        });
+        jPanel.add(nameReceiptDetail.get(index));
 
         if (!product.getSize().equals("0")) {
             for (Product product1 : productBLL.findProductsBy(Map.of("name", receiptDetailList.get(index).get(0)))) {
@@ -390,13 +421,13 @@ public class SaleGUI extends SalePanel {
                     }
                 }
             });
-            Bill_detailPanel.add(sizeReceiptDetail.get(index));
+            jPanel.add(sizeReceiptDetail.get(index));
         } else {
             sizeReceiptDetail.get(index).addItem("0");
             JLabel panel = new JLabel();
             panel.setFont(new Font("FlatLaf.style", Font.PLAIN, 8));
             panel.setPreferredSize(new Dimension(40, 40));
-            Bill_detailPanel.add(panel);
+            jPanel.add(panel);
         }
 
         quantityReceiptDetail.get(index).setFont(new Font("FlatLaf.style", Font.PLAIN, 10));
@@ -422,20 +453,20 @@ public class SaleGUI extends SalePanel {
                 }
             }
         });
-        Bill_detailPanel.add(quantityReceiptDetail.get(index));
+        jPanel.add(quantityReceiptDetail.get(index));
 
         priceReceiptDetail.get(index).setText(receiptDetailList.get(index).get(3).toString());
         priceReceiptDetail.get(index).setFont(new Font("FlatLaf.style", Font.PLAIN, 12));
         priceReceiptDetail.get(index).setPreferredSize(new Dimension(90, 40));
-        Bill_detailPanel.add(priceReceiptDetail.get(index));
+        jPanel.add(priceReceiptDetail.get(index));
 
         deleteReceiptDetail.get(index).setFont(new Font("FlatLaf.style", Font.PLAIN, 12));
         deleteReceiptDetail.get(index).setPreferredSize(new Dimension(40, 40));
         deleteReceiptDetail.get(index).setCursor(new Cursor(Cursor.HAND_CURSOR));
-        deleteReceiptDetail.get(index).setText("Xoá");
+        deleteReceiptDetail.get(index).setIcon(new FlatSVGIcon("icon/delete.svg"));
         deleteReceiptDetail.get(index).addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 for (int j = 0; j < deleteReceiptDetail.size(); j++) {
                     if (deleteReceiptDetail.get(j) == e.getComponent()) {
                         deleteProductInCart(j);
@@ -445,12 +476,52 @@ public class SaleGUI extends SalePanel {
 
             }
         });
-        Bill_detailPanel.add(deleteReceiptDetail.get(index));
+        jPanel.add(deleteReceiptDetail.get(index));
 
-        Bill_detailPanel.setPreferredSize(new Dimension(450, Math.max(400, 45 * receiptDetailList.size())));
+        JPanel productInCartNote = new JPanel();
+        productInCartNote.setPreferredSize(new Dimension(450, 150));
+        productInCartNote.setBackground(Color.PINK);
+        productIncartNotelList.add(productInCartNote);
+
+        Bill_detailPanel.setPreferredSize(new Dimension(450, Math.max(400, (55) * receiptDetailList.size())));
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
         System.out.println(receiptDetailList);
+    }
+
+    private void showOption(int index) {
+        Bill_detailPanel.removeAll();
+        productIncartPanelList = new ArrayList<>();
+
+        for (int i = 0; i < receiptDetailList.size(); i++) {
+            JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            jPanel.setBackground(new Color(245, 246, 250));
+            jPanel.setPreferredSize(new Dimension(450, 50));
+
+            jPanel.add(nameReceiptDetail.get(i));
+            if (receiptDetailList.get(i).get(1).equals("0")) {
+                JLabel panel = new JLabel();
+                panel.setFont(new Font("FlatLaf.style", Font.PLAIN, 8));
+                panel.setPreferredSize(new Dimension(40, 40));
+                jPanel.add(panel);
+            } else {
+                jPanel.add(sizeReceiptDetail.get(i));
+            }
+            jPanel.add(quantityReceiptDetail.get(i));
+            jPanel.add(priceReceiptDetail.get(i));
+            jPanel.add(deleteReceiptDetail.get(i));
+
+            if (i == index) {
+                jPanel.add(productIncartNotelList.get(index));
+                jPanel.setPreferredSize(new Dimension(450, 200));
+            }
+
+            Bill_detailPanel.add(jPanel);
+            productIncartPanelList.add(jPanel);
+        }
+        Bill_detailPanel.setPreferredSize(new Dimension(450, Math.max(400, 55 * receiptDetailList.size() + 150)));
+        Bill_detailPanel.repaint();
+        Bill_detailPanel.revalidate();
     }
 
     private void saveSizeChanged(int index) {
@@ -498,23 +569,30 @@ public class SaleGUI extends SalePanel {
 
     private void loadProductInCart() {
         Bill_detailPanel.removeAll();
+        productIncartPanelList = new ArrayList<>();
 
         for (int i = 0; i < receiptDetailList.size(); i++) {
-            Bill_detailPanel.add(nameReceiptDetail.get(i));
+            JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            jPanel.setBackground(new Color(245, 246, 250));
+            jPanel.setPreferredSize(new Dimension(450, 50));
+
+            jPanel.add(nameReceiptDetail.get(i));
             if (receiptDetailList.get(i).get(1).equals("0")) {
                 JLabel panel = new JLabel();
                 panel.setFont(new Font("FlatLaf.style", Font.PLAIN, 8));
                 panel.setPreferredSize(new Dimension(40, 40));
-                Bill_detailPanel.add(panel);
+                jPanel.add(panel);
             } else {
-                Bill_detailPanel.add(sizeReceiptDetail.get(i));
+                jPanel.add(sizeReceiptDetail.get(i));
             }
-            Bill_detailPanel.add(quantityReceiptDetail.get(i));
-            Bill_detailPanel.add(priceReceiptDetail.get(i));
-            Bill_detailPanel.add(deleteReceiptDetail.get(i));
-        }
+            jPanel.add(quantityReceiptDetail.get(i));
+            jPanel.add(priceReceiptDetail.get(i));
+            jPanel.add(deleteReceiptDetail.get(i));
 
-        Bill_detailPanel.setPreferredSize(new Dimension(450, Math.max(400, 45 * receiptDetailList.size())));
+            Bill_detailPanel.add(jPanel);
+            productIncartPanelList.add(jPanel);
+        }
+        Bill_detailPanel.setPreferredSize(new Dimension(450, Math.max(400, 55 * receiptDetailList.size())));
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
     }
