@@ -7,7 +7,7 @@ import com.coffee.DTO.Function;
 import com.coffee.DTO.Staff;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddAccountGUI;
 import com.coffee.GUI.components.DataTable;
-import com.coffee.GUI.components.Layout;
+import com.coffee.GUI.components.Layout1;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class AccountGUI extends Layout {
+public class AccountGUI extends Layout1 {
     private RoundedPanel containerSearch;
     private JLabel iconSearch;
     private JTextField jTextFieldSearch;

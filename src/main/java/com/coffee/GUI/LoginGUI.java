@@ -35,6 +35,7 @@ public class LoginGUI extends JFrame {
 
     public LoginGUI() {
         initComponents();
+        login();
     }
 
     private void initComponents() {
@@ -97,6 +98,7 @@ public class LoginGUI extends JFrame {
         formInput.add(labelUsername, "span, wrap");
 
         jTextFieldUserName = new JTextField();
+        jTextFieldUserName.setText("longbott");
         jTextFieldUserName.setBackground(Color.white);
         jTextFieldUserName.setPreferredSize(new Dimension(250, 40));
         jTextFieldUserName.setFont(new Font("FlatLaf.style", Font.PLAIN, 15));
@@ -116,6 +118,7 @@ public class LoginGUI extends JFrame {
         formInput.add(labelPassword, "span, wrap");
 
         jTextFieldPassword = new JPasswordField();
+        jTextFieldPassword.setText("Long123.");
         jTextFieldPassword.setBackground(Color.white);
         jTextFieldPassword.setPreferredSize(new Dimension(250, 40));
         jTextFieldPassword.setFont(new Font("FlatLaf.style", Font.PLAIN, 15));
