@@ -191,16 +191,16 @@ public class SaleGUI extends SalePanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-//                if (productsBuy.isEmpty()) {
-//                    JOptionPane.showMessageDialog(null, "Vui lòng chọn sản phẩm.",
-//                            "Lỗi", JOptionPane.ERROR_MESSAGE);
-//                    return;
-//                }
-//                String[] options = new String[]{"Huỷ", "Xác nhận"};
-//                int choice = JOptionPane.showOptionDialog(null, "Bạn muốn huỷ hoá đơn?",
-//                        "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-//                if (choice == 1)
-//                    cancelBill();
+                if (receiptDetailList.size() == 0) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn sản phẩm.",
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                String[] options = new String[]{"Huỷ", "Xác nhận"};
+                int choice = JOptionPane.showOptionDialog(null, "Bạn muốn huỷ hoá đơn?",
+                        "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                if (choice == 1)
+                    cancelBill();
             }
         });
         ContainerButtons.add(jButtonCancel);
@@ -685,6 +685,25 @@ public class SaleGUI extends SalePanel {
             productIncartPanelList.add(jPanel);
         }
         Bill_detailPanel.setPreferredSize(new Dimension(450, Math.max(400, 55 * receiptDetailList.size())));
+        Bill_detailPanel.repaint();
+        Bill_detailPanel.revalidate();
+    }
+    
+    private void cancelBill() {
+        receiptDetailList.removeAll(receiptDetailList);
+        nameReceiptDetail.removeAll(nameReceiptDetail);
+        sizeReceiptDetail.removeAll(sizeReceiptDetail);
+        quantityReceiptDetail.removeAll(quantityReceiptDetail);
+        deleteReceiptDetail.removeAll(deleteReceiptDetai);
+        
+        productInCartNoteList.removeAll(productInCartNoteList);
+        buttonGroupsSugar.removeAll(buttonGroupsSugar);
+        buttonGroupsIce.removeAll(buttonGroupsIce);
+
+        productInCartPanelList.removeAll(productInCartPanelList);
+        
+        Bill_detailPanel.removeAll();
+        Bill_detailPanel.setPreferredSize(new Dimension(450, 400);
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
     }
