@@ -69,4 +69,25 @@ public class DiscountDAL extends Manager{
         }
         return new ArrayList<>();
     }
+
+
+        public static void main(String[] args) {
+            // Tạo một đối tượng DiscountDAL
+            DiscountDAL discountDAL = new DiscountDAL();
+
+            // Gọi phương thức searchDiscounts với điều kiện là null để lấy tất cả các dữ liệu
+            List<Discount> discounts = discountDAL.searchDiscounts();
+
+            // In thông tin của mỗi đối tượng Discount
+            for (Discount discount : discounts) {
+                System.out.println(discount.getId() + " | " +
+                        discount.getStart_date() + " | " +
+                        discount.getEnd_date() + " | " +
+                        discount.isStatus());
+            }
+
+    }
+
+
+
 }

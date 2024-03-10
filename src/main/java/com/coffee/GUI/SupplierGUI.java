@@ -112,11 +112,12 @@ public class SupplierGUI extends Layout1 {
                 searchSuppliers();
             }
         });
+
         containerSearch.add(jTextFieldSearch);
 
         jButtonSearch.setBackground(new Color(29, 78, 216));
         jButtonSearch.setForeground(Color.white);
-        jButtonSearch.setPreferredSize(new Dimension(100, 30));
+        jButtonSearch.setPreferredSize(new Dimension(80, 30));
         jButtonSearch.addActionListener(e -> searchSuppliers());
         SearchPanel.add(jButtonSearch);
 
@@ -126,7 +127,7 @@ public class SupplierGUI extends Layout1 {
         jComboBoxSearch.addActionListener(e -> selectSearchFilter());
         SearchPanel.add(jComboBoxSearch);
 
-        loadDataTable(supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0")));
+        loadDataTable(supplierBLL.getData(supplierBLL.searchSuppliers("status = 0")));
 
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
@@ -159,6 +160,7 @@ public class SupplierGUI extends Layout1 {
                     refresh();
                 }
             });
+
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Thêm mới");
