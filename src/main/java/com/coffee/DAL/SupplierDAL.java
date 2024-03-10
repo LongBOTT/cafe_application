@@ -86,4 +86,9 @@ public class SupplierDAL extends Manager{
         }
         return new ArrayList<>();
     }
+
+    public static void main(String[] args) {
+        SupplierDAL s = new SupplierDAL();
+        System.out.println(s.searchSuppliers());
+    }
 }
