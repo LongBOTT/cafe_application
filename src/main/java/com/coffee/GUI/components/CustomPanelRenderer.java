@@ -1,4 +1,4 @@
-package com.coffee.GUI.components;
+package com.coffee.GUI.components;//package com.coffee.GUI.components;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -11,4 +11,5 @@ public class CustomPanelRenderer extends DefaultTableCellRenderer {
                                                    boolean hasFocus, int row, int column) {
         return (Component) value;
     }
+
 }

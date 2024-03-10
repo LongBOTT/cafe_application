@@ -50,7 +50,11 @@ public class ProductGUI extends Layout3 {
             edit = true;
         if (functions.stream().anyMatch(f -> f.getName().equals("remove")))
             remove = true;
+        System.out.println(detail);
+        System.out.println(edit);
+        System.out.println(remove);
         initComponents(functions);
+
     }
 
     public void initComponents(List<Function> functions) {
@@ -60,7 +64,7 @@ public class ProductGUI extends Layout3 {
         jButtonSearch = new JButton("Tìm kiếm");
         categoriesName = new ArrayList<>();
 
-        columnNames = new String[]{"Ảnh", "Tên sản phẩm", "giá bán"};
+        columnNames = new String[]{"Ảnh", "Tên sản phẩm","Size", "giá bán"};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
@@ -81,7 +85,16 @@ public class ProductGUI extends Layout3 {
 
         dataTable = new DataTable(new Object[0][0], columnNames,
                 e -> selectFunction(),
-                detail, edit, remove, 3);
+                detail, edit, remove, 4);
+        int[] columnWidths = {150, 200, 20, 100};
+
+        for (int i = 0; i < columnWidths.length; i++) {
+            dataTable.getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
+        }
+        dataTable.setRowHeight(150);
+
+        dataTable.getColumnModel().getColumn(0).setCellRenderer(new CustomPanelRenderer());
+
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
@@ -138,6 +151,7 @@ public class ProductGUI extends Layout3 {
 //                searchSuppliers();
 //            }
 //        });
+        loadDataTable(productBLL.getData(productBLL.searchProducts("deleted = 0")));
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
         refreshPanel.setPreferredSize(new Dimension(130, 40));
@@ -203,7 +217,7 @@ public class ProductGUI extends Layout3 {
         }
 
         loadCategory();
-        loadDataTable(productBLL.getData(productBLL.searchProducts("deleted = 0")));
+
     }
 
     public void refresh() {
@@ -215,34 +229,41 @@ public class ProductGUI extends Layout3 {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
 
-        Object[][] data = new Object[objects.length][objects[0].length];
-        for (int i = 0; i < data.length; i++) {
-            for (int j = 0; j < data[i].length; j++) {
-                System.out.print(data[i][j] + " "); // In ra giá trị của phần tử ở hàng i, cột j
+
+        Object[][] data = new Object[objects.length][4];
+        for (int i = 0; i < objects.length; i++) {
+
+            int columnWidth = dataTable.getColumnModel().getColumn(0).getPreferredWidth();
+            int rowHeight = dataTable.getRowHeight(0);
+
+            ImageIcon icon = new FlatSVGIcon("image/Product/" + objects[i][5] + ".svg");
+            Image image = icon.getImage();
+            Image newImg = image.getScaledInstance(columnWidth, rowHeight, java.awt.Image.SCALE_SMOOTH);
+            icon = new ImageIcon(newImg);
+            JLabel productImage = new JLabel(icon);
+            productImage.scrollRectToVisible(new Rectangle());
+
+            data[i][0] =  productImage;
+            data[i][1] = objects[i][1];
+            data[i][2] = objects[i][4];
+            data[i][3] = objects[i][3];
+            if (detail) {
+                JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
+                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
+                data[i][data[i].length - 1] = iconDetail;
             }
-            System.out.println(); // Xuống dòng sau khi hoàn thành mỗi hàng
+            if (edit) {
+                JLabel iconEdit = new JLabel(new FlatSVGIcon("icon/edit.svg"));
+                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
+                data[i][data[i].length - 1] = iconEdit;
+            }
+            if (remove) {
+                JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
+                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
+                data[i][data[i].length - 1] = iconRemove;
+            }
         }
 
-//        for (int i = 0; i < objects.length; i++) {
-//            System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
-//
-
-//            if (detail) {
-//                JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
-//                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
-//                data[i][data[i].length - 1] = iconDetail;
-//            }
-//            if (edit) {
-//                JLabel iconEdit = new JLabel(new FlatSVGIcon("icon/edit.svg"));
-//                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
-//                data[i][data[i].length - 1] = iconEdit;
-//            }
-//            if (remove) {
-//                JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
-//                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
-//                data[i][data[i].length - 1] = iconRemove;
-//            }
-//        }
 
         for (Object[] object : data) {
             model.addRow(object);
@@ -380,4 +401,10 @@ public class ProductGUI extends Layout3 {
 //          deleteSupplier(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 //
   }
+    private ImageIcon getScaledImageIcon(String path, int width, int height) {
+        ImageIcon icon = new ImageIcon(path);
+        Image img = icon.getImage();
+        Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return new ImageIcon(scaledImg);
+    }
 }
