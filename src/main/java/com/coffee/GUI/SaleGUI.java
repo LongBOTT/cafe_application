@@ -710,4 +710,19 @@ public class SaleGUI extends SalePanel {
 
     private void checkRemainProduct() {
     }
+
+    private void calculateTotal() {
+        double totalPrice = 0;
+        for (List<Object> receiptDetail: ReceiptDetailList) {
+            totalPrice += receiptDetail.get(3);
+        }
+        jLabelBill.get(0).setText(totalPrice);
+    }
+
+    private void calculateExcess() {
+        double total = Double.parseDouble(jLabelBill.get(0).getText());
+        double cash = Double.parseDouble(jTextFieldCash.getText())
+        double excess = cash - total;
+        jLabelBill.get(2).setText(excess);
+    }
 }
