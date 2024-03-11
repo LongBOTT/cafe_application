@@ -556,7 +556,7 @@ public class SaleGUI extends SalePanel {
         Bill_detailPanel.setPreferredSize(new Dimension(450, Math.max(400, Bill_detailPanel.getHeight() + 55)));
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
-        System.out.println(receiptDetailList);
+        calculateTotal();
     }
 
     private void saveNote(int index) {
@@ -627,6 +627,7 @@ public class SaleGUI extends SalePanel {
         priceReceiptDetail.get(index).setText(receipt.get(3).toString());
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
+        calculateTotal();
     }
 
     private void saveQuantityChanged(int index) {
@@ -642,6 +643,7 @@ public class SaleGUI extends SalePanel {
         priceReceiptDetail.get(index).setText(receipt.get(3).toString());
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
+        calculateTotal();
     }
 
     private void deleteProductInCart(int index) {
@@ -657,6 +659,7 @@ public class SaleGUI extends SalePanel {
         buttonGroupsSugar.remove(index);
         buttonGroupsIce.remove(index);
         loadProductInCart();
+        calculateTotal();
     }
 
     private void loadProductInCart() {
