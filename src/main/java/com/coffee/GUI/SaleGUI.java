@@ -150,11 +150,13 @@ public class SaleGUI extends SalePanel {
                 JLabel jLabel = new JLabel();
                 jLabel.setPreferredSize(new Dimension(230, 20));
                 jLabel.setFont((new Font("FlatLaf.style", Font.PLAIN, 13)));
+                jLabel.setText("0");
                 jLabelBill.add(jLabel);
                 ContainerButtons.add(jLabel, "wrap");
             } else {
                 jTextFieldCash.setPreferredSize(new Dimension(230, 20));
                 jTextFieldCash.setFont((new Font("FlatLaf.style", Font.PLAIN, 13)));
+                jTextFieldCash.setText("0");
                 jTextFieldCash.addKeyListener(new KeyAdapter() {
                     @Override
                     public void keyTyped(KeyEvent e) {
@@ -709,6 +711,12 @@ public class SaleGUI extends SalePanel {
         Bill_detailPanel.setPreferredSize(new Dimension(450, 400);
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
+
+        jLabelBill.get(0).setText("0");
+        jLabelBill.get(1).setText("0");
+        jLabelBill.get(2).setText("0");
+
+        jTextFieldCash.setText("0");
     }
 
     private void checkRemainProduct() {
