@@ -5,11 +5,13 @@ import com.coffee.BLL.Discount_DetailBLL;
 import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Supplier;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddDiscountGUI;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddSupplierGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailSupplierGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
@@ -60,6 +62,7 @@ public class DiscountGUI extends Layout2 {
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
+        jComboBoxSearch = new JComboBox<>(new String[]{"Trạng Thái","Ngừng áp dụng", "Đang áp dụng"});
 
         columnNames = new String[]{"Mã Giảm Giá", "Ngày Bắt Đầu", "Ngày Kết Thúc", "Trạng Thái"};
         if (detail) {
@@ -97,48 +100,64 @@ public class DiscountGUI extends Layout2 {
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập nội dung tìm kiếm");
-        jTextFieldSearch.setPreferredSize(new Dimension(250, 30));
+        jTextFieldSearch.setPreferredSize(new Dimension(220, 30));
         containerSearch.add(jTextFieldSearch);
 
-        jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                searchDiscount();
-            }
+//        jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
+//            @Override
+//            public void insertUpdate(DocumentEvent e) {
+//                searchDiscount();
+//            }
+//
+//            @Override
+//            public void removeUpdate(DocumentEvent e) {
+//                searchDiscount();
+//            }
+//
+//            @Override
+//            public void changedUpdate(DocumentEvent e) {
+//                searchDiscount();
+//            }
+//        });
 
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                searchDiscount();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                searchDiscount();
-            }
-        });
 
         containerSearch.add(jTextFieldSearch);
 
         jButtonSearch.setBackground(new Color(29, 78, 216));
         jButtonSearch.setForeground(Color.white);
-        jButtonSearch.setPreferredSize(new Dimension(100, 30));
-        jButtonSearch.addActionListener(e -> searchDiscount());
+        jButtonSearch.setPreferredSize(new Dimension(100, 40));
+//      jButtonSearch.addActionListener(e -> searchDiscount());
+        jButtonSearch.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                searchDiscount();
+            }
+        });
         SearchPanel.add(jButtonSearch);
 
-       loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));
+        jComboBoxSearch.setBackground(new Color(29, 78, 216));
+        jComboBoxSearch.setForeground(Color.white);
+        jComboBoxSearch.setPreferredSize(new Dimension(150, 40));
+        jComboBoxSearch.addActionListener(e -> selectSearchFilter());
+        SearchPanel.add(jComboBoxSearch);
+
+        loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));
 
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
-        refreshPanel.setPreferredSize(new Dimension(130, 40));
+        refreshPanel.setPreferredSize(new Dimension(120, 40));
         refreshPanel.setBackground(new Color(217, 217, 217));
         refreshPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                selectSearchFilter();
                 refresh();
             }
         });
         FunctionPanel.add(refreshPanel);
+
+
 
         JLabel refreshLabel = new JLabel("Làm mới");
         refreshLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));
@@ -154,7 +173,7 @@ public class DiscountGUI extends Layout2 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    new AddSupplierGUI();
+                    new AddDiscountGUI();
                     refresh();
                 }
             });
@@ -197,17 +216,55 @@ public class DiscountGUI extends Layout2 {
     public void refresh() {
         jTextFieldSearch.setText("");
         jComboBoxSearch.setSelectedIndex(0);
-       // loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("deleted = 0")));
+
+        loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));
     }
 
     private void searchDiscount() {
         if (jTextFieldSearch.getText().isEmpty()) {
-           // loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("deleted = 0")));
+            JOptionPane.showMessageDialog(null, "Nhập Thông Tin Cần Tìm Kiếm");
+            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));
+        } else {
+            selectSearchFilter();
+        }
+
+    }
+
+    private void selectSearchFilter() {
+        if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Trạng Thái")) {
+            loadDataTable(discountBLL.getData(discountBLL.findDiscounts("id", jTextFieldSearch.getText())));
+        } else if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Đang áp dụng"))
+            {
+                searchDiscountByStatus();
+            }
+            else  {
+                searchDiscountByDisStatus();
+            }
+
+    }
+    private void searchDiscountByDisStatus() {
+        if (jTextFieldSearch.getText().isEmpty()) {
+            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("status = 1")));
+
+        } else {
+            if(Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Ngừng áp dụng"))
+            {
+                loadDataTable(discountBLL.getData(discountBLL.findDiscounts("id", jTextFieldSearch.getText())));
+            }
         }
     }
 
+    private void searchDiscountByStatus() {
+        if (jTextFieldSearch.getText().isEmpty()) {
+            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("status = 0")));
 
-
+        } else {
+            if(Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Đang áp dụng"))
+            {
+                loadDataTable(discountBLL.getData(discountBLL.findDiscounts("id", jTextFieldSearch.getText())));
+            }
+        }
+    }
     public void loadDataTable(Object[][] objects) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);

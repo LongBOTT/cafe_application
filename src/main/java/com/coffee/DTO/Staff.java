@@ -12,7 +12,7 @@ public class Staff {
     private String address;
     private String email;
     private boolean deleted;
-
+    private String role ;
     public Staff() {
     }
 
@@ -28,6 +28,27 @@ public class Staff {
         this.email = email;
         this.deleted = deleted;
     }
+//
+//    public Staff(int id, String staffNo, String name, boolean gender, Date birthdate, String phone,
+//                String role, boolean deleted) {
+//        this.id = id;
+//        this.staffNo = staffNo;
+//        this.name = name;
+//        this.gender = gender;
+//        this.birthdate = birthdate;
+//        this.phone = phone;
+//        this.role= role;
+//        this.deleted = deleted;
+//
+//    }
+//
+//    public String getRole() {
+//        return role;
+//    }
+//
+//    public void setRole(String role) {
+//        this.role = role;
+//    }
 
     public int getId() {
         return id;
@@ -104,14 +125,17 @@ public class Staff {
     @Override
     public String toString() {
         String gender1 = gender? "Nam" : "Nữ";
-        return id + " | " +
-                staffNo + " | " +
-                name + " | " +
-                gender1 + " | " +
-                birthdate + " | " +
-                phone + " | " +
-                address + " | " +
-                email + " | " +
-                deleted;
+        return id + " | " + // stt nv
+                staffNo + " | " +  // mã nv
+                name + " | " + // tên
+                gender1 + " | " + // giới tính
+                birthdate + " | " + // ngày sinh
+//                role + " | " +
+                phone + " | " + // số điện thoại
+                address + " | " + // địa chỉ
+                email + " | " ; // email
+//                deleted; // trạng thái
     }
+
+
 }

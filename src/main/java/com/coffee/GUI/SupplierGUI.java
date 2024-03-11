@@ -95,7 +95,7 @@ public class SupplierGUI extends Layout1 {
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập nội dung tìm kiếm");
-        jTextFieldSearch.setPreferredSize(new Dimension(250, 30));
+        jTextFieldSearch.setPreferredSize(new Dimension(280, 30));
         jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -117,17 +117,19 @@ public class SupplierGUI extends Layout1 {
 
         jButtonSearch.setBackground(new Color(29, 78, 216));
         jButtonSearch.setForeground(Color.white);
-        jButtonSearch.setPreferredSize(new Dimension(80, 30));
+        jButtonSearch.setPreferredSize(new Dimension(110, 35));
         jButtonSearch.addActionListener(e -> searchSuppliers());
         SearchPanel.add(jButtonSearch);
 
         jComboBoxSearch.setBackground(new Color(29, 78, 216));
         jComboBoxSearch.setForeground(Color.white);
-        jComboBoxSearch.setPreferredSize(new Dimension(100, 30));
+        jComboBoxSearch.setPreferredSize(new Dimension(110, 35));
         jComboBoxSearch.addActionListener(e -> selectSearchFilter());
         SearchPanel.add(jComboBoxSearch);
 
-        loadDataTable(supplierBLL.getData(supplierBLL.searchSuppliers("status = 0")));
+
+
+        loadDataTable(supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0")));
 
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
@@ -139,7 +141,7 @@ public class SupplierGUI extends Layout1 {
             public void mousePressed(MouseEvent e) {
                 refresh();
             }
-        });
+        }); // button refesh
         FunctionPanel.add(refreshPanel);
 
         JLabel refreshLabel = new JLabel("Làm mới");
