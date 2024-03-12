@@ -1,8 +1,11 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.ProductBLL;
+import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Function;
-import com.coffee.DTO.Product;
+import com.coffee.DTO.Supplier;
+import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailSupplierGUI;
+import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
@@ -12,10 +15,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class ProductGUI extends Layout3 {
     private final ProductBLL productBLL = new ProductBLL();
@@ -24,7 +25,7 @@ public class ProductGUI extends Layout3 {
     private JLabel iconSearch;
     private JTextField jTextFieldSearch;
     private JButton jButtonSearch;
-
+    private SupplierBLL supplierBLL = new SupplierBLL();
     private boolean detail = false;
     private boolean edit = false;
     private boolean remove = false;
@@ -37,6 +38,9 @@ public class ProductGUI extends Layout3 {
     private int indexColumnRemove = -1;
 
     private String[] columnNames;
+//    private JComboBox<String> sizeComboBox;
+
+    private  ArrayList<Object[]> allProducts;
     public ProductGUI() {
 
     }
@@ -64,7 +68,7 @@ public class ProductGUI extends Layout3 {
         jButtonSearch = new JButton("Tìm kiếm");
         categoriesName = new ArrayList<>();
 
-        columnNames = new String[]{"Ảnh", "Tên sản phẩm","Size", "giá bán"};
+        columnNames = new String[]{"Ảnh", "Tên sản phẩm", "Size", "giá bán"};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
@@ -85,7 +89,7 @@ public class ProductGUI extends Layout3 {
 
         dataTable = new DataTable(new Object[0][0], columnNames,
                 e -> selectFunction(),
-                detail, edit, remove, 4);
+                detail, edit, remove, 4,2);
         int[] columnWidths = {150, 200, 20, 100};
 
         for (int i = 0; i < columnWidths.length; i++) {
@@ -94,7 +98,8 @@ public class ProductGUI extends Layout3 {
         dataTable.setRowHeight(150);
 
         dataTable.getColumnModel().getColumn(0).setCellRenderer(new CustomPanelRenderer());
-
+        dataTable.getColumnModel().getColumn(2).setCellRenderer(new CustomPanelRenderer());
+        dataTable.getColumnModel().getColumn(3).setCellRenderer(new CustomPanelRenderer());
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
@@ -225,10 +230,9 @@ public class ProductGUI extends Layout3 {
         loadDataTable(productBLL.getData(productBLL.searchProducts("deleted = 0")));
     }
 
-    public void loadDataTable(Object[][] objects) {
+    public void loadDataTable1(Object[][] objects) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
-
 
         Object[][] data = new Object[objects.length][4];
         for (int i = 0; i < objects.length; i++) {
@@ -243,7 +247,7 @@ public class ProductGUI extends Layout3 {
             JLabel productImage = new JLabel(icon);
             productImage.scrollRectToVisible(new Rectangle());
 
-            data[i][0] =  productImage;
+            data[i][0] = productImage;
             data[i][1] = objects[i][1];
             data[i][2] = objects[i][4];
             data[i][3] = objects[i][3];
@@ -264,11 +268,96 @@ public class ProductGUI extends Layout3 {
             }
         }
 
-
         for (Object[] object : data) {
             model.addRow(object);
         }
     }
+
+public void loadDataTable(Object[][] objects) {
+    DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+    model.setRowCount(0);
+    int columnWidth = dataTable.getColumnModel().getColumn(0).getPreferredWidth();
+    int rowHeight = dataTable.getRowHeight(0);
+    // Mảng chứa tất cả các sản phẩm
+    allProducts = new ArrayList<>();
+
+
+    for (Object[] product : objects) {
+        String productName = (String) product[1];
+        String size = (String) product[4];
+        double price = Double.parseDouble((String) product[3]);
+        String productImage = (String) product[5];
+
+        boolean productExists = false;
+        for (Object[] productArray : allProducts) {
+            String existingProductName = (String) productArray[1];
+            if (existingProductName.equals(productName)) {
+                productExists = true;
+
+                ((ArrayList<String>) productArray[2]).add(size);
+                ((ArrayList<Double>) productArray[3]).add(price);
+                break;
+            }
+        }
+
+        if (!productExists) {
+            ArrayList<String> sizes = new ArrayList<>();
+            sizes.add(size);
+
+            ArrayList<Double> prices = new ArrayList<>();
+            prices.add(price);
+
+            Object[] productArray = {productImage, productName, sizes, prices};
+            allProducts.add(productArray);
+        }
+    }
+    
+    // Duyệt qua mảng allProducts để thêm dữ liệu vào bảng
+    for (Object[] productArray : allProducts) {
+        String productName = (String) productArray[1];
+        ArrayList<String> sizes = (ArrayList<String>) productArray[2];
+        ArrayList<Double> prices = (ArrayList<Double>) productArray[3];
+
+        ImageIcon icon = new FlatSVGIcon("image/Product/" + productArray[0] + ".svg");
+        Image image = icon.getImage();
+        Image newImg = image.getScaledInstance(columnWidth, rowHeight, java.awt.Image.SCALE_SMOOTH);
+        icon = new ImageIcon(newImg);
+        JLabel productImage = new JLabel(icon);
+        productImage.scrollRectToVisible(new Rectangle());
+
+        if (detail) {
+            JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
+            productArray = Arrays.copyOf(productArray, productArray.length + 1);
+            productArray[productArray.length - 1] = iconDetail;
+        }
+        if (edit) {
+            JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/edit.svg"));
+            productArray = Arrays.copyOf(productArray, productArray.length + 1);
+            productArray[productArray.length - 1] = iconDetail;
+        }
+        if (remove) {
+            JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/remove.svg"));
+            productArray = Arrays.copyOf(productArray, productArray.length + 1);
+            productArray[productArray.length - 1] = iconDetail;
+        }
+
+            CustomPopupMenu popupMenuSize = new CustomPopupMenu();
+            CustomPopupMenu popupMenuPrice = new CustomPopupMenu();
+            for (String size : sizes) {
+                popupMenuSize.addMenuItem(size);
+            }
+            for (Double price : prices){
+                popupMenuPrice.addMenuItem(String.valueOf(price));
+            }
+            Object[] rowData = {productImage, productName,  popupMenuSize,popupMenuPrice, productArray[4], productArray[5], productArray[6]};
+            model.addRow(rowData);
+
+
+    }
+
+}
+
+
     public void loadCategory() {
         Category.removeAll();
         categoriesName.removeAll(categoriesName);
@@ -307,104 +396,32 @@ public class ProductGUI extends Layout3 {
     }
 
     private void searchCategory() {
-        if (categoryName.equals("TẤT CẢ"))
-            loadProduct(productBLL.searchProducts("deleted = 0"));
-        else
-            loadProduct(productBLL.findProductsBy(Map.of("category", categoryName)));
-        jTextFieldSearch.setText("");
+//        if (categoryName.equals("TẤT CẢ"))
+////            loadProduct(productBLL.searchProducts("deleted = 0"));
+//        else
+////            loadProduct(productBLL.findProductsBy(Map.of("category", categoryName)));
+//        jTextFieldSearch.setText("");
     }
 
-    public void loadProduct(List<Product> products) {
-//        ContainerProduct.removeAll();
-//        productPanelList.removeAll(productPanelList);
-//        productIDList.removeAll(productIDList);
-//        productNameList.removeAll(productNameList);
-//
-//        for (Product product : products) {
-//            if (productNameList.contains(product.getName())) {
-//                continue;
-//            }
-//            RoundedPanel panel = new RoundedPanel();
-//            panel.setLayout(new FlowLayout(FlowLayout.CENTER));
-//            panel.setBackground(Color.white);
-//            panel.setPreferredSize(new Dimension(155, 250));
-//            panel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-//            productPanelList.add(panel);
-//
-//
-//            ImageIcon icon = new FlatSVGIcon("image/Product/" + product.getImage() + ".svg");
-//            Image image = icon.getImage();
-//            Image newImg = image.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
-//            icon = new ImageIcon(newImg);
-//
-//            JLabel productImage = new JLabel(icon);
-//            productImage.scrollRectToVisible(new Rectangle());
-//            panel.add(productImage);
-//
-//            JLabel productName = new JLabel();
-//            productName.setPreferredSize(new Dimension(150, 60));
-//            productName.setVerticalAlignment(JLabel.CENTER);
-//            productName.setHorizontalAlignment(JLabel.CENTER);
-//            productName.setText("<html>" + product.getName() + "</html>");
-//            productName.setFont((new Font("FlatLaf.style", Font.PLAIN, 13)));
-//            panel.add(productName);
-//
-//            JLabel productPrice = new JLabel();
-//            productPrice.setPreferredSize(new Dimension(150, 30));
-//            productPrice.setVerticalAlignment(JLabel.CENTER);
-//            productPrice.setHorizontalAlignment(JLabel.CENTER);
-//            productPrice.setText(String.valueOf(product.getPrice()));
-//            productPrice.setFont((new Font("FlatLaf.style", Font.BOLD, 10)));
-//            panel.add(productPrice);
-//
-//            productNameList.add(product.getName());
-//            productIDList.add(product.getId());
-//        }
-//
-//        for (RoundedPanel panel : productPanelList) {
-//            panel.addMouseListener(new MouseAdapter() {
-//                @Override
-//                public void mousePressed(MouseEvent e) {
-//                    for (int i = 0; i < productPanelList.size(); i++) {
-//                        if (productPanelList.get(i) == e.getComponent()) {
-//                            addProductToCart(productBLL.findProductsBy(Map.of("id", productIDList.get(i))).get(0));
-//                        }
-//                    }
-//                }
-//            });
-//        }
-//
-//        for (RoundedPanel panel : productPanelList) {
-//            ContainerProduct.add(panel);
-//        }
-//
-//        ContainerProduct.setPreferredSize(new Dimension(690, productNameList.size() % 4 == 0 ?
-//                260 * productNameList.size() / 4 :
-//                260 * (productNameList.size() + (4 - productNameList.size() % 4)) / 4));
-//        ContainerProduct.repaint();
-//        ContainerProduct.revalidate();
-    }
+
 
     private void selectFunction() {
+        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
 
         if (detail && indexColumn == indexColumnDetail)
-//            new DetailSupplierGUI(productBLL.searchProducts("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            new DetailSupplierGUI(new Supplier()); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
         if (detail && indexColumn == indexColumnEdit) {
-//            new EditSupplierGUI(productBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            new EditSupplierGUI(new Supplier()); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
             refresh();
         }
 
 //        if (detail && indexColumn == indexColumnRemove)
-//          deleteSupplier(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-//
-  }
-    private ImageIcon getScaledImageIcon(String path, int width, int height) {
-        ImageIcon icon = new ImageIcon(path);
-        Image img = icon.getImage();
-        Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        return new ImageIcon(scaledImg);
+//            deleteSupplier(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+
+
     }
+
 }
