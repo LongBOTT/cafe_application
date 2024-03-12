@@ -65,9 +65,9 @@ public class StaffGUI extends Layout1 {
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
-        jComboBoxSearch = new JComboBox<>(new String[]{"Bộ Lọc","Tên", "Mã Nhân Viên", "Chức Vụ", "Số Điện Thoại",});
+        jComboBoxSearch = new JComboBox<>(new String[]{"Bộ Lọc", "Tên", "Mã Nhân Viên", "Chức Vụ", "Số Điện Thoại",});
 
-        columnNames = new String[]{"STT", "Mã Nhân Viên", "Tên" , "Số Điện Thoại" , " Chức Vụ"};
+        columnNames = new String[]{"Mã Nhân Viên", "CCCD", "Tên", "Số Điện Thoại", " Chức Vụ"};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
@@ -208,6 +208,7 @@ public class StaffGUI extends Layout1 {
         jComboBoxSearch.setSelectedIndex(0);
         loadDataTable(staffBLL.getData(staffBLL.searchStaffs("deleted = 0")));
     }
+
     private void searchStaffs() {
         if (jTextFieldSearch.getText().isEmpty()) {
             loadDataTable(staffBLL.getData(staffBLL.searchStaffs("deleted = 0")));
@@ -215,9 +216,10 @@ public class StaffGUI extends Layout1 {
             selectSearchFilter();
         }
     }
+
     private void selectSearchFilter() {
         if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("SĐT")) {
-           // searchSuppliersByPhone();
+            // searchSuppliersByPhone();
         } else {
             if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Email")) {
                 searchSuppliersByEmail();
@@ -226,6 +228,7 @@ public class StaffGUI extends Layout1 {
             }
         }
     }
+
     private void searchSuppliersByName() {
         if (jTextFieldSearch.getText().isEmpty()) {
             loadDataTable(staffBLL.getData(staffBLL.searchStaffs("deleted = 0")));
@@ -236,34 +239,27 @@ public class StaffGUI extends Layout1 {
 
     private void searchSuppliersByEmail() {
         if (jTextFieldSearch.getText().isEmpty()) {
-           // loadDataTable(supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0")));
+            // loadDataTable(supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0")));
         } else {
-           // loadDataTable(supplierBLL.getData(supplierBLL.findSuppliers("email", jTextFieldSearch.getText())));
+            // loadDataTable(supplierBLL.getData(supplierBLL.findSuppliers("email", jTextFieldSearch.getText())));
         }
     }
+
     public void loadDataTable(Object[][] objects) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
 
         Object[][] data = new Object[objects.length][objects[0].length];
 
-
-        for (Object[] object : objects) {
-            try {
-                int staffId = Integer.parseInt(object[1].toString());
-                List<Role_detail> role_detailList = new Role_detailBLL().searchRole_details("staff_id = " + staffId);
-                Role_detail roleDetail = role_detailList.get(role_detailList.size()-1);
-                Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
-                object = Arrays.copyOf(object, object.length+1);
-                object[object.length-1] = role.getName();
-            } catch (NumberFormatException e) {
-                System.out.println("Không thể chuyển đổi chuỗi thành số nguyên: " + object[1].toString());
-            }
-        }
-
-
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
+
+            int staffId = Integer.parseInt((String) data[i][0]);
+            List<Role_detail> role_detailList = new Role_detailBLL().searchRole_details("staff_id = " + staffId);
+            Role_detail roleDetail = role_detailList.get(role_detailList.size() - 1);
+            Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
+            data[i] = Arrays.copyOf(data[i], data[i].length + 1);
+            data[i][data[i].length - 1] = role.getName();
 
             if (detail) {
                 JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
@@ -283,7 +279,7 @@ public class StaffGUI extends Layout1 {
         }
 
 
-        for (Object[] object : objects) {
+        for (Object[] object : data) {
             model.addRow(object);
         }
     }
