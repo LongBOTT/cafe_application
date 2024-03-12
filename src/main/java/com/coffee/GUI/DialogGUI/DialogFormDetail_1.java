@@ -9,8 +9,7 @@ public class DialogFormDetail_1 extends DialogForm{
     private RoundedPanel top;
     private  RoundedPanel center;
     private RoundedPanel bottom;
-    private RoundedPanel containPanelProduct;
-    private  RoundedPanel containImageProduct;
+
 
     private RoundedPanel contentMateral;
     public DialogFormDetail_1() {
@@ -22,8 +21,7 @@ public class DialogFormDetail_1 extends DialogForm{
         top = new RoundedPanel();
         center = new RoundedPanel();
         bottom = new RoundedPanel();
-        containPanelProduct = new RoundedPanel();
-        containImageProduct = new RoundedPanel();
+
 
         top.setLayout(new BorderLayout());
         top.setBackground(new Color(255, 0, 0));
