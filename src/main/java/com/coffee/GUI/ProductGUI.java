@@ -4,7 +4,7 @@ import com.coffee.BLL.ProductBLL;
 import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Supplier;
-import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailSupplierGUI;
+import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -311,7 +311,7 @@ public void loadDataTable(Object[][] objects) {
             allProducts.add(productArray);
         }
     }
-    
+
     // Duyệt qua mảng allProducts để thêm dữ liệu vào bảng
     for (Object[] productArray : allProducts) {
         String productName = (String) productArray[1];
@@ -411,7 +411,7 @@ public void loadDataTable(Object[][] objects) {
         int indexColumn = dataTable.getSelectedColumn();
 
         if (detail && indexColumn == indexColumnDetail)
-            new DetailSupplierGUI(new Supplier()); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            new DialogFormDetail_1(); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
         if (detail && indexColumn == indexColumnEdit) {
             new EditSupplierGUI(new Supplier()); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
