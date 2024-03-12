@@ -150,13 +150,12 @@ public class SaleGUI extends SalePanel {
                 JLabel jLabel = new JLabel();
                 jLabel.setPreferredSize(new Dimension(230, 20));
                 jLabel.setFont((new Font("FlatLaf.style", Font.PLAIN, 13)));
-                jLabel.setText("0");
+                jLabel.setText("0.0");
                 jLabelBill.add(jLabel);
                 ContainerButtons.add(jLabel, "wrap");
             } else {
                 jTextFieldCash.setPreferredSize(new Dimension(230, 20));
                 jTextFieldCash.setFont((new Font("FlatLaf.style", Font.PLAIN, 13)));
-                jTextFieldCash.setText("0");
                 jTextFieldCash.addKeyListener(new KeyAdapter() {
                     @Override
                     public void keyTyped(KeyEvent e) {
@@ -693,30 +692,30 @@ public class SaleGUI extends SalePanel {
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
     }
-    
+
     private void cancelBill() {
         receiptDetailList.removeAll(receiptDetailList);
         nameReceiptDetail.removeAll(nameReceiptDetail);
         sizeReceiptDetail.removeAll(sizeReceiptDetail);
         quantityReceiptDetail.removeAll(quantityReceiptDetail);
-        deleteReceiptDetail.removeAll(deleteReceiptDetai);
-        
-        productInCartNoteList.removeAll(productInCartNoteList);
+        deleteReceiptDetail.removeAll(deleteReceiptDetail);
+
+        productIncartNotelList.removeAll(productIncartNotelList);
         buttonGroupsSugar.removeAll(buttonGroupsSugar);
         buttonGroupsIce.removeAll(buttonGroupsIce);
 
-        productInCartPanelList.removeAll(productInCartPanelList);
-        
+        productIncartPanelList.removeAll(productIncartPanelList);
+
         Bill_detailPanel.removeAll();
-        Bill_detailPanel.setPreferredSize(new Dimension(450, 400);
+        Bill_detailPanel.setPreferredSize(new Dimension(450, 400));
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
 
-        jLabelBill.get(0).setText("0");
-        jLabelBill.get(1).setText("0");
-        jLabelBill.get(2).setText("0");
+        jLabelBill.get(0).setText("0.0");
+        jLabelBill.get(1).setText("0.0");
+        jLabelBill.get(2).setText("0.0");
 
-        jTextFieldCash.setText("0");
+        jTextFieldCash.setText("");
     }
 
     private void checkRemainProduct() {
@@ -724,16 +723,16 @@ public class SaleGUI extends SalePanel {
 
     private void calculateTotal() {
         double totalPrice = 0;
-        for (List<Object> receiptDetail: ReceiptDetailList) {
-            totalPrice += receiptDetail.get(3);
+        for (List<Object> receiptDetail : receiptDetailList) {
+            totalPrice += (Double) receiptDetail.get(3);
         }
-        jLabelBill.get(0).setText(totalPrice);
+        jLabelBill.get(0).setText(String.valueOf(totalPrice));
     }
 
     private void calculateExcess() {
         double total = Double.parseDouble(jLabelBill.get(0).getText());
-        double cash = Double.parseDouble(jTextFieldCash.getText())
+        double cash = Double.parseDouble(jTextFieldCash.getText());
         double excess = cash - total;
-        jLabelBill.get(2).setText(excess);
+        jLabelBill.get(2).setText(String.valueOf(excess));
     }
 }

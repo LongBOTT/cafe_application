@@ -1,8 +1,19 @@
 package com.coffee.GUI;
 
+import com.coffee.BLL.RoleBLL;
 import com.coffee.DTO.Function;
+import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.Layout1;
+import com.coffee.GUI.components.RoundedPanel;
+import com.coffee.GUI.components.RoundedScrollPane;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
+import net.miginfocom.swing.MigLayout;
 
+import javax.swing.*;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.util.Arrays;
 import java.util.List;
 
 public class DecentralizationGUI extends Layout1 {
@@ -63,7 +74,8 @@ public class DecentralizationGUI extends Layout1 {
         }
 
         dataTable = new DataTable(new Object[0][0], columnNames,
-                e -> selectFunction(),
+                e -> {
+                },
                 detail, edit, remove, 3); // table hiển thị các thuộc tính "Mã NCC", "Tên NCC", "SĐT", "Email" nên điền 4
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
@@ -81,34 +93,34 @@ public class DecentralizationGUI extends Layout1 {
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập nội dung tìm kiếm");
         jTextFieldSearch.setPreferredSize(new Dimension(250, 30));
-        jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                searchDecentralizations();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                searchDecentralizations();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                searchDecentralizations();
-            }
-        });
+//        jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
+//            @Override
+//            public void insertUpdate(DocumentEvent e) {
+//                searchDecentralizations();
+//            }
+//
+//            @Override
+//            public void removeUpdate(DocumentEvent e) {
+//                searchDecentralizations();
+//            }
+//
+//            @Override
+//            public void changedUpdate(DocumentEvent e) {
+//                searchDecentralizations();
+//            }
+//        });
         containerSearch.add(jTextFieldSearch);
 
         jButtonSearch.setBackground(new Color(29, 78, 216));
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(100, 30));
-        jButtonSearch.addActionListener(e -> searchDecentralization());
+//        jButtonSearch.addActionListener(e -> searchDecentralization());
         SearchPanel.add(jButtonSearch);
 
         jComboBoxSearch.setBackground(new Color(29, 78, 216));
         jComboBoxSearch.setForeground(Color.white);
         jComboBoxSearch.setPreferredSize(new Dimension(100, 30));
-        jComboBoxSearch.addActionListener(e -> selectSearchFilter());
+//        jComboBoxSearch.addActionListener(e -> selectSearchFilter());
         SearchPanel.add(jComboBoxSearch);
 
         //loadDataTable(supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0")));
@@ -118,12 +130,12 @@ public class DecentralizationGUI extends Layout1 {
         refreshPanel.setPreferredSize(new Dimension(130, 40));
         refreshPanel.setBackground(new Color(217, 217, 217));
         refreshPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        refreshPanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                refresh();
-            }
-        });
+//        refreshPanel.addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mousePressed(MouseEvent e) {
+//                refresh();
+//            }
+//        });
         FunctionPanel.add(refreshPanel);
 
         JLabel refreshLabel = new JLabel("Làm mới");
@@ -137,13 +149,13 @@ public class DecentralizationGUI extends Layout1 {
             roundedPanel.setPreferredSize(new Dimension(130, 40));
             roundedPanel.setBackground(new Color(217, 217, 217));
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            roundedPanel.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    new AddSupplierGUI();
-                    refresh();
-                }
-            });
+//            roundedPanel.addMouseListener(new MouseAdapter() {
+//                @Override
+//                public void mousePressed(MouseEvent e) {
+//                    new AddSupplierGUI();
+//                    refresh();
+//                }
+//            });
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Thêm mới");
@@ -180,9 +192,9 @@ public class DecentralizationGUI extends Layout1 {
     }
 
     //public void refresh() {
-        //jTextFieldSearch.setText("");
-        //jComboBoxSearch.setSelectedIndex(0);
-        //loadDataTable(supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0")));
+    //jTextFieldSearch.setText("");
+    //jComboBoxSearch.setSelectedIndex(0);
+    //loadDataTable(supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0")));
     //}
 
 }
