@@ -1,9 +1,7 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.*;
-import com.coffee.DTO.Function;
-import com.coffee.DTO.Staff;
-import com.coffee.DTO.Supplier;
+import com.coffee.DTO.*;
 import com.coffee.GUI.*;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddSupplierGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.*;
@@ -44,6 +42,10 @@ public class StaffGUI extends Layout1 {
     private boolean remove = false;
     private String[] columnNames;
 
+    private Role_detail roleDetail = new Role_detail();
+
+    private Role role = new Role();
+
     public StaffGUI(List<Function> functions) {
 
 
@@ -63,10 +65,9 @@ public class StaffGUI extends Layout1 {
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
-        jComboBoxSearch = new JComboBox<>(new String[]{"Tên", "Mã Nhân Viên", "Chức Vụ", "Số Điện Thoại",});
+        jComboBoxSearch = new JComboBox<>(new String[]{"Bộ Lọc","Tên", "Mã Nhân Viên", "Chức Vụ", "Số Điện Thoại",});
 
-        columnNames = new String[]{"STT", "Mã Nhân Viên", "Tên", "Giới Tính",
-                "Ngày Sinh", "Địa Chỉ", "Số Điện Thoại" , "Email"};
+        columnNames = new String[]{"STT", "Mã Nhân Viên", "Tên" , "Số Điện Thoại" , " Chức Vụ"};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
@@ -87,7 +88,7 @@ public class StaffGUI extends Layout1 {
 
         dataTable = new DataTable(new Object[0][0], columnNames,
                 e -> selectFunction(),
-                detail, edit, remove, 8); // table hiển thị các thuộc tính "Mã NCC", "Tên NCC", "SĐT", "Email" nên điền 4
+                detail, edit, remove, 5); // table hiển thị các thuộc tính "Mã NCC", "Tên NCC", "SĐT", "Email" nên điền 4
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
@@ -207,12 +208,59 @@ public class StaffGUI extends Layout1 {
         jComboBoxSearch.setSelectedIndex(0);
         loadDataTable(staffBLL.getData(staffBLL.searchStaffs("deleted = 0")));
     }
+    private void searchStaffs() {
+        if (jTextFieldSearch.getText().isEmpty()) {
+            loadDataTable(staffBLL.getData(staffBLL.searchStaffs("deleted = 0")));
+        } else {
+            selectSearchFilter();
+        }
+    }
+    private void selectSearchFilter() {
+        if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("SĐT")) {
+           // searchSuppliersByPhone();
+        } else {
+            if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Email")) {
+                searchSuppliersByEmail();
+            } else {
+                loadDataTable(staffBLL.getData(staffBLL.findStaffs("staffNo", jTextFieldSearch.getText())));
+            }
+        }
+    }
+    private void searchSuppliersByName() {
+        if (jTextFieldSearch.getText().isEmpty()) {
+            loadDataTable(staffBLL.getData(staffBLL.searchStaffs("deleted = 0")));
+        } else {
+            loadDataTable(staffBLL.getData(staffBLL.findStaffs("name", jTextFieldSearch.getText())));
+        }
+    }
 
+    private void searchSuppliersByEmail() {
+        if (jTextFieldSearch.getText().isEmpty()) {
+           // loadDataTable(supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0")));
+        } else {
+           // loadDataTable(supplierBLL.getData(supplierBLL.findSuppliers("email", jTextFieldSearch.getText())));
+        }
+    }
     public void loadDataTable(Object[][] objects) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
 
         Object[][] data = new Object[objects.length][objects[0].length];
+
+
+        for (Object[] object : objects) {
+            try {
+                int staffId = Integer.parseInt(object[1].toString());
+                List<Role_detail> role_detailList = new Role_detailBLL().searchRole_details("staff_id = " + staffId);
+                Role_detail roleDetail = role_detailList.get(role_detailList.size()-1);
+                Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
+                object = Arrays.copyOf(object, object.length+1);
+                object[object.length-1] = role.getName();
+            } catch (NumberFormatException e) {
+                System.out.println("Không thể chuyển đổi chuỗi thành số nguyên: " + object[1].toString());
+            }
+        }
+
 
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
@@ -234,7 +282,8 @@ public class StaffGUI extends Layout1 {
             }
         }
 
-        for (Object[] object : data) {
+
+        for (Object[] object : objects) {
             model.addRow(object);
         }
     }

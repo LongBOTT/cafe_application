@@ -128,13 +128,13 @@ public class Staff {
         return id + " | " + // stt nv
                 staffNo + " | " +  // mã nv
                 name + " | " + // tên
-                gender1 + " | " + // giới tính
-                birthdate + " | " + // ngày sinh
-//                role + " | " +
-                phone + " | " + // số điện thoại
-                address + " | " + // địa chỉ
-                email + " | " ; // email
-//                deleted; // trạng thái
+//                gender1 + " | " + // giới tính
+//                birthdate + " | " + // ngày sinh
+//              role + " | " +
+                phone + " | ";  // số điện thoại
+//                address + " | " + // địa chỉ
+//                email + " | " ; // email
+//              deleted; // trạng thái
     }
 
 
