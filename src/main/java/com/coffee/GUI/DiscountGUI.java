@@ -44,6 +44,15 @@ public class DiscountGUI extends Layout2 {
     private boolean remove = false;
     private String[] columnNames;
 
+    private JLabel[] jLabels = new JLabel[0];
+
+    private JDateChooser[] jDateChooser = new JDateChooser[0];
+
+    private  JTextField[] dateTextField = new JTextField[0];
+
+
+
+
 
     public DiscountGUI(List<Function> functions) {
         super();
@@ -62,7 +71,7 @@ public class DiscountGUI extends Layout2 {
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
-        jComboBoxSearch = new JComboBox<>(new String[]{"Trạng Thái","Ngừng áp dụng", "Đang áp dụng"});
+        jComboBoxSearch = new JComboBox<>(new String[]{"Bộ Lọc","Ngừng áp dụng", "Đang áp dụng"});
 
         columnNames = new String[]{"Mã Giảm Giá", "Ngày Bắt Đầu", "Ngày Kết Thúc", "Trạng Thái"};
         if (detail) {
@@ -157,6 +166,38 @@ public class DiscountGUI extends Layout2 {
         });
         FunctionPanel.add(refreshPanel);
 
+
+
+        jLabels = new JLabel[2];
+        jDateChooser = new JDateChooser[2];
+        dateTextField = new JTextField[2];
+
+        for (int i = 0; i < 2; i++) {
+            jLabels[0] = new JLabel("Từ Ngày");
+            jLabels[1] = new JLabel("Đến Ngày");
+
+            jLabels[i].setFont(new Font("Times New Roman", Font.BOLD, 17));
+            jLabels[i].setPreferredSize(new Dimension(80, 35));
+            jLabels[i].setAutoscrolls(true);
+
+            jDateChooser[i] = new JDateChooser();
+            jDateChooser[i].setDateFormatString("dd/MM/yyyy");
+            jDateChooser[i].setPreferredSize(new Dimension(18, 18));
+            jDateChooser[i].setMinSelectableDate(new Date(1000 - 1900, 0, 1));
+
+//            dateTextField[i] = new JTextField();
+            dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
+            dateTextField[i].setPreferredSize(new Dimension(130, 35));
+            dateTextField[i].setFont(new Font("Times New Roman", Font.BOLD, 14));
+
+            FilterDatePanel.add(jLabels[i]);
+            FilterDatePanel.add(dateTextField[i]);
+
+            FilterDatePanel.add(jDateChooser[i]);
+            jLabels[i] = new JLabel("             ");
+            FilterDatePanel.add(jLabels[i]);
+
+        }
 
 
         JLabel refreshLabel = new JLabel("Làm mới");

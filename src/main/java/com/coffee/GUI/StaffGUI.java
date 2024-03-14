@@ -42,10 +42,6 @@ public class StaffGUI extends Layout1 {
     private boolean remove = false;
     private String[] columnNames;
 
-    private Role_detail roleDetail = new Role_detail();
-
-    private Role role = new Role();
-
     public StaffGUI(List<Function> functions) {
 
 
@@ -65,7 +61,7 @@ public class StaffGUI extends Layout1 {
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
-        jComboBoxSearch = new JComboBox<>(new String[]{"Bộ Lọc", "Tên", "Mã Nhân Viên", "Chức Vụ", "Số Điện Thoại",});
+        jComboBoxSearch = new JComboBox<>(new String[]{"Bộ Lọc", "Tên",  "Chức Vụ"});
 
         columnNames = new String[]{"Mã Nhân Viên", "CCCD", "Tên", "Số Điện Thoại", " Chức Vụ"};
         if (detail) {
@@ -125,13 +121,13 @@ public class StaffGUI extends Layout1 {
         jButtonSearch.setBackground(new Color(29, 78, 216));
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(100, 35));
-//        jButtonSearch.addActionListener(e -> searchSuppliers());
+        jButtonSearch.addActionListener(e -> searchStaffs());
         SearchPanel.add(jButtonSearch);
 
         jComboBoxSearch.setBackground(new Color(29, 78, 216));
         jComboBoxSearch.setForeground(Color.white);
         jComboBoxSearch.setPreferredSize(new Dimension(120, 35));
-//        jComboBoxSearch.addActionListener(e -> selectSearchFilter());
+        jComboBoxSearch.addActionListener(e -> selectSearchFilter());
         SearchPanel.add(jComboBoxSearch);
 
         loadDataTable(staffBLL.getData(staffBLL.searchStaffs("deleted = 0")));
@@ -211,6 +207,7 @@ public class StaffGUI extends Layout1 {
 
     private void searchStaffs() {
         if (jTextFieldSearch.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Nhập Thông Tin Cần Tìm Kiếm");
             loadDataTable(staffBLL.getData(staffBLL.searchStaffs("deleted = 0")));
         } else {
             selectSearchFilter();
@@ -218,32 +215,67 @@ public class StaffGUI extends Layout1 {
     }
 
     private void selectSearchFilter() {
-        if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("SĐT")) {
-            // searchSuppliersByPhone();
+        if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Bộ Lọc")) {
+            loadDataTable(staffBLL.getData(staffBLL.findStaffs("id", jTextFieldSearch.getText())));
         } else {
-            if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Email")) {
-                searchSuppliersByEmail();
+            if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Tên")) {
+                searchStaffByName();
             } else {
-                loadDataTable(staffBLL.getData(staffBLL.findStaffs("staffNo", jTextFieldSearch.getText())));
+                searchStaffByRole();
             }
         }
     }
 
-    private void searchSuppliersByName() {
-        if (jTextFieldSearch.getText().isEmpty()) {
+    private void searchStaffByName() {
+        String searchText = jTextFieldSearch.getText().trim();
+        if (searchText.isEmpty()) {
             loadDataTable(staffBLL.getData(staffBLL.searchStaffs("deleted = 0")));
         } else {
-            loadDataTable(staffBLL.getData(staffBLL.findStaffs("name", jTextFieldSearch.getText())));
+            List<Staff> foundStaff = staffBLL.findStaffs("name", searchText);
+            if (!foundStaff.isEmpty()) {
+                loadDataTable(staffBLL.getData(foundStaff));
+            } else {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên có tên '" + searchText + "'", "Không tìm thấy", JOptionPane.INFORMATION_MESSAGE);
+            }
         }
     }
 
-    private void searchSuppliersByEmail() {
+
+    private void searchStaffByRole() {
         if (jTextFieldSearch.getText().isEmpty()) {
-            // loadDataTable(supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0")));
+
+            loadDataTable(staffBLL.getData(staffBLL.searchStaffs("deleted = 0")));
         } else {
-            // loadDataTable(supplierBLL.getData(supplierBLL.findSuppliers("email", jTextFieldSearch.getText())));
+            String roleName = jTextFieldSearch.getText();
+            List<Role> roles = new RoleBLL().searchRoles("name = '" + roleName + "'");
+
+            if (!roles.isEmpty()) {
+                int roleId = roles.get(0).getId();
+                List<Role_detail> roleDetails = new Role_detailBLL().searchRole_details("role_id = " + roleId);
+
+                if (!roleDetails.isEmpty()) {
+                    List<Integer> staffIds = new ArrayList<>();
+                    for (Role_detail roleDetail : roleDetails) {
+                        staffIds.add(roleDetail.getStaff_id());
+                    }
+                    List<Staff> staffs = new ArrayList<>();
+                    for (Integer staffId : staffIds) {
+                        List<Staff> tempStaffs = staffBLL.searchStaffs("id = " + staffId);
+                        if (!tempStaffs.isEmpty()) {
+                            staffs.add(tempStaffs.get(0));
+                        }
+                    }
+
+                    loadDataTable(staffBLL.getData(staffs));
+                } else {
+                    JOptionPane.showMessageDialog(this, "Không có nhân viên nào có chức vụ '" + roleName + "'", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy chức vụ '" + roleName + "'", "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
+
 
     public void loadDataTable(Object[][] objects) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
@@ -296,32 +328,32 @@ public class StaffGUI extends Layout1 {
                 refresh();
             }
 
-//       if (detail && indexColumn == indexColumnRemove)
-//          deleteSupplier(staffBLL.searchStaffs("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+       if (detail && indexColumn == indexColumnRemove)
+           deleteStaff(staffBLL.searchStaffs("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
     }
 
-//    private void deleteSupplier(Staff staff) {
-//        if (dataTable.getSelectedRow() == -1) {
-//            JOptionPane.showMessageDialog(null, "Vui lòng chọn nhà cung cấp cần xoá.",
-//                    "Lỗi", JOptionPane.ERROR_MESSAGE);
-//            return;
-//        }
-//        String[] options = new String[]{"Huỷ", "Xác nhận"};
-//        int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nhà cung cấp?",
-//                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-//        if (choice == 1) {
-//            Pair<Boolean, String> result = staffBLL.deleteStaff(staff);
-//            if (result.getKey()) {
-//                JOptionPane.showMessageDialog(null, result.getValue(),
-//                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-//                refresh();
-//            } else {
-//                JOptionPane.showMessageDialog(null, result.getValue(),
-//                        "Lỗi", JOptionPane.ERROR_MESSAGE);
-//            }
-//        }
-//    }
+    private void deleteStaff(Staff staff) {
+        if (dataTable.getSelectedRow() == -1) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên cần xoá.",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        String[] options = new String[]{"Huỷ", "Xác nhận"};
+        int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nhà nhân viên?",
+                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+        if (choice == 1) {
+            Pair<Boolean, String> result = staffBLL.deleteStaff(staff);
+            if (result.getKey()) {
+                JOptionPane.showMessageDialog(null, result.getValue(),
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                refresh();
+            } else {
+                JOptionPane.showMessageDialog(null, result.getValue(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
 }
 
 

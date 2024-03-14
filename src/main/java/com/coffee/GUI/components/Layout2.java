@@ -47,10 +47,11 @@ public class Layout2 extends RoundedPanel {
         FunctionPanel.setPreferredSize(new Dimension(300, 50));
         top.add(FunctionPanel, BorderLayout.EAST);
 
-        FilterDatePanel.setLayout(new FlowLayout());
+        FilterDatePanel.setLayout(new GridBagLayout());
         FilterDatePanel.setBackground(new Color(0x7E9D2E));
         FilterDatePanel.setPreferredSize(new Dimension(800, 40));
         containerSearchPanel.add(FilterDatePanel);
+
 
         SearchPanel.setLayout(new GridBagLayout());
         SearchPanel.setBackground(new Color(0x4CFD8F8F, true));
