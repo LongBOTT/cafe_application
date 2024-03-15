@@ -1,10 +1,11 @@
 package com.coffee.GUI.components;
+
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class SalePanel extends RoundedPanel{
+public class SalePanel extends RoundedPanel {
     public RoundedPanel left;
     public RoundedPanel right;
     public RoundedPanel top;
@@ -21,6 +22,7 @@ public class SalePanel extends RoundedPanel{
     public RoundedPanel ContainerBill_detail;
     public RoundedPanel ContainerProduct;
     public RoundedScrollPane[] scrollPane;
+
     public SalePanel() {
         initComponents();
         setVisible(true);
@@ -50,7 +52,7 @@ public class SalePanel extends RoundedPanel{
         scrollPane[0] = new RoundedScrollPane(Category, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane[1] = new RoundedScrollPane(ContainerProduct, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane[2] = new RoundedScrollPane(Bill_detailPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        for (RoundedScrollPane roundedScrollPane: scrollPane) {
+        for (RoundedScrollPane roundedScrollPane : scrollPane) {
             roundedScrollPane.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
         }
 
@@ -69,16 +71,16 @@ public class SalePanel extends RoundedPanel{
         left.add(top, BorderLayout.NORTH);
 
         center.setLayout(new BorderLayout());
-        center.setBorder(BorderFactory.createMatteBorder(10,0,10,0, Color.white));
+        center.setBorder(BorderFactory.createMatteBorder(10, 0, 10, 0, Color.white));
         center.setPreferredSize(new Dimension(700, 85));
         left.add(center, BorderLayout.CENTER);
 
         bottom.setLayout(new GridBagLayout());
         bottom.setPreferredSize(new Dimension(700, 625));
-        bottom.setBackground(new Color(217,217,217));
+        bottom.setBackground(new Color(217, 217, 217));
         left.add(bottom, BorderLayout.SOUTH);
 
-        SearchPanel.setLayout(new MigLayout("", "0[]10[]0",""));
+        SearchPanel.setLayout(new MigLayout("", "0[]10[]0", ""));
         SearchPanel.setBackground(Color.white);
         top.add(SearchPanel, BorderLayout.CENTER);
 
@@ -88,12 +90,12 @@ public class SalePanel extends RoundedPanel{
 
         ProductPanel.setLayout(new BorderLayout());
         ProductPanel.setPreferredSize(new Dimension(690, 615));
-        ProductPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-        ProductPanel.setBackground(new Color(217,217,217));
+        ProductPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        ProductPanel.setBackground(new Color(217, 217, 217));
         bottom.add(ProductPanel);
 
-        ContainerProduct.setLayout(new FlowLayout(FlowLayout.LEFT, 10,10));
-        ContainerProduct.setBackground(new Color(217,217,217));
+        ContainerProduct.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        ContainerProduct.setBackground(new Color(217, 217, 217));
 
         scrollPane[1].getViewport().setBackground(new Color(217, 217, 217));
         ProductPanel.add(scrollPane[1], BorderLayout.CENTER);
@@ -105,27 +107,27 @@ public class SalePanel extends RoundedPanel{
 
         BillPanel.setBackground(Color.white);
         BillPanel.setLayout(new BorderLayout());
-        BillPanel.setBorder(BorderFactory.createMatteBorder(10,0,0,0, Color.white));
+        BillPanel.setBorder(BorderFactory.createMatteBorder(10, 0, 0, 0, Color.white));
         BillPanel.setPreferredSize(new Dimension(450, 686));
         right.add(BillPanel, BorderLayout.SOUTH);
 
-        ContainerBill_detail.setBackground(new Color(217,217,217));
+        ContainerBill_detail.setBackground(new Color(217, 217, 217));
         BillPanel.add(ContainerBill_detail, BorderLayout.CENTER);
 
         Title.setLayout(new FlowLayout());
-        Title.setBackground(new Color(217,217,217));
+        Title.setBackground(new Color(217, 217, 217));
         Title.setPreferredSize(new Dimension(440, 40));
         ContainerBill_detail.add(Title, BorderLayout.NORTH);
 
         Bill_detailPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        Bill_detailPanel.setBackground(new Color(245, 246, 250));
+        Bill_detailPanel.setBackground(new Color(217, 217, 217));
 
         scrollPane[2].setPreferredSize(new Dimension(450, 400));
         ContainerBill_detail.add(scrollPane[2], BorderLayout.CENTER);
 
         ContainerButtons.setLayout(new MigLayout("", "10[]15[]10", "10[]20[]"));
         ContainerButtons.setPreferredSize(new Dimension(450, 210));
-        ContainerButtons.setBackground(new Color(217,217,217));
+        ContainerButtons.setBackground(new Color(217, 217, 217));
         ContainerBill_detail.add(ContainerButtons, BorderLayout.SOUTH);
 
     }

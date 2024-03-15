@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class RoleBLL extends Manager<Role>{
+public class RoleBLL extends Manager<Role> {
     private RoleDAL roleDAL;
 
     public RoleBLL() {
@@ -35,8 +35,8 @@ public class RoleBLL extends Manager<Role>{
         Pair<Boolean, String> result;
 
         result = exists(role);
-        if(result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if (result.getKey()) {
+            return new Pair<>(false, result.getValue());
         }
 
         if (roleDAL.addRole(role) == 0)
@@ -56,8 +56,8 @@ public class RoleBLL extends Manager<Role>{
         Pair<Boolean, String> result;
 
         result = checkDecentralization(role);
-        if(result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if (result.getKey()) {
+            return new Pair<>(false, result.getValue());
         }
 
         if (roleDAL.deleteRole("id = " + role.getId()) == 0)
@@ -72,7 +72,7 @@ public class RoleBLL extends Manager<Role>{
 
     public List<Role> findRoles(String key, String value) {
         List<Role> list = new ArrayList<>();
-        List<Role> roleList = roleDAL.searchRoles();
+        List<Role> roleList = roleDAL.searchRoles("id != 0");
         for (Role role : roleList) {
             if (getValueByKey(role, key).toString().toLowerCase().contains(value.toLowerCase())) {
                 list.add(role);
@@ -82,23 +82,22 @@ public class RoleBLL extends Manager<Role>{
     }
 
     public List<Role> findRolesBy(Map<String, Object> conditions) {
-        List<Role> roles = roleDAL.searchRoles();
+        List<Role> roles = roleDAL.searchRoles("id != 0");
         for (Map.Entry<String, Object> entry : conditions.entrySet())
             roles = findObjectsBy(entry.getKey(), entry.getValue(), roles);
         return roles;
     }
 
     public Pair<Boolean, String> exists(Role role) {
-        List<Role> modules =findRolesBy(Map.of(
-                "name", role.getName()
-        ));
+        List<Role> modules = findRoles("name", role.getName());
 
-        if(!modules.isEmpty()){
+        if (!modules.isEmpty()) {
             return new Pair<>(true, "Chức vụ đã tồn tại.");
         }
         return new Pair<>(false, "");
     }
-    private  Pair<Boolean, String> validateName(String name) {
+
+    private Pair<Boolean, String> validateName(String name) {
         if (name.isBlank())
             return new Pair<>(false, "Tên chức vụ không được để trống.");
         if (VNString.containsSpecial(name))
@@ -107,25 +106,16 @@ public class RoleBLL extends Manager<Role>{
             return new Pair<>(false, "Tên chức vụ không được chứa số.");
         return new Pair<>(true, name);
     }
+
     public Pair<Boolean, String> checkDecentralization(Role role) {
         DecentralizationBLL decentralizationBLL = new DecentralizationBLL();
         List<Decentralization> decentralizationss = decentralizationBLL.findDecentralizationsBy(Map.of(
                 "role_id", role.getId()
         ));
 
-        if(!decentralizationss.isEmpty()){
+        if (!decentralizationss.isEmpty()) {
             return new Pair<>(true, "Chức vụ đã tồn tại trong phân quyền.");
         }
-
-        AccountBLL accountBLL = new AccountBLL();
-        List<Account> accounts = accountBLL.findAccountsBy(Map.of(
-                "role_id", role.getId()
-        ));
-
-        if(!accounts.isEmpty()){
-            return new Pair<>(true, "Tồn tại tài khoản có chức vụ này.");
-        }
-
         return new Pair<>(false, "");
     }
 

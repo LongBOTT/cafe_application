@@ -1,13 +1,14 @@
 package com.coffee.GUI;
 
-import com.coffee.BLL.SupplierBLL;
+import com.coffee.BLL.StaffBLL;
+import com.coffee.BLL.Work_ScheduleBLL;
+import com.coffee.DTO.Account;
 import com.coffee.DTO.Function;
-import com.coffee.DTO.Supplier;
-import com.coffee.GUI.DialogGUI.FormAddGUI.AddSupplierGUI;
-import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailSupplierGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
+import com.coffee.DTO.Staff;
+import com.coffee.DTO.Work_Schedule;
 import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
@@ -18,17 +19,20 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
 
-public class SupplierGUI extends Layout1 {
+public class CreateWorkScheduleGUI extends Layout2 {
     private RoundedPanel containerSearch;
     private JLabel iconSearch;
     private JTextField jTextFieldSearch;
+    private JTextField[] jTextFieldDate;
+    private JTextField[] dateTextField;
+    private JDateChooser[] jDateChooser;
     private JButton jButtonSearch;
-    private JComboBox<String> jComboBoxSearch;
     private List<Function> functions;
-    private SupplierBLL supplierBLL = new SupplierBLL();
+    private Work_ScheduleBLL workScheduleBLL = new Work_ScheduleBLL();
     private DataTable dataTable;
     private RoundedScrollPane scrollPane;
     private int indexColumnDetail = -1;
@@ -38,8 +42,10 @@ public class SupplierGUI extends Layout1 {
     private boolean edit = false;
     private boolean remove = false;
     private String[] columnNames;
+    private StaffBLL staffBLL = new StaffBLL();
+    private Date date;
 
-    public SupplierGUI(List<Function> functions) {
+    public CreateWorkScheduleGUI(List<Function> functions) {
         super();
         this.functions = functions;
         if (functions.stream().anyMatch(f -> f.getName().equals("view")))
@@ -52,13 +58,16 @@ public class SupplierGUI extends Layout1 {
     }
 
     private void init(List<Function> functions) {
+        date = new Date();
         containerSearch = new RoundedPanel();
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
-        jComboBoxSearch = new JComboBox<>(new String[]{"Tên NCC", "SĐT", "Email"});
+        jDateChooser = new JDateChooser[2];
+        dateTextField = new JTextField[2];
+        jTextFieldDate = new JTextField[2];
 
-        columnNames = new String[]{"Mã NCC", "Tên NCC", "SĐT", "Email"};
+        columnNames = new String[]{"Chức vụ", "Họ tên", "Ngày làm", "Ca", "Giờ vào", "Giờ ra"};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
@@ -79,10 +88,36 @@ public class SupplierGUI extends Layout1 {
 
         dataTable = new DataTable(new Object[0][0], columnNames,
                 e -> selectFunction(),
-                detail, edit, remove, 4); // table hiển thị các thuộc tính "Mã NCC", "Tên NCC", "SĐT", "Email" nên điền 4
+                detail, edit, remove, 6);
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
+
+        for (int i = 0; i < 2; i++) {
+            jTextFieldDate[i] = new JTextField();
+            jTextFieldDate[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
+            jTextFieldDate[i].setPreferredSize(new Dimension(200, 30));
+            jTextFieldDate[i].setAutoscrolls(true);
+
+            jDateChooser[i] = new JDateChooser();
+            jDateChooser[i].setDateFormatString("dd/MM/yyyy");
+            jDateChooser[i].setPreferredSize(new Dimension(200, 30));
+            jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
+
+            dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
+            dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
+
+            if (i == 0) {
+                JLabel jLabel = new JLabel("Từ Ngày");
+                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
+                FilterDatePanel.add(jLabel);
+            } else {
+                JLabel jLabel = new JLabel("Đến Ngày");
+                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
+                FilterDatePanel.add(jLabel);
+            }
+            FilterDatePanel.add(jDateChooser[i]);
+        }
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
         containerSearch.setBackground(new Color(245, 246, 250));
@@ -94,22 +129,22 @@ public class SupplierGUI extends Layout1 {
 
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
-        jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập nội dung tìm kiếm");
+        jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập tên nhân viên cần tìm kiếm");
         jTextFieldSearch.setPreferredSize(new Dimension(250, 30));
         jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                searchSuppliers();
+                searchWork_schedules();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                searchSuppliers();
+                searchWork_schedules();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                searchSuppliers();
+                searchWork_schedules();
             }
         });
         containerSearch.add(jTextFieldSearch);
@@ -117,16 +152,10 @@ public class SupplierGUI extends Layout1 {
         jButtonSearch.setBackground(new Color(29, 78, 216));
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(100, 30));
-        jButtonSearch.addActionListener(e -> searchSuppliers());
+        jButtonSearch.addActionListener(e -> searchWork_schedules());
         SearchPanel.add(jButtonSearch);
 
-        jComboBoxSearch.setBackground(new Color(29, 78, 216));
-        jComboBoxSearch.setForeground(Color.white);
-        jComboBoxSearch.setPreferredSize(new Dimension(100, 30));
-        jComboBoxSearch.addActionListener(e -> selectSearchFilter());
-        SearchPanel.add(jComboBoxSearch);
-
-        loadDataTable(supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0")));
+        loadDataTable(workScheduleBLL.getData(workScheduleBLL.searchWork_schedules()));
 
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
@@ -155,7 +184,7 @@ public class SupplierGUI extends Layout1 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    new AddSupplierGUI();
+//                    new AddWorkScheduleGUI();
                     refresh();
                 }
             });
@@ -196,43 +225,43 @@ public class SupplierGUI extends Layout1 {
 
     public void refresh() {
         jTextFieldSearch.setText("");
-        jComboBoxSearch.setSelectedIndex(0);
-        loadDataTable(supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0")));
+        jDateChooser[0].getDateEditor().setDate(null);
+        jDateChooser[1].getDateEditor().setDate(null);
+        loadDataTable(workScheduleBLL.getData(workScheduleBLL.searchWork_schedules()));
     }
 
-    private void searchSuppliers() {
-        if (jTextFieldSearch.getText().isEmpty()) {
-            loadDataTable(supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0")));
+    private void searchWork_schedules() {
+        List<Work_Schedule> work_scheduleList = workScheduleBLL.searchWork_schedules();
+        if (jTextFieldSearch.getText().isEmpty() && jDateChooser[0].getDateEditor().getDate() == null && jDateChooser[1].getDateEditor().getDate() == null) {
+            loadDataTable(workScheduleBLL.getData(work_scheduleList));
         } else {
-            selectSearchFilter();
-        }
-    }
-
-    private void selectSearchFilter() {
-        if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("SĐT")) {
-            searchSuppliersByPhone();
-        } else {
-            if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Email")) {
-                searchSuppliersByEmail();
-            } else {
-                loadDataTable(supplierBLL.getData(supplierBLL.findSuppliers("name", jTextFieldSearch.getText())));
+            if (!jTextFieldSearch.getText().isEmpty()) {
+                List<Integer> staffIDList = new ArrayList<>();
+                for (Staff staff : staffBLL.findStaffs("name", jTextFieldSearch.getText()))
+                    staffIDList.add(staff.getId());
+                work_scheduleList.removeIf(work_schedule -> !staffIDList.contains(work_schedule.getStaff_id()));
             }
-        }
-    }
-
-    private void searchSuppliersByPhone() {
-        if (jTextFieldSearch.getText().isEmpty()) {
-            loadDataTable(supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0")));
-        } else {
-            loadDataTable(supplierBLL.getData(supplierBLL.findSuppliers("phone", jTextFieldSearch.getText())));
-        }
-    }
-
-    private void searchSuppliersByEmail() {
-        if (jTextFieldSearch.getText().isEmpty()) {
-            loadDataTable(supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0")));
-        } else {
-            loadDataTable(supplierBLL.getData(supplierBLL.findSuppliers("email", jTextFieldSearch.getText())));
+            if (jDateChooser[0].getDateEditor().getDate() != null || jDateChooser[1].getDateEditor().getDate() != null) {
+                if (jDateChooser[0].getDateEditor().getDate() != null && jDateChooser[1].getDateEditor().getDate() != null) {
+                    Date startDate = jDateChooser[0].getDate();
+                    Date endDate = jDateChooser[1].getDate();
+                    if (startDate.after(endDate)) {
+                        JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
+                                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    work_scheduleList.removeIf(work_schedule -> (work_schedule.getDate().before(startDate) || work_schedule.getDate().after(endDate)));
+                } else {
+                    if (jDateChooser[0].getDateEditor().getDate() == null) {
+                        Date endDate = jDateChooser[1].getDate();
+                        work_scheduleList.removeIf(work_schedule -> (work_schedule.getDate().before(java.sql.Date.valueOf("1000-1-1")) || work_schedule.getDate().after(endDate)));
+                    } else {
+                        Date startDate = jDateChooser[0].getDate();
+                        work_scheduleList.removeIf(work_schedule -> (work_schedule.getDate().before(startDate)));
+                    }
+                }
+            }
+            loadDataTable(workScheduleBLL.getData(work_scheduleList));
         }
     }
 
@@ -240,10 +269,26 @@ public class SupplierGUI extends Layout1 {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
 
+        if (objects.length == 0) {
+            return;
+        }
+
         Object[][] data = new Object[objects.length][objects[0].length];
 
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
+
+            int staffId = Integer.parseInt(data[i][1].toString());
+            data[i][1] = staffBLL.findStaffsBy(Map.of("id", staffId)).get(0).getName();
+
+            if (data[i][3].toString().equals("1"))
+                data[i][3] = "6h - 12h";
+
+            if (data[i][3].toString().equals("2"))
+                data[i][3] = "12h - 18h";
+
+            if (data[i][3].toString().equals("3"))
+                data[i][3] = "18h - 23h";
 
             if (detail) {
                 JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
@@ -272,19 +317,19 @@ public class SupplierGUI extends Layout1 {
         int indexColumn = dataTable.getSelectedColumn();
 
         if (detail && indexColumn == indexColumnDetail)
-            new DetailSupplierGUI(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+//            new DetailWorkScheduleGUI(workScheduleBLL.searchWork_schedules().get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
 
-        if (edit && indexColumn == indexColumnEdit) {
-            new EditSupplierGUI(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-            refresh();
-        }
+            if (edit && indexColumn == indexColumnEdit) {
+//            new EditWorkScheduleGUI(workScheduleBLL.searchWork_schedules().get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
+                refresh();
+            }
 
         if (remove && indexColumn == indexColumnRemove)
-            deleteSupplier(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            deleteWorkSchedule(workScheduleBLL.searchWork_schedules().get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
 
     }
 
-    private void deleteSupplier(Supplier supplier) {
+    private void deleteWorkSchedule(Work_Schedule workSchedule) {
         if (dataTable.getSelectedRow() == -1) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn nhà cung cấp cần xoá.",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -294,7 +339,7 @@ public class SupplierGUI extends Layout1 {
         int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nhà cung cấp?",
                 "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
         if (choice == 1) {
-            Pair<Boolean, String> result = supplierBLL.deleteSupplier(supplier);
+            Pair<Boolean, String> result = workScheduleBLL.deleteWork_schedule(workSchedule);
             if (result.getKey()) {
                 JOptionPane.showMessageDialog(null, result.getValue(),
                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
@@ -305,5 +350,4 @@ public class SupplierGUI extends Layout1 {
             }
         }
     }
-
 }

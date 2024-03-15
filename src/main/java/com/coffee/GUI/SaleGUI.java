@@ -167,7 +167,7 @@ public class SaleGUI extends SalePanel {
                     @Override
                     public void keyPressed(KeyEvent e) {
                         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-//                            calculateExcess();
+                            calculateExcess();
                         }
                     }
                 });
@@ -192,7 +192,7 @@ public class SaleGUI extends SalePanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                if (receiptDetailList.size() == 0) {
+                if (receiptDetailList.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Vui lòng chọn sản phẩm.",
                             "Lỗi", JOptionPane.ERROR_MESSAGE);
                     return;
@@ -372,7 +372,7 @@ public class SaleGUI extends SalePanel {
         receiptDetailList.add(receiptDetail);
 
         JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        jPanel.setBackground(new Color(255, 255, 255));
+        jPanel.setBackground(new Color(245, 246, 250));
         jPanel.setPreferredSize(new Dimension(450, 50));
         Bill_detailPanel.add(jPanel);
 
@@ -488,7 +488,7 @@ public class SaleGUI extends SalePanel {
 
         JPanel productInCartNote = new JPanel(new FlowLayout(FlowLayout.LEFT));
         productInCartNote.setPreferredSize(new Dimension(450, 150));
-        productInCartNote.setBackground(new Color(255, 255, 255));
+        productInCartNote.setBackground(new Color(245, 246, 250));
 
         JLabel choosingSugar = new JLabel("Chọn mức đường: ");
         choosingSugar.setFont(new Font("Public Sans", Font.PLAIN, 13));
@@ -554,7 +554,7 @@ public class SaleGUI extends SalePanel {
 
         productIncartNotelList.add(productInCartNote);
 
-        Bill_detailPanel.setPreferredSize(new Dimension(450, Math.max(400, Bill_detailPanel.getHeight() + 55)));
+        Bill_detailPanel.setPreferredSize(new Dimension(450, 400 < receiptDetailList.size() * 55 ? Bill_detailPanel.getHeight() + 55 : 400));
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
         calculateTotal();
@@ -584,7 +584,7 @@ public class SaleGUI extends SalePanel {
 
         for (int i = 0; i < receiptDetailList.size(); i++) {
             JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-            jPanel.setBackground(new Color(255, 255, 255));
+            jPanel.setBackground(new Color(245, 246, 250));
             jPanel.setPreferredSize(new Dimension(450, 50));
 
             jPanel.add(nameReceiptDetail.get(i));
@@ -669,7 +669,7 @@ public class SaleGUI extends SalePanel {
 
         for (int i = 0; i < receiptDetailList.size(); i++) {
             JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-            jPanel.setBackground(new Color(255, 255, 255));
+            jPanel.setBackground(new Color(245, 246, 250));
             jPanel.setPreferredSize(new Dimension(450, 50));
 
             jPanel.add(nameReceiptDetail.get(i));
@@ -727,6 +727,8 @@ public class SaleGUI extends SalePanel {
             totalPrice += (Double) receiptDetail.get(3);
         }
         jLabelBill.get(0).setText(String.valueOf(totalPrice));
+        jLabelBill.get(2).setText("0");
+        jTextFieldCash.setText("");
     }
 
     private void calculateExcess() {

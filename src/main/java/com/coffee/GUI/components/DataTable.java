@@ -144,6 +144,11 @@ public class DataTable extends JTable {
                         actionListener.actionPerformed(null);
                     }
                 }
+                if (!detail && !edit && remove && col != numberOfColumns && row != -1 && col != numberOfColumns + 1 && col != numberOfColumns + 2) {
+                    if (actionListener != null) {
+                        actionListener.actionPerformed(null);
+                    }
+                }
             }
 
             @Override
