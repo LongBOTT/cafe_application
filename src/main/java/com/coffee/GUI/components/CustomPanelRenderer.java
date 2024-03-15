@@ -7,12 +7,11 @@ import java.awt.*;
 import java.awt.event.MouseListener;
 
 public class CustomPanelRenderer extends DefaultTableCellRenderer {
-    private static final Color GRID_COLOR = Color.GRAY; // Màu của dải giữa các hàng
-    private static final int GRID_THICKNESS = 1; // Độ dày của dải giữa các hàng
+    private static final Color GRID_COLOR = Color.GRAY;
+    private static final int GRID_THICKNESS = 1;
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                                                    boolean hasFocus, int row, int column) {
-        // Thêm border cho các hàng, trừ hàng cuối cùng
         Border border;
         if (row < table.getRowCount() - 1) {
             border = BorderFactory.createMatteBorder(0, 0, GRID_THICKNESS, 0, GRID_COLOR);
