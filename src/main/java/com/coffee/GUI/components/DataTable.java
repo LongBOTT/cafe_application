@@ -117,7 +117,9 @@ public class DataTable extends JTable {
             }
 
         });
-
+        for (int i = 0; i < getColumnCount(); i++) {
+            setDefaultRenderer(getColumnClass(i), new CustomTableCellRenderer());
+        }
         for (int i = numberOfColumns; i < getColumnCount(); i++) {
             getColumnModel().getColumn(i).setCellRenderer(new CustomPanelRenderer());
             getColumnModel().getColumn(i).setMaxWidth(50);
