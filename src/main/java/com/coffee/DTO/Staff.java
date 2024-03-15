@@ -28,19 +28,13 @@ public class Staff {
         this.email = email;
         this.deleted = deleted;
     }
-//
-//    public Staff(int id, String staffNo, String name, boolean gender, Date birthdate, String phone,
-//                String role, boolean deleted) {
-//        this.id = id;
-//        this.staffNo = staffNo;
-//        this.name = name;
-//        this.gender = gender;
-//        this.birthdate = birthdate;
-//        this.phone = phone;
-//        this.role= role;
-//        this.deleted = deleted;
-//
-//    }
+
+    public Staff(int id, String staffNo, String name, String phone) {
+        this.id = id;
+        this.staffNo = staffNo;
+        this.name = name;
+
+    }
 //
 //    public String getRole() {
 //        return role;
@@ -124,18 +118,19 @@ public class Staff {
 
     @Override
     public String toString() {
-        String gender1 = gender? "Nam" : "Nữ";
+        String gender1 = gender? "Nữ" : "Nam";
         return id + " | " + // stt nv
                 staffNo + " | " +  // mã nv
                 name + " | " + // tên
-//                gender1 + " | " + // giới tính
+//                gender1 + " | " ; // giới tính
 //                birthdate + " | " + // ngày sinh
-//              role + " | " +
-                phone + " | ";  // số điện thoại
+                phone + " | " ;// số điện thoại
 //                address + " | " + // địa chỉ
 //                email + " | " ; // email
 //              deleted; // trạng thái
     }
+
+
 
 
 }

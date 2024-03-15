@@ -321,14 +321,14 @@ public class StaffGUI extends Layout1 {
         int indexColumn = dataTable.getSelectedColumn();
 
         if (detail && indexColumn == indexColumnDetail)
-            //new DetailSupplierGUI(staffBLL.searchStaffs("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            new DetailStaffGUI(staffBLL.searchStaffs("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
-            if (detail && indexColumn == indexColumnEdit) {
-                //new EditSupplierGUI(staffBLL.searchStaffs("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-                refresh();
-            }
+//        if (edit && indexColumn == indexColumnEdit) {
+//                new EditSupplierGUI(staffBLL.searchStaffs("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+//                refresh();
+//        }
 
-       if (detail && indexColumn == indexColumnRemove)
+       if (remove && indexColumn == indexColumnRemove)
            deleteStaff(staffBLL.searchStaffs("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
     }

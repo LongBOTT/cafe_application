@@ -278,12 +278,12 @@ public class SupplierGUI extends Layout1 {
         if (detail && indexColumn == indexColumnDetail)
             new DetailSupplierGUI(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
-        if (detail && indexColumn == indexColumnEdit) {
+        if (edit && indexColumn == indexColumnEdit) {
             new EditSupplierGUI(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
             refresh();
         }
 
-        if (detail && indexColumn == indexColumnRemove)
+        if (remove && indexColumn == indexColumnRemove)
             deleteSupplier(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
     }
