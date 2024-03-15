@@ -54,9 +54,6 @@ public class ProductGUI extends Layout3 {
             edit = true;
         if (functions.stream().anyMatch(f -> f.getName().equals("remove")))
             remove = true;
-        System.out.println(detail);
-        System.out.println(edit);
-        System.out.println(remove);
         initComponents(functions);
 
     }
@@ -89,7 +86,7 @@ public class ProductGUI extends Layout3 {
 
         dataTable = new DataTable(new Object[0][0], columnNames,
                 e -> selectFunction(),
-                detail, edit, remove, 4,2);
+                detail, edit, remove, 4);
         int[] columnWidths = {150, 200, 20, 100};
 
         for (int i = 0; i < columnWidths.length; i++) {
@@ -230,48 +227,6 @@ public class ProductGUI extends Layout3 {
         loadDataTable(productBLL.getData(productBLL.searchProducts("deleted = 0")));
     }
 
-    public void loadDataTable1(Object[][] objects) {
-        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
-        model.setRowCount(0);
-
-        Object[][] data = new Object[objects.length][4];
-        for (int i = 0; i < objects.length; i++) {
-
-            int columnWidth = dataTable.getColumnModel().getColumn(0).getPreferredWidth();
-            int rowHeight = dataTable.getRowHeight(0);
-
-            ImageIcon icon = new FlatSVGIcon("image/Product/" + objects[i][5] + ".svg");
-            Image image = icon.getImage();
-            Image newImg = image.getScaledInstance(columnWidth, rowHeight, java.awt.Image.SCALE_SMOOTH);
-            icon = new ImageIcon(newImg);
-            JLabel productImage = new JLabel(icon);
-            productImage.scrollRectToVisible(new Rectangle());
-
-            data[i][0] = productImage;
-            data[i][1] = objects[i][1];
-            data[i][2] = objects[i][4];
-            data[i][3] = objects[i][3];
-            if (detail) {
-                JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
-                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
-                data[i][data[i].length - 1] = iconDetail;
-            }
-            if (edit) {
-                JLabel iconEdit = new JLabel(new FlatSVGIcon("icon/edit.svg"));
-                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
-                data[i][data[i].length - 1] = iconEdit;
-            }
-            if (remove) {
-                JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
-                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
-                data[i][data[i].length - 1] = iconRemove;
-            }
-        }
-
-        for (Object[] object : data) {
-            model.addRow(object);
-        }
-    }
 
 public void loadDataTable(Object[][] objects) {
     DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
@@ -280,7 +235,6 @@ public void loadDataTable(Object[][] objects) {
     int rowHeight = dataTable.getRowHeight(0);
     // Mảng chứa tất cả các sản phẩm
     allProducts = new ArrayList<>();
-
 
     for (Object[] product : objects) {
         String productName = (String) product[1];
@@ -325,6 +279,14 @@ public void loadDataTable(Object[][] objects) {
         JLabel productImage = new JLabel(icon);
         productImage.scrollRectToVisible(new Rectangle());
 
+        CustomPopupMenu popupMenuSize = new CustomPopupMenu();
+        CustomPopupMenu popupMenuPrice = new CustomPopupMenu();
+        for (String size : sizes) {
+            popupMenuSize.addMenuItem(size);
+        }
+        for (Double price : prices){
+            popupMenuPrice.addMenuItem(String.valueOf(price));
+        }
         if (detail) {
             JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
             productArray = Arrays.copyOf(productArray, productArray.length + 1);
@@ -341,24 +303,25 @@ public void loadDataTable(Object[][] objects) {
             productArray[productArray.length - 1] = iconDetail;
         }
 
-            CustomPopupMenu popupMenuSize = new CustomPopupMenu();
-            CustomPopupMenu popupMenuPrice = new CustomPopupMenu();
-            for (String size : sizes) {
-                popupMenuSize.addMenuItem(size);
-            }
-            for (Double price : prices){
-                popupMenuPrice.addMenuItem(String.valueOf(price));
-            }
-            Object[] rowData = {productImage, productName,  popupMenuSize,popupMenuPrice, productArray[4], productArray[5], productArray[6]};
-            model.addRow(rowData);
+        Object[] rowData;
+        if (productArray.length == 7) {
+            rowData = new Object[]{productImage, productName, popupMenuSize, popupMenuPrice, productArray[4], productArray[5], productArray[6]};
+        } else if (productArray.length == 6) {
+            rowData = new Object[]{productImage, productName, popupMenuSize, popupMenuPrice, productArray[4], productArray[5]};
+        } else if (productArray.length == 5) {
+            rowData = new Object[]{productImage, productName, popupMenuSize, popupMenuPrice, productArray[4]};
+        } else {
+            rowData = new Object[]{productImage, productName, popupMenuSize, popupMenuPrice};
+        }
+
+        model.addRow(rowData);
 
 
     }
 
 }
 
-
-    public void loadCategory() {
+public void loadCategory() {
         Category.removeAll();
         categoriesName.removeAll(categoriesName);
         categoriesName.add("TẤT CẢ");
@@ -414,12 +377,13 @@ public void loadDataTable(Object[][] objects) {
             new DialogFormDetail_1(); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
         if (detail && indexColumn == indexColumnEdit) {
-            new EditSupplierGUI(new Supplier()); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            new DialogFormDetail_1(); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
             refresh();
         }
 
-//        if (detail && indexColumn == indexColumnRemove)
-//            deleteSupplier(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        if (detail && indexColumn == indexColumnRemove)
+            new DialogFormDetail_1(); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        refresh(); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
 
     }
