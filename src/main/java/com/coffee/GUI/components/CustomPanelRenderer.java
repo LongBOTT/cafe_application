@@ -23,8 +23,6 @@ public class CustomPanelRenderer extends DefaultTableCellRenderer {
             JLabel label = new JLabel((String) value);
             label.setHorizontalAlignment(SwingConstants.CENTER); // Căn giữa nội dung
 
-            // Tạo border cho label
-//            Border border = BorderFactory.createLineBorder(Color.BLACK); // Border đen
             label.setBorder(border);
 
             return label;

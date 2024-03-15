@@ -6,9 +6,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class DialogFormDetail_1 extends DialogForm{
-    private RoundedPanel top;
-    private  RoundedPanel center;
-    private RoundedPanel bottom;
+    protected RoundedPanel top;
+    protected  RoundedPanel center;
+    protected RoundedPanel bottom;
 
 
     private RoundedPanel contentMateral;
@@ -21,7 +21,6 @@ public class DialogFormDetail_1 extends DialogForm{
         top = new RoundedPanel();
         center = new RoundedPanel();
         bottom = new RoundedPanel();
-
 
         top.setLayout(new BorderLayout());
         top.setBackground(new Color(255, 0, 0));

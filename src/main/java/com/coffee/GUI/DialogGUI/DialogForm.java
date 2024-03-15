@@ -43,11 +43,11 @@ public class DialogForm extends JDialog {
 
         title.setLayout(new BorderLayout());
         title.setBackground(new Color(232,206,180));
-//        title.setPreferredSize(new Dimension(1000, 70));
         title.setPreferredSize(new Dimension(1000, 70));
         add(title, "wrap, span, center");
 
-        content.setLayout(new MigLayout("", "20[]20[]20", "10[]10[]10"));
+//        content.setLayout(new MigLayout("", "20[]20[]20", "10[]10[]10"));
+        content.setLayout(new MigLayout("", "[][]", "[][]"));
         content.setBackground(new Color(255, 255, 255));
         content.setPreferredSize(new Dimension(1000, 560));
         add(content, "wrap");

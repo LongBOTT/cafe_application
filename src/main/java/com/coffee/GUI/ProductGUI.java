@@ -4,7 +4,9 @@ import com.coffee.BLL.ProductBLL;
 import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Supplier;
+import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
+import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailProductGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -227,7 +229,6 @@ public class ProductGUI extends Layout3 {
         loadDataTable(productBLL.getData(productBLL.searchProducts("deleted = 0")));
     }
 
-
 public void loadDataTable(Object[][] objects) {
     DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
     model.setRowCount(0);
@@ -265,7 +266,6 @@ public void loadDataTable(Object[][] objects) {
             allProducts.add(productArray);
         }
     }
-
     // Duyệt qua mảng allProducts để thêm dữ liệu vào bảng
     for (Object[] productArray : allProducts) {
         String productName = (String) productArray[1];
@@ -315,7 +315,6 @@ public void loadDataTable(Object[][] objects) {
         }
 
         model.addRow(rowData);
-
 
     }
 
@@ -369,23 +368,20 @@ public void loadCategory() {
 
 
     private void selectFunction() {
-        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
-        int indexRow = dataTable.getSelectedRow();
+//        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         int indexColumn = dataTable.getSelectedColumn();
 
-        if (detail && indexColumn == indexColumnDetail)
-            new DialogFormDetail_1(); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        if (indexColumn == indexColumnDetail)
+            new DetailProductGUI(); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
-        if (detail && indexColumn == indexColumnEdit) {
-            new DialogFormDetail_1(); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        if ( indexColumn == indexColumnEdit) {
+            new DetailProductGUI(); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
             refresh();
         }
 
-        if (detail && indexColumn == indexColumnRemove)
-            new DialogFormDetail_1(); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        if (indexColumn == indexColumnRemove)
+            new DetailProductGUI(); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
         refresh(); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-
-
     }
 
 }
