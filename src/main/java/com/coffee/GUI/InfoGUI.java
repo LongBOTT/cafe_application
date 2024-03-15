@@ -3,6 +3,7 @@ package com.coffee.GUI;
 import com.coffee.BLL.StaffBLL;
 import com.coffee.DTO.Account;
 import com.coffee.DTO.Staff;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddLeaveOfAbsenceFormGUI;
 import com.coffee.GUI.components.InfoPanel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
@@ -148,12 +149,12 @@ public class InfoGUI extends InfoPanel {
         buttonOffDay.setPreferredSize(new Dimension(150, 30));
         buttonOffDay.setFont(new Font("Lexend", Font.BOLD, 15));
         buttonOffDay.setCursor(new Cursor(Cursor.HAND_CURSOR));
-//        buttonOffDay.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//
-//            }
-//        });
+        buttonOffDay.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                new AddLeaveOfAbsenceFormGUI(staff);
+            }
+        });
         InfoStaffPanel.add(buttonOffDay, "span, wrap");
     }
 

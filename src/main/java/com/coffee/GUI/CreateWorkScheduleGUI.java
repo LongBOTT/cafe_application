@@ -1,11 +1,12 @@
 package com.coffee.GUI;
 
+import com.coffee.BLL.RoleBLL;
+import com.coffee.BLL.Role_detailBLL;
 import com.coffee.BLL.StaffBLL;
 import com.coffee.BLL.Work_ScheduleBLL;
-import com.coffee.DTO.Account;
-import com.coffee.DTO.Function;
-import com.coffee.DTO.Staff;
-import com.coffee.DTO.Work_Schedule;
+import com.coffee.DTO.*;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddWorkScheduleGUI;
+import com.coffee.GUI.DialogGUI.FromEditGUI.EditWorkScheduleGUI;
 import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
@@ -35,7 +36,6 @@ public class CreateWorkScheduleGUI extends Layout2 {
     private Work_ScheduleBLL workScheduleBLL = new Work_ScheduleBLL();
     private DataTable dataTable;
     private RoundedScrollPane scrollPane;
-    private int indexColumnDetail = -1;
     private int indexColumnEdit = -1;
     private int indexColumnRemove = -1;
     private boolean detail = false;
@@ -48,8 +48,6 @@ public class CreateWorkScheduleGUI extends Layout2 {
     public CreateWorkScheduleGUI(List<Function> functions) {
         super();
         this.functions = functions;
-        if (functions.stream().anyMatch(f -> f.getName().equals("view")))
-            detail = true;
         if (functions.stream().anyMatch(f -> f.getName().equals("edit")))
             edit = true;
         if (functions.stream().anyMatch(f -> f.getName().equals("remove")))
@@ -68,11 +66,6 @@ public class CreateWorkScheduleGUI extends Layout2 {
         jTextFieldDate = new JTextField[2];
 
         columnNames = new String[]{"Chức vụ", "Họ tên", "Ngày làm", "Ca", "Giờ vào", "Giờ ra"};
-        if (detail) {
-            columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
-            indexColumnDetail = columnNames.length - 1;
-            columnNames[indexColumnDetail] = "Xem";
-        }
 
         if (edit) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
@@ -184,7 +177,7 @@ public class CreateWorkScheduleGUI extends Layout2 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-//                    new AddWorkScheduleGUI();
+                    new AddWorkScheduleGUI();
                     refresh();
                 }
             });
@@ -279,6 +272,12 @@ public class CreateWorkScheduleGUI extends Layout2 {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
 
             int staffId = Integer.parseInt(data[i][1].toString());
+
+            List<Role_detail> role_detailList = new Role_detailBLL().searchRole_details("staff_id = " + staffId);
+            Role_detail roleDetail = role_detailList.get(role_detailList.size() - 1);
+            Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
+            data[i][0] = role.getName();
+
             data[i][1] = staffBLL.findStaffsBy(Map.of("id", staffId)).get(0).getName();
 
             if (data[i][3].toString().equals("1"))
@@ -290,11 +289,6 @@ public class CreateWorkScheduleGUI extends Layout2 {
             if (data[i][3].toString().equals("3"))
                 data[i][3] = "18h - 23h";
 
-            if (detail) {
-                JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
-                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
-                data[i][data[i].length - 1] = iconDetail;
-            }
             if (edit) {
                 JLabel iconEdit = new JLabel(new FlatSVGIcon("icon/edit.svg"));
                 data[i] = Arrays.copyOf(data[i], data[i].length + 1);
@@ -316,13 +310,10 @@ public class CreateWorkScheduleGUI extends Layout2 {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
 
-        if (detail && indexColumn == indexColumnDetail)
-//            new DetailWorkScheduleGUI(workScheduleBLL.searchWork_schedules().get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
-
-            if (edit && indexColumn == indexColumnEdit) {
-//            new EditWorkScheduleGUI(workScheduleBLL.searchWork_schedules().get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
-                refresh();
-            }
+        if (edit && indexColumn == indexColumnEdit) {
+            new EditWorkScheduleGUI(workScheduleBLL.searchWork_schedules().get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
+            refresh();
+        }
 
         if (remove && indexColumn == indexColumnRemove)
             deleteWorkSchedule(workScheduleBLL.searchWork_schedules().get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
@@ -331,12 +322,12 @@ public class CreateWorkScheduleGUI extends Layout2 {
 
     private void deleteWorkSchedule(Work_Schedule workSchedule) {
         if (dataTable.getSelectedRow() == -1) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn nhà cung cấp cần xoá.",
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn lịch làm việc xoá.",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
         String[] options = new String[]{"Huỷ", "Xác nhận"};
-        int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nhà cung cấp?",
+        int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá lịch làm việc?",
                 "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
         if (choice == 1) {
             Pair<Boolean, String> result = workScheduleBLL.deleteWork_schedule(workSchedule);
