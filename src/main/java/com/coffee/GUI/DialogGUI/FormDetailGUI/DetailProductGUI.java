@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
 public class DetailProductGUI extends DialogFormDetail_1 {
 
     private JLabel titleName;
@@ -20,14 +21,17 @@ public class DetailProductGUI extends DialogFormDetail_1 {
     private JLabel material;
 
     private JComboBox<String> CbListMaterial;
-    private List<String> AtributeProduct=  new ArrayList<>();
+    private List<String> AtributeProduct = new ArrayList<>();
+
     public DetailProductGUI() {
         super();
+        super.setTitle("Thông tin nhà cung cấp");
+        setVisible(true);
         init();
     }
 
     public void init() {
-        super.init();
+//        super.init();
         titleName = new JLabel("Chi tiết sản phẩm");
         title.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
@@ -54,8 +58,8 @@ public class DetailProductGUI extends DialogFormDetail_1 {
         containerImage = new RoundedPanel();
         containerImage.setLayout(new MigLayout("", "[]", "[][]"));
 
-        containerImage.add(lblImage,"alignx center, wrap");
-        containerImage.add(btnImage,"alignx center");
+        containerImage.add(lblImage, "alignx center, wrap");
+        containerImage.add(btnImage, "alignx center");
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
@@ -92,7 +96,7 @@ public class DetailProductGUI extends DialogFormDetail_1 {
                 size.setPreferredSize(new Dimension(350, 30));
                 size.setFont((new Font("Public Sans", Font.PLAIN, 14)));
                 size.setBackground(new Color(245, 246, 250));
-                containerAtributeProduct.add(size,"wrap");
+                containerAtributeProduct.add(size, "wrap");
                 continue;
             }
             if (string.equals("Giá bán")) {
@@ -107,7 +111,7 @@ public class DetailProductGUI extends DialogFormDetail_1 {
             textField.setPreferredSize(new Dimension(350, 30));
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
-            containerAtributeProduct.add(textField,"wrap");
+            containerAtributeProduct.add(textField, "wrap");
 
         }
         lblListMaterial = new JLabel("Danh sách nguyên liệu");
@@ -134,7 +138,7 @@ public class DetailProductGUI extends DialogFormDetail_1 {
                 size.setPreferredSize(new Dimension(350, 30));
                 size.setFont((new Font("Public Sans", Font.PLAIN, 14)));
                 size.setBackground(new Color(245, 246, 250));
-                containerAtributeProduct.add(size,"wrap");
+                containerAtributeProduct.add(size, "wrap");
                 continue;
             }
             if (string.equals("Giá bán")) {
