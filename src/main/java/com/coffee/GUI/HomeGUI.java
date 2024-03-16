@@ -5,14 +5,12 @@ import com.coffee.DTO.*;
 import com.coffee.DTO.Module;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
-import com.coffee.GUI.components.SalePanel;
 import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -139,11 +137,7 @@ public class HomeGUI extends JFrame {
         staffInfo.setPreferredSize(new Dimension(40, 80));
         infor.add(staffInfo);
 
-        ImageIcon icon = new FlatSVGIcon("icon/coffee_logo.svg");
-        Image image = icon.getImage();
-        Image newimg = image.getScaledInstance(60, 60, java.awt.Image.SCALE_SMOOTH);
-        icon = new ImageIcon(newimg);
-        iconLogo.setIcon(icon);
+        iconLogo.setIcon(new FlatSVGIcon("icon/avatar.svg"));
         jPanelLogo.add(iconLogo);
 
         iconInfo.setIcon(new FlatSVGIcon("icon/profile.svg"));
@@ -283,6 +277,7 @@ public class HomeGUI extends JFrame {
             moduleNames[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
             modules[i].add(moduleNames[i]);
         }
+        menu.setPreferredSize(new Dimension(200, Math.max(500, modules.length * 52)));
         openModule(allPanelModules[0]);
         Active(modules[0]);
     }
@@ -332,11 +327,13 @@ public class HomeGUI extends JFrame {
             case 10 -> new ProductGUI(functions);
             case 11 -> new SupplierGUI(functions);
             case 12 -> new StaffGUI(functions);
-//            case 13 -> new RecipeGUI(functions);
-            case 14 -> new CasualLeaveGUI(functions);
-            case 15 -> new AccountGUI(functions);
-            case 16 -> new DecentralizationGUI(functions);
-            case 17 -> new MaterialGUI(functions);
+            case 13 -> new Leave_Of_Absence_FormGUI(functions);
+            case 14 -> new AccountGUI(functions);
+            case 15 -> new DecentralizationGUI(functions);
+            case 16 -> new MaterialGUI(functions);
+            case 17 -> new InfoGUI(account, staff);
+            case 18 -> new MyWorkScheduleGUI(staff);
+            case 19 -> new CreateWorkScheduleGUI(functions);
             default -> new RoundedPanel();
         };
     }

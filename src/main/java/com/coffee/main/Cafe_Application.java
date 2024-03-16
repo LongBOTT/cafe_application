@@ -25,7 +25,7 @@ public class Cafe_Application {
         UIManager.put("ScrollBar.thumbArc", 999);
         UIManager.put("ScrollBar.trackInsets", new Insets(2, 4, 2, 4));
         UIManager.put("ScrollBar.thumbInsets", new Insets(2, 2, 2, 2));
-        UIManager.put("ScrollBar.track", new Color(253, 143, 143, 76));
+        UIManager.put("ScrollBar.track", new Color(220, 221, 225, 255));
         UIManager.put("PasswordField.showRevealButton", true);
         UIManager.put("PasswordField.capsLockIcon", new FlatSVGIcon("icon/capslock.svg"));
         UIManager.put("TitlePane.iconSize", new Dimension(25, 25));

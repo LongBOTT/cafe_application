@@ -33,7 +33,6 @@ public class DetailProductGUI extends DialogFormDetail_1 {
 
     public void init() {
 
-//        super.init();
 
         titleName = new JLabel("Chi tiết sản phẩm");
         title.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
@@ -59,12 +58,24 @@ public class DetailProductGUI extends DialogFormDetail_1 {
 //        containerAtributeProduct.setBackground(new Color(217,217,217));
 
 
-
+        top.add(containerAtributeProduct);
         containerImage = new RoundedPanel();
         containerImage.setLayout(new MigLayout("", "[]", "[][]"));
 
-        containerImage.add(lblImage, "alignx center, wrap");
-        containerImage.add(btnImage, "alignx center");
+        containerImage.setBackground(new Color(217, 217, 217));
+        containerImage.setPreferredSize(new Dimension(300, 200));
+        containerImage.add(btnImage);
+        containerImage.add(lblImage);
+        lblImage.setBackground(new Color(0, 0, 0));
+        top.add(containerImage);
+        GridBagConstraints gbcAtributeProduct = new GridBagConstraints();
+        gbcAtributeProduct.fill = GridBagConstraints.BOTH;
+        gbcAtributeProduct.gridx = 0;
+        gbcAtributeProduct.gridy = 0;
+        gbcAtributeProduct.weightx = 1.0;
+        gbcAtributeProduct.weighty = 1.0;
+        gbcAtributeProduct.insets = new Insets(0, 0, 0, 10); // Khoảng cách bên phải
+
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;

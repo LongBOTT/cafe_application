@@ -41,12 +41,9 @@ public class DiscountGUI extends Layout2 {
 
     private JDateChooser[] jDateChooser = new JDateChooser[0];
 
-    private  JTextField[] dateTextField = new JTextField[0];
+    private JTextField[] dateTextField = new JTextField[0];
 
-    private  JTextField[] jTextFieldDate = new JTextFieldDateEditor[0];
-
-
-
+    private JTextField[] jTextFieldDate = new JTextFieldDateEditor[0];
 
 
     public DiscountGUI(List<Function> functions) {
@@ -66,7 +63,7 @@ public class DiscountGUI extends Layout2 {
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
-        jComboBoxSearch = new JComboBox<>(new String[]{"Bộ Lọc","Ngừng áp dụng", "Đang áp dụng"});
+        jComboBoxSearch = new JComboBox<>(new String[]{"Bộ Lọc", "Ngừng áp dụng", "Đang áp dụng"});
 
         columnNames = new String[]{"Mã Giảm Giá", "Ngày Bắt Đầu", "Ngày Kết Thúc", "Trạng Thái"};
         if (detail) {
@@ -272,22 +269,20 @@ public class DiscountGUI extends Layout2 {
     private void selectSearchFilter() {
         if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Trạng Thái")) {
             loadDataTable(discountBLL.getData(discountBLL.findDiscounts("id", jTextFieldSearch.getText())));
-        } else if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Đang áp dụng"))
-            {
-                searchDiscountByStatus();
-            }
-            else  {
-                searchDiscountByDisStatus();
-            }
+        } else if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Đang áp dụng")) {
+            searchDiscountByStatus();
+        } else {
+            searchDiscountByDisStatus();
+        }
 
     }
+
     private void searchDiscountByDisStatus() {
         if (jTextFieldSearch.getText().isEmpty()) {
             loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("status = 1")));
 
         } else {
-            if(Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Ngừng áp dụng"))
-            {
+            if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Ngừng áp dụng")) {
                 loadDataTable(discountBLL.getData(discountBLL.findDiscounts("id", jTextFieldSearch.getText())));
             }
         }
@@ -298,12 +293,12 @@ public class DiscountGUI extends Layout2 {
             loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("status = 0")));
 
         } else {
-            if(Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Đang áp dụng"))
-            {
+            if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Đang áp dụng")) {
                 loadDataTable(discountBLL.getData(discountBLL.findDiscounts("id", jTextFieldSearch.getText())));
             }
         }
     }
+
     public void loadDataTable(Object[][] objects) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
@@ -337,20 +332,19 @@ public class DiscountGUI extends Layout2 {
     }
 
 
-
     private void selectFunction() {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
 
         if (detail && indexColumn == indexColumnDetail)
-         //   new DetailDiscountGUI(discountBLL.searchDiscounts("deleted = 0").get(indexRow));
-        // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-
-        if (detail && indexColumn == indexColumnEdit) {
-        //   new EditDiscountGUI(discountBLL.searchDiscounts("deleted = 0").get(indexRow));
+            //   new DetailDiscountGUI(discountBLL.searchDiscounts("deleted = 0").get(indexRow));
             // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-            refresh();
-        }
+
+            if (detail && indexColumn == indexColumnEdit) {
+                //   new EditDiscountGUI(discountBLL.searchDiscounts("deleted = 0").get(indexRow));
+                // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+                refresh();
+            }
 
     }
 

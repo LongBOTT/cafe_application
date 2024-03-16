@@ -192,7 +192,7 @@ public class AccountGUI extends Layout1 {
     private void searchAccountsByStaff() {
         List<Account> accountList = new ArrayList<>();
         for (Staff staff : staffBLL.searchStaffs("deleted = 0")) {
-            if (staff.getName().toLowerCase().contains(jTextFieldSearch.getText())) {
+            if (staff.getName().toLowerCase().contains(jTextFieldSearch.getText().toLowerCase())) {
                 accountList.add(accountBLL.findAccountsBy(Map.of("staff_id", staff.getId())).get(0));
             }
         }

@@ -1,5 +1,6 @@
 package com.coffee.GUI.DialogGUI.FormAddGUI;
 
+
 import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.DialogForm;
@@ -163,4 +164,5 @@ public class AddDiscountGUI extends DialogFormDetail_2 {
 //        }
 //    }
     }
+
 }

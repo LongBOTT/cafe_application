@@ -20,6 +20,10 @@ public class DataTable extends JTable {
                 return false;
             }
         });
+        
+        for (int i = 0; i < getColumnCount(); i++) {
+            setDefaultRenderer(getColumnClass(i), new CustomTableCellRenderer());
+        }
 
         getTableHeader().setFont(new Font("Public Sans", Font.BOLD | Font.ITALIC, 15));
         getTableHeader().setReorderingAllowed(false);
@@ -69,6 +73,10 @@ public class DataTable extends JTable {
                 return String.class;
             }
         });
+
+        for (int i = 0; i < getColumnCount(); i++) {
+            setDefaultRenderer(getColumnClass(i), new CustomTableCellRenderer());
+        }
 
         getTableHeader().setFont(new Font("Public Sans", Font.BOLD | Font.ITALIC, 15));
         getTableHeader().setReorderingAllowed(false);
@@ -143,6 +151,11 @@ public class DataTable extends JTable {
                 int col = columnAtPoint(e.getPoint());
 
                 if ((col == numberOfColumns && row != -1) || (col == numberOfColumns + 1 && row != -1) || (col == numberOfColumns + 2 && row != -1)) {
+                    if (actionListener != null) {
+                        actionListener.actionPerformed(null);
+                    }
+                }
+                if (!detail && !edit && remove && col != numberOfColumns && row != -1 && col != numberOfColumns + 1 && col != numberOfColumns + 2) {
                     if (actionListener != null) {
                         actionListener.actionPerformed(null);
                     }

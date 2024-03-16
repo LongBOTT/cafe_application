@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 07, 2024 at 06:08 PM
+-- Generation Time: Mar 16, 2024 at 03:34 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.29
 
@@ -64,33 +64,100 @@ CREATE TABLE `decentralization` (
 INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 (0, 1, 1),
 (0, 2, 1),
+(0, 2, 5),
+(0, 2, 6),
 (0, 3, 1),
 (0, 4, 1),
 (0, 5, 1),
 (0, 6, 1),
+(0, 6, 2),
+(0, 6, 3),
+(0, 7, 1),
+(0, 7, 5),
+(0, 7, 6),
 (0, 8, 1),
+(0, 8, 2),
+(0, 8, 5),
+(0, 8, 6),
 (0, 9, 1),
+(0, 9, 2),
+(0, 9, 5),
+(0, 9, 6),
 (0, 10, 1),
+(0, 10, 2),
+(0, 10, 3),
+(0, 10, 4),
+(0, 10, 5),
+(0, 10, 6),
 (0, 11, 1),
+(0, 11, 2),
+(0, 11, 3),
+(0, 11, 4),
+(0, 11, 5),
+(0, 11, 6),
 (0, 12, 1),
+(0, 12, 2),
+(0, 12, 3),
+(0, 12, 4),
+(0, 12, 5),
+(0, 12, 6),
 (0, 13, 1),
+(0, 13, 3),
 (0, 14, 1),
+(0, 14, 2),
 (0, 15, 1),
+(0, 15, 2),
+(0, 15, 3),
+(0, 15, 4),
 (0, 16, 1),
+(0, 16, 2),
+(0, 16, 3),
+(0, 16, 4),
+(0, 16, 5),
+(0, 16, 6),
 (0, 17, 1),
-(1, 10, 1),
-(1, 11, 1),
+(0, 18, 1),
+(0, 19, 1),
+(0, 19, 2),
+(0, 19, 3),
+(0, 19, 4),
+(0, 19, 5),
+(0, 19, 6),
+(0, 20, 1),
+(0, 20, 2),
+(0, 20, 3),
+(0, 20, 4),
+(0, 20, 5),
+(0, 20, 6),
+(1, 14, 1),
+(1, 14, 2),
 (1, 15, 1),
 (1, 15, 2),
-(1, 16, 1),
-(1, 16, 2),
-(1, 16, 3),
-(1, 16, 4),
+(1, 15, 3),
+(1, 15, 4),
+(2, 2, 1),
+(2, 2, 5),
+(2, 2, 6),
+(2, 3, 1),
 (2, 4, 1),
 (2, 5, 1),
 (2, 6, 1),
 (2, 6, 2),
 (2, 6, 3),
+(2, 7, 1),
+(2, 7, 5),
+(2, 7, 6),
+(2, 8, 1),
+(2, 8, 5),
+(2, 8, 6),
+(2, 9, 1),
+(2, 9, 5),
+(2, 9, 6),
+(2, 10, 1),
+(2, 10, 2),
+(2, 10, 3),
+(2, 10, 4),
+(2, 11, 1),
 (2, 12, 1),
 (2, 12, 2),
 (2, 12, 3),
@@ -99,25 +166,45 @@ INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 (2, 13, 2),
 (2, 13, 3),
 (2, 13, 4),
-(2, 14, 1),
-(2, 14, 2),
-(2, 14, 3),
-(2, 14, 4),
+(2, 16, 1),
+(2, 19, 1),
+(2, 19, 2),
+(2, 19, 3),
+(2, 19, 4),
+(2, 19, 5),
+(2, 19, 6),
+(2, 20, 1),
+(2, 20, 2),
+(2, 20, 3),
+(2, 20, 4),
+(2, 20, 5),
+(2, 20, 6),
+(3, 2, 1),
+(3, 7, 1),
+(3, 7, 5),
+(3, 7, 6),
 (3, 8, 1),
 (3, 8, 2),
+(3, 8, 5),
+(3, 8, 6),
 (3, 9, 1),
 (3, 9, 2),
+(3, 9, 5),
+(3, 9, 6),
 (3, 11, 1),
 (3, 11, 2),
 (3, 11, 3),
 (3, 11, 4),
+(3, 16, 1),
+(3, 16, 2),
+(3, 16, 3),
+(3, 16, 4),
 (3, 17, 1),
-(3, 17, 2),
-(3, 17, 3),
-(3, 17, 4),
+(3, 18, 1),
 (4, 1, 1),
 (4, 10, 1),
-(4, 13, 1);
+(4, 17, 1),
+(4, 18, 1);
 
 -- --------------------------------------------------------
 
@@ -234,6 +321,29 @@ INSERT INTO `import_note` (`id`, `staff_id`, `total`, `received_date`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `leave_of_absence_form`
+--
+
+CREATE TABLE `leave_of_absence_form` (
+  `id` bigint(20) NOT NULL,
+  `staff_id` bigint(20) DEFAULT NULL,
+  `date` date DEFAULT NULL,
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `reason` varchar(255) DEFAULT NULL,
+  `status` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `leave_of_absence_form`
+--
+
+INSERT INTO `leave_of_absence_form` (`id`, `staff_id`, `date`, `start_date`, `end_date`, `reason`, `status`) VALUES
+(1, 4, '2024-03-16', '2024-03-18', '2024-03-19', 'bệnh', 2);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `material`
 --
 
@@ -309,7 +419,7 @@ CREATE TABLE `module` (
 INSERT INTO `module` (`id`, `name`) VALUES
 (1, 'Bán hàng'),
 (2, 'Kho hàng'),
-(3, 'Thống kê kinh doanh'),
+(3, 'Doanh thu'),
 (4, 'Thống kê lương'),
 (5, 'Thống kê nhân sự'),
 (6, 'Giảm giá'),
@@ -319,11 +429,14 @@ INSERT INTO `module` (`id`, `name`) VALUES
 (10, 'Sản phẩm'),
 (11, 'Nhà cung cấp'),
 (12, 'Nhân viên'),
-(13, 'Công thức'),
-(14, 'Đơn nghỉ phép'),
-(15, 'Tài khoản'),
-(16, 'Phân quyền'),
-(17, 'Nguyên liệu');
+(13, 'Đơn nghỉ phép'),
+(14, 'Tài khoản'),
+(15, 'Phân quyền'),
+(16, 'Nguyên liệu'),
+(17, 'Thông tin'),
+(18, 'Lịch làm việc'),
+(19, 'Xếp ca làm'),
+(20, 'Tính lương');
 
 -- --------------------------------------------------------
 
@@ -705,7 +818,9 @@ INSERT INTO `role_detail` (`role_id`, `staff_id`, `entry_date`, `salary`, `hourl
 (2, 2, '2024-02-28', 5000000, 0),
 (2, 3, '2024-02-28', 5000000, 0),
 (3, 4, '2024-02-28', 0, 20000),
-(4, 5, '2024-02-28', 0, 25000);
+(4, 5, '2024-02-28', 0, 25000),
+(4, 6, '2024-03-12', 0, 25000),
+(4, 7, '2024-03-12', 0, 25000);
 
 -- --------------------------------------------------------
 
@@ -789,9 +904,27 @@ CREATE TABLE `work_schedule` (
   `id` bigint(20) NOT NULL,
   `staff_id` bigint(20) DEFAULT NULL,
   `date` date DEFAULT NULL,
-  `start_time` varchar(255) DEFAULT NULL,
-  `end_time` varchar(255) DEFAULT NULL
+  `check_in` varchar(255) DEFAULT 'null',
+  `check_out` varchar(255) DEFAULT 'null',
+  `shift` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `work_schedule`
+--
+
+INSERT INTO `work_schedule` (`id`, `staff_id`, `date`, `check_in`, `check_out`, `shift`) VALUES
+(1, 4, '2024-03-11', 'null', 'null', 1),
+(2, 4, '2024-03-12', 'null', 'null', 2),
+(3, 4, '2024-03-13', 'null', 'null', 3),
+(4, 4, '2024-03-14', 'null', 'null', 2),
+(5, 4, '2024-03-15', 'null', 'null', 1),
+(6, 4, '2024-03-16', 'null', 'null', 2),
+(7, 4, '2024-03-17', 'null', 'null', 3),
+(8, 5, '2024-03-11', '20:52', 'null', 1),
+(9, 5, '2024-03-12', 'null', 'null', 2),
+(10, 5, '2024-03-13', 'null', 'null', 3),
+(11, 5, '2024-03-14', 'null', 'null', 1);
 
 --
 -- Indexes for dumped tables
@@ -851,6 +984,13 @@ ALTER TABLE `function`
 ALTER TABLE `import_note`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_import_note_staff` (`staff_id`);
+
+--
+-- Indexes for table `leave_of_absence_form`
+--
+ALTER TABLE `leave_of_absence_form`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_leave_staff` (`staff_id`);
 
 --
 -- Indexes for table `material`
@@ -956,7 +1096,7 @@ ALTER TABLE `function`
 -- AUTO_INCREMENT for table `module`
 --
 ALTER TABLE `module`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11116;
 
 --
 -- Constraints for dumped tables
@@ -1001,6 +1141,12 @@ ALTER TABLE `export_note`
 --
 ALTER TABLE `import_note`
   ADD CONSTRAINT `fk_import_note_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `leave_of_absence_form`
+--
+ALTER TABLE `leave_of_absence_form`
+  ADD CONSTRAINT `fk_leave_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `material`
