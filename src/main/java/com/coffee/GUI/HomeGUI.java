@@ -327,7 +327,7 @@ public class HomeGUI extends JFrame {
             case 10 -> new ProductGUI(functions);
             case 11 -> new SupplierGUI(functions);
             case 12 -> new StaffGUI(functions);
-            case 13 -> new CasualLeaveGUI(functions);
+            case 13 -> new Leave_Of_Absence_FormGUI(functions);
             case 14 -> new AccountGUI(functions);
             case 15 -> new DecentralizationGUI(functions);
             case 16 -> new MaterialGUI(functions);

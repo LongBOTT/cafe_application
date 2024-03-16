@@ -5,6 +5,7 @@ import java.util.Date;
 public class Leave_Of_Absence_Form {
     private int id;
     private int staff_id;
+    private Date date;
     private Date start_date;
     private Date end_date;
     private String reason;
@@ -13,9 +14,10 @@ public class Leave_Of_Absence_Form {
     public Leave_Of_Absence_Form() {
     }
 
-    public Leave_Of_Absence_Form(int id, int staff_id, Date start_date, Date end_date, String reason, int status) {
+    public Leave_Of_Absence_Form(int id, int staff_id, Date date, Date start_date, Date end_date, String reason, int status) {
         this.id = id;
         this.staff_id = staff_id;
+        this.date = date;
         this.start_date = start_date;
         this.end_date = end_date;
         this.reason = reason;
@@ -36,6 +38,14 @@ public class Leave_Of_Absence_Form {
 
     public void setStaff_id(int staff_id) {
         this.staff_id = staff_id;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public Date getStart_date() {
@@ -75,9 +85,9 @@ public class Leave_Of_Absence_Form {
         String status1 = status == 0 ? "Chưa duyệt" : status == 1 ? "Duyệt" : "Không duyệt";
         return id + " | " +
                 staff_id + " | " +
+                date + " | " +
                 start_date + " | " +
                 end_date + " | " +
-                reason + " | " +
                 status1;
     }
 }

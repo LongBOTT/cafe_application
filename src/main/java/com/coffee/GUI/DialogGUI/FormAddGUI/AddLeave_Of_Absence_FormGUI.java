@@ -1,11 +1,14 @@
 package com.coffee.GUI.DialogGUI.FormAddGUI;
 
 
+import com.coffee.BLL.Leave_Of_Absence_FormBLL;
+import com.coffee.DTO.Leave_Of_Absence_Form;
 import com.coffee.DTO.Staff;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
+import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -15,11 +18,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
-public class AddLeaveOfAbsenceFormGUI extends JDialog {
+public class AddLeave_Of_Absence_FormGUI extends JDialog {
     private Staff staff;
     private List<JLabel> attributeLeaveOfAbsenceForm;
     private JTextField textField;
@@ -28,8 +32,9 @@ public class AddLeaveOfAbsenceFormGUI extends JDialog {
     private JDateChooser[] jDateChooser;
     private JTextArea jTextArea;
     private JButton buttonCreate;
+    private Leave_Of_Absence_FormBLL leaveOfAbsenceFormBLL = new Leave_Of_Absence_FormBLL();
 
-    public AddLeaveOfAbsenceFormGUI(Staff staff) {
+    public AddLeave_Of_Absence_FormGUI(Staff staff) {
         super((Frame) null, "", true);
         this.staff = staff;
         getContentPane().setBackground(new Color(217, 217, 217));
@@ -159,6 +164,43 @@ public class AddLeaveOfAbsenceFormGUI extends JDialog {
     }
 
     private void addLeave_Of_Absence_form() {
+        Pair<Boolean, String> result;
+
+        int id, staff_id;
+        Date date, start_date, end_date;
+        String reason;
+
+        id = leaveOfAbsenceFormBLL.getAutoID(leaveOfAbsenceFormBLL.searchLeave_Of_Absence_Forms());
+        staff_id = staff.getId();
+
+        if (jDateChooser[0].getDateEditor().getDate() == null) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn ngày bắt đầu.",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (jDateChooser[1].getDateEditor().getDate() == null) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn ngày kết thúc.",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        date = java.sql.Date.valueOf(LocalDate.now());
+        start_date = java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[0].getDate()));
+        end_date = java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[1].getDate()));
+        reason = jTextArea.getText();
+
+        Leave_Of_Absence_Form leaveOfAbsenceForm = new Leave_Of_Absence_Form(id, staff_id, date, start_date, end_date, reason, 0);
+
+        result = leaveOfAbsenceFormBLL.addLeave_Of_Absence_Form(leaveOfAbsenceForm);
+
+        if (result.getKey()) {
+            JOptionPane.showMessageDialog(null, result.getValue(),
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(null, result.getValue(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void cancel() {

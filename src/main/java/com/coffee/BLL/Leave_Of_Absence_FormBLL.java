@@ -97,6 +97,7 @@ public class Leave_Of_Absence_FormBLL extends Manager<Leave_Of_Absence_Form> {
         return switch (key) {
             case "id" -> leave_Of_Absence_Form.getId();
             case "staff_id" -> leave_Of_Absence_Form.getStaff_id();
+            case "date" -> leave_Of_Absence_Form.getDate();
             case "start_date" -> leave_Of_Absence_Form.getStart_date();
             case "end_date" -> leave_Of_Absence_Form.getEnd_date();
             case "reason" -> leave_Of_Absence_Form.getReason();
