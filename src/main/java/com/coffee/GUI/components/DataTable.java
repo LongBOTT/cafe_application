@@ -12,7 +12,7 @@ import java.awt.event.MouseEvent;
 
 public class DataTable extends JTable {
     private int lastSelectedRow = -1;
-
+    private boolean isUniqueTable;
     public DataTable(Object[][] data, Object[] columnNames) {
         super(new DefaultTableModel(data, columnNames) {
             @Override
@@ -135,6 +135,7 @@ public class DataTable extends JTable {
         setSelectionBackground(new Color(220, 221, 225, 221));
         setSelectionForeground(Color.BLACK);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -156,9 +157,14 @@ public class DataTable extends JTable {
             }
         });
 
+
+
+
         JTableHeader jTableHeader = getTableHeader();
         jTableHeader.setBackground(new Color(217, 217, 217));
     }
+
+
 
 }
 
