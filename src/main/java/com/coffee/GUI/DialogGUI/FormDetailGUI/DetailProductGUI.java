@@ -6,6 +6,7 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +21,13 @@ public class DetailProductGUI extends DialogFormDetail_1 {
     private JLabel lblListMaterial;
     private JLabel material;
 
+    private RoundedPanel  containerInforMaterial;
     private JComboBox<String> CbListMaterial;
     private List<String> AtributeProduct = new ArrayList<>();
 
     public DetailProductGUI() {
         super();
-        super.setTitle("Thông tin nhà cung cấp");
+        super.setTitle("Chi tiết sản phẩm");
         init();
         setVisible(true);
 
@@ -47,13 +49,11 @@ public class DetailProductGUI extends DialogFormDetail_1 {
         Image newImg = image.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
         icon = new ImageIcon(newImg);
         lblImage.setIcon(icon);
-//
 
         top.setLayout(new GridBagLayout());
 
         containerAtributeProduct = new RoundedPanel();
         containerAtributeProduct.setLayout(new MigLayout("", "[]30[]30", "[]20[]20[]"));
-//        containerAtributeProduct.setBackground(new Color(217,217,217));
 
         top.add(containerAtributeProduct);
         containerImage = new RoundedPanel();
@@ -61,8 +61,9 @@ public class DetailProductGUI extends DialogFormDetail_1 {
 
         containerImage.setBackground(new Color(217, 217, 217));
         containerImage.setPreferredSize(new Dimension(300, 200));
-        containerImage.add(btnImage);
-        containerImage.add(lblImage);
+        containerImage.add(lblImage,"alignx center, wrap");
+        containerImage.add(btnImage,"alignx center");
+
         lblImage.setBackground(new Color(0, 0, 0));
         top.add(containerImage);
         GridBagConstraints gbcAtributeProduct = new GridBagConstraints();
@@ -132,42 +133,40 @@ public class DetailProductGUI extends DialogFormDetail_1 {
 
         center.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
         center.add(lblListMaterial);
-//        for (String string : new String[]{"Tên nguyên liệu", "Số lượng", "Đơn vị", "Thêm"}) {
-//            JLabel label = new JLabel();
-//            label.setPreferredSize(new Dimension(170, 30));
-//            label.setText(string);
-//            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
-//            containerAtributeProduct.add(label);
-//
-//            JTextField textField = new JTextField();
-//
-//            if (string.equals("Tên sản phẩm")) {
-////                textField.setText(AtributeProduct.get(0));
-//            }
-//            if (string.equals("Size")) {
-//                JComboBox<String> size = new JComboBox();
-////                textField.setText(AtributeProduct.get(1));
-//                size.setPreferredSize(new Dimension(350, 30));
-//                size.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-//                size.setBackground(new Color(245, 246, 250));
-//                containerAtributeProduct.add(size, "wrap");
-//                continue;
-//            }
-//            if (string.equals("Giá bán")) {
-////                textField.setText(AtributeProduct.get(2));
-//            }
-//            if (string.equals("Loại")) {
-////                textField.setText(AtributeProduct.get(3));
-//            }
-//
-////            textField.setEditable(false);
-////            textField.setEnabled(false);
-////            textField.setPreferredSize(new Dimension(350, 30));
-////            textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-////            textField.setBackground(new Color(245, 246, 250));
-////            containerAtributeProduct.add(textField,"wrap");
-//
-//        }
+
+        containerInforMaterial = new RoundedPanel();
+        containerInforMaterial.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10)); // Sử dụng FlowLayout và đặt khoảng cách ngang và dọc là 0
+        EmptyBorder emptyBorder = new EmptyBorder(0, 30, 0, 0);
+        containerInforMaterial.setBorder(emptyBorder);
+        bottom.add(containerInforMaterial, BorderLayout.NORTH);
+        for (String string : new String[]{"Tên nguyên liệu", "Số lượng", "Đơn vị", "Thêm"}) {
+            if (string.equals("Thêm")) {
+                JButton btnThem = new JButton("Thêm");
+                btnThem.setPreferredSize(new Dimension(100, 30));
+                containerInforMaterial.add(btnThem);
+                continue;
+            }
+            JLabel label = new JLabel();
+            label.setText(string);
+            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+            label.setPreferredSize(null);
+            containerInforMaterial.add(label);
+
+
+            JTextField textField = new JTextField();
+            textField.setEditable(false);
+            textField.setEnabled(false);
+            textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+            textField.setBackground(new Color(245, 246, 250));
+            containerInforMaterial.add(textField);
+            if (string.equals("Tên nguyên liệu")) {
+                textField.setPreferredSize(new Dimension(250, 30));
+            }
+            else {
+                textField.setPreferredSize(new Dimension(50, 30));
+            }
+        }
+
 
     }
 }

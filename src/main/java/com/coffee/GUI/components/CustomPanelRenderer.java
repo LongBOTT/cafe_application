@@ -24,12 +24,12 @@ public class CustomPanelRenderer extends DefaultTableCellRenderer {
             label.setBorder(border);
             return label;
         }
-//        if (value instanceof CustomPopupMenu) {
-//
-//            CustomPopupMenu popupMenu = (CustomPopupMenu) value;
-//            popupMenu.setBorder(border);
-//            return popupMenu;
-//        }
+        if (value instanceof CustomPopupMenu) {
+
+            CustomPopupMenu popupMenu = (CustomPopupMenu) value;
+            popupMenu.setBorder(border);
+            return popupMenu;
+        }
         if (value instanceof JLabel) {
             JLabel label = (JLabel) value;
             label.setBorder(border);
