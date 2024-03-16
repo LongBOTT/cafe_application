@@ -76,7 +76,6 @@ public class EditSupplierGUI extends DialogForm {
             content.add(textField, "wrap");
 
         }
-
         buttonCancel.setPreferredSize(new Dimension(100, 30));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));

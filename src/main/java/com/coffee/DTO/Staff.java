@@ -29,20 +29,6 @@ public class Staff {
         this.deleted = deleted;
     }
 
-    public Staff(int id, String staffNo, String name, String phone) {
-        this.id = id;
-        this.staffNo = staffNo;
-        this.name = name;
-
-    }
-//
-//    public String getRole() {
-//        return role;
-//    }
-//
-//    public void setRole(String role) {
-//        this.role = role;
-//    }
 
     public int getId() {
         return id;

@@ -6,6 +6,7 @@ import com.coffee.GUI.*;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddSupplierGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.*;
 import com.coffee.GUI.DialogGUI.*;
+import com.coffee.GUI.DialogGUI.FromEditGUI.EditStaffGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -323,11 +324,11 @@ public class StaffGUI extends Layout1 {
         if (detail && indexColumn == indexColumnDetail)
             new DetailStaffGUI(staffBLL.searchStaffs("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
-//        if (edit && indexColumn == indexColumnEdit) {
-//                new EditSupplierGUI(staffBLL.searchStaffs("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-//                refresh();
-//        }
-
+        if (edit && indexColumn == indexColumnEdit) {
+                new EditStaffGUI(staffBLL.searchStaffs("deleted = 0").get(indexRow));
+            System.out.println(" đã nhấn ởddaaay ");// Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+                refresh();
+        }
        if (remove && indexColumn == indexColumnRemove)
            deleteStaff(staffBLL.searchStaffs("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 

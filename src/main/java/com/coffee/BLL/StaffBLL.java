@@ -13,6 +13,8 @@ import java.util.Map;
 public class StaffBLL extends Manager<Staff> {
     private StaffDAL staffDAL;
 
+    private Staff staff ;
+
     public StaffBLL() {
         staffDAL = new StaffDAL();
     }
@@ -41,6 +43,7 @@ public class StaffBLL extends Manager<Staff> {
         return new Pair<>(true, "Thêm nhân viên thành công.");
     }
 
+
     public Pair<Boolean, String> updateStaff(Staff staff) {
         Pair<Boolean, String> result = validateStaffAll(staff);
         if (!result.getKey())
@@ -50,6 +53,9 @@ public class StaffBLL extends Manager<Staff> {
 
         return new Pair<>(true, "Cập nhật nhân viên thành công.");
     }
+
+
+
 
     public Pair<Boolean, String> deleteStaff(Staff staff) {
 
@@ -100,6 +106,9 @@ public class StaffBLL extends Manager<Staff> {
         if (!result.getKey())
             return new Pair<>(false, result.getValue());
 
+        result = validateAddress(staff.getAddress());
+        if (!result.getKey())
+            return new Pair<>(false, result.getValue());
         result = exists(staff);
         if (result.getKey())
             return new Pair<>(false, result.getValue());
@@ -166,6 +175,12 @@ public class StaffBLL extends Manager<Staff> {
         if (!VNString.checkFormatOfEmail(email))
             return new Pair<>(false, "Email nhân viên phải theo định dạng (username@domain.name).");
         return new Pair<>(true, email);
+    }
+
+    public Pair<Boolean, String> validateAddress(String address) {
+        if (address.isBlank())
+            return new Pair<>(false, "Email nhân viên không được để trống.");
+        return new Pair<>(true, address);
     }
 
     @Override

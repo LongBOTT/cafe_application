@@ -12,6 +12,7 @@ import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JTextFieldDateEditor;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
@@ -49,6 +50,8 @@ public class DiscountGUI extends Layout2 {
     private JDateChooser[] jDateChooser = new JDateChooser[0];
 
     private  JTextField[] dateTextField = new JTextField[0];
+
+    private  JTextField[] jTextFieldDate = new JTextFieldDateEditor[0];
 
 
 
@@ -166,37 +169,40 @@ public class DiscountGUI extends Layout2 {
         });
         FunctionPanel.add(refreshPanel);
 
-
-
-        jLabels = new JLabel[2];
+        jTextFieldDate = new JTextField[2];
         jDateChooser = new JDateChooser[2];
         dateTextField = new JTextField[2];
 
         for (int i = 0; i < 2; i++) {
-            jLabels[0] = new JLabel("Từ Ngày");
-            jLabels[1] = new JLabel("Đến Ngày");
-
-            jLabels[i].setFont(new Font("Times New Roman", Font.BOLD, 17));
-            jLabels[i].setPreferredSize(new Dimension(80, 35));
-            jLabels[i].setAutoscrolls(true);
+            jTextFieldDate[i] = new JTextField();
+            jTextFieldDate[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
+            jTextFieldDate[i].setPreferredSize(new Dimension(200, 30));
+            jTextFieldDate[i].setAutoscrolls(true);
 
             jDateChooser[i] = new JDateChooser();
             jDateChooser[i].setDateFormatString("dd/MM/yyyy");
-            jDateChooser[i].setPreferredSize(new Dimension(18, 18));
-            jDateChooser[i].setMinSelectableDate(new Date(1000 - 1900, 0, 1));
+            jDateChooser[i].setPreferredSize(new Dimension(150, 30));
+            jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
 
-//            dateTextField[i] = new JTextField();
             dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
-            dateTextField[i].setPreferredSize(new Dimension(130, 35));
-            dateTextField[i].setFont(new Font("Times New Roman", Font.BOLD, 14));
+            dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
 
-            FilterDatePanel.add(jLabels[i]);
-            FilterDatePanel.add(dateTextField[i]);
-
+            if (i == 0) {
+                JLabel jLabel = new JLabel("Từ Ngày");
+                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
+                FilterDatePanel.add(jLabel);
+                JLabel jLabel1 = new JLabel("         ");
+                FilterDatePanel.add(jLabel1);
+            } else {
+                JLabel jLabel = new JLabel("Đến Ngày");
+                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
+                FilterDatePanel.add(jLabel);
+                JLabel jLabel1 = new JLabel("         ");
+                FilterDatePanel.add(jLabel1);
+            }
             FilterDatePanel.add(jDateChooser[i]);
-            jLabels[i] = new JLabel("             ");
-            FilterDatePanel.add(jLabels[i]);
-
+            JLabel jLabel1 = new JLabel("      ");
+            FilterDatePanel.add(jLabel1);
         }
 
 

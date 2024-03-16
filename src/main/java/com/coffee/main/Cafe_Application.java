@@ -31,7 +31,6 @@ public class Cafe_Application {
         UIManager.put("TitlePane.iconSize", new Dimension(25, 25));
         UIManager.put("TitlePane.iconMargins", new Insets(3, 5, 0, 20));
 
-
         Thread thread = new Thread(() -> homeGUI = new HomeGUI());
         thread.start();
         loginGUI = new LoginGUI();
