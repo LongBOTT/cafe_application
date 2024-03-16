@@ -45,6 +45,8 @@ public class AddSupplierGUI extends DialogForm {
         titleName.setVerticalAlignment(JLabel.CENTER);
         title.add(titleName, BorderLayout.CENTER);
 
+
+
         for (String string : new String[]{"Tên nhà cung cấp", "Điện thoại", "Địa chỉ", "Email"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));

@@ -77,7 +77,7 @@ public class VNString {
     }
 
     public static boolean checkNo(String str) {
-        return str.matches("^0\\d{11}$");
+        return str.matches("^0\\d{12}$");
     }
 
     public static boolean checkFormatOfEmail(String str) {

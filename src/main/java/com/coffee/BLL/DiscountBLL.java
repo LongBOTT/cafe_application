@@ -108,6 +108,6 @@ public class DiscountBLL extends Manager<Discount>{
 //        discountBLL.addDiscount(discount);
 //        discount.setStatus(true);
 //        discountBLL.updateDiscount(discount);
-        System.out.println(discountBLL.searchDiscounts("id != 0"));
+        System.out.println(discountBLL.searchDiscounts());
     }
 }

@@ -18,7 +18,6 @@ public class DialogForm extends JDialog {
     public DialogForm() {
         super((Frame) null, "", true);
         getContentPane().setBackground(new Color(217,217,217));
-
         setLayout(new MigLayout("", "50[]50", "10[]10"));
         setIconImage(new FlatSVGIcon("image/coffee_logo.svg").getImage());
 //        setSize(new Dimension(1000,700));
@@ -39,6 +38,7 @@ public class DialogForm extends JDialog {
     private void initComponents() {
         title = new RoundedPanel();
         content = new RoundedPanel();
+
         containerButton = new RoundedPanel();
 
         title.setLayout(new BorderLayout());
@@ -49,14 +49,21 @@ public class DialogForm extends JDialog {
 //        content.setLayout(new MigLayout("", "20[]20[]20", "10[]10[]10"));
         content.setLayout(new MigLayout("", "[][]", "[][]"));
         content.setBackground(new Color(255, 255, 255));
-        content.setPreferredSize(new Dimension(1000, 560));
+        content.setPreferredSize(new Dimension(1000, 250));
+        add(content, "wrap");
+
+        content.setLayout(new MigLayout("", "[][]", "[][]"));
+        content.setBackground(new Color(255, 255, 255));
+        content.setPreferredSize(new Dimension(1000, 250));
         add(content, "wrap");
 
         containerButton.setLayout(new FlowLayout());
         containerButton.setBackground(new Color(232,206,180));
-//        containerButton.setPreferredSize(new Dimension(1000, 100));
+//      containerButton.setPreferredSize(new Dimension(1000, 100));
         containerButton.setPreferredSize(new Dimension(1000, 70));
         add(containerButton, "wrap");
+
+
 
     }
 

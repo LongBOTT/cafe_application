@@ -1,10 +1,12 @@
 package com.coffee.DAL;
 
+import com.coffee.DTO.Discount;
 import com.coffee.DTO.Staff;
 
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,6 +82,8 @@ public class StaffDAL extends Manager{
         return 0;
     }
 
+
+
     public int deleteStaff(String... conditions) {
         try {
             List<Object> updateValues = new ArrayList<>();
@@ -98,5 +102,27 @@ public class StaffDAL extends Manager{
             System.out.println("Error occurred in StaffDAL.searchStaffs(): " + e.getMessage());
         }
         return new ArrayList<>();
+    }
+
+    public static void main(String[] args) {
+
+        StaffDAL staffDAL = new StaffDAL();
+
+
+        List<Staff> staffs = staffDAL.searchStaffs();
+
+        // In thông tin của mỗi đối tượng Discount
+        for (Staff staff : staffs) {
+            System.out.println(staff.getId() + " | " +
+                    staff.getStaffNo() + " | " +
+                    staff.getName() + " | " +
+                    staff.isGender() + " | " +
+                    staff.getBirthdate() + " | " +
+                    staff.getPhone() + " | " +
+                    staff.getAddress() + " | " +
+                    staff.getEmail() + " | " +
+                    staff.isDeleted());
+        }
+
     }
 }

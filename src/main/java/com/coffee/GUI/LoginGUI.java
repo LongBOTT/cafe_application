@@ -96,7 +96,7 @@ public class LoginGUI extends JFrame {
         labelUsername.setPreferredSize(new Dimension(100, 50));
         labelUsername.setFont(new Font("FlatLaf.style", Font.PLAIN, 15));
         formInput.add(labelUsername, "span, wrap");
-
+        // sửa
         jTextFieldUserName = new JTextField();
         jTextFieldUserName.setText("ducanh");
         jTextFieldUserName.setBackground(Color.white);
