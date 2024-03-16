@@ -753,5 +753,5 @@ public class SaleGUI extends SalePanel {
         jLabelBill.get(2).setText(String.valueOf(excess));
     }
 
-    private void check
+//    private void check
 }
