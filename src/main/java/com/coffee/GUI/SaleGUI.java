@@ -22,6 +22,8 @@ public class SaleGUI extends SalePanel {
     private final ProductBLL productBLL = new ProductBLL();
     private final StaffBLL staffBLL = new StaffBLL();
     private final RecipeBLL receiptBLL = new RecipeBLL();
+    private final RecipeBLL recipeBLL = new RecipeBLL();
+    private final MaterialBLL materialBLL = new MaterialBLL();
     private final Receipt_DetailBLL receipt_detailBLL = new Receipt_DetailBLL();
     private final DiscountBLL discountBLL = new DiscountBLL();
     private final Discount_DetailBLL discountDetailBLL = new Discount_DetailBLL();
@@ -54,6 +56,7 @@ public class SaleGUI extends SalePanel {
     private List<Material> materials = new MaterialBLL().searchMaterials("deleted = 0");
     private String categoryName = "TẤT CẢ";
     private int indexShowOption = -1;
+    private boolean note = false;
 
     public SaleGUI(Account account) {
         super();
@@ -352,9 +355,9 @@ public class SaleGUI extends SalePanel {
             productRemain.setPreferredSize(new Dimension(150, 30));
             productRemain.setVerticalAlignment(JLabel.CENTER);
             productRemain.setHorizontalAlignment(JLabel.CENTER);
-            int remain = checkRemainProduct(product.getId(), product.getSize());
-            productRemain.setText("Còn Lại: " + remain);
             productRemain.setFont((new Font("Palatino", Font.BOLD, 10)));
+            int remain = checkRemainProduct(product);
+            productRemain.setText("Còn Lại: " + remain);
             panel.add(productRemain);
 
             productNameList.add(product.getName());
@@ -424,10 +427,12 @@ public class SaleGUI extends SalePanel {
                         if (j != indexShowOption && !receiptDetailList.get(j).get(1).equals("0")) {
                             showOption(j);
                             indexShowOption = j;
+                            note = true;
                         } else {
                             if (j == indexShowOption) {
                                 loadProductInCart();
                                 indexShowOption = -1;
+                                note = false;
                             }
                         }
 
@@ -582,7 +587,7 @@ public class SaleGUI extends SalePanel {
 
         productIncartNotelList.add(productInCartNote);
 
-        Bill_detailPanel.setPreferredSize(new Dimension(450, 400 < receiptDetailList.size() * 55 ? Bill_detailPanel.getHeight() + 55 : 400));
+        Bill_detailPanel.setPreferredSize(new Dimension(450, note ? (Math.max(400, receiptDetailList.size() * 55 + 150)) : (Math.max(400, receiptDetailList.size() * 55))));
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
         calculateTotal();
@@ -648,6 +653,11 @@ public class SaleGUI extends SalePanel {
         int quantity = Integer.parseInt(quantityReceiptDetail.get(index).getText());
         Product product = productBLL.findProductsBy(Map.of("name", receipt.get(0),
                 "size", Objects.requireNonNull(sizeReceiptDetail.get(index).getSelectedItem()))).get(0);
+        int remain = checkRemainProduct(product);
+        if (quantity > remain) {
+            JOptionPane.showMessageDialog(this, "Số lượng sản phẩm còn lại: " + remain + ".\nVui lòng thay đổi số lượng mua.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
         double price;
         double percent = checkDiscount(product.getId());
         if (percent == 0) {
@@ -673,6 +683,11 @@ public class SaleGUI extends SalePanel {
         int quantity = Integer.parseInt(quantityReceiptDetail.get(index).getText());
         Product product = productBLL.findProductsBy(Map.of("name", receipt.get(0),
                 "size", Objects.requireNonNull(sizeReceiptDetail.get(index).getSelectedItem()))).get(0);
+        int remain = checkRemainProduct(product);
+        if (quantity > remain) {
+            JOptionPane.showMessageDialog(this, "Số lượng sản phẩm còn lại: " + remain + ".\nVui lòng thay đổi số lượng mua.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
         double price;
         double percent = checkDiscount(product.getId());
         if (percent == 0) {
@@ -786,27 +801,40 @@ public class SaleGUI extends SalePanel {
         return 0;
     }
 
-    private int checkRemainProduct(int product_id, String size) {
-        List<Recipe> recipes = new RecipeBLL().findRecipesBy(Map.of("product_id", product_id, "size", size));
-        List<Pair<Integer, Double>> quantityMaterials = new ArrayList<>();
+    private int checkRemainProduct(Product product) {
+        if (Objects.equals(product.getSize(), "0")) {
+            List<Material> materialList = materialBLL.findMaterialsBy(Map.of("name", product.getName()));
+            if (materialList.isEmpty())
+                return 0;
+            else {
+                Material material = materialList.get(0);
+                return (int) material.getRemain();
+            }
+        } else {
+            List<Recipe> recipes = recipeBLL.findRecipesBy(Map.of("product_id", product.getId(), "size", product.getSize()));
+            List<Pair<Integer, Double>> quantityMaterials = new ArrayList<>();
 
-        for (Recipe recipe : recipes) {
-            for (Material material : materials)
-                if (recipe.getMaterial_id() == material.getId())
-                    quantityMaterials.add(new Pair<>(material.getId(), material.getRemain()));
+            for (Recipe recipe : recipes) {
+                for (Material material : materials)
+                    if (recipe.getMaterial_id() == material.getId())
+                        quantityMaterials.add(new Pair<>(material.getId(), material.getRemain()));
+            }
+
+            if (quantityMaterials.isEmpty())
+                return 0;
+
+            quantityMaterials.sort(Comparator.comparing(Pair::getValue));
+
+            double minRemain = quantityMaterials.get(0).getValue();
+            double quantityRecipe = 0;
+
+            for (Recipe recipe : recipes) {
+                if (recipe.getMaterial_id() == quantityMaterials.get(0).getKey())
+                    quantityRecipe = recipe.getQuantity();
+            }
+
+            return (int) (minRemain / quantityRecipe);
         }
-
-        quantityMaterials.sort(Comparator.comparing(Pair::getValue));
-
-        double minRemain = quantityMaterials.get(0).getValue();
-        double quantityRecipe = 0;
-
-        for (Recipe recipe : recipes) {
-            if (recipe.getMaterial_id() == quantityMaterials.get(0).getKey())
-                quantityRecipe = recipe.getQuantity();
-        }
-
-        return (int) (minRemain / quantityRecipe);
     }
 
 }
