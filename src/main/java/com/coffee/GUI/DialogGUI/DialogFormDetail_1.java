@@ -10,7 +10,6 @@ public class DialogFormDetail_1 extends DialogForm{
     protected  RoundedPanel center;
     protected RoundedPanel bottom;
 
-
     private RoundedPanel contentMateral;
     public DialogFormDetail_1() {
         super();

@@ -31,7 +31,6 @@ public class DetailProductGUI extends DialogFormDetail_1 {
     }
 
     public void init() {
-        super.init();
         titleName = new JLabel("Chi tiết sản phẩm");
         title.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
@@ -49,7 +48,7 @@ public class DetailProductGUI extends DialogFormDetail_1 {
         containerAtributeProduct.setBackground(new Color(217,217,217));
         containerAtributeProduct.setPreferredSize(new Dimension(600, 200));
 
-//        top.add(containerAtributeProduct);
+        top.add(containerAtributeProduct);
         containerImage = new RoundedPanel();
         containerImage.setLayout(new MigLayout("", "[]", "[]10[]"));
 
@@ -58,7 +57,7 @@ public class DetailProductGUI extends DialogFormDetail_1 {
         containerImage.add(btnImage);
         containerImage.add(lblImage);
         lblImage.setBackground(new Color(0,0,0));
-//        top.add(containerImage);
+        top.add(containerImage);
         GridBagConstraints gbcAtributeProduct = new GridBagConstraints();
         gbcAtributeProduct.fill = GridBagConstraints.BOTH;
         gbcAtributeProduct.gridx = 0;

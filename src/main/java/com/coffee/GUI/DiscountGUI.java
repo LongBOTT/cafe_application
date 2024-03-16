@@ -1,24 +1,14 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.DiscountBLL;
-import com.coffee.BLL.Discount_DetailBLL;
-import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Function;
-import com.coffee.DTO.Supplier;
-import com.coffee.GUI.DialogGUI.FormAddGUI.AddDiscountGUI;
-import com.coffee.GUI.DialogGUI.FormAddGUI.AddSupplierGUI;
-import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailSupplierGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JTextFieldDateEditor;
-import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
