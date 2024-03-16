@@ -31,10 +31,10 @@ public class StaffBLL extends Manager<Staff> {
 
 
     public Pair<Boolean, String> addStaff(Staff staff) {
-        Pair<Boolean, String> result = validateStaffAll(staff);
-        if (!result.getKey())
-            return new Pair<>(false, result.getValue());
-
+//        Pair<Boolean, String> result = validateStaffAll(staff);
+//        if (!result.getKey())
+//            return new Pair<>(false, result.getValue());
+//
         if (staffDAL.addStaff(staff) == 0)
             return new Pair<>(false, "Thêm nhân viên không thành công.");
 
@@ -42,9 +42,9 @@ public class StaffBLL extends Manager<Staff> {
     }
 
     public Pair<Boolean, String> updateStaff(Staff staff) {
-        Pair<Boolean, String> result = validateStaffAll(staff);
-        if (!result.getKey())
-            return new Pair<>(false, result.getValue());
+//        Pair<Boolean, String> result = validateStaffAll(staff);
+//        if (!result.getKey())
+//            return new Pair<>(false, result.getValue());
         if (staffDAL.updateStaff(staff) == 0)
             return new Pair<>(false, "Cập nhật nhân viên không thành công.");
 

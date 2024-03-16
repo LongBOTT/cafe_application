@@ -102,4 +102,8 @@ public class ProductDAL extends Manager{
         }
     }
 
+    public static void main(String[] args) {
+       ProductDAL s = new ProductDAL();
+        System.out.println(s.searchProducts());
+    }
 }
