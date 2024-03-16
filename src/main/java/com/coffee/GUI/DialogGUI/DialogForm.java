@@ -17,11 +17,11 @@ public class DialogForm extends JDialog {
 
     public DialogForm() {
         super((Frame) null, "", true);
-        getContentPane().setBackground(new Color(217,217,217));
+        getContentPane().setBackground(new Color(217, 217, 217));
+
         setLayout(new MigLayout("", "50[]50", "10[]10"));
         setIconImage(new FlatSVGIcon("image/coffee_logo.svg").getImage());
-//        setSize(new Dimension(1000,700));
-        setSize(new Dimension(1000,700));
+        setSize(new Dimension(1000, 700));
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(Cafe_Application.homeGUI);
@@ -38,39 +38,29 @@ public class DialogForm extends JDialog {
     private void initComponents() {
         title = new RoundedPanel();
         content = new RoundedPanel();
-
         containerButton = new RoundedPanel();
 
         title.setLayout(new BorderLayout());
-        title.setBackground(new Color(232,206,180));
+        title.setBackground(new Color(232, 206, 180));
         title.setPreferredSize(new Dimension(1000, 70));
         add(title, "wrap, span, center");
 
-//        content.setLayout(new MigLayout("", "20[]20[]20", "10[]10[]10"));
-        content.setLayout(new MigLayout("", "[][]", "[][]"));
+        content.setLayout(new MigLayout("", "20[]20[]20", "20[]20[]20"));
         content.setBackground(new Color(255, 255, 255));
-        content.setPreferredSize(new Dimension(1000, 250));
-        add(content, "wrap");
-
-        content.setLayout(new MigLayout("", "[][]", "[][]"));
-        content.setBackground(new Color(255, 255, 255));
-        content.setPreferredSize(new Dimension(1000, 250));
+        content.setPreferredSize(new Dimension(1000, 530));
         add(content, "wrap");
 
         containerButton.setLayout(new FlowLayout());
-        containerButton.setBackground(new Color(232,206,180));
-//      containerButton.setPreferredSize(new Dimension(1000, 100));
-        containerButton.setPreferredSize(new Dimension(1000, 70));
+        containerButton.setBackground(new Color(217, 217, 217));
+        containerButton.setPreferredSize(new Dimension(1000, 100));
         add(containerButton, "wrap");
-
-
 
     }
 
     public void cancel() {
         String[] options = new String[]{"Huỷ", "Thoát"};
         int choice = JOptionPane.showOptionDialog(null, "Bạn có muốn thoát?",
-            "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
         if (choice == 1)
             dispose();
     }
