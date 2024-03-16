@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class RecipeBLL extends Manager<Recipe>{
+public class RecipeBLL extends Manager<Recipe> {
     private RecipeDAL recipeDAL;
 
     public RecipeBLL() {
@@ -32,25 +32,25 @@ public class RecipeBLL extends Manager<Recipe>{
         Pair<Boolean, String> result;
 
         result = exists(recipe);
-        if(result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if (result.getKey()) {
+            return new Pair<>(false, result.getValue());
         }
 
         if (recipeDAL.addRecipe(recipe) == 0)
             return new Pair<>(false, "Thêm công thức thành công.");
-        return new Pair<>(true,"");
+        return new Pair<>(true, "");
     }
 
     public Pair<Boolean, String> updateRecipe(Recipe recipe) {
 
         if (recipeDAL.updateRecipe(recipe) == 0)
             return new Pair<>(false, "Cập nhật công thức thành công.");
-        return new Pair<>(true,"");
+        return new Pair<>(true, "");
     }
 
     public Pair<Boolean, String> deleteRecipe(Recipe recipe) {
         if (recipeDAL.deleteRecipe("product_id = " + recipe.getProduct_id(),
-                "material_id = " + recipe.getMaterial_id()) == 0)
+                "material_id = " + recipe.getMaterial_id(), "size = '" + recipe.getSize() + "'") == 0)
             return new Pair<>(false, "Xoá công thức không thành công.");
 
         return new Pair<>(true, "Xoá công thức thành công.");
@@ -79,12 +79,13 @@ public class RecipeBLL extends Manager<Recipe>{
     }
 
     public Pair<Boolean, String> exists(Recipe recipe) {
-        List<Recipe> recipes =findRecipesBy(Map.of(
+        List<Recipe> recipes = findRecipesBy(Map.of(
                 "product_id", recipe.getProduct_id(),
-                "material_id", recipe.getProduct_id()
+                "material_id", recipe.getProduct_id(),
+                "size", recipe.getSize()
         ));
 
-        if(!recipes.isEmpty()){
+        if (!recipes.isEmpty()) {
             return new Pair<>(true, "Công thức đã tồn tại.");
         }
         return new Pair<>(false, "");
@@ -96,16 +97,18 @@ public class RecipeBLL extends Manager<Recipe>{
             case "product_id" -> recipe.getProduct_id();
             case "material_id" -> recipe.getMaterial_id();
             case "quantity" -> recipe.getQuantity();
+            case "size" -> recipe.getSize();
+            case "unit" -> recipe.getUnit();
             default -> null;
         };
     }
 
     public static void main(String[] args) {
         RecipeBLL receiptBLL = new RecipeBLL();
-        Recipe recipe = new Recipe(1, 1, 0);
+//        Recipe recipe = new Recipe(1, 1, 0);
 //        receiptBLL.addRecipe(recipe);
 //        recipe.setQuantity(50);
 //        receiptBLL.updateRecipe(recipe);
-        receiptBLL.deleteRecipe(recipe);
+//        receiptBLL.deleteRecipe(recipe);
     }
 }

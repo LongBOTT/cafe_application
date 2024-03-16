@@ -9,6 +9,7 @@ import java.awt.event.MouseListener;
 public class CustomPanelRenderer extends DefaultTableCellRenderer {
     private static final Color GRID_COLOR = Color.GRAY;
     private static final int GRID_THICKNESS = 1;
+
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                                                    boolean hasFocus, int row, int column) {
@@ -24,12 +25,12 @@ public class CustomPanelRenderer extends DefaultTableCellRenderer {
             label.setBorder(border);
             return label;
         }
-//        if (value instanceof CustomPopupMenu) {
-//
-//            CustomPopupMenu popupMenu = (CustomPopupMenu) value;
-//            popupMenu.setBorder(border);
-//            return popupMenu;
-//        }
+        if (value instanceof CustomPopupMenu) {
+
+            CustomPopupMenu popupMenu = (CustomPopupMenu) value;
+            popupMenu.setBorder(border);
+            return popupMenu;
+        }
         if (value instanceof JLabel) {
             JLabel label = (JLabel) value;
             label.setBorder(border);

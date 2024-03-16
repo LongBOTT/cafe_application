@@ -7,20 +7,25 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecipeDAL extends Manager{
+public class RecipeDAL extends Manager {
     public RecipeDAL() {
         super("recipe",
                 List.of("product_id",
                         "material_id",
-                        "quantity"));
+                        "quantity",
+                        "size",
+                        "unit"));
     }
-    public List<Recipe> convertToRecipes(List<List<String>> data){
+
+    public List<Recipe> convertToRecipes(List<List<String>> data) {
         return convert(data, row -> {
             try {
                 return new Recipe(
                         Integer.parseInt(row.get(0)), // product_id
                         Integer.parseInt(row.get(1)), // material_id
-                        Double.parseDouble(row.get(2)) //quantity
+                        Double.parseDouble(row.get(2)), //quantity
+                        row.get(3),
+                        row.get(4)
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in RecipeDAL.convertToRecipes(): " + e.getMessage());
@@ -33,13 +38,16 @@ public class RecipeDAL extends Manager{
         try {
             return create(recipe.getProduct_id(),
                     recipe.getMaterial_id(),
-                    recipe.getQuantity()
+                    recipe.getQuantity(),
+                    recipe.getSize(),
+                    recipe.getUnit()
             );
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in RecipeDAL.addRecipe(): " + e.getMessage());
         }
         return 0;
     }
+
     public int updateRecipe(Recipe recipe) {
         try {
             List<Object> updateValues = new ArrayList<>();
@@ -47,7 +55,7 @@ public class RecipeDAL extends Manager{
             updateValues.add(recipe.getMaterial_id());
             updateValues.add(recipe.getQuantity());
             return update(updateValues, "product_id = " + recipe.getProduct_id(),
-                    "material_id = " + recipe.getMaterial_id());
+                    "material_id = " + recipe.getMaterial_id(), "size = '" + recipe.getSize() + "'");
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in Recipe.updateRecipe(): " + e.getMessage());
         }

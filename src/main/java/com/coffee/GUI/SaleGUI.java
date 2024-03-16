@@ -1,8 +1,7 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.*;
-import com.coffee.DTO.Account;
-import com.coffee.DTO.Product;
+import com.coffee.DTO.*;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.SalePanel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -22,10 +21,12 @@ import java.util.List;
 public class SaleGUI extends SalePanel {
     private final ProductBLL productBLL = new ProductBLL();
     private final StaffBLL staffBLL = new StaffBLL();
-    private final ReceiptBLL receiptBLL = new ReceiptBLL();
+    private final RecipeBLL receiptBLL = new RecipeBLL();
     private final Receipt_DetailBLL receipt_detailBLL = new Receipt_DetailBLL();
     private final DiscountBLL discountBLL = new DiscountBLL();
+    private final Discount_DetailBLL discountDetailBLL = new Discount_DetailBLL();
     private final Account account;
+    private List<Discount_Detail> discountDetails;
     private RoundedPanel containerSearch;
     private List<RoundedPanel> productPanelList;
     private List<JPanel> productIncartPanelList;
@@ -50,19 +51,14 @@ public class SaleGUI extends SalePanel {
     private List<Integer> productIDList;
     private List<String> productNameList;
     private List<List<Object>> receiptDetailList;
+    private List<Material> materials = new MaterialBLL().searchMaterials("deleted = 0");
     private String categoryName = "TẤT CẢ";
     private int indexShowOption = -1;
-    private Font strikeFont;
 
     public SaleGUI(Account account) {
         super();
         this.account = account;
         initComponents();
-
-        Font font = new Font("Palatino", Font.BOLD, 13);
-        Map attributes = font.getAttributes();
-        attributes.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
-        strikeFont = new Font(attributes);
     }
 
     public void initComponents() {
@@ -90,6 +86,9 @@ public class SaleGUI extends SalePanel {
         receiptDetailList = new ArrayList<>();
         buttonGroupsSugar = new ArrayList<>();
         buttonGroupsIce = new ArrayList<>();
+
+        Discount discount = discountBLL.searchDiscounts("status = 0").get(0);
+        discountDetails = discountDetailBLL.findDiscount_DetailsBy(Map.of("discount_id", discount.getId()));
 
         containerSearch.setLayout(new MigLayout("", "10[]20[]10", ""));
         containerSearch.setBackground(new Color(245, 246, 250));
@@ -228,7 +227,6 @@ public class SaleGUI extends SalePanel {
             }
         });
         ContainerButtons.add(jButtonPay, "wrap");
-
     }
 
     private void searchProducts() {
@@ -335,18 +333,27 @@ public class SaleGUI extends SalePanel {
             panel.add(productName);
 
             JLabel productPrice = new JLabel();
-            productPrice.setPreferredSize(new Dimension(150, 30));
             productPrice.setVerticalAlignment(JLabel.CENTER);
             productPrice.setHorizontalAlignment(JLabel.CENTER);
-            productPrice.setText(String.valueOf(product.getPrice()));
             productPrice.setFont((new Font("Palatino", Font.BOLD, 10)));
-            panel.add(productPrice);
+            productPrice.setPreferredSize(new Dimension(150, 30));
+
+            double percent = checkDiscount(product.getId());
+            if (percent == 0) {
+                productPrice.setText(String.valueOf(product.getPrice()));
+                panel.add(productPrice);
+            } else {
+                double newPrice = product.getPrice() - product.getPrice() * percent / 100;
+                productPrice.setText("<html><s>" + product.getPrice() + "</s>\t <span style='color: red'>" + newPrice + "</span></html>");
+                panel.add(productPrice);
+            }
 
             JLabel productRemain = new JLabel();
             productRemain.setPreferredSize(new Dimension(150, 30));
             productRemain.setVerticalAlignment(JLabel.CENTER);
             productRemain.setHorizontalAlignment(JLabel.CENTER);
-            productRemain.setText("Còn Lại: 20");
+            int remain = checkRemainProduct(product.getId(), product.getSize());
+            productRemain.setText("Còn Lại: " + remain);
             productRemain.setFont((new Font("Palatino", Font.BOLD, 10)));
             panel.add(productRemain);
 
@@ -383,7 +390,13 @@ public class SaleGUI extends SalePanel {
         receiptDetail.add(product.getName());
         receiptDetail.add(product.getSize());
         receiptDetail.add(Integer.parseInt("1"));
-        receiptDetail.add(product.getPrice());
+        double percent = checkDiscount(product.getId());
+        if (percent == 0) {
+            receiptDetail.add(product.getPrice());
+        } else {
+            double newPrice = product.getPrice() - product.getPrice() * percent / 100;
+            receiptDetail.add(newPrice);
+        }
         receiptDetailList.add(receiptDetail);
 
         JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -633,8 +646,15 @@ public class SaleGUI extends SalePanel {
         receipt.set(1, sizeReceiptDetail.get(index).getSelectedItem());
 
         int quantity = Integer.parseInt(quantityReceiptDetail.get(index).getText());
-        double price = productBLL.findProductsBy(Map.of("name", receipt.get(0),
-                "size", Objects.requireNonNull(sizeReceiptDetail.get(index).getSelectedItem()))).get(0).getPrice();
+        Product product = productBLL.findProductsBy(Map.of("name", receipt.get(0),
+                "size", Objects.requireNonNull(sizeReceiptDetail.get(index).getSelectedItem()))).get(0);
+        double price;
+        double percent = checkDiscount(product.getId());
+        if (percent == 0) {
+            price = product.getPrice();
+        } else {
+            price = product.getPrice() - product.getPrice() * percent / 100;
+        }
         receipt.set(3, quantity * price);
 
         receiptDetailList.set(index, receipt);
@@ -651,8 +671,15 @@ public class SaleGUI extends SalePanel {
         receipt.set(2, Integer.parseInt(quantityReceiptDetail.get(index).getText()));
 
         int quantity = Integer.parseInt(quantityReceiptDetail.get(index).getText());
-        double price = productBLL.findProductsBy(Map.of("name", receipt.get(0),
-                "size", Objects.requireNonNull(sizeReceiptDetail.get(index).getSelectedItem()))).get(0).getPrice();
+        Product product = productBLL.findProductsBy(Map.of("name", receipt.get(0),
+                "size", Objects.requireNonNull(sizeReceiptDetail.get(index).getSelectedItem()))).get(0);
+        double price;
+        double percent = checkDiscount(product.getId());
+        if (percent == 0) {
+            price = product.getPrice();
+        } else {
+            price = product.getPrice() - product.getPrice() * percent / 100;
+        }
         receipt.set(3, quantity * price);
 
         receiptDetailList.set(index, receipt);
@@ -733,9 +760,6 @@ public class SaleGUI extends SalePanel {
         jTextFieldCash.setText("");
     }
 
-    private void checkRemainProduct() {
-    }
-
     private void calculateTotal() {
         double totalPrice = 0;
         for (List<Object> receiptDetail : receiptDetailList) {
@@ -753,5 +777,36 @@ public class SaleGUI extends SalePanel {
         jLabelBill.get(2).setText(String.valueOf(excess));
     }
 
-//    private void check
+    private double checkDiscount(int product_id) {
+        for (Discount_Detail discountDetail : discountDetails) {
+            if (product_id == discountDetail.getProduct_id()) {
+                return discountDetail.getPercent();
+            }
+        }
+        return 0;
+    }
+
+    private int checkRemainProduct(int product_id, String size) {
+        List<Recipe> recipes = new RecipeBLL().findRecipesBy(Map.of("product_id", product_id, "size", size));
+        List<Pair<Integer, Double>> quantityMaterials = new ArrayList<>();
+
+        for (Recipe recipe : recipes) {
+            for (Material material : materials)
+                if (recipe.getMaterial_id() == material.getId())
+                    quantityMaterials.add(new Pair<>(material.getId(), material.getRemain()));
+        }
+
+        quantityMaterials.sort(Comparator.comparing(Pair::getValue));
+
+        double minRemain = quantityMaterials.get(0).getValue();
+        double quantityRecipe = 0;
+
+        for (Recipe recipe : recipes) {
+            if (recipe.getMaterial_id() == quantityMaterials.get(0).getKey())
+                quantityRecipe = recipe.getQuantity();
+        }
+
+        return (int) (minRemain / quantityRecipe);
+    }
+
 }
