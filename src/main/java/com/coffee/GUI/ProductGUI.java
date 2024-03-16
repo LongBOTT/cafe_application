@@ -7,6 +7,7 @@ import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailProductGUI;
+import com.coffee.GUI.DialogGUI.FromEditGUI.EditProductGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -375,8 +376,8 @@ public void loadCategory() {
             new DetailProductGUI(); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
         if ( indexColumn == indexColumnEdit) {
-            new DetailProductGUI(); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-            refresh();
+            new EditProductGUI(); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+//            refresh();
         }
 
         if (indexColumn == indexColumnRemove)
