@@ -24,3 +24,4 @@ out
 hs_err_pid*
 replay_pid*
 src/main/resources/settings/db.properties
+src/main/resources/settings/db.properties

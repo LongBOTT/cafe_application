@@ -26,8 +26,9 @@ public class DetailProductGUI extends DialogFormDetail_1 {
     public DetailProductGUI() {
         super();
         super.setTitle("Thông tin nhà cung cấp");
-        setVisible(true);
         init();
+        setVisible(true);
+
     }
 
     public void init() {
@@ -120,42 +121,42 @@ public class DetailProductGUI extends DialogFormDetail_1 {
 
         center.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
         center.add(lblListMaterial);
-        for (String string : new String[]{"Tên nguyên liệu", "Số lượng", "Đơn vị", "Thêm"}) {
-            JLabel label = new JLabel();
-            label.setPreferredSize(new Dimension(170, 30));
-            label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
-            containerAtributeProduct.add(label);
-
-            JTextField textField = new JTextField();
-
-            if (string.equals("Tên sản phẩm")) {
-//                textField.setText(AtributeProduct.get(0));
-            }
-            if (string.equals("Size")) {
-                JComboBox<String> size = new JComboBox();
-//                textField.setText(AtributeProduct.get(1));
-                size.setPreferredSize(new Dimension(350, 30));
-                size.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-                size.setBackground(new Color(245, 246, 250));
-                containerAtributeProduct.add(size, "wrap");
-                continue;
-            }
-            if (string.equals("Giá bán")) {
-//                textField.setText(AtributeProduct.get(2));
-            }
-            if (string.equals("Loại")) {
-//                textField.setText(AtributeProduct.get(3));
-            }
-
-            textField.setEditable(false);
-            textField.setEnabled(false);
-            textField.setPreferredSize(new Dimension(350, 30));
-            textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-            textField.setBackground(new Color(245, 246, 250));
-//            containerAtributeProduct.add(textField,"wrap");
-
-        }
+//        for (String string : new String[]{"Tên nguyên liệu", "Số lượng", "Đơn vị", "Thêm"}) {
+//            JLabel label = new JLabel();
+//            label.setPreferredSize(new Dimension(170, 30));
+//            label.setText(string);
+//            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+//            containerAtributeProduct.add(label);
+//
+//            JTextField textField = new JTextField();
+//
+//            if (string.equals("Tên sản phẩm")) {
+////                textField.setText(AtributeProduct.get(0));
+//            }
+//            if (string.equals("Size")) {
+//                JComboBox<String> size = new JComboBox();
+////                textField.setText(AtributeProduct.get(1));
+//                size.setPreferredSize(new Dimension(350, 30));
+//                size.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+//                size.setBackground(new Color(245, 246, 250));
+//                containerAtributeProduct.add(size, "wrap");
+//                continue;
+//            }
+//            if (string.equals("Giá bán")) {
+////                textField.setText(AtributeProduct.get(2));
+//            }
+//            if (string.equals("Loại")) {
+////                textField.setText(AtributeProduct.get(3));
+//            }
+//
+////            textField.setEditable(false);
+////            textField.setEnabled(false);
+////            textField.setPreferredSize(new Dimension(350, 30));
+////            textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+////            textField.setBackground(new Color(245, 246, 250));
+////            containerAtributeProduct.add(textField,"wrap");
+//
+//        }
 
     }
 }
