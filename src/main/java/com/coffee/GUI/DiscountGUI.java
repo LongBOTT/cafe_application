@@ -2,6 +2,7 @@ package com.coffee.GUI;
 
 import com.coffee.BLL.DiscountBLL;
 import com.coffee.DTO.Function;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddDiscountGUI;
 import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
@@ -15,6 +16,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
+
 
 public class DiscountGUI extends Layout2 {
     private RoundedPanel containerSearch;
