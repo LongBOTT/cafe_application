@@ -14,6 +14,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.font.TextAttribute;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
@@ -51,11 +52,17 @@ public class SaleGUI extends SalePanel {
     private List<List<Object>> receiptDetailList;
     private String categoryName = "TẤT CẢ";
     private int indexShowOption = -1;
+    private Font strikeFont;
 
     public SaleGUI(Account account) {
         super();
         this.account = account;
         initComponents();
+
+        Font font = new Font("Palatino", Font.BOLD, 13);
+        Map attributes = font.getAttributes();
+        attributes.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
+        strikeFont = new Font(attributes);
     }
 
     public void initComponents() {
@@ -126,10 +133,10 @@ public class SaleGUI extends SalePanel {
 
         loadProduct(productBLL.searchProducts("deleted = 0"));
 
-        staffName.setFont((new Font("FlatLaf.style", Font.BOLD, 15)));
+        staffName.setFont((new Font("Palatino", Font.BOLD, 15)));
         StaffPanel.add(staffName);
 
-        date.setFont(new Font("FlatLaf.style", Font.PLAIN, 13));
+        date.setFont(new Font("Palatino", Font.PLAIN, 13));
         StaffPanel.add(date);
 
         List<String> titles = new ArrayList<>(List.of(new String[]{"Sản phẩm", "Size", "SL", "Thành tiền", "Xoá"}));
@@ -143,19 +150,19 @@ public class SaleGUI extends SalePanel {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 20));
             label.setText(string);
-            label.setFont((new Font("FlatLaf.style", Font.PLAIN, 13)));
+            label.setFont((new Font("Palatino", Font.PLAIN, 13)));
             ContainerButtons.add(label);
 
             if (string.equals("Thành tiền:") || string.equals("Khuyến mãi:") || string.equals("Tiền thừa:")) {
                 JLabel jLabel = new JLabel();
                 jLabel.setPreferredSize(new Dimension(230, 20));
-                jLabel.setFont((new Font("FlatLaf.style", Font.PLAIN, 13)));
+                jLabel.setFont((new Font("Palatino", Font.PLAIN, 13)));
                 jLabel.setText("0.0");
                 jLabelBill.add(jLabel);
                 ContainerButtons.add(jLabel, "wrap");
             } else {
                 jTextFieldCash.setPreferredSize(new Dimension(230, 20));
-                jTextFieldCash.setFont((new Font("FlatLaf.style", Font.PLAIN, 13)));
+                jTextFieldCash.setFont((new Font("Palatino", Font.PLAIN, 13)));
                 jTextFieldCash.addKeyListener(new KeyAdapter() {
                     @Override
                     public void keyTyped(KeyEvent e) {
@@ -176,7 +183,7 @@ public class SaleGUI extends SalePanel {
         }
 
         jButtonCancel.setPreferredSize(new Dimension(40, 40));
-        jButtonCancel.setFont(new Font("FlatLaf.style", Font.BOLD, 15));
+        jButtonCancel.setFont(new Font("Palatino", Font.BOLD, 15));
         jButtonCancel.setBackground(new Color(0xFFFFFF));
         jButtonCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         jButtonCancel.addMouseListener(new MouseAdapter() {
@@ -207,7 +214,7 @@ public class SaleGUI extends SalePanel {
         ContainerButtons.add(jButtonCancel);
 
         jButtonPay.setPreferredSize(new Dimension(40, 40));
-        jButtonPay.setFont(new Font("FlatLaf.style", Font.BOLD, 15));
+        jButtonPay.setFont(new Font("Palatino", Font.BOLD, 15));
         jButtonPay.setBackground(new Color(0xB58DDEAF, true));
         jButtonPay.setCursor(new Cursor(Cursor.HAND_CURSOR));
         jButtonPay.addMouseListener(new MouseAdapter() {
@@ -235,7 +242,7 @@ public class SaleGUI extends SalePanel {
 
     private static JLabel getjLabel(String tittle) {
         JLabel jLabel = new JLabel(tittle);
-        jLabel.setFont(new Font("FlatLaf.style", Font.BOLD, 13));
+        jLabel.setFont(new Font("Palatino", Font.BOLD, 13));
         if (Objects.equals(tittle, "Sản phẩm")) {
             jLabel.setPreferredSize(new Dimension(200, 40));
         } else if (Objects.equals(tittle, "Size") || Objects.equals(tittle, "SL") || Objects.equals(tittle, "Xoá")) {
@@ -274,7 +281,7 @@ public class SaleGUI extends SalePanel {
             JLabel jLabel = new JLabel(category);
             jLabel.setHorizontalAlignment(SwingConstants.CENTER);
             jLabel.setVerticalAlignment(SwingConstants.CENTER);
-            jLabel.setFont((new Font("FlatLaf.style", Font.PLAIN, 13)));
+            jLabel.setFont((new Font("Palatino", Font.PLAIN, 13)));
             roundedPanel.add(jLabel);
 
             roundedPanel.setPreferredSize(new Dimension(Math.max(jLabel.getPreferredSize().width + 10, 100), 31));
@@ -305,7 +312,7 @@ public class SaleGUI extends SalePanel {
             RoundedPanel panel = new RoundedPanel();
             panel.setLayout(new FlowLayout(FlowLayout.CENTER));
             panel.setBackground(Color.white);
-            panel.setPreferredSize(new Dimension(155, 250));
+            panel.setPreferredSize(new Dimension(155, 260));
             panel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             productPanelList.add(panel);
 
@@ -320,11 +327,11 @@ public class SaleGUI extends SalePanel {
             panel.add(productImage);
 
             JLabel productName = new JLabel();
-            productName.setPreferredSize(new Dimension(150, 60));
+            productName.setPreferredSize(new Dimension(150, 30));
             productName.setVerticalAlignment(JLabel.CENTER);
             productName.setHorizontalAlignment(JLabel.CENTER);
-            productName.setText("<html>" + product.getName() + "</html>");
-            productName.setFont((new Font("FlatLaf.style", Font.PLAIN, 13)));
+            productName.setText(product.getName());
+            productName.setFont((new Font("Palatino", Font.BOLD, 13)));
             panel.add(productName);
 
             JLabel productPrice = new JLabel();
@@ -332,8 +339,16 @@ public class SaleGUI extends SalePanel {
             productPrice.setVerticalAlignment(JLabel.CENTER);
             productPrice.setHorizontalAlignment(JLabel.CENTER);
             productPrice.setText(String.valueOf(product.getPrice()));
-            productPrice.setFont((new Font("FlatLaf.style", Font.BOLD, 10)));
+            productPrice.setFont((new Font("Palatino", Font.BOLD, 10)));
             panel.add(productPrice);
+
+            JLabel productRemain = new JLabel();
+            productRemain.setPreferredSize(new Dimension(150, 30));
+            productRemain.setVerticalAlignment(JLabel.CENTER);
+            productRemain.setHorizontalAlignment(JLabel.CENTER);
+            productRemain.setText("Còn Lại: 20");
+            productRemain.setFont((new Font("Palatino", Font.BOLD, 10)));
+            panel.add(productRemain);
 
             productNameList.add(product.getName());
             productIDList.add(product.getId());
@@ -357,8 +372,8 @@ public class SaleGUI extends SalePanel {
         }
 
         ContainerProduct.setPreferredSize(new Dimension(690, productNameList.size() % 4 == 0 ?
-                260 * productNameList.size() / 4 :
-                260 * (productNameList.size() + (4 - productNameList.size() % 4)) / 4));
+                270 * productNameList.size() / 4 :
+                270 * (productNameList.size() + (4 - productNameList.size() % 4)) / 4));
         ContainerProduct.repaint();
         ContainerProduct.revalidate();
     }
@@ -385,7 +400,7 @@ public class SaleGUI extends SalePanel {
 
         int index = receiptDetailList.size() - 1;
 
-        nameReceiptDetail.get(index).setFont(new Font("FlatLaf.style", Font.PLAIN, 12));
+        nameReceiptDetail.get(index).setFont(new Font("Palatino", Font.PLAIN, 12));
         nameReceiptDetail.get(index).setText("<html>" + receiptDetailList.get(index).get(0) + "</html>");
         nameReceiptDetail.get(index).setPreferredSize(new Dimension(200, 40));
         nameReceiptDetail.get(index).addMouseListener(new MouseAdapter() {
@@ -414,7 +429,7 @@ public class SaleGUI extends SalePanel {
                 sizeReceiptDetail.get(index).addItem(product1.getSize());
             }
             sizeReceiptDetail.get(index).setPreferredSize(new Dimension(40, 40));
-            sizeReceiptDetail.get(index).setFont(new Font("FlatLaf.style", Font.PLAIN, 8));
+            sizeReceiptDetail.get(index).setFont(new Font("Palatino", Font.PLAIN, 8));
             sizeReceiptDetail.get(index).setSelectedItem(receiptDetailList.get(index).get(1));
             sizeReceiptDetail.get(index).addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -433,12 +448,12 @@ public class SaleGUI extends SalePanel {
         } else {
             sizeReceiptDetail.get(index).addItem("0");
             JLabel panel = new JLabel();
-            panel.setFont(new Font("FlatLaf.style", Font.PLAIN, 8));
+            panel.setFont(new Font("Palatino", Font.PLAIN, 8));
             panel.setPreferredSize(new Dimension(40, 40));
             jPanel.add(panel);
         }
 
-        quantityReceiptDetail.get(index).setFont(new Font("FlatLaf.style", Font.PLAIN, 10));
+        quantityReceiptDetail.get(index).setFont(new Font("Palatino", Font.PLAIN, 10));
         quantityReceiptDetail.get(index).setPreferredSize(new Dimension(40, 40));
         quantityReceiptDetail.get(index).setText(receiptDetailList.get(index).get(2).toString());
 
@@ -464,11 +479,11 @@ public class SaleGUI extends SalePanel {
         jPanel.add(quantityReceiptDetail.get(index));
 
         priceReceiptDetail.get(index).setText(receiptDetailList.get(index).get(3).toString());
-        priceReceiptDetail.get(index).setFont(new Font("FlatLaf.style", Font.PLAIN, 12));
+        priceReceiptDetail.get(index).setFont(new Font("Palatino", Font.PLAIN, 12));
         priceReceiptDetail.get(index).setPreferredSize(new Dimension(90, 40));
         jPanel.add(priceReceiptDetail.get(index));
 
-        deleteReceiptDetail.get(index).setFont(new Font("FlatLaf.style", Font.PLAIN, 12));
+        deleteReceiptDetail.get(index).setFont(new Font("Palatino", Font.PLAIN, 12));
         deleteReceiptDetail.get(index).setPreferredSize(new Dimension(40, 40));
         deleteReceiptDetail.get(index).setCursor(new Cursor(Cursor.HAND_CURSOR));
         deleteReceiptDetail.get(index).setIcon(new FlatSVGIcon("icon/delete.svg"));
@@ -491,7 +506,7 @@ public class SaleGUI extends SalePanel {
         productInCartNote.setBackground(new Color(245, 246, 250));
 
         JLabel choosingSugar = new JLabel("Chọn mức đường: ");
-        choosingSugar.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        choosingSugar.setFont(new Font("Palatino Sans", Font.PLAIN, 13));
         choosingSugar.setPreferredSize(new Dimension(150, 50));
         productInCartNote.add(choosingSugar);
 
@@ -522,7 +537,7 @@ public class SaleGUI extends SalePanel {
         productInCartNote.add(radioSugar5);
 
         JLabel choosingIce = new JLabel("Chọn mức đá: ");
-        choosingIce.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        choosingIce.setFont(new Font("Palatino Sans", Font.PLAIN, 13));
         choosingIce.setPreferredSize(new Dimension(150, 50));
         productInCartNote.add(choosingIce);
 
@@ -590,7 +605,7 @@ public class SaleGUI extends SalePanel {
             jPanel.add(nameReceiptDetail.get(i));
             if (receiptDetailList.get(i).get(1).equals("0")) {
                 JLabel panel = new JLabel();
-                panel.setFont(new Font("FlatLaf.style", Font.PLAIN, 8));
+                panel.setFont(new Font("Palatino", Font.PLAIN, 8));
                 panel.setPreferredSize(new Dimension(40, 40));
                 jPanel.add(panel);
             } else {
@@ -675,7 +690,7 @@ public class SaleGUI extends SalePanel {
             jPanel.add(nameReceiptDetail.get(i));
             if (receiptDetailList.get(i).get(1).equals("0")) {
                 JLabel panel = new JLabel();
-                panel.setFont(new Font("FlatLaf.style", Font.PLAIN, 8));
+                panel.setFont(new Font("Palatino", Font.PLAIN, 8));
                 panel.setPreferredSize(new Dimension(40, 40));
                 jPanel.add(panel);
             } else {
@@ -737,4 +752,6 @@ public class SaleGUI extends SalePanel {
         double excess = cash - total;
         jLabelBill.get(2).setText(String.valueOf(excess));
     }
+
+    private void check
 }
