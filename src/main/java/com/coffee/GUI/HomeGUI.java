@@ -333,7 +333,7 @@ public class HomeGUI extends JFrame {
             case 16 -> new MaterialGUI(functions);
             case 17 -> new InfoGUI(account, staff);
             case 18 -> new MyWorkScheduleGUI(staff);
-            case 19 -> new CreateWorkScheduleGUI(functions);
+            case 19 -> new CreateWorkScheduleGUI();
             default -> new RoundedPanel();
         };
     }

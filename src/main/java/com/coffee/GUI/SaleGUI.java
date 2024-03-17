@@ -14,6 +14,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.TextAttribute;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
@@ -89,6 +90,8 @@ public class SaleGUI extends SalePanel {
         receiptDetailList = new ArrayList<>();
         buttonGroupsSugar = new ArrayList<>();
         buttonGroupsIce = new ArrayList<>();
+
+        checkDiscount();
 
         Discount discount = discountBLL.searchDiscounts("status = 0").get(0);
         discountDetails = discountDetailBLL.findDiscount_DetailsBy(Map.of("discount_id", discount.getId()));
@@ -341,7 +344,7 @@ public class SaleGUI extends SalePanel {
             productPrice.setFont((new Font("Palatino", Font.BOLD, 10)));
             productPrice.setPreferredSize(new Dimension(150, 30));
 
-            double percent = checkDiscount(product.getId());
+            double percent = checkPercentDiscount(product.getId());
             if (percent == 0) {
                 productPrice.setText(String.valueOf(product.getPrice()));
                 panel.add(productPrice);
@@ -393,7 +396,7 @@ public class SaleGUI extends SalePanel {
         receiptDetail.add(product.getName());
         receiptDetail.add(product.getSize());
         receiptDetail.add(Integer.parseInt("1"));
-        double percent = checkDiscount(product.getId());
+        double percent = checkPercentDiscount(product.getId());
         if (percent == 0) {
             receiptDetail.add(product.getPrice());
         } else {
@@ -659,7 +662,7 @@ public class SaleGUI extends SalePanel {
             return;
         }
         double price;
-        double percent = checkDiscount(product.getId());
+        double percent = checkPercentDiscount(product.getId());
         if (percent == 0) {
             price = product.getPrice();
         } else {
@@ -689,7 +692,7 @@ public class SaleGUI extends SalePanel {
             return;
         }
         double price;
-        double percent = checkDiscount(product.getId());
+        double percent = checkPercentDiscount(product.getId());
         if (percent == 0) {
             price = product.getPrice();
         } else {
@@ -792,7 +795,7 @@ public class SaleGUI extends SalePanel {
         jLabelBill.get(2).setText(String.valueOf(excess));
     }
 
-    private double checkDiscount(int product_id) {
+    private double checkPercentDiscount(int product_id) {
         for (Discount_Detail discountDetail : discountDetails) {
             if (product_id == discountDetail.getProduct_id()) {
                 return discountDetail.getPercent();
@@ -837,4 +840,12 @@ public class SaleGUI extends SalePanel {
         }
     }
 
+    private void checkDiscount() {
+        for (Discount discount : discountBLL.searchDiscounts()) {
+            if (discount.getEnd_date().before(Date.valueOf(LocalDate.now()))) {
+                discount.setStatus(true);
+                discountBLL.updateDiscount(discount);
+            }
+        }
+    }
 }
