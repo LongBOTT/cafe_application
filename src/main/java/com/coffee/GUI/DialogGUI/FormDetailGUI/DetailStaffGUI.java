@@ -22,7 +22,7 @@ import java.util.List;
 
 public class DetailStaffGUI extends DialogForm {
     private JLabel titleName;
-    private List<JLabel> attributeSupplier;
+    private List<JLabel> attributeStaff;
 
 
     private List<JTextField> jTextFieldsStaff;
@@ -31,16 +31,16 @@ public class DetailStaffGUI extends DialogForm {
     private Staff staff = new Staff();
     private JDateChooser jDateChooser = new JDateChooser();
 
-    public DetailStaffGUI (Staff staff)
-    {
+    public DetailStaffGUI(Staff staff) {
         super();
         super.setTitle("Thông Tin Nhân Viên ");
         init(staff);
         setVisible(true);
     }
+
     private void init(Staff staff) {
         titleName = new JLabel();
-        attributeSupplier = new ArrayList<>();
+        attributeStaff = new ArrayList<>();
         jTextFieldsStaff = new ArrayList<>();
         content.setLayout(new MigLayout("",
                 "200[]20[]200",
@@ -52,12 +52,13 @@ public class DetailStaffGUI extends DialogForm {
         titleName.setVerticalAlignment(JLabel.CENTER);
         title.add(titleName, BorderLayout.CENTER);
 
-        for (String string : new String[]{"Mã Nhân Viên", "Tên Nhân Viên", "CCCD", "Giới Tính", "Ngày Sinh", "Chức Vụ", "Số Điện Thoại", "Địa Chỉ", "Email"}) {
+        for (String string : new String[]{"Mã Nhân Viên", "Tên Nhân Viên", "CCCD", "Giới Tính",
+                "Ngày Sinh", "Chức Vụ", "Số Điện Thoại", "Địa Chỉ", "Email"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(150, 35));
             label.setText(string);
             label.setFont((new Font("Public Sans", Font.PLAIN, 15)));
-            attributeSupplier.add(label);
+            attributeStaff.add(label);
             content.add(label);
             JTextField textField = new JTextField();
             textField.setEditable(false);
@@ -65,8 +66,7 @@ public class DetailStaffGUI extends DialogForm {
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
 
-            if (string.trim().equals("Ngày Sinh"))
-            {
+            if (string.trim().equals("Ngày Sinh")) {
                 Date birthDate = staff.getBirthdate();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -82,12 +82,8 @@ public class DetailStaffGUI extends DialogForm {
                 textField.setText(dateFormat.format(birthDate));
                 content.add(jDateChooser, "wrap");
 
-            }
-
-                else
-                {
-                if (string.trim().equals("Mã Nhân Viên"))
-                    {
+            } else {
+                if (string.trim().equals("Mã Nhân Viên")) {
                     String staffId = Integer.toString(staff.getId());
                     textField.setText(staffId);
                 }
@@ -99,7 +95,7 @@ public class DetailStaffGUI extends DialogForm {
                 }
                 if (string.trim().equals("Giới Tính")) {
                     boolean gender = staff.isGender();
-                    String gender1 = gender? "Nữ" : "Nam";
+                    String gender1 = gender ? "Nữ" : "Nam";
                     textField.setText(gender1);
                 }
                 if (string.trim().equals("Số Điện Thoại")) {
@@ -131,3 +127,4 @@ public class DetailStaffGUI extends DialogForm {
 
     }
 }
+
