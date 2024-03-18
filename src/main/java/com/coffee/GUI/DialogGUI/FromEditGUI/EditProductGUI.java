@@ -1,5 +1,6 @@
 package com.coffee.GUI.DialogGUI.FromEditGUI;
 
+import com.coffee.DTO.Product;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
 import com.coffee.GUI.components.CustomPanelRenderer;
 import com.coffee.GUI.components.DataTable;
@@ -7,15 +8,14 @@ import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
+import org.apache.poi.ss.formula.functions.DProduct;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.time.Period;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,15 +37,18 @@ public class EditProductGUI extends DialogFormDetail_1 {
     private JComboBox<String> CbListMaterial;
     private List<String> AtributeProduct = new ArrayList<>();
     private String[] columnNames;
-    public EditProductGUI() {
+    private Product product;
+    public EditProductGUI( ArrayList<Object[]> allProducts) {
         super();
         super.setTitle("Sửa sản phẩm");
-        init();
+        this.product = product;
+        init(allProducts);
         setVisible(true);
 
     }
 
-    public void init() {
+    public void init( ArrayList<Object[]> allProducts) {
+        Object[] product = allProducts.get(0);
         titleName = new JLabel("Sửa sản phẩm");
         title.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
@@ -68,7 +71,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
         PanelImage.setBackground(new Color(217,217,217));
 
         JLabel lblImage = new JLabel();
-        ImageIcon icon = new FlatSVGIcon("image/Product/" + "SP01" + ".svg");
+        ImageIcon icon = new FlatSVGIcon("image/Product/" + product[5] + ".svg");
         Image image = icon.getImage();
         Image newImg = image.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
         icon = new ImageIcon(newImg);
@@ -87,40 +90,52 @@ public class EditProductGUI extends DialogFormDetail_1 {
         EmptyBorder emptyBorder = new EmptyBorder(0, 30, 0, 0);
         top.setBorder(emptyBorder);
 
-        for (String string : new String[]{"Tên sản phẩm", "Size", "Giá bán", "Loại"}) {
-            JLabel label = new JLabel();
-            label.setPreferredSize(new Dimension(170, 30));
-            label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
-            containerAtributeProduct.add(label);
+        JLabel lblName = createLabel("Tên sản phẩm");
+        JLabel lblSize = createLabel("Size");
+        JLabel lblPrice = createLabel("Giá bán");
+        JLabel lblCategory = createLabel("Thể loại");
 
-            JTextField textField = new JTextField();
+        JTextField txtName = createTextField();
+        JComboBox <String>  cbSize = createComboBox();
+        JTextField txtPrice = createTextField();
+        JTextField txtCategory = createTextField();
 
-            if (string.equals("Tên sản phẩm")) {
-//                textField.setText(AtributeProduct.get(0));
-            }
-            if (string.equals("Size")) {
-                JComboBox<String> size = new JComboBox();
-//                textField.setText(AtributeProduct.get(1));
-                size.setPreferredSize(new Dimension(350, 30));
-                size.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-                size.setBackground(new Color(245, 246, 250));
-                containerAtributeProduct.add(size, "wrap");
-                continue;
-            }
-            if (string.equals("Giá bán")) {
-//                textField.setText(AtributeProduct.get(2));
-            }
-            if (string.equals("Loại")) {
-//                textField.setText(AtributeProduct.get(3));
-            }
 
-            textField.setPreferredSize(new Dimension(350, 30));
-            textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-            textField.setBackground(new Color(245, 246, 250));
-            containerAtributeProduct.add(textField, "wrap");
+        containerAtributeProduct.add(lblName);
+        containerAtributeProduct.add(txtName,"wrap");
 
+        containerAtributeProduct.add(lblSize);
+        containerAtributeProduct.add(cbSize,"wrap");
+
+        containerAtributeProduct.add(lblPrice);
+        containerAtributeProduct.add(txtPrice,"wrap");
+
+        containerAtributeProduct.add(lblCategory);
+        containerAtributeProduct.add(txtCategory,"wrap");
+
+
+
+
+        txtName.setText((String) product[1]);
+
+        ArrayList<String> sizes = (ArrayList<String>) product[4];
+        for (String size : sizes) {
+            cbSize.addItem(size);
         }
+        ArrayList<String> prices = (ArrayList<String>) product[3];
+        txtPrice.setText(String.valueOf(prices.get(0)));
+
+        txtCategory.setText((String) product[2]);
+        cbSize.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    JComboBox<String> combo = (JComboBox<String>) e.getSource();
+                    int sizeIndex = (int) combo.getSelectedIndex();
+                    txtPrice.setText(String.valueOf(prices.get(sizeIndex)));
+                }
+            }
+        });
+
         lblListMaterial = new JLabel("Danh sách nguyên liệu");
 
         lblListMaterial.setFont(new Font("Public Sans", Font.BOLD, 16));
@@ -235,6 +250,29 @@ public class EditProductGUI extends DialogFormDetail_1 {
         });
         containerButton.add(buttonEdit);
     }
+    private JLabel createLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setPreferredSize(new Dimension(170, 30));
+        label.setFont(new Font("Public Sans", Font.PLAIN, 16));
+        return label;
+    }
 
+    // Phương thức để tạo và cấu hình JTextField
+    private JTextField createTextField() {
+        JTextField textField = new JTextField();
+        textField.setPreferredSize(new Dimension(350, 30));
+        textField.setFont(new Font("Public Sans", Font.PLAIN, 14));
+        textField.setBackground(new Color(245, 246, 250));
+        return textField;
+    }
+
+    // Phương thức để tạo và cấu hình JComboBox
+    private JComboBox<String> createComboBox() {
+        JComboBox<String> comboBox = new JComboBox<>();
+        comboBox.setPreferredSize(new Dimension(350, 30));
+        comboBox.setFont(new Font("Public Sans", Font.PLAIN, 14));
+        comboBox.setBackground(new Color(245, 246, 250));
+        return comboBox;
+    }
 }
 

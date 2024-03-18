@@ -46,7 +46,7 @@ public class Product {
         this.category = category;
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
