@@ -8,6 +8,7 @@ import javafx.util.Pair;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class SupplierBLL extends Manager<Supplier> {
     private SupplierDAL supplierDAL;
@@ -41,18 +42,54 @@ public class SupplierBLL extends Manager<Supplier> {
 
     }
 
-    public Pair<Boolean, String> updateSupplier(Supplier supplier) {
-        Pair<Boolean, String> result = validateSupplierAll(supplier);
+//    public Pair<Boolean, String> updateSupplier(Supplier supplier) {
+//        Pair<Boolean, String> result = validateSupplierAll(supplier);
+//
+//        if (!result.getKey()) {
+//            return new Pair<>(false, result.getValue());
+//        }
+//
+//        if (supplierDAL.updateSupplier(supplier) == 0)
+//            return new Pair<>(false, "Cập nhật nhà cung cấp không thành công.");
+//
+//        return new Pair<>(true, "Cập nhật nhà cung cấp thành công.");
+//    }
+public Pair<Boolean, String> updateSupplier(Supplier oldSupplier, Supplier newSupplier) {
 
-        if (!result.getKey()) {
-            return new Pair<>(false, result.getValue());
+    List<String> errorMessages = new ArrayList<>();
+
+    if (!Objects.equals(oldSupplier.getName(), newSupplier.getName())) {
+        Pair<Boolean, String> nameResult = validateName(newSupplier.getName());
+        if (!nameResult.getKey()) {
+            errorMessages.add(nameResult.getValue());
         }
-
-        if (supplierDAL.updateSupplier(supplier) == 0)
-            return new Pair<>(false, "Cập nhật nhà cung cấp không thành công.");
-
-        return new Pair<>(true, "Cập nhật nhà cung cấp thành công.");
     }
+
+    if (!Objects.equals(oldSupplier.getPhone(), newSupplier.getPhone())) {
+        Pair<Boolean, String> phoneResult = validatePhone(newSupplier.getPhone());
+        if (!phoneResult.getKey()) {
+            errorMessages.add(phoneResult.getValue());
+        }
+    }
+
+    if (!Objects.equals(oldSupplier.getEmail(), newSupplier.getEmail())) {
+        Pair<Boolean, String> emailResult = validateEmail(newSupplier.getEmail());
+        if (!emailResult.getKey()) {
+            errorMessages.add(emailResult.getValue());
+        }
+    }
+
+    if (!errorMessages.isEmpty()) {
+        String errorMessage = String.join("\n", errorMessages);
+        return new Pair<>(false, errorMessage);
+    }
+
+    if (supplierDAL.updateSupplier(newSupplier) == 0) {
+        return new Pair<>(false, "Cập nhật nhà cung cấp không thành công.");
+    }
+
+    return new Pair<>(true, "Cập nhật nhà cung cấp thành công.");
+}
 
     public Pair<Boolean, String> deleteSupplier(Supplier supplier) {
 
@@ -123,8 +160,8 @@ public class SupplierBLL extends Manager<Supplier> {
     private static Pair<Boolean, String> validateName(String name) {
         if (name.isBlank())
             return new Pair<>(false, "Tên nhà cung cấp không được để trống.");
-//        if (VNString.containsSpecial(name))
-//            return new Pair<>(false, "Tên nhà cung cấp không được chứa ký tự đặc biệt.");
+        if (VNString.containsSpecial(name))
+            return new Pair<>(false, "Tên nhà cung cấp không được chứa ký tự đặc biệt.");
         if (VNString.containsNumber(name))
             return new Pair<>(false, "Tên nhà cung cấp không được chứa số.");
         return new Pair<>(true, name);
@@ -135,6 +172,11 @@ public class SupplierBLL extends Manager<Supplier> {
             return new Pair<>(false, "Số điện thoại nhà cung cấp không được bỏ trống.");
         if (!VNString.checkFormatPhone(phone))
             return new Pair<>(false, "Số điện thoại nhà cung cấp phải bắt đầu với \"0x\" hoặc \"+84x\" hoặc \"84x\" với \"x\" thuộc \\{\\\\3, 5, 7, 8, 9\\}\\\\.");
+
+        List<Supplier> suppliers = supplierDAL.searchSuppliers("phone = '" + phone + "'", "deleted = 0");
+        if (!suppliers.isEmpty()) {
+            return new Pair<>(false, "Số điện thoại nhà cung cấp đã tồn tại.");
+        }
         return new Pair<>(true, phone);
     }
 
@@ -146,6 +188,10 @@ public class SupplierBLL extends Manager<Supplier> {
             return new Pair<>(false, "Email nhà cung cấp không được chứa unicode.");
         if (!VNString.checkFormatOfEmail(email))
             return new Pair<>(false, "Email nhà cung cấp phải theo định dạng (username@domain.name).");
+        List<Supplier>suppliers = supplierDAL.searchSuppliers("email = '" + email + "'", "deleted = 0");
+        if (!suppliers.isEmpty()) {
+            return new Pair<>(true, "Email nhà cung cấp đã tồn tại.");
+        }
         return new Pair<>(true, email);
     }
 
