@@ -7,17 +7,17 @@ public class Role_detail {
     private int staff_id;
     private Date entry_date;
     private double salary;
-    private double hourly_wage;
+    private int type_salary;
 
     public Role_detail() {
     }
 
-    public Role_detail(int role_id, int staff_id, Date entry_date, double salary, double hourly_wage) {
+    public Role_detail(int role_id, int staff_id, Date entry_date, double salary, int type_salary) {
         this.role_id = role_id;
         this.staff_id = staff_id;
         this.entry_date = entry_date;
         this.salary = salary;
-        this.hourly_wage = hourly_wage;
+        this.type_salary = type_salary;
     }
 
     public int getRole_id() {
@@ -52,12 +52,12 @@ public class Role_detail {
         this.salary = salary;
     }
 
-    public double getHourly_wage() {
-        return hourly_wage;
+    public double getType_salary() {
+        return type_salary;
     }
 
-    public void setHourly_wage(double hourly_wage) {
-        this.hourly_wage = hourly_wage;
+    public void setType_salary(int type_salary) {
+        this.type_salary = type_salary;
     }
 
     @Override
@@ -66,6 +66,6 @@ public class Role_detail {
                 staff_id + " | " +
                 entry_date + " | " +
                 salary + " | " +
-                hourly_wage;
+                type_salary;
     }
 }

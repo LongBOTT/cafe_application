@@ -92,7 +92,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
             }
         });
         FunctionPanel.add(refreshPanel);
-//
+
         JLabel refreshLabel = new JLabel("Làm mới");
         refreshLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
