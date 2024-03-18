@@ -56,7 +56,7 @@ public class DialogFormDetail_2 extends  JDialog{
 //        content.setLayout(new MigLayout("", "20[]20[]20", "10[]10[]10"));
         contentdis.setLayout(new MigLayout("", "[][]", "[][]"));
         contentdis.setBackground(new Color(255, 255, 255));
-        contentdis.setPreferredSize(new Dimension(1000, 140));
+        contentdis.setPreferredSize(new Dimension(1000, 100));
         add(contentdis, "wrap");
 
         titlepro.setLayout(new BorderLayout());

@@ -7,14 +7,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoleDAL extends Manager{
-    public RoleDAL(){
+public class RoleDAL extends Manager {
+    public RoleDAL() {
         super("role",
                 List.of("id",
                         "name"));
     }
 
-    public List<Role> convertToRoles(List<List<String>> data ){
+    public List<Role> convertToRoles(List<List<String>> data) {
         return convert(data, row -> {
             try {
                 return new Role(
@@ -38,6 +38,17 @@ public class RoleDAL extends Manager{
         }
         return 0;
     }
+    public int getRoleName(Role role) {
+        try {
+            return create(
+                    role.getName()
+            );
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in RoleDAL.addRole(): " + e.getMessage());
+        }
+        return 0;
+    }
+
 
     public int updateRole(Role role) {
         try {
@@ -68,4 +79,9 @@ public class RoleDAL extends Manager{
         }
         return new ArrayList<>();
     }
+
+
 }
+
+
+

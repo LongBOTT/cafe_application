@@ -56,7 +56,7 @@ public class AddDiscountGUI extends DialogFormDetail_2 {
         titledis.add(titleName, BorderLayout.CENTER);
 
 
-        FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT, 25, 25);
+        FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT, 30, 10);
         contentdis.setLayout(flowLayout);
 
         for (String string : new String[]{"Mã Giảm Giá", "Trạng Thái"}) {

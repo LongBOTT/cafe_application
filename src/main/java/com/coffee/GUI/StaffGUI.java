@@ -290,6 +290,7 @@ public class StaffGUI extends Layout1 {
 
             int staffId = Integer.parseInt((String) data[i][0]);
             List<Role_detail> role_detailList = new Role_detailBLL().searchRole_details("staff_id = " + staffId);
+
             Role_detail roleDetail = role_detailList.get(role_detailList.size() - 1);
             Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
             data[i] = Arrays.copyOf(data[i], data[i].length + 1);
@@ -327,7 +328,7 @@ public class StaffGUI extends Layout1 {
 
         if (edit && indexColumn == indexColumnEdit) {
                 new EditStaffGUI(staffBLL.searchStaffs("deleted = 0").get(indexRow));
-            System.out.println(" đã nhấn ởddaaay ");// Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+           // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
                 refresh();
         }
        if (remove && indexColumn == indexColumnRemove)

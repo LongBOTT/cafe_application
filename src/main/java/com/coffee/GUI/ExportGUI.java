@@ -1,8 +1,11 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.DiscountBLL;
+import com.coffee.BLL.Export_NoteBLL;
 import com.coffee.DTO.Function;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailExportGUI;
+import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailSupplierGUI;
+import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.Layout2;
 import com.coffee.GUI.components.*;
@@ -51,11 +54,13 @@ public class ExportGUI extends Layout2 {
 
     private Date date;
 
+    private Export_NoteBLL exportNoteBLL = new Export_NoteBLL();
     public ExportGUI(List<Function> functions) {
         super();
         this.functions = functions;
         if (functions.stream().anyMatch(f -> f.getName().equals("view"))) detail = true;
         if (functions.stream().anyMatch(f -> f.getName().equals("edit"))) edit = true;
+        if (functions.stream().anyMatch(f -> f.getName().equals("remove"))) remove = true;
         init(functions);
     }
 
@@ -69,19 +74,20 @@ public class ExportGUI extends Layout2 {
         dateTextField = new JTextField[2];
         jTextFieldDate = new JTextField[2];
 
-        columnNames = new String[]{"Mã Xuất Hàng", "Ngày Xuất Hàng", "Nhà Cung Cấp", "Số Lượng", "Trạng Thái"};
+//        jComboBoxSearch = new JComboBox<>(new String[]{"Nhà Cung Cấp"});
 
+        columnNames = new String[]{"Mã Phiếu Nhập ", "Nhân Viên Nhập", "Tổng","Ngày Nhập"};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
             columnNames[indexColumnDetail] = "Xem";
         }
+
         if (edit) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnEdit = columnNames.length - 1;
             columnNames[indexColumnEdit] = "Sửa";
         }
-
 
 //        if (remove) {
 //            columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
@@ -89,7 +95,8 @@ public class ExportGUI extends Layout2 {
 //            columnNames[indexColumnRemove] = "Xoá";
 //        }
 
-        dataTable = new DataTable(new Object[0][0], columnNames, e -> selectFunction(), detail, edit, remove, 5);
+
+        dataTable = new DataTable(new Object[0][0], columnNames, e -> selectFunction(), detail, edit, remove, 4);
 
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
@@ -126,6 +133,12 @@ public class ExportGUI extends Layout2 {
         containerSearch.setPreferredSize(new Dimension(280, 40));
         SearchPanel.add(containerSearch);
 
+//        jComboBoxSearch.setBackground(new Color(29, 78, 216));
+//        jComboBoxSearch.setForeground(Color.white);
+//        jComboBoxSearch.setPreferredSize(new Dimension(150, 35));
+//        jComboBoxSearch.addActionListener(e -> selectSearchFilter());
+//        SearchPanel.add(jComboBoxSearch);
+
         iconSearch.setIcon(new FlatSVGIcon("icon/search.svg"));
         containerSearch.add(iconSearch);
 
@@ -157,7 +170,7 @@ public class ExportGUI extends Layout2 {
 //        jButtonSearch.addActionListener(e -> searchWork_schedules());
         SearchPanel.add(jButtonSearch);
 
-//        loadDataTable(workScheduleBLL.getData(workScheduleBLL.searchWork_schedules()));
+        loadDataTable(exportNoteBLL.getData(exportNoteBLL.searchExport_Note()));
 
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
@@ -167,7 +180,7 @@ public class ExportGUI extends Layout2 {
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-//                refresh();
+                refresh();
             }
         });
         FunctionPanel.add(refreshPanel);
@@ -186,7 +199,7 @@ public class ExportGUI extends Layout2 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-//                    refresh();
+                    refresh();
                 }
             });
             FunctionPanel.add(roundedPanel);
@@ -223,7 +236,11 @@ public class ExportGUI extends Layout2 {
             roundedPanel.add(panel);
         }
     }
-
+    public void refresh() {
+        jTextFieldSearch.setText("");
+        jComboBoxSearch.setSelectedIndex(0);
+        loadDataTable(exportNoteBLL.getData(exportNoteBLL.searchExport_Note()));
+    }
 
     public void loadDataTable(Object[][] objects) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
@@ -244,7 +261,11 @@ public class ExportGUI extends Layout2 {
                 data[i] = Arrays.copyOf(data[i], data[i].length + 1);
                 data[i][data[i].length - 1] = iconEdit;
             }
-
+//            if (remove) {
+//                JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
+//                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
+//                data[i][data[i].length - 1] = iconRemove;
+//            }
         }
 
         for (Object[] object : data) {
@@ -269,17 +290,14 @@ public class ExportGUI extends Layout2 {
         int indexColumn = dataTable.getSelectedColumn();
 
         if (detail && indexColumn == indexColumnDetail)
-//            new DetailSupplierGUI(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+//            new DetailSupplierGUI(exportNoteBLL.searchExport_Note("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        if (edit && indexColumn == indexColumnEdit) {
+//            new EditSupplierGUI(exportNoteBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            refresh();
+        }
+//        if (remove && indexColumn == indexColumnRemove)
+//            deleteSupplier(exportNoteBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
-            if (edit && indexColumn == indexColumnEdit) {
-//            new EditSupplierGUI(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-//            refresh();
-            }
-
-//        if (remove && indexColumn == indexColumnRemove) {
-////            deleteSupplier(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-//
-//        }
     }
 
 

@@ -1,9 +1,11 @@
 package com.coffee.GUI;
 
+import com.coffee.BLL.Import_NoteBLL;
 import com.coffee.BLL.StaffBLL;
 import com.coffee.BLL.Work_ScheduleBLL;
 import com.coffee.DTO.Function;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddWorkScheduleGUI;
+import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.Layout2;
 import com.coffee.GUI.components.RoundedPanel;
@@ -49,13 +51,14 @@ public class ImportGUI extends Layout2 {
     private JComboBox<String> jComboBoxSearch;
     private Date date;
 
+    private Import_NoteBLL importNoteBLL = new Import_NoteBLL();
+
     public ImportGUI(List<Function> functions) {
         super();
         this.functions = functions;
         if (functions.stream().anyMatch(f -> f.getName().equals("view"))) detail = true;
         if (functions.stream().anyMatch(f -> f.getName().equals("edit"))) edit = true;
-//        if (functions.stream().anyMatch(f -> f.getName().equals("remove")))
-//            remove = true;
+        if (functions.stream().anyMatch(f -> f.getName().equals("remove"))) remove = true;
         init(functions);
 
     }
@@ -70,15 +73,15 @@ public class ImportGUI extends Layout2 {
         dateTextField = new JTextField[2];
         jTextFieldDate = new JTextField[2];
 
-        jComboBoxSearch = new JComboBox<>(new String[]{"Nhà Cung Cấp"});
+//        jComboBoxSearch = new JComboBox<>(new String[]{"Nhà Cung Cấp"});
 
-        columnNames = new String[]{"Mã Phiếu Nhập ", "Ngày Nhập", "Nhà Cung Cấp", "Nhân Viên Nhập", "Số Lượng"};
-
+        columnNames = new String[]{"Mã Phiếu Nhập ", "Nhân Viên Nhập", "Tổng","Ngày Nhập"};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
             columnNames[indexColumnDetail] = "Xem";
         }
+
         if (edit) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnEdit = columnNames.length - 1;
@@ -91,7 +94,7 @@ public class ImportGUI extends Layout2 {
 //            columnNames[indexColumnRemove] = "Xoá";
 //        }
 
-        dataTable = new DataTable(new Object[0][0], columnNames, e -> selectFunction(), detail, edit, remove, 5);
+        dataTable = new DataTable(new Object[0][0], columnNames, e -> selectFunction(), detail, edit, remove, 4);
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
@@ -127,11 +130,11 @@ public class ImportGUI extends Layout2 {
         containerSearch.setPreferredSize(new Dimension(280, 40));
         SearchPanel.add(containerSearch);
 
-        jComboBoxSearch.setBackground(new Color(29, 78, 216));
-        jComboBoxSearch.setForeground(Color.white);
-        jComboBoxSearch.setPreferredSize(new Dimension(110, 35));
-        jComboBoxSearch.addActionListener(e -> selectSearchFilter());
-        SearchPanel.add(jComboBoxSearch);
+//        jComboBoxSearch.setBackground(new Color(29, 78, 216));
+//        jComboBoxSearch.setForeground(Color.white);
+//        jComboBoxSearch.setPreferredSize(new Dimension(150, 35));
+//        jComboBoxSearch.addActionListener(e -> selectSearchFilter());
+//        SearchPanel.add(jComboBoxSearch);
 
         iconSearch.setIcon(new FlatSVGIcon("icon/search.svg"));
         containerSearch.add(iconSearch);
@@ -164,7 +167,7 @@ public class ImportGUI extends Layout2 {
 //        jButtonSearch.addActionListener(e -> searchWork_schedules());
         SearchPanel.add(jButtonSearch);
 
-//        loadDataTable(workScheduleBLL.getData(workScheduleBLL.searchWork_schedules()));
+        loadDataTable(importNoteBLL.getData(importNoteBLL.searchImport()));
 
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
@@ -174,7 +177,7 @@ public class ImportGUI extends Layout2 {
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-//                refresh();
+                refresh();
             }
         });
         FunctionPanel.add(refreshPanel);
@@ -194,7 +197,7 @@ public class ImportGUI extends Layout2 {
                 @Override
                 public void mousePressed(MouseEvent e) {
 
-//                    refresh();
+                    refresh();
                 }
             });
             FunctionPanel.add(roundedPanel);
@@ -251,11 +254,11 @@ public class ImportGUI extends Layout2 {
                 data[i] = Arrays.copyOf(data[i], data[i].length + 1);
                 data[i][data[i].length - 1] = iconEdit;
             }
-            if (remove) {
-                JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
-                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
-                data[i][data[i].length - 1] = iconRemove;
-            }
+//            if (remove) {
+//                JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
+//                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
+//                data[i][data[i].length - 1] = iconRemove;
+//            }
         }
 
         for (Object[] object : data) {
@@ -274,22 +277,25 @@ public class ImportGUI extends Layout2 {
 //            }
 //        }
     }
-
+    public void refresh() {
+        jTextFieldSearch.setText("");
+        jComboBoxSearch.setSelectedIndex(0);
+        loadDataTable(importNoteBLL.getData(importNoteBLL.searchImport()));
+    }
     private void selectFunction() {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
 
         if (detail && indexColumn == indexColumnDetail)
-//            new DetailSupplierGUI(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-
+//            new DetailSupplierGUI(exportNoteBLL.searchExport_Note("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
             if (edit && indexColumn == indexColumnEdit) {
-//            new EditSupplierGUI(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-//            refresh();
+//            new EditSupplierGUI(exportNoteBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+                refresh();
             }
+//        if (remove && indexColumn == indexColumnRemove)
+//            deleteSupplier(exportNoteBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
-//        if (remove && indexColumn == indexColumnRemove) {
-////            deleteSupplier(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-//
-//        }
     }
+
+
 }
