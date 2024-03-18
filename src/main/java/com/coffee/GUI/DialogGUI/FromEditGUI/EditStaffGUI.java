@@ -122,6 +122,9 @@ public class EditStaffGUI extends DialogForm {
                 }
                 if (string.trim().equals("Chức Vụ")) {
                     textFieldRole = new JTextField();
+                    textFieldRole.setPreferredSize(new Dimension(280, 35));
+                    textFieldRole.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+                    textFieldRole.setBackground(new Color(245, 246, 250));
                     List<Role_detail> roleDetails = new Role_detailBLL().searchRole_details("staff_id = " + staff.getId());
                     for (Role_detail roleDetail : roleDetails) {
                         int roleId = roleDetail.getRole_id();
@@ -138,7 +141,7 @@ public class EditStaffGUI extends DialogForm {
                     iconChangePasswd.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mousePressed(MouseEvent e) {
-                            new ChangeRoleGUI(staff).setVisible(true);
+                            new ChangeRoleGUI(staff);
                         }
                     });
                     content.add(iconChangePasswd, "wrap");

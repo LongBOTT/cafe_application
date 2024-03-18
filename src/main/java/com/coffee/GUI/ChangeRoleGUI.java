@@ -31,6 +31,7 @@ public class ChangeRoleGUI extends DialogForm {
     private JButton buttonSet;
     private Role_detailBLL supplierBLL = new Role_detailBLL();
     private Staff staff;
+    private Role_detail roleDetail;
 
     public ChangeRoleGUI(Staff staff) {
         super();
@@ -38,6 +39,8 @@ public class ChangeRoleGUI extends DialogForm {
         super.setSize(new Dimension(600, 400));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         this.staff = staff;
+        List<Role_detail> role_detailList = new Role_detailBLL().searchRole_details("staff_id = " + staff.getId());
+        roleDetail = role_detailList.get(role_detailList.size() - 1);
         init();
         setVisible(true);
     }
@@ -52,7 +55,7 @@ public class ChangeRoleGUI extends DialogForm {
         buttonCancel = new JButton("Huỷ");
         buttonSet = new JButton("Thiết lập");
         content.setLayout(new MigLayout("",
-                "50[]20[]",
+                "50[]20[][]50",
                 "20[]20[]20"));
 
         titleName.setText("Thiết lập lương");
@@ -73,13 +76,17 @@ public class ChangeRoleGUI extends DialogForm {
 
             if (string.equals("Nhân viên")) {
                 JLabel jLabel = new JLabel(staff.getName());
-                jLabel.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+                jLabel.setFont((new Font("Public Sans", Font.BOLD, 16)));
                 content.add(jLabel, "wrap");
             }
 
             if (string.equals("Chức vụ")) {
                 for (Role role : new RoleBLL().searchRoles("id > 1"))
                     jComboBoxRole.addItem(role.getName());
+
+
+                Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
+                jComboBoxRole.setSelectedItem(role.getName());
 
                 jComboBoxRole.setPreferredSize(new Dimension(1000, 30));
                 jComboBoxRole.setFont((new Font("Public Sans", Font.PLAIN, 14)));
@@ -91,6 +98,14 @@ public class ChangeRoleGUI extends DialogForm {
                 jComboBoxTypeSalary.addItem("1. Cố định");
                 jComboBoxTypeSalary.addItem("2. Theo giờ làm việc");
 
+                if (roleDetail.getType_salary() == 1)
+                    jComboBoxTypeSalary.setSelectedIndex(1);
+
+                else if (roleDetail.getType_salary() == 2)
+                    jComboBoxTypeSalary.setSelectedIndex(2);
+                else
+                    jComboBoxTypeSalary.setSelectedIndex(0);
+                
                 jComboBoxTypeSalary.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -100,17 +115,23 @@ public class ChangeRoleGUI extends DialogForm {
 
                 jComboBoxTypeSalary.setPreferredSize(new Dimension(1000, 30));
                 jComboBoxTypeSalary.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+
                 content.add(jComboBoxTypeSalary, "wrap");
-            } else {
+            }
+
+            if (string.isEmpty()) {
                 textFieldSalary.setPreferredSize(new Dimension(1000, 30));
                 textFieldSalary.setFont((new Font("Public Sans", Font.PLAIN, 14)));
                 textFieldSalary.setVisible(false);
-                content.add(jComboBoxTypeSalary);
+                content.add(textFieldSalary);
             }
 
         }
-        jLabelTypeSalary = new JLabel();
+        jLabelTypeSalary = new JLabel("          ");
+        jLabelTypeSalary.setFont((new Font("Public Sans", Font.PLAIN, 13)));
         content.add(jLabelTypeSalary, "wrap");
+
+        loadTypeSalary();
 
         buttonCancel.setPreferredSize(new Dimension(100, 30));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
@@ -148,17 +169,18 @@ public class ChangeRoleGUI extends DialogForm {
         if (jComboBoxTypeSalary.getSelectedIndex() == 0) {
             attributeRole_detail.get(attributeRole_detail.size() - 1).setText("");
             textFieldSalary.setVisible(false);
-            jLabelTypeSalary.setText("");
+            jLabelTypeSalary.setText("         ");
+        } else {
+            attributeRole_detail.get(attributeRole_detail.size() - 1).setText("Mức lương");
+            textFieldSalary.setText("");
+            textFieldSalary.setVisible(true);
+
+            if (jComboBoxTypeSalary.getSelectedIndex() == 1)
+                jLabelTypeSalary.setText("/kỳ lương");
+
+            if (jComboBoxTypeSalary.getSelectedIndex() == 2)
+                jLabelTypeSalary.setText("/giờ");
         }
-        attributeRole_detail.get(attributeRole_detail.size() - 1).setText("Mức lương");
-        textFieldSalary.setText("");
-        textFieldSalary.setVisible(true);
-
-        if (jComboBoxTypeSalary.getSelectedIndex() == 1)
-            jLabelTypeSalary.setText("/kỳ lương");
-
-        if (jComboBoxTypeSalary.getSelectedIndex() == 2)
-            jLabelTypeSalary.setText("/giờ");
     }
 
     private void addRole_detail() {
