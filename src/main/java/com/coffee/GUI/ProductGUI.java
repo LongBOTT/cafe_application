@@ -6,6 +6,7 @@ import com.coffee.DTO.Function;
 import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddProductGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailProductGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditProductGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
@@ -183,7 +184,7 @@ public class ProductGUI extends Layout3 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-//                    new AddSupplierGUI();
+                    new AddProductGUI();
                     refresh();
                 }
             });

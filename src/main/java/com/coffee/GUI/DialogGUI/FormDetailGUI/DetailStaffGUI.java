@@ -83,7 +83,6 @@ public class DetailStaffGUI extends DialogForm {
                 content.add(jDateChooser, "wrap");
 
             }
-
                 else
                 {
                 if (string.trim().equals("Mã Nhân Viên"))

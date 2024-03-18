@@ -11,7 +11,7 @@ public class CustomTableCellRenderer extends DefaultTableCellRenderer {
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-//        ((JLabel) cellComponent).setHorizontalAlignment(SwingConstants.CENTER); // Căn giữa nội dung
+        ((JLabel) cellComponent).setHorizontalAlignment(SwingConstants.CENTER); // Căn giữa nội dung
 
         // Thêm border cho các hàng, trừ hàng cuối cùng
         Border border;

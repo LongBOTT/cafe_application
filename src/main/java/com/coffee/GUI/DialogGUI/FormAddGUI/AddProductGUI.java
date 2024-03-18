@@ -1,6 +1,7 @@
-package com.coffee.GUI.DialogGUI.FormDetailGUI;
+package com.coffee.GUI.DialogGUI.FormAddGUI;
 
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
+import com.coffee.GUI.components.CustomPanelRenderer;
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
@@ -12,11 +13,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetailProductGUI extends DialogFormDetail_1 {
-
+public class AddProductGUI extends DialogFormDetail_1 {
     private JLabel titleName;
     private RoundedPanel containerAtributeProduct;
     private RoundedPanel containerImage;
@@ -25,6 +28,8 @@ public class DetailProductGUI extends DialogFormDetail_1 {
     private JLabel lblListMaterial;
     private JLabel material;
     private DataTable dataTable ;
+    private JButton buttonCancel;
+    private JButton buttonEdit;
 
     private RoundedPanel  containerInforMaterial;
     private RoundedScrollPane scrollPane;
@@ -32,16 +37,16 @@ public class DetailProductGUI extends DialogFormDetail_1 {
     private JComboBox<String> CbListMaterial;
     private List<String> AtributeProduct = new ArrayList<>();
     private String[] columnNames;
-    public DetailProductGUI() {
+    public AddProductGUI() {
         super();
-        super.setTitle("Chi tiết sản phẩm");
+        super.setTitle("Thêm sản phẩm");
         init();
         setVisible(true);
 
     }
 
     public void init() {
-        titleName = new JLabel("Chi tiết sản phẩm");
+        titleName = new JLabel("Thêm sản phẩm");
         title.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
         title.add(titleName);
@@ -60,16 +65,11 @@ public class DetailProductGUI extends DialogFormDetail_1 {
 
         JPanel PanelImage = new JPanel();
         PanelImage.setPreferredSize(new Dimension(150,150));
-        PanelImage.setBackground(new Color(217,217,217));
+//        PanelImage.setBackground(new Color(217,217,217));
 
         JLabel lblImage = new JLabel();
-        ImageIcon icon = new FlatSVGIcon("image/Product/" + "SP01" + ".svg");
-        Image image = icon.getImage();
-        Image newImg = image.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
-        icon = new ImageIcon(newImg);
-        lblImage.setIcon(icon);
-
         PanelImage.add(lblImage);
+
 
         btnImage = new JButton("Thêm ảnh");
         btnImage.setPreferredSize(new Dimension(100, 30));
@@ -110,9 +110,7 @@ public class DetailProductGUI extends DialogFormDetail_1 {
 //                textField.setText(AtributeProduct.get(3));
             }
 
-            textField.setEditable(false);
-            textField.setEnabled(false);
-            textField.setPreferredSize(new Dimension(350, 40));
+            textField.setPreferredSize(new Dimension(350, 30));
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
             containerAtributeProduct.add(textField, "wrap");
@@ -132,15 +130,44 @@ public class DetailProductGUI extends DialogFormDetail_1 {
         EmptyBorder emptyBorder1 = new EmptyBorder(0, 30, 0, 0);
         containerInforMaterial.setBorder(emptyBorder1);
         bottom.add(containerInforMaterial, BorderLayout.NORTH);
-        columnNames = new String[]{"STT","Tên nguyên liệu", "Số lượng", "Đơn vị"};
+        for (String string : new String[]{"Tên nguyên liệu", "Số lượng", "Đơn vị", "Thêm"}) {
+            if (string.equals("Thêm")) {
+                JButton btnThem = new JButton("Thêm");
+                btnThem.setPreferredSize(new Dimension(100, 40));
+                btnThem.setBackground(new Color(0, 182, 62));
+                btnThem.setFont(new Font("Public Sans", Font.BOLD, 16));
+                btnThem.setForeground(Color.WHITE);
+                containerInforMaterial.add(btnThem);
+                continue;
+            }
+            JLabel label = new JLabel();
+            label.setText(string);
+            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+            label.setPreferredSize(null);
+            containerInforMaterial.add(label);
+
+            JTextField textField = new JTextField();
+            textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+            textField.setBackground(new Color(245, 246, 250));
+            containerInforMaterial.add(textField);
+            if (string.equals("Tên nguyên liệu")) {
+                textField.setPreferredSize(new Dimension(240, 30));
+            }
+            else {
+                textField.setPreferredSize(new Dimension(60, 30));
+            }
+        }
+        columnNames = new String[]{"STT","Tên nguyên liệu", "Số lượng", "Đơn vị","Sửa","Xóa"};
         dataTable = new DataTable(new Object[0][0], columnNames,
-               null,
-                false, false, false, 4);
-        int[] columnWidths = {50,300, 50, 50};
+                null,
+                false, true, true, 6);
+        int[] columnWidths = {50,300, 50, 50,50,50};
 
         for (int i = 0; i < columnWidths.length; i++) {
-           dataTable.getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
+            dataTable.getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
         }
+        dataTable.getColumnModel().getColumn(4).setCellRenderer(new CustomPanelRenderer());
+        dataTable.getColumnModel().getColumn(5).setCellRenderer(new CustomPanelRenderer());
 
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         containerDataTable = new RoundedPanel();
@@ -150,15 +177,19 @@ public class DetailProductGUI extends DialogFormDetail_1 {
         containerDataTable.setBorder(emptyBorderTop);
         containerDataTable.add(scrollPane, BorderLayout.CENTER);
         bottom.add(containerDataTable, BorderLayout.CENTER);
-
+        // Tạo dữ liệu mẫu
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+        JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/edit.svg"));
+        JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
         Object[][] data = {
-                {1, "Nguyên liệu 1", 10, "Đơn vị 1"},
-                {2, "Nguyên liệu 2", 20, "Đơn vị 2"},
-                {3, "Nguyên liệu 3", 30, "Đơn vị 3"},
-                {1, "Nguyên liệu 1", 10, "Đơn vị 1"},
-                {2, "Nguyên liệu 2", 20, "Đơn vị 2"},
-                {3, "Nguyên liệu 3", 30, "Đơn vị 3"},
+                {1, "Nguyên liệu 1", 10, "Đơn vị 1",iconDetail,iconRemove},
+                {1, "Nguyên liệu 1", 10, "Đơn vị 1",iconDetail,iconRemove},
+                {1, "Nguyên liệu 1", 10, "Đơn vị 1",iconDetail,iconRemove},
+                {1, "Nguyên liệu 1", 10, "Đơn vị 1",iconDetail,iconRemove},
+                {1, "Nguyên liệu 1", 10, "Đơn vị 1",iconDetail,iconRemove},
+                {1, "Nguyên liệu 1", 10, "Đơn vị 1",iconDetail,iconRemove},
+                {1, "Nguyên liệu 1", 10, "Đơn vị 1",iconDetail,iconRemove},
+                {1, "Nguyên liệu 1", 10, "Đơn vị 1",iconDetail,iconRemove},
         };
         for (Object[] object : data) {
             model.addRow(object);
@@ -166,5 +197,39 @@ public class DetailProductGUI extends DialogFormDetail_1 {
 
         JTableHeader jTableHeader = dataTable.getTableHeader();
         jTableHeader.setBackground(new Color(232, 206, 180));
+        buttonCancel = new JButton("Huỷ");
+        buttonEdit = new JButton("Cập nhật");
+        buttonCancel.setPreferredSize(new Dimension(100, 30));
+        buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
+        buttonCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        buttonCancel.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                buttonCancel.setBackground(new Color(0xD54218));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                buttonCancel.setBackground(Color.white);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                cancel();
+            }
+        });
+        containerButton.add(buttonCancel);
+
+        buttonEdit.setPreferredSize(new Dimension(100, 30));
+        buttonEdit.setFont(new Font("Public Sans", Font.BOLD, 15));
+        buttonEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        buttonEdit.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+        });
+        containerButton.add(buttonEdit);
     }
+
 }
+

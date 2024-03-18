@@ -15,6 +15,7 @@ import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,57 +51,41 @@ public class EditProductGUI extends DialogFormDetail_1 {
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
         title.add(titleName);
 
-        btnImage = new JButton("Thêm ảnh");
-        btnImage.setPreferredSize(new Dimension(100, 30));
+        top.setLayout(new FlowLayout());
 
-        ImageIcon icon = new FlatSVGIcon("image/Product/" + "SP01" + ".svg");
+        containerAtributeProduct = new RoundedPanel();
+        containerAtributeProduct.setLayout(new MigLayout("", "[]60[]200", "15[]15[]15[]15"));
+        containerAtributeProduct.setBackground(new Color(217, 217, 217));
+        containerAtributeProduct.setPreferredSize(new Dimension(600,200));
+
+        containerImage = new RoundedPanel();
+        containerImage.setLayout(new MigLayout("", "[]", "[][]"));
+        containerImage.setBackground(new Color(217, 217, 217));
+        containerImage.setPreferredSize(new Dimension(200, 200));
+
+        JPanel PanelImage = new JPanel();
+        PanelImage.setPreferredSize(new Dimension(150,150));
+        PanelImage.setBackground(new Color(217,217,217));
+
         JLabel lblImage = new JLabel();
-        lblImage.setPreferredSize(new Dimension(200, 150));
+        ImageIcon icon = new FlatSVGIcon("image/Product/" + "SP01" + ".svg");
         Image image = icon.getImage();
         Image newImg = image.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
         icon = new ImageIcon(newImg);
         lblImage.setIcon(icon);
 
-        top.setLayout(new GridBagLayout());
+        PanelImage.add(lblImage);
 
-        containerAtributeProduct = new RoundedPanel();
-        containerAtributeProduct.setLayout(new MigLayout("", "[]30[]30", "[]20[]20[]"));
-        containerAtributeProduct.setBackground(new Color(217, 217, 217));
-        top.add(containerAtributeProduct);
-        containerImage = new RoundedPanel();
-        containerImage.setLayout(new MigLayout("", "[]", "[][]"));
+        btnImage = new JButton("Thêm ảnh");
+        btnImage.setPreferredSize(new Dimension(100, 30));
 
-        containerImage.setBackground(new Color(217, 217, 217));
-        containerImage.setPreferredSize(new Dimension(300, 200));
-        containerImage.add(lblImage,"alignx center, wrap");
+        containerImage.add(PanelImage,"alignx center,wrap");
         containerImage.add(btnImage,"alignx center");
 
-        lblImage.setBackground(new Color(0, 0, 0));
+        top.add(containerAtributeProduct);
         top.add(containerImage);
-        GridBagConstraints gbcAtributeProduct = new GridBagConstraints();
-        gbcAtributeProduct.fill = GridBagConstraints.BOTH;
-        gbcAtributeProduct.gridx = 0;
-        gbcAtributeProduct.gridy = 0;
-        gbcAtributeProduct.weightx = 1.0;
-        gbcAtributeProduct.weighty = 1.0;
-        gbcAtributeProduct.insets = new Insets(0, 0, 0, 10); // Khoảng cách bên phải
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.insets = new Insets(0, 50, 0, 200); // Khoảng cách bên phải
-
-        top.add(containerAtributeProduct, gbc);
-
-        gbc.gridx++;
-        gbc.weightx = 0.0;
-
-        gbc.insets = new Insets(0, 0, 0, 0); // Không có khoảng cách
-
-        top.add(containerImage, gbc);
+        EmptyBorder emptyBorder = new EmptyBorder(0, 30, 0, 0);
+        top.setBorder(emptyBorder);
 
         for (String string : new String[]{"Tên sản phẩm", "Size", "Giá bán", "Loại"}) {
             JLabel label = new JLabel();
@@ -130,7 +115,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
 //                textField.setText(AtributeProduct.get(3));
             }
 
-            textField.setPreferredSize(new Dimension(350, 40));
+            textField.setPreferredSize(new Dimension(350, 30));
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
             containerAtributeProduct.add(textField, "wrap");
@@ -147,8 +132,8 @@ public class EditProductGUI extends DialogFormDetail_1 {
         containerInforMaterial.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
         containerInforMaterial.setBackground(new Color(217, 217, 217));
 
-        EmptyBorder emptyBorder = new EmptyBorder(0, 30, 0, 0);
-        containerInforMaterial.setBorder(emptyBorder);
+        EmptyBorder emptyBorder1 = new EmptyBorder(0, 30, 0, 0);
+        containerInforMaterial.setBorder(emptyBorder1);
         bottom.add(containerInforMaterial, BorderLayout.NORTH);
         for (String string : new String[]{"Tên nguyên liệu", "Số lượng", "Đơn vị", "Thêm"}) {
             if (string.equals("Thêm")) {
