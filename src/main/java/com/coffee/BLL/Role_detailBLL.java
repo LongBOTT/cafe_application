@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Role_detailBLL extends Manager<Role_detail>{
+public class Role_detailBLL extends Manager<Role_detail> {
     private Role_detailDAL role_detailDAL;
 
     public Role_detailBLL() {
@@ -32,8 +32,8 @@ public class Role_detailBLL extends Manager<Role_detail>{
         Pair<Boolean, String> result;
 
         result = exists(role_detail);
-        if(result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if (result.getKey()) {
+            return new Pair<>(false, result.getValue());
         }
 
         if (role_detailDAL.addRole_detail(role_detail) == 0)
@@ -78,7 +78,7 @@ public class Role_detailBLL extends Manager<Role_detail>{
                 "entry_date", role_detail.getEntry_date()
         ));
 
-        if(!role_details.isEmpty()){
+        if (!role_details.isEmpty()) {
             return new Pair<>(true, "Chi tiết chức vụ nhân viên nhân viên đã tồn tại.");
         }
         return new Pair<>(false, "");
@@ -91,7 +91,7 @@ public class Role_detailBLL extends Manager<Role_detail>{
             case "staff_id" -> role_detail.getStaff_id();
             case "entry_date" -> role_detail.getEntry_date();
             case "salary" -> role_detail.getSalary();
-            case "hourly_wage" -> role_detail.getHourly_wage();
+            case "type_salary" -> role_detail.getType_salary();
             default -> null;
         };
     }

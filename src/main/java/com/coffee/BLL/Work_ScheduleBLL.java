@@ -26,17 +26,16 @@ public class Work_ScheduleBLL extends Manager<Work_Schedule> {
         return getData(work_scheduleDAL.searchWork_schedules());
     }
 
-    public Pair<Boolean, String> addWork_schedule(Work_Schedule work_schedule) {
+    public Pair<Boolean, String> addWork_schedule(List<Work_Schedule> work_schedules) {
         Pair<Boolean, String> result;
-
-        result = exists(work_schedule);
-        if (result.getKey()) {
-            return new Pair<>(false, result.getValue());
+        for (Work_Schedule work_schedule : work_schedules) {
+            result = exists(work_schedule);
+            if (result.getKey()) {
+                return new Pair<>(false, result.getValue());
+            }
+            if (work_scheduleDAL.addWork_schedule(work_schedule) == 0)
+                return new Pair<>(false, "Thêm lịch làm việc không thành công.");
         }
-
-        if (work_scheduleDAL.addWork_schedule(work_schedule) == 0)
-            return new Pair<>(false, "Thêm lịch làm việc không thành công.");
-
         return new Pair<>(true, "Thêm lịch làm việc thành công.");
     }
 
@@ -79,7 +78,8 @@ public class Work_ScheduleBLL extends Manager<Work_Schedule> {
     public Pair<Boolean, String> exists(Work_Schedule work_schedule) {
         List<Work_Schedule> work_schedules = findWork_schedulesBy(Map.of(
                 "staff_id", work_schedule.getStaff_id(),
-                "date", work_schedule.getDate()
+                "date", work_schedule.getDate(),
+                "shift", work_schedule.getShift()
         ));
 
         if (!work_schedules.isEmpty()) {

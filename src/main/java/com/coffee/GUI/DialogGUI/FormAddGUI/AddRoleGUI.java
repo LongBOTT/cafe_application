@@ -3,6 +3,7 @@ package com.coffee.GUI.DialogGUI.FormAddGUI;
 import com.coffee.BLL.RoleBLL;
 import com.coffee.DTO.Role;
 import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.main.Cafe_Application;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
@@ -25,6 +26,7 @@ public class AddRoleGUI extends DialogForm {
         super();
         super.setTitle("Thêm chức vụ");
         super.setSize(new Dimension(500, 300));
+        super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init();
         setVisible(true);
     }

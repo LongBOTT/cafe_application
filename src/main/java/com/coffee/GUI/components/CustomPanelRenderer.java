@@ -9,6 +9,7 @@ import java.awt.event.MouseListener;
 public class CustomPanelRenderer extends DefaultTableCellRenderer {
     private static final Color GRID_COLOR = Color.GRAY;
     private static final int GRID_THICKNESS = 1;
+
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                                                    boolean hasFocus, int row, int column) {

@@ -6,8 +6,11 @@ import com.coffee.DTO.Role;
 import com.coffee.DTO.Role_detail;
 import com.coffee.DTO.Staff;
 import com.coffee.DTO.Supplier;
+import com.coffee.GUI.ChangePasswordGUI;
+import com.coffee.GUI.ChangeRoleGUI;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.BLL.StaffBLL;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -32,6 +35,7 @@ public class EditStaffGUI extends DialogForm {
     private StaffBLL staffBLL = new StaffBLL();
 
     private List<JTextField> jTextFieldsStaff;
+    public static JTextField textFieldRole;
     private JDateChooser jDateChooser = new JDateChooser();
 
     private Staff staff;
@@ -51,7 +55,7 @@ public class EditStaffGUI extends DialogForm {
         buttonCancel = new JButton("Huỷ");
         buttonEdit = new JButton("Cập nhật");
         content.setLayout(new MigLayout("",
-                "200[]20[]200",
+                "200[]20[]",
                 "20[]20[]20"));
 
         titleName.setText("Cập Nhật Thông Tin Nhân Viên");
@@ -61,8 +65,7 @@ public class EditStaffGUI extends DialogForm {
         title.add(titleName, BorderLayout.CENTER);
 
         for (String string : new String[]{"Mã Nhân Viên", "Tên Nhân Viên", "CCCD", "Giới Tính",
-                "Ngày Sinh", "Chức Vụ", "Số Điện Thoại", "Địa Chỉ", "Email"})
-        {
+                "Ngày Sinh", "Chức Vụ", "Số Điện Thoại", "Địa Chỉ", "Email"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(150, 35));
             label.setText(string);
@@ -74,8 +77,7 @@ public class EditStaffGUI extends DialogForm {
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
 
-            if (string.trim().equals("Ngày Sinh"))
-            {
+            if (string.trim().equals("Ngày Sinh")) {
                 Date birthDate = staff.getBirthdate();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                 jDateChooser = new JDateChooser();
@@ -88,12 +90,9 @@ public class EditStaffGUI extends DialogForm {
                 jDateChooser.setEnabled(false);
                 content.add(jDateChooser, "wrap");
 
-
-            }
-            else
-            {
-                if (string.trim().equals("Mã Nhân Viên"))
-                {
+                continue;
+            } else {
+                if (string.trim().equals("Mã Nhân Viên")) {
                     String staffId = Integer.toString(staff.getId());
                     textField.setText(staffId);
                     textField.setEditable(false);
@@ -108,7 +107,7 @@ public class EditStaffGUI extends DialogForm {
                 }
                 if (string.trim().equals("Giới Tính")) {
                     boolean gender = staff.isGender();
-                    String gender1 = gender? "Nữ" : "Nam";
+                    String gender1 = gender ? "Nữ" : "Nam";
                     textField.setText(gender1);
                     textField.setEditable(false);
                 }
@@ -122,26 +121,33 @@ public class EditStaffGUI extends DialogForm {
                     textField.setText(staff.getEmail());
                 }
                 if (string.trim().equals("Chức Vụ")) {
+                    textFieldRole = new JTextField();
                     List<Role_detail> roleDetails = new Role_detailBLL().searchRole_details("staff_id = " + staff.getId());
                     for (Role_detail roleDetail : roleDetails) {
                         int roleId = roleDetail.getRole_id();
                         Role role = new RoleBLL().searchRoles("id = " + roleId).get(0);
-                        textField.setText(role.getName());
-                        textField.setEditable(false);
+                        textFieldRole.setText(role.getName());
+                        textFieldRole.setEditable(false);
                         break; // Dừng vòng lặp sau khi tìm thấy một chức vụ
                     }
+                    textFieldRole.setEditable(false);
+                    content.add(textFieldRole);
 
-
+                    JLabel iconChangePasswd = new JLabel(new FlatSVGIcon("icon/edit.svg"));
+                    iconChangePasswd.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    iconChangePasswd.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                            new ChangeRoleGUI(staff).setVisible(true);
+                        }
+                    });
+                    content.add(iconChangePasswd, "wrap");
+                    continue;
                 }
 
                 content.add(textField, "wrap");
             }
             jTextFieldsStaff.add(textField);
-//            int i = 0;
-//            for (JTextField textFieldtest : jTextFieldsStaff) {
-//                System.out.println("get( " + i + ") " + textFieldtest.getText());
-//                i++;
-//            }
 
         }
 
@@ -190,9 +196,9 @@ public class EditStaffGUI extends DialogForm {
         name = jTextFieldsStaff.get(2).getText().trim();
         gender = Boolean.parseBoolean(jTextFieldsStaff.get(3).getText().trim()); // Chuyển đổi giá trị boolean từ text field
         birthdate = jDateChooser.getDate(); // Lấy ngày tháng từ JDateChooser
-        phone = jTextFieldsStaff.get(6).getText().trim();
-        address = jTextFieldsStaff.get(7).getText().trim();
-        email = jTextFieldsStaff.get(8).getText().trim();
+        phone = jTextFieldsStaff.get(4).getText().trim();
+        address = jTextFieldsStaff.get(5).getText().trim();
+        email = jTextFieldsStaff.get(6).getText().trim();
 
 
         Staff staff = new Staff(id, name, staffNo, gender, birthdate, phone, address, email, false);

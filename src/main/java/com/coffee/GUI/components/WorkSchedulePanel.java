@@ -1,26 +1,36 @@
 package com.coffee.GUI.components;
 
+
+import com.coffee.BLL.Role_detailBLL;
+import com.coffee.BLL.StaffBLL;
 import com.coffee.BLL.Work_ScheduleBLL;
+
+import com.coffee.DTO.Role_detail;
 import com.coffee.DTO.Staff;
 import com.coffee.DTO.Work_Schedule;
+import com.coffee.GUI.CreateWorkScheduleGUI;
+import com.coffee.GUI.DialogGUI.FromEditGUI.EditWorkScheduleGUI;
+import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
-public class MyWorkSchedulePanel extends JScrollPane {
-    private final Staff staff;
+public class WorkSchedulePanel extends JScrollPane {
     private final List<String> shifts;
     private RoundedPanel panel;
     private List<JLabel> jLabelsDay;
     private final JPanel[][] roundedPanels;
+    private int role_id;
 
-    public MyWorkSchedulePanel(Staff staff) {
-        this.staff = staff;
+    public WorkSchedulePanel(int role_id) {
+        this.role_id = role_id;
 
         shifts = new ArrayList<>();
         shifts.add("Shift 1: 6h - 12h");
@@ -54,8 +64,8 @@ public class MyWorkSchedulePanel extends JScrollPane {
             jLabelsDay.add(jLabel);
         }
         for (i = 0; i < shifts.size(); i++) {
-            String moduleName = shifts.get(i);
-            JLabel jLabel = new JLabel(moduleName);
+            String shift = shifts.get(i);
+            JLabel jLabel = new JLabel(shift);
             jLabel.setBackground(Color.white);
             jLabel.setVerticalAlignment(JLabel.CENTER);
             jLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -63,7 +73,7 @@ public class MyWorkSchedulePanel extends JScrollPane {
             jLabel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
             panel.add(jLabel);
             for (j = 0; j < 7; j++) {
-                roundedPanels[i][j] = new JPanel();
+                roundedPanels[i][j] = new JPanel(new MigLayout("", "5[]5", ""));
                 roundedPanels[i][j].setBackground(Color.white);
                 roundedPanels[i][j].setBorder(BorderFactory.createLineBorder(Color.black, 1));
                 panel.add(roundedPanels[i][j]);
@@ -76,9 +86,20 @@ public class MyWorkSchedulePanel extends JScrollPane {
     }
 
     public void showWorkSchedule(Date date1, Date date2) {
-        List<Work_Schedule> work_schedules = new Work_ScheduleBLL().searchWork_schedules("staff_id = " + staff.getId(),
-                "date >= '" + new SimpleDateFormat("yyyy-MM-dd").format(date1) + "'",
-                "date <= '" + new SimpleDateFormat("yyyy-MM-dd").format(date2) + "'");
+        List<Integer> staffIDList = new ArrayList<>();
+        List<Role_detail> role_detailList = new Role_detailBLL().searchRole_details("role_id = " + role_id);
+
+        for (Role_detail roleDetail : role_detailList)
+            if (!staffIDList.contains(roleDetail.getStaff_id()))
+                staffIDList.add(roleDetail.getStaff_id());
+
+        List<Work_Schedule> work_schedules = new ArrayList<>();
+        for (Integer id : staffIDList) {
+            work_schedules.addAll(new Work_ScheduleBLL().searchWork_schedules("staff_id = " + id,
+                    "date >= '" + new SimpleDateFormat("yyyy-MM-dd").format(date1) + "'",
+                    "date <= '" + new SimpleDateFormat("yyyy-MM-dd").format(date2) + "'"));
+        }
+
         List<Date> dates = getDaysBetween(date1, date2);
         for (int i = 0; i < dates.size(); i++) {
             DateTimeFormatter dtfInput = DateTimeFormatter.ofPattern("u-M-d", Locale.ENGLISH);
@@ -89,15 +110,47 @@ public class MyWorkSchedulePanel extends JScrollPane {
         }
 
         for (JPanel[] jPanel : roundedPanels)
-            for (JPanel panel1 : jPanel)
-                panel1.setBackground(Color.white);
+            for (JPanel panel1 : jPanel) {
+                panel1.removeAll();
+                panel1.repaint();
+                panel1.revalidate();
+            }
 
         int i, j;
         for (Work_Schedule work_schedule : work_schedules) {
             i = work_schedule.getShift() - 1;
             j = dates.indexOf(work_schedule.getDate());
-            roundedPanels[i][j].setBackground(new Color(242, 164, 164));
+
+            Staff staff = new StaffBLL().searchStaffs("id = " + work_schedule.getStaff_id()).get(0);
+            JPanel jPanel = new JPanel(new BorderLayout());
+            jPanel.setBackground(new Color(0x4CFD8F8F, true));
+            jPanel.setPreferredSize(new Dimension(130, 10));
+            jPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            jPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    editWorkSchedule(work_schedule);
+                }
+            });
+
+            JLabel jLabelName = new JLabel(staff.getName());
+            jLabelName.setFont(new Font("Inter", Font.BOLD, 12));
+            jPanel.add(jLabelName, BorderLayout.CENTER);
+
+            String checkin = work_schedule.getCheck_in().equals("null") ? "--" : work_schedule.getCheck_in();
+            String checkout = work_schedule.getCheck_out().equals("null") ? "--" : work_schedule.getCheck_out();
+
+            JLabel jLabelCheckInOut = new JLabel(checkin + " " + checkout);
+            jLabelCheckInOut.setFont(new Font("Inter", Font.PLAIN, 10));
+            jPanel.add(jLabelCheckInOut, BorderLayout.SOUTH);
+
+            roundedPanels[i][j].add(jPanel, "wrap");
         }
+    }
+
+    private void editWorkSchedule(Work_Schedule work_schedule) {
+        new EditWorkScheduleGUI(work_schedule);
+        CreateWorkScheduleGUI.refresh();
     }
 
     public static List<Date> getDaysBetween(Date start, Date end) {

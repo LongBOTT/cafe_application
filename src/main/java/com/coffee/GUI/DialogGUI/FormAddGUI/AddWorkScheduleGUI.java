@@ -7,6 +7,7 @@ import com.coffee.DTO.Staff;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.components.AutocompleteJComboBox;
 import com.coffee.GUI.components.StringSearchable;
+import com.coffee.main.Cafe_Application;
 import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -29,7 +30,9 @@ public class AddWorkScheduleGUI extends DialogForm {
     private JDateChooser jDateChooser;
     private JButton buttonCancel;
     private JButton buttonAdd;
-    private ButtonGroup bgShift;
+    private JCheckBox jCheckBox1;
+    private JCheckBox jCheckBox2;
+    private JCheckBox jCheckBox3;
 
     private StaffBLL staffBLL = new StaffBLL();
     private Work_ScheduleBLL work_ScheduleBLL = new Work_ScheduleBLL();
@@ -38,6 +41,8 @@ public class AddWorkScheduleGUI extends DialogForm {
     public AddWorkScheduleGUI() {
         super();
         super.setTitle("Thêm lịch làm việc");
+        super.setSize(new Dimension(600, 400));
+        super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init();
         setVisible(true);
     }
@@ -51,10 +56,12 @@ public class AddWorkScheduleGUI extends DialogForm {
         jTextFieldWork_Schedule = new ArrayList<>();
         buttonCancel = new JButton("Huỷ");
         buttonAdd = new JButton("Thêm");
-        bgShift = new ButtonGroup();
+        jCheckBox1 = new JCheckBox();
+        jCheckBox2 = new JCheckBox();
+        jCheckBox3 = new JCheckBox();
         staffList = new ArrayList<String>();
         content.setLayout(new MigLayout("",
-                "200[]20[]200",
+                "50[]20[]50",
                 "20[]20[]20"));
 
         titleName.setText("Thêm lịch làm việc");
@@ -63,7 +70,7 @@ public class AddWorkScheduleGUI extends DialogForm {
         titleName.setVerticalAlignment(JLabel.CENTER);
         title.add(titleName, BorderLayout.CENTER);
 
-        for (String string : new String[]{"Nhân viên", "Ngày", "Ca", "Giờ vào", "Giờ ra"}) {
+        for (String string : new String[]{"Nhân viên", "Ngày", "Ca"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
@@ -109,28 +116,15 @@ public class AddWorkScheduleGUI extends DialogForm {
                 jPanel.setPreferredSize(new Dimension(1000, 30));
                 jPanel.setBackground(Color.white);
 
-                JRadioButton radioShift1 = new JRadioButton("1: 6h - 12h");
-                JRadioButton radioShift2 = new JRadioButton("2: 12h - 18h");
-                JRadioButton radioShift3 = new JRadioButton("3: 18h - 23h");
+                jCheckBox1.setText("1: 6h - 12h");
+                jCheckBox2.setText("2: 12h - 18h");
+                jCheckBox3.setText("3: 18h - 23h");
 
-                jPanel.add(radioShift1);
-                jPanel.add(radioShift2);
-                jPanel.add(radioShift3);
-
-                bgShift.add(radioShift1);
-                bgShift.add(radioShift2);
-                bgShift.add(radioShift3);
+                jPanel.add(jCheckBox1);
+                jPanel.add(jCheckBox2);
+                jPanel.add(jCheckBox3);
                 content.add(jPanel, "wrap");
-            } else {
-                JTextField textField = new JTextField();
-                textField.setPreferredSize(new Dimension(1000, 30));
-                textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-                textField.setBackground(new Color(245, 246, 250));
-                jTextFieldWork_Schedule.add(textField);
-                content.add(textField, "wrap");
             }
-
-
         }
 
         buttonCancel.setPreferredSize(new Dimension(100, 30));
@@ -168,7 +162,8 @@ public class AddWorkScheduleGUI extends DialogForm {
     private void addWork_Schedule() {
         Pair<Boolean, String> result;
 
-        int id, staff_id, shift = 0;
+        int id, staff_id;
+        List<Integer> shifts = new ArrayList<>();
         Date date;
         String checkin, checkout;
 
@@ -187,28 +182,35 @@ public class AddWorkScheduleGUI extends DialogForm {
         List<Work_Schedule> work_schedules = work_ScheduleBLL.searchWork_schedules();
         work_schedules.sort(Comparator.comparing(Work_Schedule::getId));
         id = work_ScheduleBLL.getAutoID(work_schedules);
+
         staff_id = Integer.parseInt(Objects.requireNonNull(combo.getSelectedItem()).toString().split(" - ")[1]);
         date = java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser.getDate()));
-        for (Enumeration<AbstractButton> buttons = bgShift.getElements(); buttons.hasMoreElements(); ) {
-            AbstractButton button = buttons.nextElement();
 
-            if (button.isSelected()) {
-                if (button.getText().contains("1:"))
-                    shift = 1;
+        if (jCheckBox1.isSelected())
+            shifts.add(1);
 
-                if (button.getText().contains("2:"))
-                    shift = 2;
+        if (jCheckBox2.isSelected())
+            shifts.add(2);
 
-                if (button.getText().contains("3:"))
-                    shift = 3;
-            }
+        if (jCheckBox3.isSelected())
+            shifts.add(3);
+
+        if (shifts.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn ca làm!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            return;
         }
-        checkin = jTextFieldWork_Schedule.get(0).getText().isEmpty() ? "null" : jTextFieldWork_Schedule.get(0).getText();
-        checkout = jTextFieldWork_Schedule.get(1).getText().isEmpty() ? "null" : jTextFieldWork_Schedule.get(1).getText();
 
-        Work_Schedule workSchedule = new Work_Schedule(id, staff_id, date, checkin, checkout, shift);
+        checkin = "null";
+        checkout = "null";
 
-        result = work_ScheduleBLL.addWork_schedule(workSchedule);
+        List<Work_Schedule> newWork_scheduleList = new ArrayList<>();
+        for (Integer shift : shifts) {
+            Work_Schedule workSchedule = new Work_Schedule(id, staff_id, date, checkin, checkout, shift);
+            newWork_scheduleList.add(workSchedule);
+            id += 1;
+        }
+        result = work_ScheduleBLL.addWork_schedule(newWork_scheduleList);
 
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),
