@@ -190,21 +190,27 @@ public class EditStaffGUI extends DialogForm {
         String staffNo, name, phone, address, email;
         boolean gender;
         Date birthdate;
-
+        for (JTextField textField : jTextFieldsStaff) {
+            // Lấy giá trị từ JTextField và in ra terminal
+            System.out.println("========"+textField.getText());
+        }
         id = staff.getId();
-        staffNo = jTextFieldsStaff.get(1).getText().trim();
-        name = jTextFieldsStaff.get(2).getText().trim();
+        staffNo = jTextFieldsStaff.get(2).getText().trim();
+        System.out.println("=========================="+staffNo);
+        name = jTextFieldsStaff.get(1).getText().trim();
         gender = Boolean.parseBoolean(jTextFieldsStaff.get(3).getText().trim()); // Chuyển đổi giá trị boolean từ text field
         birthdate = jDateChooser.getDate(); // Lấy ngày tháng từ JDateChooser
+      
+
         phone = jTextFieldsStaff.get(4).getText().trim();
         address = jTextFieldsStaff.get(5).getText().trim();
         email = jTextFieldsStaff.get(6).getText().trim();
 
 
-        Staff staff = new Staff(id, name, staffNo, gender, birthdate, phone, address, email, false);
+        Staff newStaff = new Staff(id,staffNo,name, gender,staff.getBirthdate(), phone, address, email, false);
         // false là tồn tại, true là đã xoá
 
-        result = staffBLL.updateStaff(staff);
+        result = staffBLL.updateStaff(staff,newStaff);
 
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),
