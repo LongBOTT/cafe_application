@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 18, 2024 at 04:53 PM
+-- Generation Time: Mar 19, 2024 at 03:49 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.29
 
@@ -836,7 +836,7 @@ INSERT INTO `role` (`id`, `name`) VALUES
 CREATE TABLE `role_detail` (
   `role_id` bigint(20) NOT NULL,
   `staff_id` bigint(20) NOT NULL,
-  `entry_date` date NOT NULL,
+  `entry_date` datetime NOT NULL,
   `salary` float DEFAULT NULL,
   `type_salary` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -846,13 +846,13 @@ CREATE TABLE `role_detail` (
 --
 
 INSERT INTO `role_detail` (`role_id`, `staff_id`, `entry_date`, `salary`, `type_salary`) VALUES
-(1, 1, '2024-02-27', 0, 0),
-(2, 2, '2024-02-28', 5000000, 0),
-(2, 3, '2024-02-28', 5000000, 0),
-(3, 4, '2024-02-28', 0, 20000),
-(4, 5, '2024-02-28', 0, 25000),
-(4, 6, '2024-03-12', 0, 25000),
-(4, 7, '2024-03-12', 0, 25000);
+(1, 1, '2024-02-27 00:00:00', 0, 0),
+(2, 2, '2024-02-28 03:00:00', 7000000, 1),
+(2, 3, '2024-02-28 00:00:00', 7000000, 1),
+(3, 4, '2024-02-28 00:00:00', 25000, 2),
+(4, 5, '2024-02-28 00:00:00', 25000, 2),
+(4, 6, '2024-03-12 00:00:00', 25000, 2),
+(4, 7, '2024-03-12 00:00:00', 25000.7, 2);
 
 -- --------------------------------------------------------
 
@@ -899,7 +899,7 @@ INSERT INTO `staff` (`id`, `no`, `name`, `gender`, `birthdate`, `phone`, `addres
 (4, '079203023643', 'Vũ Minh Thuận', b'0', '2003-08-30', '0964512941', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'vmiinhthuan@gmail.com', b'0'),
 (5, '079203023645', 'Trần Huỳnh Đức Anh', b'0', '2003-08-30', '0964512940', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'ducanh@gmail.com', b'0'),
 (6, '079203023522', 'Nguyễn Tiến Dũng', b'0', '2003-08-30', '0964512920', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'abc@gmail.com', b'0'),
-(7, '079203023777', 'Nguyễn Tiến Quang', b'0', '2003-08-30', '0964513320', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'abcd@gmail.com', b'0');
+(7, '079203023777', 'Nguyễn Tiến Quang', b'0', '2003-08-30', '0964513325', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'abcd@gmail.com', b'0');
 
 -- --------------------------------------------------------
 
