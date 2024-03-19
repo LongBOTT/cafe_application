@@ -119,9 +119,9 @@ public class EditSupplierGUI extends DialogForm {
         address = jTextFieldSupplier.get(2).getText();
         email = jTextFieldSupplier.get(3).getText();
 
-        Supplier supplier = new Supplier(id, name, phone, address, email, false); // false là tồn tại, true là đã xoá
+        Supplier newsSupplier = new Supplier(id, name, phone, address, email, false); // false là tồn tại, true là đã xoá
 
-        result = supplierBLL.updateSupplier(supplier);
+        result = supplierBLL.updateSupplier(supplier,newsSupplier);
 
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),

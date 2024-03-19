@@ -6,9 +6,8 @@ import com.coffee.utils.VNString;
 import javafx.util.Pair;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 
 public class StaffBLL extends Manager<Staff> {
     private StaffDAL staffDAL;
@@ -33,10 +32,10 @@ public class StaffBLL extends Manager<Staff> {
 
 
     public Pair<Boolean, String> addStaff(Staff staff) {
-//        Pair<Boolean, String> result = validateStaffAll(staff);
-//        if (!result.getKey())
-//            return new Pair<>(false, result.getValue());
-//
+        Pair<Boolean, String> result = validateStaffAll(staff);
+        if (!result.getKey())
+            return new Pair<>(false, result.getValue());
+
         if (staffDAL.addStaff(staff) == 0)
             return new Pair<>(false, "Thêm nhân viên không thành công.");
 
@@ -44,11 +43,45 @@ public class StaffBLL extends Manager<Staff> {
     }
 
 
-    public Pair<Boolean, String> updateStaff(Staff staff) {
-//        Pair<Boolean, String> result = validateStaffAll(staff);
-//        if (!result.getKey())
-//            return new Pair<>(false, result.getValue());
-        if (staffDAL.updateStaff(staff) == 0)
+    public Pair<Boolean, String> updateStaff(Staff oldStaff, Staff newStaff) {
+        List<String> errorMessages = new ArrayList<>();
+        if(!Objects.equals(oldStaff.getStaffNo(),newStaff.getStaffNo())) {
+            Pair<Boolean, String> result = validateStaffNo(newStaff.getStaffNo());
+            if (!result.getKey())
+                errorMessages.add(result.getValue());
+        }
+        if(!Objects.equals(oldStaff.getName(),newStaff.getName())){
+            Pair<Boolean, String> result = validateName(newStaff.getName());
+            if (!result.getKey())
+                errorMessages.add(result.getValue());
+        }
+        if(!Objects.equals(oldStaff.getPhone(),newStaff.getPhone())){
+            Pair<Boolean, String> result = validatePhone(newStaff.getPhone());
+            if (!result.getKey())
+                errorMessages.add(result.getValue());
+        }
+        if(!Objects.equals(oldStaff.getEmail(),newStaff.getEmail())){
+            Pair<Boolean, String> result = validateEmail(newStaff.getEmail());
+            if (!result.getKey())
+                errorMessages.add(result.getValue());
+        }
+        if(!Objects.equals(oldStaff.getAddress(),newStaff.getAddress())){
+            Pair<Boolean, String> result = validateAddress(newStaff.getAddress());
+            if (!result.getKey())
+                errorMessages.add(result.getValue());
+        }
+
+        if(!Objects.equals(oldStaff.getBirthdate(),newStaff.getBirthdate())){
+            Pair<Boolean, String> result = validateDate(newStaff.getBirthdate());
+            if (!result.getKey())
+                errorMessages.add(result.getValue());
+        }
+
+        if (!errorMessages.isEmpty()) {
+            String errorMessage = String.join("\n", errorMessages);
+            return new Pair<>(false, errorMessage);
+        }
+        if (staffDAL.updateStaff(newStaff) == 0)
             return new Pair<>(false, "Cập nhật nhân viên không thành công.");
 
         return new Pair<>(true, "Cập nhật nhân viên thành công.");
@@ -106,6 +139,10 @@ public class StaffBLL extends Manager<Staff> {
         if (!result.getKey())
             return new Pair<>(false, result.getValue());
 
+        result = validateDate(staff.getBirthdate());
+        if (!result.getKey())
+            return new Pair<>(false, result.getValue());
+
         result = validateAddress(staff.getAddress());
         if (!result.getKey())
             return new Pair<>(false, result.getValue());
@@ -145,6 +182,11 @@ public class StaffBLL extends Manager<Staff> {
         if (!VNString.checkNo(no))
             return new Pair<>(false, "Số căn cước công dân của nhân viên phải bao gồm 12 số.");
 
+        List<Staff> staffs = staffDAL.searchStaffs("no = '" + no + "'", "deleted = 0");
+        if (!staffs.isEmpty()) {
+            return new Pair<>(false, "Số căn cước công dân của nhân viên đã tồn tại.");
+        }
+
         return new Pair<>(true, no);
     }
 
@@ -164,6 +206,13 @@ public class StaffBLL extends Manager<Staff> {
             return new Pair<>(false, "Số điện thoại nhân viên không được bỏ trống.");
         if (!VNString.checkFormatPhone(phone))
             return new Pair<>(false, "Số điện thoại nhân viên phải bắt đầu với \"0x\" hoặc \"+84x\" hoặc \"84x\" với \"x\" thuộc \\{\\\\3, 5, 7, 8, 9\\}\\\\.");
+
+
+        List<Staff> staffs = staffDAL.searchStaffs("phone = '" +phone + "'", "deleted = 0");
+        if (!staffs.isEmpty()) {
+            return new Pair<>(false, "Số điện thoại nhân viên đã tồn tại.");
+        }
+
         return new Pair<>(true, phone);
     }
 
@@ -174,6 +223,11 @@ public class StaffBLL extends Manager<Staff> {
             return new Pair<>(false, "Email nhân viên không được chứa unicode.");
         if (!VNString.checkFormatOfEmail(email))
             return new Pair<>(false, "Email nhân viên phải theo định dạng (username@domain.name).");
+
+        List<Staff> staffs = staffDAL.searchStaffs("email = '" + email + "'", "deleted = 0");
+        if (!staffs.isEmpty()) {
+            return new Pair<>(false, "Email nhân viên đã tồn tại.");
+        }
         return new Pair<>(true, email);
     }
 
@@ -181,6 +235,23 @@ public class StaffBLL extends Manager<Staff> {
         if (address.isBlank())
             return new Pair<>(false, "Email nhân viên không được để trống.");
         return new Pair<>(true, address);
+    }
+    private static Pair<Boolean, String> validateDate(java.util.Date birthDate){
+        if (birthDate == null)
+            return new Pair<>(false, "Ngày sinh không được để trống.");
+        if(!VNString.checkFormatDate(String.valueOf(birthDate)))
+            return new Pair<>(false, "Ngày sinh không đúng định dạng");
+
+        // nếu ngày sinh nhỏ hơn 18 tuổi tính cả ngày tháng năm
+        Calendar dob = Calendar.getInstance();
+        dob.setTime(birthDate);
+        Calendar now = Calendar.getInstance();
+        now.add(Calendar.YEAR, -18); // Giảm đi 18 năm từ ngày hiện tại
+        if (dob.after(now)) {
+            return new Pair<>(false, "Nhân viên chưa đủ 18 tuổi.");
+        }
+
+        return new Pair<>(true, "Ngày sinh hợp lệ");
     }
 
     @Override

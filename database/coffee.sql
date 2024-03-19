@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 16, 2024 at 03:34 AM
+-- Generation Time: Mar 18, 2024 at 04:53 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.29
 
@@ -224,10 +224,10 @@ CREATE TABLE `discount` (
 --
 
 INSERT INTO `discount` (`id`, `start_date`, `end_date`, `status`) VALUES
-(0, '1000-01-01', '1000-01-01', b'0'),
-(1, '2024-03-10', '2024-05-10', b'0'),
+(0, '1000-01-01', '1000-01-01', b'1'),
+(1, '2024-03-10', '2024-05-10', b'1'),
 (2, '2024-03-10', '2024-05-10', b'1'),
-(3, '2024-03-10', '2024-05-10', b'1');
+(3, '2024-03-10', '2024-05-10', b'0');
 
 -- --------------------------------------------------------
 
@@ -240,6 +240,16 @@ CREATE TABLE `discount_detail` (
   `product_id` bigint(20) NOT NULL,
   `percent` double DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `discount_detail`
+--
+
+INSERT INTO `discount_detail` (`discount_id`, `product_id`, `percent`) VALUES
+(3, 1, 20),
+(3, 2, 20),
+(3, 3, 20),
+(3, 4, 20);
 
 -- --------------------------------------------------------
 
@@ -399,7 +409,11 @@ INSERT INTO `material` (`id`, `name`, `supplier_id`, `remain`, `unit`, `deleted`
 (39, 'Thạch Đào', 2, 200, 'g', b'0'),
 (40, 'Syrup Đào', 3, 100, 'ml', b'0'),
 (41, 'Syrup sả', 2, 100, 'ml', b'0'),
-(42, 'Sốt caramel', 2, 100, 'ml', b'0');
+(42, 'Sốt caramel', 2, 100, 'ml', b'0'),
+(43, 'Bánh Chuối', 1, 10, 'cái', b'0'),
+(44, 'Bánh Su Kem', 1, 12, 'cái', b'0'),
+(45, 'Phô Mai Chanh Dây', 1, 15, 'cái', b'0'),
+(46, 'Phô Mai Trà Xanh', 1, 10, 'cái', b'0');
 
 -- --------------------------------------------------------
 
@@ -771,7 +785,25 @@ INSERT INTO `recipe` (`product_id`, `material_id`, `quantity`, `size`, `unit`) V
 (17, 34, 12, 'S', 'g'),
 (17, 37, 150, 'L', 'g'),
 (17, 37, 125, 'M', 'g'),
-(17, 37, 100, 'S', 'g');
+(17, 37, 100, 'S', 'g'),
+(18, 6, 250, 'L', 'g'),
+(18, 6, 230, 'M', 'g'),
+(18, 6, 180, 'S', 'g'),
+(18, 7, 25, 'L', 'ml'),
+(18, 7, 20, 'M', 'ml'),
+(18, 7, 15, 'S', 'ml'),
+(18, 10, 0, 'L', 'ml'),
+(18, 10, 80, 'M', 'ml'),
+(18, 10, 50, 'S', 'ml'),
+(18, 27, 55, 'L', 'g'),
+(18, 27, 50, 'M', 'g'),
+(18, 27, 40, 'S', 'g'),
+(18, 34, 18, 'L', 'g'),
+(18, 34, 16, 'M', 'g'),
+(18, 34, 12, 'S', 'g'),
+(18, 37, 150, 'L', 'g'),
+(18, 37, 125, 'M', 'g'),
+(18, 37, 100, 'S', 'g');
 
 -- --------------------------------------------------------
 
@@ -806,14 +838,14 @@ CREATE TABLE `role_detail` (
   `staff_id` bigint(20) NOT NULL,
   `entry_date` date NOT NULL,
   `salary` float DEFAULT NULL,
-  `hourly_wage` float DEFAULT NULL
+  `type_salary` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `role_detail`
 --
 
-INSERT INTO `role_detail` (`role_id`, `staff_id`, `entry_date`, `salary`, `hourly_wage`) VALUES
+INSERT INTO `role_detail` (`role_id`, `staff_id`, `entry_date`, `salary`, `type_salary`) VALUES
 (1, 1, '2024-02-27', 0, 0),
 (2, 2, '2024-02-28', 5000000, 0),
 (2, 3, '2024-02-28', 5000000, 0),
@@ -914,17 +946,27 @@ CREATE TABLE `work_schedule` (
 --
 
 INSERT INTO `work_schedule` (`id`, `staff_id`, `date`, `check_in`, `check_out`, `shift`) VALUES
-(1, 4, '2024-03-11', 'null', 'null', 1),
-(2, 4, '2024-03-12', 'null', 'null', 2),
+(1, 4, '2024-03-11', 'null', 'null', 3),
+(2, 4, '2024-03-12', '12:15', 'null', 2),
 (3, 4, '2024-03-13', 'null', 'null', 3),
 (4, 4, '2024-03-14', 'null', 'null', 2),
 (5, 4, '2024-03-15', 'null', 'null', 1),
 (6, 4, '2024-03-16', 'null', 'null', 2),
 (7, 4, '2024-03-17', 'null', 'null', 3),
-(8, 5, '2024-03-11', '20:52', 'null', 1),
+(8, 5, '2024-03-11', 'null', 'null', 1),
 (9, 5, '2024-03-12', 'null', 'null', 2),
 (10, 5, '2024-03-13', 'null', 'null', 3),
-(11, 5, '2024-03-14', 'null', 'null', 1);
+(11, 5, '2024-03-14', 'null', 'null', 1),
+(12, 6, '2024-03-14', '8:00', '12:30', 2),
+(13, 6, '2024-03-15', 'null', 'null', 1),
+(14, 6, '2024-03-16', 'null', 'null', 2),
+(15, 7, '2024-03-11', 'null', 'null', 3),
+(16, 7, '2024-03-12', 'null', 'null', 2),
+(18, 5, '2024-03-17', 'null', 'null', 1),
+(19, 5, '2024-03-17', 'null', 'null', 3),
+(20, 7, '2024-03-16', 'null', 'null', 1),
+(21, 7, '2024-03-16', 'null', 'null', 2),
+(22, 7, '2024-03-16', 'null', 'null', 3);
 
 --
 -- Indexes for dumped tables

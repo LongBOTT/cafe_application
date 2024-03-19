@@ -168,7 +168,7 @@ public class InfoGUI extends InfoPanel {
 
         Staff newstaff = new Staff(staff.getId(), staff.getStaffNo(), staff.getName(), staff.isGender(), staff.getBirthdate(), phone, address, email, false); // false là tồn tại, true là đã xoá
 
-        result = new StaffBLL().updateStaff(newstaff);
+        result = new StaffBLL().updateStaff(staff,newstaff);
 
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),
