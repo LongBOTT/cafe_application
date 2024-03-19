@@ -88,7 +88,7 @@ public class MaterialBLL extends Manager<Material>{
             materials = findObjectsBy(entry.getKey(), entry.getValue(), materials);
         return materials;
     }
-    private static Pair<Boolean, String> validateName(String name) {
+    public  Pair<Boolean, String> validateName(String name) {
         if (name.isBlank())
             return new Pair<>(false, "Tên nguyên liệu được để trống.");
         if (VNString.containsSpecial(name))
@@ -118,6 +118,23 @@ public class MaterialBLL extends Manager<Material>{
         return new Pair<>(false, "");
     }
 
+    public Pair<Boolean, String> validateQuantity(String quantity){
+        if(quantity.isBlank())
+            return new Pair<>(false,"Số lượng không được để trống");
+        if(!VNString.checkUnsignedNumber(quantity))
+            return new Pair<>(false,"Số lượng phải là số lớn hơn không");
+        return new Pair<>(true,"Số lượng hợp lệ");
+    }
+
+    public  Pair<Boolean, String> validateUnit(String name) {
+        if (name.isBlank())
+            return new Pair<>(false, "Đơn vị không được để trống.");
+        if (VNString.containsSpecial(name))
+            return new Pair<>(false, "Đơn vị không được chứa ký tự đặc biệt.");
+        if (VNString.containsNumber(name))
+            return new Pair<>(false, "Đơn không được chứa số.");
+        return new Pair<>(true, name);
+    }
     @Override
     public Object getValueByKey(Material material, String key) {
         return switch (key) {

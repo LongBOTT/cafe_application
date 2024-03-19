@@ -257,7 +257,6 @@ public class EditProductGUI extends DialogFormDetail_1 {
         return label;
     }
 
-    // Phương thức để tạo và cấu hình JTextField
     private JTextField createTextField() {
         JTextField textField = new JTextField();
         textField.setPreferredSize(new Dimension(350, 30));
@@ -266,7 +265,6 @@ public class EditProductGUI extends DialogFormDetail_1 {
         return textField;
     }
 
-    // Phương thức để tạo và cấu hình JComboBox
     private JComboBox<String> createComboBox() {
         JComboBox<String> comboBox = new JComboBox<>();
         comboBox.setPreferredSize(new Dimension(350, 30));
