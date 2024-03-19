@@ -128,7 +128,7 @@ public class WorkSchedulePanel extends JScrollPane {
             jPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    editWorkSchedule(work_schedule);
+                    new EditWorkScheduleGUI(work_schedule);
                 }
             });
 
@@ -145,11 +145,6 @@ public class WorkSchedulePanel extends JScrollPane {
 
             roundedPanels[i][j].add(jPanel, "wrap");
         }
-    }
-
-    private void editWorkSchedule(Work_Schedule work_schedule) {
-        new EditWorkScheduleGUI(work_schedule);
-        CreateWorkScheduleGUI.refresh();
     }
 
     public static List<Date> getDaysBetween(Date start, Date end) {

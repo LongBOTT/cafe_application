@@ -4,6 +4,7 @@ import com.coffee.BLL.StaffBLL;
 import com.coffee.BLL.Work_ScheduleBLL;
 
 import com.coffee.DTO.Work_Schedule;
+import com.coffee.GUI.CreateWorkScheduleGUI;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.components.AutocompleteJComboBox;
 import com.coffee.main.Cafe_Application;
@@ -345,6 +346,7 @@ public class EditWorkScheduleGUI extends DialogForm {
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            CreateWorkScheduleGUI.refresh();
             dispose();
         } else {
             JOptionPane.showMessageDialog(null, result.getValue(),
