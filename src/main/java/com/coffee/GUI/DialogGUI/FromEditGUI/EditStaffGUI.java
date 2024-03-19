@@ -5,11 +5,11 @@ import com.coffee.BLL.Role_detailBLL;
 import com.coffee.DTO.Role;
 import com.coffee.DTO.Role_detail;
 import com.coffee.DTO.Staff;
-import com.coffee.DTO.Supplier;
-import com.coffee.GUI.ChangePasswordGUI;
 import com.coffee.GUI.ChangeRoleGUI;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.BLL.StaffBLL;
+import com.coffee.GUI.HomeGUI;
+import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
@@ -20,8 +20,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
 
 public class EditStaffGUI extends DialogForm {
@@ -36,14 +35,17 @@ public class EditStaffGUI extends DialogForm {
 
     private List<JTextField> jTextFieldsStaff;
     public static JTextField textFieldRole;
+    public static boolean changeRole = false;
     private JDateChooser jDateChooser = new JDateChooser();
 
     private Staff staff;
+    private HomeGUI homeGUI;
 
-    public EditStaffGUI(Staff staff) {
+    public EditStaffGUI(Staff staff, HomeGUI homeGUI) {
         super();
         super.setTitle("Cập Nhật Thông Tin Nhân Viên");
         this.staff = staff;
+        this.homeGUI = homeGUI;
         init(staff);
         setVisible(true);
     }
@@ -125,14 +127,12 @@ public class EditStaffGUI extends DialogForm {
                     textFieldRole.setPreferredSize(new Dimension(280, 35));
                     textFieldRole.setFont((new Font("Public Sans", Font.PLAIN, 14)));
                     textFieldRole.setBackground(new Color(245, 246, 250));
-                    List<Role_detail> roleDetails = new Role_detailBLL().searchRole_details("staff_id = " + staff.getId());
-                    for (Role_detail roleDetail : roleDetails) {
-                        int roleId = roleDetail.getRole_id();
-                        Role role = new RoleBLL().searchRoles("id = " + roleId).get(0);
-                        textFieldRole.setText(role.getName());
-                        textFieldRole.setEditable(false);
-                        break; // Dừng vòng lặp sau khi tìm thấy một chức vụ
-                    }
+                    List<Role_detail> role_detailList = new Role_detailBLL().searchRole_details("staff_id = " + staff.getId());
+                    role_detailList.sort(Comparator.comparing(Role_detail::getEntry_date));
+                    Role_detail roleDetail = role_detailList.get(role_detailList.size() - 1);
+                    Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
+                    textFieldRole.setText(role.getName());
+                    textFieldRole.setEditable(false);
                     textFieldRole.setEditable(false);
                     content.add(textFieldRole);
 
@@ -141,7 +141,17 @@ public class EditStaffGUI extends DialogForm {
                     iconChangePasswd.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mousePressed(MouseEvent e) {
+                            changeRole = false;
                             new ChangeRoleGUI(staff);
+                            if (changeRole && staff.getId() == HomeGUI.staff.getId()) {
+                                JOptionPane.showMessageDialog(null, "Vui lòng đăng nhập lại.",
+                                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                                dispose();
+                                homeGUI.dispose();
+                                System.gc();
+                                Cafe_Application.loginGUI.setVisible(true);
+                            }
+
                         }
                     });
                     content.add(iconChangePasswd, "wrap");
@@ -151,7 +161,6 @@ public class EditStaffGUI extends DialogForm {
                 content.add(textField, "wrap");
             }
             jTextFieldsStaff.add(textField);
-
         }
 
         buttonCancel.setPreferredSize(new Dimension(100, 30));

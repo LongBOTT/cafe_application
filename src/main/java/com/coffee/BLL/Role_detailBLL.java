@@ -37,16 +37,16 @@ public class Role_detailBLL extends Manager<Role_detail> {
         }
 
         if (role_detailDAL.addRole_detail(role_detail) == 0)
-            return new Pair<>(false, "Thêm chi tiết chức vụ nhân viên không thành công.");
+            return new Pair<>(false, "Thiết lập lương nhân viên không thành công.");
 
-        return new Pair<>(true, "Thêm bảng chi tiết chức vụ nhân viên thành công.");
+        return new Pair<>(true, "Thiết lập lương nhân viên thành công.");
     }
 
     public Pair<Boolean, String> updateRole_detail(Role_detail role_detail) {
         if (role_detailDAL.updateRole_detail(role_detail) == 0)
-            return new Pair<>(false, "Cập nhật chi tiết chức vụ nhân viên không thành công.");
+            return new Pair<>(false, "Thiết lập lương nhân viên không thành công.");
 
-        return new Pair<>(true, "Cập nhật chi tiết chức vụ nhân viên thành công.");
+        return new Pair<>(true, "Thiết lập lương nhân viên thành công.");
     }
 
     public List<Role_detail> searchRole_details(String... conditions) {

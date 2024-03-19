@@ -326,7 +326,7 @@ public class HomeGUI extends JFrame {
             case 9 -> new ImportGUI(functions);
             case 10 -> new ProductGUI(functions);
             case 11 -> new SupplierGUI(functions);
-            case 12 -> new StaffGUI(functions);
+            case 12 -> new StaffGUI(functions, this);
             case 13 -> new Leave_Of_Absence_FormGUI(functions);
             case 14 -> new AccountGUI(functions);
             case 15 -> new DecentralizationGUI(functions);
@@ -358,7 +358,7 @@ public class HomeGUI extends JFrame {
         module.setBackground(colorOver);
     }
 
-    private void exit() {
+    public void exit() {
         int message = JOptionPane.showOptionDialog(null,
                 "Bạn có chắc chắn muốn đăng xuất?",
                 "Đăng xuất",
@@ -368,7 +368,7 @@ public class HomeGUI extends JFrame {
                 new String[]{"Đăng xuất", "Huỷ"},
                 "Đăng xuất");
         if (message == JOptionPane.YES_OPTION) {
-            this.dispose();
+            dispose();
             System.gc();
             Cafe_Application.loginGUI.setVisible(true);
         }
