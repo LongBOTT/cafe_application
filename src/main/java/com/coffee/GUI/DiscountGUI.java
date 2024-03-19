@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 
+
 public class DiscountGUI extends Layout2 {
     private RoundedPanel containerSearch;
     private JLabel iconSearch;

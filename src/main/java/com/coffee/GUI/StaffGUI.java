@@ -2,6 +2,7 @@ package com.coffee.GUI;
 
 import com.coffee.BLL.*;
 import com.coffee.DTO.*;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddStaffGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.*;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditStaffGUI;
 import com.coffee.GUI.components.*;
@@ -152,7 +153,7 @@ public class StaffGUI extends Layout1 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-
+                    new AddStaffGUI();
                     refresh();
                 }
             });
