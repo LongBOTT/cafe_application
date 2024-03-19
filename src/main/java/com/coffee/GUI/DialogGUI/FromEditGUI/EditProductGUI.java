@@ -43,7 +43,8 @@ public class EditProductGUI extends DialogFormDetail_1 {
     private String[] columnNames;
     private Product product = new Product();
     private final RecipeBLL recipeBLL = new RecipeBLL();
-
+    private JLabel iconEdit = new JLabel(new FlatSVGIcon("icon/edit.svg"));
+    private JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
     private MaterialBLL materialBLL = new MaterialBLL();
     public EditProductGUI( ArrayList<Object[]> allProducts) {
         super();
@@ -133,15 +134,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
         txtPrice.setText(String.valueOf(prices.get(0)));
 
         txtCategory.setText((String) product[2]);
-        cbSize.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    JComboBox<String> combo = (JComboBox<String>) e.getSource();
-                    int sizeIndex = (int) combo.getSelectedIndex();
-                    txtPrice.setText(String.valueOf(prices.get(sizeIndex)));
-                }
-            }
-        });
+
 
         lblListMaterial = new JLabel("Danh sách nguyên liệu");
 
@@ -205,42 +198,23 @@ public class EditProductGUI extends DialogFormDetail_1 {
         containerDataTable.add(scrollPane, BorderLayout.CENTER);
         bottom.add(containerDataTable, BorderLayout.CENTER);
 
-
-        List<Recipe> recipes = recipeBLL.searchRecipes("product_id = "+ product[0] , "size = L");
-//        List<Material> materials = materialBLL.findMaterialsBy(Map.of("id",3));
-//        if(materials.isEmpty())
-//            System.out.println("Mảng rổng");
-//        else{
-//            for (Material material : materials) {
-//                System.out.println(material.getName()+"HI========================================");
-//            }
-//        }
-
-        if(!recipes.isEmpty())
-            System.out.println("Mảng công thức rổng");
-        for (Recipe recipe : recipes) {
-            System.out.println(recipe.getProduct_id()+ recipe.getMaterial_id()+recipe.getSize()+"HI========================================");
-        }
-
-        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
-        JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/edit.svg"));
-        JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
-        Object[][] data = {
-                {1, "Nguyên liệu 1", 10, "Đơn vị 1",iconDetail,iconRemove},
-                {1, "Nguyên liệu 1", 10, "Đơn vị 1",iconDetail,iconRemove},
-                {1, "Nguyên liệu 1", 10, "Đơn vị 1",iconDetail,iconRemove},
-                {1, "Nguyên liệu 1", 10, "Đơn vị 1",iconDetail,iconRemove},
-                {1, "Nguyên liệu 1", 10, "Đơn vị 1",iconDetail,iconRemove},
-                {1, "Nguyên liệu 1", 10, "Đơn vị 1",iconDetail,iconRemove},
-                {1, "Nguyên liệu 1", 10, "Đơn vị 1",iconDetail,iconRemove},
-                {1, "Nguyên liệu 1", 10, "Đơn vị 1",iconDetail,iconRemove},
-        };
-        for (Object[] object : data) {
-            model.addRow(object);
-        }
-
         JTableHeader jTableHeader = dataTable.getTableHeader();
         jTableHeader.setBackground(new Color(232, 206, 180));
+        int product_id = Integer.parseInt(product[0].toString());
+        String size = cbSize.getSelectedItem().toString();
+        loadMaterial(product_id,size);
+
+        cbSize.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    JComboBox<String> combo = (JComboBox<String>) e.getSource();
+                    int sizeIndex = (int) combo.getSelectedIndex();
+                    String size = cbSize.getSelectedItem().toString();
+                    txtPrice.setText(String.valueOf(prices.get(sizeIndex)));
+                    loadMaterial(product_id,size);
+                }
+            }
+        });
         buttonCancel = new JButton("Huỷ");
         buttonEdit = new JButton("Cập nhật");
         buttonCancel.setPreferredSize(new Dimension(100, 30));
@@ -295,6 +269,27 @@ public class EditProductGUI extends DialogFormDetail_1 {
         comboBox.setFont(new Font("Public Sans", Font.PLAIN, 14));
         comboBox.setBackground(new Color(245, 246, 250));
         return comboBox;
+    }
+    private void loadMaterial(int product_id,String size){
+        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+        model.setRowCount(0);
+        List<List<Object>> searchResults =recipeBLL.searchRecipesByProduct(product_id,size);
+        Object[][] data = new Object[searchResults.size()][6];
+        for (int i = 0; i < searchResults.size(); i++) {
+            List<Object> recipe = searchResults.get(i);
+            // Chèn STT vào cột đầu tiên
+            data[i][0] = i + 1;
+            // Chèn dữ liệu còn lại từ danh sách kết quả
+            for (int j = 1; j < recipe.size(); j++) {
+                data[i][j] = recipe.get(j - 1);
+            }
+            // Thêm iconEdit và iconRemove vào cột cuối cùng
+            data[i][4] = iconEdit;
+            data[i][5] = iconRemove;
+        }
+        for (Object[] object : data) {
+            model.addRow(object);
+        }
     }
 }
 
