@@ -53,6 +53,14 @@ public class Role_detailBLL extends Manager<Role_detail> {
         return role_detailDAL.searchRole_details(conditions);
     }
 
+    public List<Role_detail> searchRole_detailsByRole(int role_id) {
+        return role_detailDAL.searchRole_detailsByRole(role_id);
+    }
+
+    public List<Role_detail> searchRole_detailsByStaff(int staff_id) {
+        return role_detailDAL.searchRole_detailsByStaff(staff_id);
+    }
+
     public List<Role_detail> findRole_details(String key, String value) {
         List<Role_detail> list = new ArrayList<>();
         List<Role_detail> role_detailList = role_detailDAL.searchRole_details();

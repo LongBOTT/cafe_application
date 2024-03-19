@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 
@@ -41,9 +42,8 @@ public class ChangeRoleGUI extends DialogForm {
         super.setSize(new Dimension(600, 400));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         this.staff = staff;
-        List<Role_detail> role_detailList = new Role_detailBLL().searchRole_details("staff_id = " + staff.getId());
-        role_detailList.sort(Comparator.comparing(Role_detail::getEntry_date));
-        roleDetail = role_detailList.get(role_detailList.size() - 1);
+        List<Role_detail> role_detailList = new Role_detailBLL().searchRole_detailsByStaff(staff.getId());
+        roleDetail = role_detailList.get(0);
         init();
         setVisible(true);
     }
@@ -188,7 +188,7 @@ public class ChangeRoleGUI extends DialogForm {
     private void updateRole_detail() {
         Pair<Boolean, String> result;
         int role_id, staff_id, type_salary;
-        Date entry_date;
+        LocalDateTime entry_date;
         double salary;
 
         role_id = jComboBoxRole.getSelectedIndex() + 2;
@@ -212,7 +212,7 @@ public class ChangeRoleGUI extends DialogForm {
                         "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         } else {
-            entry_date = java.sql.Date.valueOf(LocalDate.now());
+            entry_date = LocalDateTime.now();
             type_salary = jComboBoxTypeSalary.getSelectedIndex();
             salary = Double.parseDouble(textFieldSalary.getText());
 

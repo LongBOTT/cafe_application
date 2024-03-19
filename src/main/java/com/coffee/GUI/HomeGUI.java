@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -70,8 +71,10 @@ public class HomeGUI extends JFrame {
         staff = staffBLL.findStaffsBy(Map.of("id", account.getStaff_id())).get(0);
 
         Role_detailBLL roleDetailBLL = new Role_detailBLL();
-        List<Role_detail> roleDetails = roleDetailBLL.findRole_detailsBy(Map.of("staff_id", staff.getId()));
-        role = roleBLL.findRolesBy(Map.of("id", roleDetails.get(roleDetails.size() - 1).getRole_id())).get(0);
+        List<Role_detail> role_detailList = new Role_detailBLL().searchRole_detailsByStaff(staff.getId());
+        Role_detail roleDetail = role_detailList.get(0);
+        role = roleBLL.findRolesBy(Map.of("id", roleDetail.getRole_id())).get(0);
+
         name.setText("<html>" + staff.getName() + "</html>");
         roleName.setText("<html>Chức vụ: " + role.getName() + "</html>");
     }

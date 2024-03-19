@@ -4,6 +4,8 @@ import com.coffee.utils.Database;
 
 import java.io.IOException;
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +62,9 @@ public class MySQL {
                 stringValue = (boolean) value ? "1" : "0";
             } else if (value instanceof Number) {
                 stringValue = value.toString();
+            } else if (value instanceof LocalDateTime) {
+                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                stringValue = "'" + ((LocalDateTime) value).format(myFormatObj) + "'";
             } else {
                 stringValue = "'" + value + "'";
             }

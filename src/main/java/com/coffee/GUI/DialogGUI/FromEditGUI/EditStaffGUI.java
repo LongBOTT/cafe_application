@@ -6,6 +6,7 @@ import com.coffee.DTO.Role;
 import com.coffee.DTO.Role_detail;
 import com.coffee.DTO.Staff;
 import com.coffee.GUI.ChangeRoleGUI;
+import com.coffee.GUI.CreateWorkScheduleGUI;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.BLL.StaffBLL;
 import com.coffee.GUI.HomeGUI;
@@ -127,9 +128,8 @@ public class EditStaffGUI extends DialogForm {
                     textFieldRole.setPreferredSize(new Dimension(280, 35));
                     textFieldRole.setFont((new Font("Public Sans", Font.PLAIN, 14)));
                     textFieldRole.setBackground(new Color(245, 246, 250));
-                    List<Role_detail> role_detailList = new Role_detailBLL().searchRole_details("staff_id = " + staff.getId());
-                    role_detailList.sort(Comparator.comparing(Role_detail::getEntry_date));
-                    Role_detail roleDetail = role_detailList.get(role_detailList.size() - 1);
+                    List<Role_detail> role_detailList = new Role_detailBLL().searchRole_detailsByStaff(staff.getId());
+                    Role_detail roleDetail = role_detailList.get(0);
                     Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
                     textFieldRole.setText(role.getName());
                     textFieldRole.setEditable(false);
@@ -143,6 +143,9 @@ public class EditStaffGUI extends DialogForm {
                         public void mousePressed(MouseEvent e) {
                             changeRole = false;
                             new ChangeRoleGUI(staff);
+                            if (changeRole) {
+                                CreateWorkScheduleGUI.refresh();
+                            }
                             if (changeRole && staff.getId() == HomeGUI.staff.getId()) {
                                 JOptionPane.showMessageDialog(null, "Vui lòng đăng nhập lại.",
                                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
@@ -151,6 +154,7 @@ public class EditStaffGUI extends DialogForm {
                                 System.gc();
                                 Cafe_Application.loginGUI.setVisible(true);
                             }
+
 
                         }
                     });
@@ -204,25 +208,25 @@ public class EditStaffGUI extends DialogForm {
         Date birthdate;
         for (JTextField textField : jTextFieldsStaff) {
             // Lấy giá trị từ JTextField và in ra terminal
-            System.out.println("========"+textField.getText());
+            System.out.println("========" + textField.getText());
         }
         id = staff.getId();
         staffNo = jTextFieldsStaff.get(2).getText().trim();
-        System.out.println("=========================="+staffNo);
+        System.out.println("==========================" + staffNo);
         name = jTextFieldsStaff.get(1).getText().trim();
         gender = Boolean.parseBoolean(jTextFieldsStaff.get(3).getText().trim()); // Chuyển đổi giá trị boolean từ text field
         birthdate = jDateChooser.getDate(); // Lấy ngày tháng từ JDateChooser
-      
+
 
         phone = jTextFieldsStaff.get(4).getText().trim();
         address = jTextFieldsStaff.get(5).getText().trim();
         email = jTextFieldsStaff.get(6).getText().trim();
 
 
-        Staff newStaff = new Staff(id,staffNo,name, gender,staff.getBirthdate(), phone, address, email, false);
+        Staff newStaff = new Staff(id, staffNo, name, gender, staff.getBirthdate(), phone, address, email, false);
         // false là tồn tại, true là đã xoá
 
-        result = staffBLL.updateStaff(staff,newStaff);
+        result = staffBLL.updateStaff(staff, newStaff);
 
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),
