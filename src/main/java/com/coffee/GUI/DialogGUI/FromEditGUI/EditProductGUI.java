@@ -1,6 +1,10 @@
 package com.coffee.GUI.DialogGUI.FromEditGUI;
 
+import com.coffee.BLL.MaterialBLL;
+import com.coffee.BLL.RecipeBLL;
+import com.coffee.DTO.Material;
 import com.coffee.DTO.Product;
+import com.coffee.DTO.Recipe;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
 import com.coffee.GUI.components.CustomPanelRenderer;
 import com.coffee.GUI.components.DataTable;
@@ -18,6 +22,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EditProductGUI extends DialogFormDetail_1 {
     private JLabel titleName;
@@ -26,7 +31,6 @@ public class EditProductGUI extends DialogFormDetail_1 {
 
     private JButton btnImage;
     private JLabel lblListMaterial;
-    private JLabel material;
     private DataTable dataTable ;
     private JButton buttonCancel;
     private JButton buttonEdit;
@@ -37,7 +41,10 @@ public class EditProductGUI extends DialogFormDetail_1 {
     private JComboBox<String> CbListMaterial;
     private List<String> AtributeProduct = new ArrayList<>();
     private String[] columnNames;
-    private Product product;
+    private Product product = new Product();
+    private final RecipeBLL recipeBLL = new RecipeBLL();
+
+    private MaterialBLL materialBLL = new MaterialBLL();
     public EditProductGUI( ArrayList<Object[]> allProducts) {
         super();
         super.setTitle("Sửa sản phẩm");
@@ -197,7 +204,24 @@ public class EditProductGUI extends DialogFormDetail_1 {
         containerDataTable.setBorder(emptyBorderTop);
         containerDataTable.add(scrollPane, BorderLayout.CENTER);
         bottom.add(containerDataTable, BorderLayout.CENTER);
-        // Tạo dữ liệu mẫu
+
+
+        List<Recipe> recipes = recipeBLL.searchRecipes("product_id = "+ product[0] , "size = L");
+//        List<Material> materials = materialBLL.findMaterialsBy(Map.of("id",3));
+//        if(materials.isEmpty())
+//            System.out.println("Mảng rổng");
+//        else{
+//            for (Material material : materials) {
+//                System.out.println(material.getName()+"HI========================================");
+//            }
+//        }
+
+        if(!recipes.isEmpty())
+            System.out.println("Mảng công thức rổng");
+        for (Recipe recipe : recipes) {
+            System.out.println(recipe.getProduct_id()+ recipe.getMaterial_id()+recipe.getSize()+"HI========================================");
+        }
+
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/edit.svg"));
         JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));

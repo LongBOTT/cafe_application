@@ -281,12 +281,6 @@ public void loadDataTable(Object[][] objects) {
 
 }
 public ArrayList<Object[]> ConvertProductUnique(Object[][] objects){
-    for (Object[] objArray : objects) {
-        for (Object obj : objArray) {
-            System.out.print(obj + " ");
-        }
-        System.out.println();
-    }
      ArrayList<Object[]> allProducts = new ArrayList<>();
     for (Object[] product : objects) {
         String productID = (String) product[0];
@@ -382,7 +376,13 @@ public void loadCategory() {
             new DetailProductGUI();
 
         if ( indexColumn == indexColumnEdit) {
-            new EditProductGUI(ConvertProductUnique(productBLL.getData(productBLL.searchProducts("deleted = 0"))));
+            DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+
+            Object selectedValue = model.getValueAt(indexRow,1);
+
+            new EditProductGUI(ConvertProductUnique(productBLL.getData(productBLL.findProducts("name", selectedValue.toString()))));
+
+
 //            refresh();
         }
         if (indexColumn == indexColumnRemove)
