@@ -2,27 +2,20 @@ package com.coffee.GUI;
 
 import com.coffee.BLL.*;
 import com.coffee.DTO.*;
-import com.coffee.GUI.*;
-import com.coffee.GUI.DialogGUI.FormAddGUI.AddSupplierGUI;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddStaffGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.*;
-import com.coffee.GUI.DialogGUI.*;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditStaffGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
-import java.util.List;
-
 import java.util.List;
 
 public class StaffGUI extends Layout1 {
@@ -42,12 +35,12 @@ public class StaffGUI extends Layout1 {
     private boolean edit = false;
     private boolean remove = false;
     private String[] columnNames;
+    private final HomeGUI homeGUI;
 
-    public StaffGUI(List<Function> functions) {
-
-
+    public StaffGUI(List<Function> functions, HomeGUI homeGUI) {
         super();
         this.functions = functions;
+        this.homeGUI = homeGUI;
         if (functions.stream().anyMatch(f -> f.getName().equals("view")))
             detail = true;
         if (functions.stream().anyMatch(f -> f.getName().equals("edit")))
@@ -62,7 +55,7 @@ public class StaffGUI extends Layout1 {
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
-        jComboBoxSearch = new JComboBox<>(new String[]{"Bộ Lọc", "Tên",  "Chức Vụ"});
+        jComboBoxSearch = new JComboBox<>(new String[]{"Bộ Lọc", "Tên", "Chức Vụ"});
 
         columnNames = new String[]{"Mã Nhân Viên", "CCCD", "Tên", "Số Điện Thoại", " Chức Vụ"};
         if (detail) {
@@ -160,7 +153,7 @@ public class StaffGUI extends Layout1 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-
+                    new AddStaffGUI();
                     refresh();
                 }
             });
@@ -288,11 +281,17 @@ public class StaffGUI extends Layout1 {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
 
             int staffId = Integer.parseInt((String) data[i][0]);
-            List<Role_detail> role_detailList = new Role_detailBLL().searchRole_details("staff_id = " + staffId);
-            Role_detail roleDetail = role_detailList.get(role_detailList.size() - 1);
-            Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
-            data[i] = Arrays.copyOf(data[i], data[i].length + 1);
-            data[i][data[i].length - 1] = role.getName();
+            List<Role_detail> role_detailList = new Role_detailBLL().searchRole_detailsByStaff(staffId);
+            if (!role_detailList.isEmpty()) {
+                Role_detail roleDetail = role_detailList.get(0);
+                Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
+                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
+                data[i][data[i].length - 1] = role.getName();
+            } else {
+                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
+                data[i][data[i].length - 1] = "Chưa có chức vụ";
+            }
+
 
             if (detail) {
                 JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
@@ -325,12 +324,12 @@ public class StaffGUI extends Layout1 {
             new DetailStaffGUI(staffBLL.searchStaffs("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
         if (edit && indexColumn == indexColumnEdit) {
-                new EditStaffGUI(staffBLL.searchStaffs("deleted = 0").get(indexRow));
+            new EditStaffGUI(staffBLL.searchStaffs("deleted = 0").get(indexRow), homeGUI);
             System.out.println(" đã nhấn ởddaaay ");// Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-                refresh();
+            refresh();
         }
-       if (remove && indexColumn == indexColumnRemove)
-           deleteStaff(staffBLL.searchStaffs("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        if (remove && indexColumn == indexColumnRemove)
+            deleteStaff(staffBLL.searchStaffs("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
     }
 

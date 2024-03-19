@@ -5,6 +5,8 @@ import com.coffee.DTO.Role_detail;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +26,7 @@ public class Role_detailDAL extends Manager {
                 return new Role_detail(
                         Integer.parseInt(row.get(0)), // role_id
                         Integer.parseInt(row.get(1)), // staff_id
-                        Date.valueOf(row.get(2)), // entry_date
+                        LocalDateTime.parse(row.get(2)), // entry_date
                         Double.parseDouble(row.get(3)), // salary
                         Integer.parseInt(row.get(4)) // type_salary
                 );
@@ -51,13 +53,14 @@ public class Role_detailDAL extends Manager {
 
     public int updateRole_detail(Role_detail role_detail) {
         try {
+            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             List<Object> updateValues = new ArrayList<>();
             updateValues.add(role_detail.getRole_id());
             updateValues.add(role_detail.getStaff_id());
             updateValues.add(role_detail.getEntry_date());
             updateValues.add(role_detail.getSalary());
             updateValues.add(role_detail.getType_salary());
-            return update(updateValues, "role_id = " + role_detail.getRole_id(), "staff_id = " + role_detail.getStaff_id(), "entry_date = '" + role_detail.getEntry_date() + "'");
+            return update(updateValues, "role_id = " + role_detail.getRole_id(), "staff_id = " + role_detail.getStaff_id(), "entry_date = '" + role_detail.getEntry_date().format(myFormatObj) + "'");
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in Role_detailDAL.updateRole_detail(): " + e.getMessage());
         }
@@ -67,6 +70,32 @@ public class Role_detailDAL extends Manager {
     public List<Role_detail> searchRole_details(String... conditions) {
         try {
             return convertToRole_details(read(conditions));
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in Role_detailDAL.searchRole_details(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
+
+    public List<Role_detail> searchRole_detailsByRole(int role_id) {
+        try {
+            return convertToRole_details(executeQuery("SELECT rd.role_id, rd.staff_id, rd.entry_date, rd.salary, rd.type_salary \n" +
+                    "FROM (SELECT staff_id, MAX(entry_date) as entry_date\n" +
+                    "\t\t\tFROM `role_detail` \n" +
+                    "\t\t\tGROUP BY staff_id) tb1 JOIN role_detail rd on tb1.staff_id = rd.staff_id AND tb1.entry_date = rd.entry_date\n" +
+                    "WHERE rd.role_id = " + role_id));
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in Role_detailDAL.searchRole_details(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
+
+    public List<Role_detail> searchRole_detailsByStaff(int staff_id) {
+        try {
+            return convertToRole_details(executeQuery("SELECT rd.role_id, rd.staff_id, rd.entry_date, rd.salary, rd.type_salary \n" +
+                    "FROM (SELECT staff_id, MAX(entry_date) as entry_date\n" +
+                    "\t\t\tFROM `role_detail` \n" +
+                    "\t\t\tGROUP BY staff_id) tb1 JOIN role_detail rd on tb1.staff_id = rd.staff_id AND tb1.entry_date = rd.entry_date\n" +
+                    "WHERE rd.staff_id = " + staff_id));
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in Role_detailDAL.searchRole_details(): " + e.getMessage());
         }

@@ -7,14 +7,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoleDAL extends Manager{
-    public RoleDAL(){
+public class RoleDAL extends Manager {
+    public RoleDAL() {
         super("role",
                 List.of("id",
                         "name"));
     }
 
-    public List<Role> convertToRoles(List<List<String>> data ){
+    public List<Role> convertToRoles(List<List<String>> data) {
         return convert(data, row -> {
             try {
                 return new Role(
@@ -68,4 +68,9 @@ public class RoleDAL extends Manager{
         }
         return new ArrayList<>();
     }
+
+
 }
+
+
+

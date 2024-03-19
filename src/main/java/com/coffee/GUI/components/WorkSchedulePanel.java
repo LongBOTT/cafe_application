@@ -87,8 +87,7 @@ public class WorkSchedulePanel extends JScrollPane {
 
     public void showWorkSchedule(Date date1, Date date2) {
         List<Integer> staffIDList = new ArrayList<>();
-        List<Role_detail> role_detailList = new Role_detailBLL().searchRole_details("role_id = " + role_id);
-
+        List<Role_detail> role_detailList = new Role_detailBLL().searchRole_detailsByRole(role_id);
         for (Role_detail roleDetail : role_detailList)
             if (!staffIDList.contains(roleDetail.getStaff_id()))
                 staffIDList.add(roleDetail.getStaff_id());

@@ -24,14 +24,15 @@ public class DetailProductGUI extends DialogFormDetail_1 {
     private JButton btnImage;
     private JLabel lblListMaterial;
     private JLabel material;
-    private DataTable dataTable ;
+    private DataTable dataTable;
 
-    private RoundedPanel  containerInforMaterial;
+    private RoundedPanel containerInforMaterial;
     private RoundedScrollPane scrollPane;
     private RoundedPanel containerDataTable;
     private JComboBox<String> CbListMaterial;
     private List<String> AtributeProduct = new ArrayList<>();
     private String[] columnNames;
+
     public DetailProductGUI() {
         super();
         super.setTitle("Chi tiết sản phẩm");
@@ -41,6 +42,8 @@ public class DetailProductGUI extends DialogFormDetail_1 {
     }
 
     public void init() {
+
+
         titleName = new JLabel("Chi tiết sản phẩm");
         title.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
@@ -51,7 +54,7 @@ public class DetailProductGUI extends DialogFormDetail_1 {
         containerAtributeProduct = new RoundedPanel();
         containerAtributeProduct.setLayout(new MigLayout("", "[]60[]200", "15[]15[]15[]15"));
         containerAtributeProduct.setBackground(new Color(217, 217, 217));
-        containerAtributeProduct.setPreferredSize(new Dimension(600,200));
+        containerAtributeProduct.setPreferredSize(new Dimension(600, 200));
 
         containerImage = new RoundedPanel();
         containerImage.setLayout(new MigLayout("", "[]", "[][]"));
@@ -59,8 +62,8 @@ public class DetailProductGUI extends DialogFormDetail_1 {
         containerImage.setPreferredSize(new Dimension(200, 200));
 
         JPanel PanelImage = new JPanel();
-        PanelImage.setPreferredSize(new Dimension(150,150));
-        PanelImage.setBackground(new Color(217,217,217));
+        PanelImage.setPreferredSize(new Dimension(150, 150));
+        PanelImage.setBackground(new Color(217, 217, 217));
 
         JLabel lblImage = new JLabel();
         ImageIcon icon = new FlatSVGIcon("image/Product/" + "SP01" + ".svg");
@@ -74,8 +77,8 @@ public class DetailProductGUI extends DialogFormDetail_1 {
         btnImage = new JButton("Thêm ảnh");
         btnImage.setPreferredSize(new Dimension(100, 30));
 
-        containerImage.add(PanelImage,"alignx center,wrap");
-        containerImage.add(btnImage,"alignx center");
+        containerImage.add(PanelImage, "alignx center,wrap");
+        containerImage.add(btnImage, "alignx center");
 
         top.add(containerAtributeProduct);
         top.add(containerImage);
@@ -132,14 +135,14 @@ public class DetailProductGUI extends DialogFormDetail_1 {
         EmptyBorder emptyBorder1 = new EmptyBorder(0, 30, 0, 0);
         containerInforMaterial.setBorder(emptyBorder1);
         bottom.add(containerInforMaterial, BorderLayout.NORTH);
-        columnNames = new String[]{"STT","Tên nguyên liệu", "Số lượng", "Đơn vị"};
+        columnNames = new String[]{"STT", "Tên nguyên liệu", "Số lượng", "Đơn vị"};
         dataTable = new DataTable(new Object[0][0], columnNames,
-               null,
+                null,
                 false, false, false, 4);
-        int[] columnWidths = {50,300, 50, 50};
+        int[] columnWidths = {50, 300, 50, 50};
 
         for (int i = 0; i < columnWidths.length; i++) {
-           dataTable.getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
+            dataTable.getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
         }
 
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

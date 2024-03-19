@@ -1,6 +1,7 @@
 package com.coffee.BLL;
 
 import com.coffee.DAL.RecipeDAL;
+import com.coffee.DTO.Material;
 import com.coffee.DTO.Module;
 import com.coffee.DTO.Recipe;
 import javafx.util.Pair;
@@ -101,6 +102,21 @@ public class RecipeBLL extends Manager<Recipe> {
             case "unit" -> recipe.getUnit();
             default -> null;
         };
+    }
+
+    public List<List<Object>> searchRecipesByProduct(int product_id, String size) {
+        List<List<Object>> result = new ArrayList<>();
+        for (Recipe recipe : searchRecipes("product_id = " + product_id, "size = '" + size + "'")) {
+            List<Object> objects = new ArrayList<>();
+            Material material = new MaterialBLL().searchMaterials("id = " + recipe.getMaterial_id()).get(0);
+            objects.add(material.getId());
+            objects.add(material.getName());
+            objects.add(recipe.getQuantity());
+            objects.add(recipe.getUnit());
+
+            result.add(objects);
+        }
+        return result;
     }
 
     public static void main(String[] args) {

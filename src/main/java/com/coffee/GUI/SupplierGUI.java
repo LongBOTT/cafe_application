@@ -42,12 +42,9 @@ public class SupplierGUI extends Layout1 {
     public SupplierGUI(List<Function> functions) {
         super();
         this.functions = functions;
-        if (functions.stream().anyMatch(f -> f.getName().equals("view")))
-            detail = true;
-        if (functions.stream().anyMatch(f -> f.getName().equals("edit")))
-            edit = true;
-        if (functions.stream().anyMatch(f -> f.getName().equals("remove")))
-            remove = true;
+        if (functions.stream().anyMatch(f -> f.getName().equals("view"))) detail = true;
+        if (functions.stream().anyMatch(f -> f.getName().equals("edit"))) edit = true;
+        if (functions.stream().anyMatch(f -> f.getName().equals("remove"))) remove = true;
         init(functions);
     }
 
@@ -77,9 +74,7 @@ public class SupplierGUI extends Layout1 {
             columnNames[indexColumnRemove] = "Xoá";
         }
 
-        dataTable = new DataTable(new Object[0][0], columnNames,
-                e -> selectFunction(),
-                detail, edit, remove, 4); // table hiển thị các thuộc tính "Mã NCC", "Tên NCC", "SĐT", "Email" nên điền 4
+        dataTable = new DataTable(new Object[0][0], columnNames, e -> selectFunction(), detail, edit, remove, 4); // table hiển thị các thuộc tính  nên điền 4
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
@@ -128,7 +123,6 @@ public class SupplierGUI extends Layout1 {
         SearchPanel.add(jComboBoxSearch);
 
 
-
         loadDataTable(supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0")));
 
         RoundedPanel refreshPanel = new RoundedPanel();
@@ -158,6 +152,7 @@ public class SupplierGUI extends Layout1 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
+
                     new AddSupplierGUI();
                     refresh();
                 }
@@ -290,22 +285,18 @@ public class SupplierGUI extends Layout1 {
 
     private void deleteSupplier(Supplier supplier) {
         if (dataTable.getSelectedRow() == -1) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn nhà cung cấp cần xoá.",
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn nhà cung cấp cần xoá.", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
         String[] options = new String[]{"Huỷ", "Xác nhận"};
-        int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nhà cung cấp?",
-                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+        int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nhà cung cấp?", "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
         if (choice == 1) {
             Pair<Boolean, String> result = supplierBLL.deleteSupplier(supplier);
             if (result.getKey()) {
-                JOptionPane.showMessageDialog(null, result.getValue(),
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, result.getValue(), "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 refresh();
             } else {
-                JOptionPane.showMessageDialog(null, result.getValue(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

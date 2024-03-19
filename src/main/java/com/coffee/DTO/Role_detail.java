@@ -1,18 +1,19 @@
 package com.coffee.DTO;
 
-import java.util.Date;
+
+import java.time.LocalDateTime;
 
 public class Role_detail {
     private int role_id;
     private int staff_id;
-    private Date entry_date;
+    private LocalDateTime entry_date;
     private double salary;
     private int type_salary;
 
     public Role_detail() {
     }
 
-    public Role_detail(int role_id, int staff_id, Date entry_date, double salary, int type_salary) {
+    public Role_detail(int role_id, int staff_id, LocalDateTime entry_date, double salary, int type_salary) {
         this.role_id = role_id;
         this.staff_id = staff_id;
         this.entry_date = entry_date;
@@ -36,11 +37,11 @@ public class Role_detail {
         this.staff_id = staff_id;
     }
 
-    public Date getEntry_date() {
+    public LocalDateTime getEntry_date() {
         return entry_date;
     }
 
-    public void setEntry_date(Date entry_date) {
+    public void setEntry_date(LocalDateTime entry_date) {
         this.entry_date = entry_date;
     }
 

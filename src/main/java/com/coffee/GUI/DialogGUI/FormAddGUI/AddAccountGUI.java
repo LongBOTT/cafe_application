@@ -65,8 +65,6 @@ public class AddAccountGUI extends DialogForm {
 
 
             if (string.equals("Nhân Viên")) {
-
-
                 for (Staff staff : staffBLL.searchStaffs("deleted = 0")) {
                     staffList.add(String.valueOf(staff.getId()));
                 }
