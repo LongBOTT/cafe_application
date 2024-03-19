@@ -52,7 +52,6 @@ public class RoleBLL extends Manager<Role> {
         return new Pair<>(true, "Cập nhật chức vụ thành công.");
     }
 
-
     public Pair<Boolean, String> deleteRole(Role role) {
         Pair<Boolean, String> result;
 
@@ -88,7 +87,6 @@ public class RoleBLL extends Manager<Role> {
             roles = findObjectsBy(entry.getKey(), entry.getValue(), roles);
         return roles;
     }
-
 
     public Pair<Boolean, String> exists(Role role) {
         List<Role> modules = findRoles("name", role.getName());

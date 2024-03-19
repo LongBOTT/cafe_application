@@ -38,17 +38,6 @@ public class RoleDAL extends Manager {
         }
         return 0;
     }
-    public int getRoleName(Role role) {
-        try {
-            return create(
-                    role.getName()
-            );
-        } catch (SQLException | IOException e) {
-            System.out.println("Error occurred in RoleDAL.addRole(): " + e.getMessage());
-        }
-        return 0;
-    }
-
 
     public int updateRole(Role role) {
         try {
