@@ -282,10 +282,16 @@ public class StaffGUI extends Layout1 {
 
             int staffId = Integer.parseInt((String) data[i][0]);
             List<Role_detail> role_detailList = new Role_detailBLL().searchRole_detailsByStaff(staffId);
-            Role_detail roleDetail = role_detailList.get(0);
-            Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
-            data[i] = Arrays.copyOf(data[i], data[i].length + 1);
-            data[i][data[i].length - 1] = role.getName();
+            if (!role_detailList.isEmpty()) {
+                Role_detail roleDetail = role_detailList.get(0);
+                Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
+                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
+                data[i][data[i].length - 1] = role.getName();
+            } else {
+                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
+                data[i][data[i].length - 1] = "Chưa có chức vụ";
+            }
+
 
             if (detail) {
                 JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));

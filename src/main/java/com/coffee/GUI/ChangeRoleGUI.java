@@ -43,7 +43,11 @@ public class ChangeRoleGUI extends DialogForm {
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         this.staff = staff;
         List<Role_detail> role_detailList = new Role_detailBLL().searchRole_detailsByStaff(staff.getId());
-        roleDetail = role_detailList.get(0);
+        if (!role_detailList.isEmpty()) {
+            roleDetail = role_detailList.get(0);
+        } else {
+            roleDetail = null;
+        }
         init();
         setVisible(true);
     }
@@ -87,9 +91,10 @@ public class ChangeRoleGUI extends DialogForm {
                 for (Role role : new RoleBLL().searchRoles("id > 1"))
                     jComboBoxRole.addItem(role.getName());
 
-
-                Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
-                jComboBoxRole.setSelectedItem(role.getName());
+                if (roleDetail != null) {
+                    Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
+                    jComboBoxRole.setSelectedItem(role.getName());
+                }
 
                 jComboBoxRole.setPreferredSize(new Dimension(1000, 30));
                 jComboBoxRole.setFont((new Font("Public Sans", Font.PLAIN, 14)));
@@ -101,12 +106,13 @@ public class ChangeRoleGUI extends DialogForm {
                 jComboBoxTypeSalary.addItem("1. Cố định");
                 jComboBoxTypeSalary.addItem("2. Theo giờ làm việc");
 
-                if (roleDetail.getType_salary() == 1)
-                    jComboBoxTypeSalary.setSelectedIndex(1);
+                if (roleDetail != null) {
+                    if (roleDetail.getType_salary() == 1)
+                        jComboBoxTypeSalary.setSelectedIndex(1);
 
-                else if (roleDetail.getType_salary() == 2)
-                    jComboBoxTypeSalary.setSelectedIndex(2);
-                else
+                    else if (roleDetail.getType_salary() == 2)
+                        jComboBoxTypeSalary.setSelectedIndex(2);
+                } else
                     jComboBoxTypeSalary.setSelectedIndex(0);
 
                 jComboBoxTypeSalary.addActionListener(new ActionListener() {
@@ -125,7 +131,9 @@ public class ChangeRoleGUI extends DialogForm {
             if (string.isEmpty()) {
                 textFieldSalary.setPreferredSize(new Dimension(1000, 30));
                 textFieldSalary.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-                textFieldSalary.setText(String.valueOf(roleDetail.getSalary()));
+                if (roleDetail != null) {
+                    textFieldSalary.setText(String.valueOf(roleDetail.getSalary()));
+                }
                 content.add(textFieldSalary);
             }
 
@@ -193,23 +201,25 @@ public class ChangeRoleGUI extends DialogForm {
 
         role_id = jComboBoxRole.getSelectedIndex() + 2;
         staff_id = staff.getId();
-        if (role_id == roleDetail.getRole_id()) {
-            entry_date = roleDetail.getEntry_date();
-            type_salary = jComboBoxTypeSalary.getSelectedIndex();
-            salary = Double.parseDouble(textFieldSalary.getText());
+        if (roleDetail != null) {
+            if (role_id == roleDetail.getRole_id()) {
+                entry_date = roleDetail.getEntry_date();
+                type_salary = jComboBoxTypeSalary.getSelectedIndex();
+                salary = Double.parseDouble(textFieldSalary.getText());
 
-            Role_detail role_detail = new Role_detail(role_id, staff_id, entry_date, salary, type_salary); // false là tồn tại, true là đã xoá
+                Role_detail role_detail = new Role_detail(role_id, staff_id, entry_date, salary, type_salary); // false là tồn tại, true là đã xoá
 
-            result = role_detailBLL.updateRole_detail(role_detail);
+                result = role_detailBLL.updateRole_detail(role_detail);
 
-            if (result.getKey()) {
-                JOptionPane.showMessageDialog(null, result.getValue(),
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                EditStaffGUI.textFieldRole.setText(Objects.requireNonNull(jComboBoxRole.getSelectedItem()).toString());
-                dispose();
-            } else {
-                JOptionPane.showMessageDialog(null, result.getValue(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                if (result.getKey()) {
+                    JOptionPane.showMessageDialog(null, result.getValue(),
+                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    EditStaffGUI.textFieldRole.setText(Objects.requireNonNull(jComboBoxRole.getSelectedItem()).toString());
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(null, result.getValue(),
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
             }
         } else {
             entry_date = LocalDateTime.now();

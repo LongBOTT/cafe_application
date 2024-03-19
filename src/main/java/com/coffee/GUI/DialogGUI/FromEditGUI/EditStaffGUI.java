@@ -129,10 +129,14 @@ public class EditStaffGUI extends DialogForm {
                     textFieldRole.setFont((new Font("Public Sans", Font.PLAIN, 14)));
                     textFieldRole.setBackground(new Color(245, 246, 250));
                     List<Role_detail> role_detailList = new Role_detailBLL().searchRole_detailsByStaff(staff.getId());
-                    Role_detail roleDetail = role_detailList.get(0);
-                    Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
-                    textFieldRole.setText(role.getName());
-                    textFieldRole.setEditable(false);
+
+                    if (!role_detailList.isEmpty()) {
+                        Role_detail roleDetail = role_detailList.get(0);
+                        Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
+                        textFieldRole.setText(role.getName());
+                    } else {
+                        textFieldRole.setText("Chưa có");
+                    }
                     textFieldRole.setEditable(false);
                     content.add(textFieldRole);
 
@@ -206,16 +210,11 @@ public class EditStaffGUI extends DialogForm {
         String staffNo, name, phone, address, email;
         boolean gender;
         Date birthdate;
-        for (JTextField textField : jTextFieldsStaff) {
-            // Lấy giá trị từ JTextField và in ra terminal
-            System.out.println("========" + textField.getText());
-        }
         id = staff.getId();
-        staffNo = jTextFieldsStaff.get(2).getText().trim();
-        System.out.println("==========================" + staffNo);
-        name = jTextFieldsStaff.get(1).getText().trim();
-        gender = Boolean.parseBoolean(jTextFieldsStaff.get(3).getText().trim()); // Chuyển đổi giá trị boolean từ text field
-        birthdate = jDateChooser.getDate(); // Lấy ngày tháng từ JDateChooser
+        staffNo = staff.getStaffNo();
+        name = staff.getName();
+        gender = staff.isGender(); // Chuyển đổi giá trị boolean từ text field
+        birthdate = staff.getBirthdate(); // Lấy ngày tháng từ JDateChooser
 
 
         phone = jTextFieldsStaff.get(4).getText().trim();
@@ -223,7 +222,7 @@ public class EditStaffGUI extends DialogForm {
         email = jTextFieldsStaff.get(6).getText().trim();
 
 
-        Staff newStaff = new Staff(id, staffNo, name, gender, staff.getBirthdate(), phone, address, email, false);
+        Staff newStaff = new Staff(id, staffNo, name, gender, birthdate, phone, address, email, false);
         // false là tồn tại, true là đã xoá
 
         result = staffBLL.updateStaff(staff, newStaff);
