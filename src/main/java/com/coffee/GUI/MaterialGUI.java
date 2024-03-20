@@ -2,6 +2,7 @@ package com.coffee.GUI;
 
 import com.coffee.BLL.MaterialBLL;
 import com.coffee.DTO.Function;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddMaterialGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailSupplierGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.*;
@@ -160,7 +161,7 @@ public class MaterialGUI extends Layout1 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-//                    new AddSupplierGUI();
+                    new AddMaterialGUI();
                     refresh();
                 }
             });

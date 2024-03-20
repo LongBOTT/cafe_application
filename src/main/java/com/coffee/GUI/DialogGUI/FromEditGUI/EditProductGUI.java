@@ -11,6 +11,7 @@ import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 import org.apache.poi.ss.formula.functions.DProduct;
 
@@ -21,6 +22,7 @@ import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +48,9 @@ public class EditProductGUI extends DialogFormDetail_1 {
     private JLabel iconEdit = new JLabel(new FlatSVGIcon("icon/edit.svg"));
     private JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
     private MaterialBLL materialBLL = new MaterialBLL();
+    private JTextField txtNameMaterial;
+    private JTextField txtQuantity;
+    private JTextField txtUnit;
     public EditProductGUI( ArrayList<Object[]> allProducts) {
         super();
         super.setTitle("Sửa sản phẩm");
@@ -150,45 +155,62 @@ public class EditProductGUI extends DialogFormDetail_1 {
         EmptyBorder emptyBorder1 = new EmptyBorder(0, 30, 0, 0);
         containerInforMaterial.setBorder(emptyBorder1);
         bottom.add(containerInforMaterial, BorderLayout.NORTH);
-        for (String string : new String[]{"Tên nguyên liệu", "Số lượng", "Đơn vị", "Thêm"}) {
-            if (string.equals("Thêm")) {
-                JButton btnThem = new JButton("Thêm");
-                btnThem.setPreferredSize(new Dimension(100, 40));
-                btnThem.setBackground(new Color(0, 182, 62));
-                btnThem.setFont(new Font("Public Sans", Font.BOLD, 16));
-                btnThem.setForeground(Color.WHITE);
-                containerInforMaterial.add(btnThem);
-                continue;
-            }
-            JLabel label = new JLabel();
-            label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
-            label.setPreferredSize(null);
-            containerInforMaterial.add(label);
 
-            JTextField textField = new JTextField();
-            textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-            textField.setBackground(new Color(245, 246, 250));
-            containerInforMaterial.add(textField);
-            if (string.equals("Tên nguyên liệu")) {
-                textField.setPreferredSize(new Dimension(240, 30));
+        JLabel lblNameMaterial = createLabelMaterial("Tên nguyên liệu");
+        txtNameMaterial = createTextFieldMaterial();
+        txtNameMaterial.setPreferredSize(new Dimension(240, 30));
+
+        JLabel lblQuantity = createLabelMaterial("Số lượng");
+        txtQuantity = createTextFieldMaterial();
+        txtQuantity.setPreferredSize(new Dimension(60, 30));
+
+        JLabel lblUnit = createLabelMaterial("Đơn vị");
+        txtUnit = createTextFieldMaterial();
+        txtUnit.setPreferredSize(new Dimension(60, 30));
+
+        JButton btnThem = new JButton("Thêm");
+        btnThem.setPreferredSize(new Dimension(100, 40));
+        btnThem.setBackground(new Color(0, 182, 62));
+        btnThem.setFont(new Font("Public Sans", Font.BOLD, 16));
+        btnThem.setForeground(Color.WHITE);
+        btnThem.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        btnThem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = dataTable.getSelectedRow();
+                if (selectedRow == -1) {
+                    addDataToTable();
+                } else {
+                    updateDataTable(selectedRow);
+                }
             }
-            else {
-                textField.setPreferredSize(new Dimension(60, 30));
-            }
-        }
-        columnNames = new String[]{"STT","Tên nguyên liệu", "Số lượng", "Đơn vị","Sửa","Xóa"};
+
+        });
+
+
+        containerInforMaterial.add(lblNameMaterial);
+        containerInforMaterial.add(txtNameMaterial);
+        containerInforMaterial.add(lblQuantity);
+        containerInforMaterial.add(txtQuantity);
+        containerInforMaterial.add(lblUnit);
+        containerInforMaterial.add(txtUnit);
+        containerInforMaterial.add(btnThem);
+
+        columnNames = new String[]{"STT","Tên nguyên liệu", "Số lượng", "Đơn vị"};
+        columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
+        columnNames[ columnNames.length - 1] = "Sửa";
+        columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
+        columnNames[ columnNames.length - 1] = "Xóa";
         dataTable = new DataTable(new Object[0][0], columnNames,
-                null,
-                false, true, true, 6);
-        int[] columnWidths = {50,300, 50, 50,50,50};
+                e -> selectFunction(),
+                false, true, true, 4);
+        int[] columnWidths = {50,300, 50, 50};
 
         for (int i = 0; i < columnWidths.length; i++) {
             dataTable.getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
         }
         dataTable.getColumnModel().getColumn(4).setCellRenderer(new CustomPanelRenderer());
         dataTable.getColumnModel().getColumn(5).setCellRenderer(new CustomPanelRenderer());
-
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         containerDataTable = new RoundedPanel();
         containerDataTable.setLayout(new BorderLayout());
@@ -270,6 +292,18 @@ public class EditProductGUI extends DialogFormDetail_1 {
         comboBox.setBackground(new Color(245, 246, 250));
         return comboBox;
     }
+    private JLabel createLabelMaterial(String text) {
+        JLabel label = new JLabel(text);
+        label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+        label.setPreferredSize(null);
+        return label;
+    }
+    private JTextField createTextFieldMaterial() {
+        JTextField textField = new JTextField();
+        textField.setFont(new Font("Public Sans", Font.PLAIN, 14));
+        textField.setBackground(new Color(245, 246, 250));
+        return textField;
+    }
     private void loadMaterial(int product_id,String size){
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
@@ -277,18 +311,93 @@ public class EditProductGUI extends DialogFormDetail_1 {
         Object[][] data = new Object[searchResults.size()][6];
         for (int i = 0; i < searchResults.size(); i++) {
             List<Object> recipe = searchResults.get(i);
-            // Chèn STT vào cột đầu tiên
             data[i][0] = i + 1;
-            // Chèn dữ liệu còn lại từ danh sách kết quả
             for (int j = 1; j < recipe.size(); j++) {
                 data[i][j] = recipe.get(j - 1);
             }
-            // Thêm iconEdit và iconRemove vào cột cuối cùng
             data[i][4] = iconEdit;
             data[i][5] = iconRemove;
         }
         for (Object[] object : data) {
             model.addRow(object);
+        }
+    }
+    private Pair<Boolean, String> validateMaterial(String name,String quantity,String unit){
+        Pair<Boolean, String> result;
+
+        result = materialBLL.validateName(name);
+        if(!result.getKey()){
+            return new Pair<>(false,result.getValue());
+        }
+        result = materialBLL.validateQuantity(quantity);
+        if(!result.getKey()){
+            return new Pair<>(false,result.getValue());
+        }
+        result = materialBLL.validateUnit(unit);
+        if(!result.getKey()){
+            return new Pair<>(false,result.getValue());
+        }
+        return new Pair<>(true,"hợp lệ");
+    }
+    private void addDataToTable() {
+
+        String name = txtNameMaterial.getText();
+        String quantity = txtQuantity.getText();
+        String unit = txtUnit.getText();
+
+        Pair<Boolean, String> result = validateMaterial(name,quantity,unit);
+        if(!result.getKey()){
+            JOptionPane.showMessageDialog(null, result.getValue(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+        int nextRowNumber = model.getRowCount() + 1;
+        Object[] rowData = {nextRowNumber, name, quantity, unit, iconEdit, iconRemove};
+        model.addRow(rowData);
+
+        txtNameMaterial.setText("");
+        txtQuantity.setText("");
+        txtUnit.setText("");
+    }
+    private void updateDataTable(int selectedRow) {
+        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+
+        String quantity = txtQuantity.getText();
+        Pair <Boolean,String> result = materialBLL.validateQuantity(quantity);
+        if(result.getKey()) {
+            model.setValueAt(quantity, selectedRow, 2);
+            txtNameMaterial.setText("");
+            txtQuantity.setText("");
+            txtUnit.setText("");
+            txtNameMaterial.setEnabled(true);
+            txtUnit.setEnabled(true);
+            dataTable.clearSelection();
+        }
+        else
+            JOptionPane.showMessageDialog(null, result.getValue(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
+    private void selectFunction() {
+        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+        int indexRow = dataTable.getSelectedRow();
+        int indexColumn = dataTable.getSelectedColumn();
+
+        if (indexColumn == 4){
+            txtNameMaterial.setText(dataTable.getValueAt(indexRow, 1).toString());
+            txtQuantity.setText(dataTable.getValueAt(indexRow, 2).toString());
+            txtUnit.setText(dataTable.getValueAt(indexRow, 3).toString());
+            txtNameMaterial.setEnabled(false);
+            txtUnit.setEnabled(false);
+        }
+
+        if ( indexColumn == 5) {
+            String[] options = new String[]{"Huỷ", "Xác nhận"};
+            int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nguyên liệu?",
+                    "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+            if(choice == 1 )
+                model.removeRow(indexRow);
         }
     }
 }

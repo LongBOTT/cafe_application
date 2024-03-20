@@ -1,6 +1,9 @@
 package com.coffee.GUI.DialogGUI.FormAddGUI;
 
 import com.coffee.BLL.MaterialBLL;
+import com.coffee.BLL.ProductBLL;
+import com.coffee.DTO.Product;
+import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailSupplierGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
@@ -30,6 +33,7 @@ import java.util.List;
 
 public class AddProductGUI extends DialogFormDetail_1 {
     private MaterialBLL materialBLL = new MaterialBLL();
+    private ProductBLL productBLL = new ProductBLL();
     private JLabel titleName;
     private RoundedPanel containerAtributeProduct;
     private RoundedPanel containerImage;
@@ -38,7 +42,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
     private JLabel lblListMaterial;
     private DataTable dataTable ;
     private JButton buttonCancel;
-    private JButton buttonEdit;
+    private JButton buttonAdd;
 
     private RoundedPanel  containerInforMaterial;
     private RoundedScrollPane scrollPane;
@@ -46,6 +50,10 @@ public class AddProductGUI extends DialogFormDetail_1 {
     private JComboBox<String> CbListMaterial;
     private List<String> AtributeProduct = new ArrayList<>();
     private String[] columnNames;
+    private JTextField txtNameProduct;
+    private JComboBox <String>  cbSize;
+    private JTextField txtPrice ;
+    private JTextField txtCategory;
     private JTextField txtNameMaterial;
     private JTextField txtQuantity;
     private JTextField txtUnit;
@@ -96,34 +104,28 @@ public class AddProductGUI extends DialogFormDetail_1 {
         EmptyBorder emptyBorder = new EmptyBorder(0, 30, 0, 0);
         top.setBorder(emptyBorder);
 
-        for (String string : new String[]{"Tên sản phẩm", "Size", "Giá bán", "Loại"}) {
-            JLabel label = new JLabel();
-            label.setPreferredSize(new Dimension(170, 30));
-            label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
-            containerAtributeProduct.add(label);
+        JLabel lblName = createLabel("Tên sản phẩm");
+        JLabel lblSize = createLabel("Size");
+        JLabel lblPrice = createLabel("Giá bán");
+        JLabel lblCategory = createLabel("Thể loại");
 
-            JTextField textField = new JTextField();
+        txtNameProduct = createTextField();
+        cbSize = createComboBox();
+        txtPrice = createTextField();
+        txtCategory = createTextField();
 
-            if (string.equals("Tên sản phẩm")) {
 
-            }
-            if (string.equals("Size")) {
+        containerAtributeProduct.add(lblName);
+        containerAtributeProduct.add(txtNameProduct,"wrap");
 
-            }
-            if (string.equals("Giá bán")) {
+        containerAtributeProduct.add(lblSize);
+        containerAtributeProduct.add(cbSize,"wrap");
 
-            }
-            if (string.equals("Loại")) {
+        containerAtributeProduct.add(lblPrice);
+        containerAtributeProduct.add(txtPrice,"wrap");
 
-            }
-
-            textField.setPreferredSize(new Dimension(350, 30));
-            textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-            textField.setBackground(new Color(245, 246, 250));
-            containerAtributeProduct.add(textField, "wrap");
-
-        }
+        containerAtributeProduct.add(lblCategory);
+        containerAtributeProduct.add(txtCategory,"wrap");
         lblListMaterial = new JLabel("Danh sách nguyên liệu");
 
         lblListMaterial.setFont(new Font("Public Sans", Font.BOLD, 16));
@@ -139,16 +141,16 @@ public class AddProductGUI extends DialogFormDetail_1 {
         containerInforMaterial.setBorder(emptyBorder1);
         bottom.add(containerInforMaterial, BorderLayout.NORTH);
 
-        JLabel lblNameMaterial = createLabel("Tên nguyên liệu");
-        txtNameMaterial = createTextField();
+        JLabel lblNameMaterial = createLabelMaterial("Tên nguyên liệu");
+        txtNameMaterial = createTextFieldMaterial();
         txtNameMaterial.setPreferredSize(new Dimension(240, 30));
 
-        JLabel lblQuantity = createLabel("Số lượng");
-        txtQuantity = createTextField();
+        JLabel lblQuantity = createLabelMaterial("Số lượng");
+        txtQuantity = createTextFieldMaterial();
         txtQuantity.setPreferredSize(new Dimension(60, 30));
 
-        JLabel lblUnit = createLabel("Đơn vị");
-        txtUnit = createTextField();
+        JLabel lblUnit = createLabelMaterial("Đơn vị");
+        txtUnit = createTextFieldMaterial();
         txtUnit.setPreferredSize(new Dimension(60, 30));
 
         JButton btnThem = new JButton("Thêm");
@@ -211,7 +213,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         jTableHeader.setBackground(new Color(232, 206, 180));
 
         buttonCancel = new JButton("Huỷ");
-        buttonEdit = new JButton("Cập nhật");
+        buttonAdd = new JButton("Thêm");
         buttonCancel.setPreferredSize(new Dimension(100, 30));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -232,16 +234,18 @@ public class AddProductGUI extends DialogFormDetail_1 {
         });
         containerButton.add(buttonCancel);
 
-        buttonEdit.setPreferredSize(new Dimension(100, 30));
-        buttonEdit.setFont(new Font("Public Sans", Font.BOLD, 15));
-        buttonEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        buttonEdit.addMouseListener(new MouseAdapter() {
+        buttonAdd.setPreferredSize(new Dimension(100, 30));
+        buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
+        buttonAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        buttonAdd.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-
+                addProduct();
             }
         });
-        containerButton.add(buttonEdit);
+
+
+        containerButton.add(buttonAdd);
     }
     private Pair<Boolean, String> validateMaterial(String name,String quantity,String unit){
        Pair<Boolean, String> result;
@@ -321,17 +325,64 @@ public class AddProductGUI extends DialogFormDetail_1 {
                 model.removeRow(indexRow);
         }
     }
-    private JLabel createLabel(String text) {
+    private JLabel createLabelMaterial(String text) {
         JLabel label = new JLabel(text);
         label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
         label.setPreferredSize(null);
         return label;
     }
-    private JTextField createTextField() {
+    private JTextField createTextFieldMaterial() {
         JTextField textField = new JTextField();
         textField.setFont(new Font("Public Sans", Font.PLAIN, 14));
         textField.setBackground(new Color(245, 246, 250));
         return textField;
+    }
+    private JComboBox<String> createComboBox() {
+        JComboBox<String> comboBox = new JComboBox<>();
+        comboBox.setPreferredSize(new Dimension(350, 30));
+        comboBox.setFont(new Font("Public Sans", Font.PLAIN, 14));
+        comboBox.setBackground(new Color(245, 246, 250));
+        return comboBox;
+    }
+    private JLabel createLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setPreferredSize(new Dimension(170, 30));
+        label.setFont(new Font("Public Sans", Font.PLAIN, 16));
+        return label;
+    }
+
+    private JTextField createTextField() {
+        JTextField textField = new JTextField();
+        textField.setPreferredSize(new Dimension(350, 30));
+        textField.setFont(new Font("Public Sans", Font.PLAIN, 14));
+        textField.setBackground(new Color(245, 246, 250));
+        return textField;
+    }
+    private void addProduct() {
+        Pair<Boolean, String> result;
+        int id;
+        String name, size, category, price,image;
+
+        id = productBLL.getAutoID(productBLL.searchProducts("deleted = 0")); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        name = txtNameProduct.getText();
+//        size = cbSize.getSelectedItem().toString();
+        size = "0";
+        price = txtPrice.getText();
+        double priceDouble = Double.parseDouble(price);
+        category = txtCategory.getText();
+        image = "SP01";
+
+        Product product = new Product(id, name, "S", category, priceDouble,image, false); // false là tồn tại, true là đã xoá
+        result = productBLL.addProduct(product);
+
+        if (result.getKey()) {
+            JOptionPane.showMessageDialog(null, result.getValue(),
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(null, result.getValue(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
 
