@@ -321,7 +321,7 @@ public class HomeGUI extends JFrame {
             case 4 -> new StatisticSalaryGUI();
             case 5 -> new StatisticStaffGUI();
             case 6 -> new DiscountGUI(functions);
-            case 7 -> new ReceiptGUI();
+            case 7 -> new ReceiptGUI(functions);
             case 8 -> new ExportGUI(functions);
             case 9 -> new ImportGUI(functions);
             case 10 -> new ProductGUI(functions);
