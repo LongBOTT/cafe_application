@@ -117,10 +117,6 @@ public class MaterialBLL extends Manager<Material>{
     public  Pair<Boolean, String> validateName(String name) {
         if (name.isBlank())
             return new Pair<>(false, "Tên nguyên liệu được để trống.");
-        if (VNString.containsSpecial(name))
-            return new Pair<>(false, "Tên nguyên liêu không được chứa ký tự đặc biệt.");
-        if (VNString.containsNumber(name))
-            return new Pair<>(false, "Tên nguyên liệu không được chứa số.");
         List<Material> materials = materialDAL.searchMaterials("name = '" + name + "'");
         if(!materials.isEmpty()){
             return new Pair<>(false, "Nguyên liệu đã tồn tại.");

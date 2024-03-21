@@ -36,6 +36,7 @@ public class AddAccountGUI extends DialogForm {
         super.setTitle("Thêm tài khoản");
         init();
         setVisible(true);
+
     }
 
     private void init() {

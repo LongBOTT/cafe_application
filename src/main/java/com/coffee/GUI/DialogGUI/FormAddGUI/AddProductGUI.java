@@ -2,6 +2,8 @@ package com.coffee.GUI.DialogGUI.FormAddGUI;
 
 import com.coffee.BLL.MaterialBLL;
 import com.coffee.BLL.ProductBLL;
+import com.coffee.BLL.SupplierBLL;
+import com.coffee.DTO.Material;
 import com.coffee.DTO.Product;
 import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
@@ -23,10 +25,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +33,7 @@ import java.util.List;
 public class AddProductGUI extends DialogFormDetail_1 {
     private MaterialBLL materialBLL = new MaterialBLL();
     private ProductBLL productBLL = new ProductBLL();
+    private List<Material> listMaterials = new ArrayList<>();;
     private JLabel titleName;
     private RoundedPanel containerAtributeProduct;
     private RoundedPanel containerImage;
@@ -54,9 +54,10 @@ public class AddProductGUI extends DialogFormDetail_1 {
     private JComboBox <String>  cbSize;
     private JTextField txtPrice ;
     private JTextField txtCategory;
-    private JTextField txtNameMaterial;
+    private JComboBox<String> listMaterial;
     private JTextField txtQuantity;
     private JTextField txtUnit;
+    private JButton btnAddMaterial;
     private JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/edit.svg"));
     private JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
     public AddProductGUI() {
@@ -137,13 +138,39 @@ public class AddProductGUI extends DialogFormDetail_1 {
         containerInforMaterial.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
         containerInforMaterial.setBackground(new Color(217, 217, 217));
 
-        EmptyBorder emptyBorder1 = new EmptyBorder(0, 30, 0, 0);
-        containerInforMaterial.setBorder(emptyBorder1);
+//        EmptyBorder emptyBorder1 = new EmptyBorder(0, 30, 0, 0);
+//        containerInforMaterial.setBorder(emptyBorder1);
+        btnAddMaterial = new JButton();
+        ImageIcon icon = new FlatSVGIcon("icon/add.svg");
+        Image image = icon.getImage();
+        Image newImg = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+        icon = new ImageIcon(newImg);
+        btnAddMaterial.setIcon(icon);
+        btnAddMaterial.setPreferredSize(new Dimension(30, 30));
+        btnAddMaterial.setBackground(new Color(0, 182, 62));
+        btnAddMaterial.setFont(new Font("Public Sans", Font.BOLD, 16));
+        btnAddMaterial.setForeground(Color.WHITE);
+        btnAddMaterial.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnAddMaterial.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                new AddMaterialGUI();
+                listMaterials = materialBLL.searchMaterials("deleted = 0");
+                loadMaterial(listMaterials);
+            }
+        });
+        containerInforMaterial.add(btnAddMaterial);
         bottom.add(containerInforMaterial, BorderLayout.NORTH);
 
         JLabel lblNameMaterial = createLabelMaterial("Tên nguyên liệu");
-        txtNameMaterial = createTextFieldMaterial();
-        txtNameMaterial.setPreferredSize(new Dimension(240, 30));
+        listMaterial = createComboBox();
+        listMaterial.setPreferredSize(new Dimension(240, 30));
+        listMaterial.setEditable(true);
+
+
+
+        listMaterials = materialBLL.searchMaterials("deleted = 0");
+        loadMaterial(listMaterials);
 
         JLabel lblQuantity = createLabelMaterial("Số lượng");
         txtQuantity = createTextFieldMaterial();
@@ -152,9 +179,10 @@ public class AddProductGUI extends DialogFormDetail_1 {
         JLabel lblUnit = createLabelMaterial("Đơn vị");
         txtUnit = createTextFieldMaterial();
         txtUnit.setPreferredSize(new Dimension(60, 30));
+        txtUnit.setEnabled(false);
 
         JButton btnThem = new JButton("Thêm");
-        btnThem.setPreferredSize(new Dimension(100, 40));
+        btnThem.setPreferredSize(new Dimension(80, 30));
         btnThem.setBackground(new Color(0, 182, 62));
         btnThem.setFont(new Font("Public Sans", Font.BOLD, 16));
         btnThem.setForeground(Color.WHITE);
@@ -174,7 +202,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
 
         containerInforMaterial.add(lblNameMaterial);
-        containerInforMaterial.add(txtNameMaterial);
+        containerInforMaterial.add(listMaterial);
         containerInforMaterial.add(lblQuantity);
         containerInforMaterial.add(txtQuantity);
         containerInforMaterial.add(lblUnit);
@@ -246,31 +274,53 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
 
         containerButton.add(buttonAdd);
+        listMaterial.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    JComboBox<String> combo = (JComboBox<String>) e.getSource();
+                    String value = (String) combo.getSelectedItem();
+                    String[] parts = value.split(" - ");
+                    if(parts.length == 2){
+//                        int material_id = Integer.parseInt(parts[0]);
+                        Material material = materialBLL.findMaterials("id",parts[0]).get(0);
+                        txtUnit.setText(material.getUnit());
+                    }
+
+                }
+            }
+        });
+
     }
-    private Pair<Boolean, String> validateMaterial(String name,String quantity,String unit){
+    private Pair<Boolean, String> validateMaterial(String name,String quantity){
        Pair<Boolean, String> result;
 
-        result = materialBLL.validateName(name);
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if(name.isBlank()){
+            return new Pair<>(false,"vui lòng chọn nguyên liệu");
         }
         result = materialBLL.validateQuantity(quantity);
         if(!result.getKey()){
             return new Pair<>(false,result.getValue());
         }
-        result = materialBLL.validateUnit(unit);
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
+
         return new Pair<>(true,"hợp lệ");
+    }
+    private void loadMaterial(List<Material> listMaterials){
+        listMaterial.removeAllItems();
+        listMaterial.addItem("");
+        for(Material material : listMaterials){
+            String id = String.valueOf(material.getId());
+            String name = material.getName();
+            listMaterial.addItem(id + " - " + name);
+
+        }
     }
     private void addDataToTable() {
 
-        String name = txtNameMaterial.getText();
+        String name = listMaterial.getSelectedItem().toString();
         String quantity = txtQuantity.getText();
         String unit = txtUnit.getText();
 
-        Pair<Boolean, String> result = validateMaterial(name,quantity,unit);
+        Pair<Boolean, String> result = validateMaterial(name,quantity);
         if(!result.getKey()){
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -282,7 +332,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         Object[] rowData = {nextRowNumber, name, quantity, unit, iconDetail, iconRemove};
         model.addRow(rowData);
 
-        txtNameMaterial.setText("");
+        listMaterial.setSelectedItem("");
         txtQuantity.setText("");
         txtUnit.setText("");
     }
@@ -293,11 +343,10 @@ public class AddProductGUI extends DialogFormDetail_1 {
         Pair <Boolean,String> result = materialBLL.validateQuantity(quantity);
         if(result.getKey()) {
             model.setValueAt(quantity, selectedRow, 2);
-            txtNameMaterial.setText("");
+            listMaterial.setSelectedItem("");
             txtQuantity.setText("");
             txtUnit.setText("");
-            txtNameMaterial.setEnabled(true);
-            txtUnit.setEnabled(true);
+            listMaterial.setEnabled(true);
             dataTable.clearSelection();
         }
         else
@@ -310,11 +359,10 @@ public class AddProductGUI extends DialogFormDetail_1 {
         int indexColumn = dataTable.getSelectedColumn();
 
         if (indexColumn == 4){
-            txtNameMaterial.setText(dataTable.getValueAt(indexRow, 1).toString());
+            listMaterial.setSelectedItem(dataTable.getValueAt(indexRow, 1).toString());
             txtQuantity.setText(dataTable.getValueAt(indexRow, 2).toString());
             txtUnit.setText(dataTable.getValueAt(indexRow, 3).toString());
-            txtNameMaterial.setEnabled(false);
-            txtUnit.setEnabled(false);
+            listMaterial.setEnabled(false);
         }
 
         if ( indexColumn == 5) {
