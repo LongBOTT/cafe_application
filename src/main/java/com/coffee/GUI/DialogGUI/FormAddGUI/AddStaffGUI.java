@@ -69,6 +69,8 @@ public class AddStaffGUI extends DialogForm {
     public AddStaffGUI() {
         super();
         super.setTitle("Thêm Nhân Viên");
+        super.setSize(new Dimension(600, 700));
+        super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init();
         setVisible(true);
     }
@@ -80,7 +82,7 @@ public class AddStaffGUI extends DialogForm {
         buttonCancel = new JButton("Huỷ");
         buttonAdd = new JButton("Thêm");
         content.setLayout(new MigLayout("",
-                "200[]20[][]230",
+                "50[]20[]50",
                 "20[]20[]20"));
         titleName.setText("Thêm Nhân Viên");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));

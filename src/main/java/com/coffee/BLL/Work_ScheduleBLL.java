@@ -57,6 +57,10 @@ public class Work_ScheduleBLL extends Manager<Work_Schedule> {
         return work_scheduleDAL.searchWork_schedules(conditions);
     }
 
+    public List<Work_Schedule> searchWork_schedulesByStaff(int staff_id, int year, int month) {
+        return work_scheduleDAL.searchWork_schedulesByStaff(staff_id, year, month);
+    }
+
     public List<Work_Schedule> findWork_schedules(String key, String value) {
         List<Work_Schedule> list = new ArrayList<>();
         List<Work_Schedule> work_scheduleList = work_scheduleDAL.searchWork_schedules();

@@ -192,29 +192,6 @@ public class HomeGUI extends JFrame {
         content.setLayout(new BorderLayout());
         content.setBackground(new Color(232, 206, 180));
         center.add(content, BorderLayout.CENTER);
-
-//        content.add(new SaleGUI(account), BorderLayout.CENTER);
-
-//        checkDiscount();
-    }
-
-    private void checkDiscount() {
-//        DiscountBLL discountBLL = new DiscountBLL();
-//        Discount_detailBLL discountDetailBLL = new Discount_detailBLL();
-//        for (Discount discount : discountBLL.getDiscountList()){
-//            try {
-//                if (discount.getEnd_date().isBefore(Date.parseDate(Date.dateNow()))) {
-//                    discount.setStatus(true);
-//                    discountBLL.updateDiscount(discount);
-//                    for (Discount_detail discountDetail : discountDetailBLL.findDiscount_detailsBy(Map.of("discount_id", discount.getId()))) {
-//                        discountDetail.setStatus(true);
-//                        discountDetailBLL.updateDiscount_detail(discountDetail);
-//                    }
-//                }
-//            } catch (Exception e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
     }
 
     private void initMenu() {
@@ -337,6 +314,7 @@ public class HomeGUI extends JFrame {
             case 17 -> new InfoGUI(account, staff);
             case 18 -> new MyWorkScheduleGUI(staff);
             case 19 -> new CreateWorkScheduleGUI();
+            case 20 -> new PayrollGUI(functions, this);
             default -> new RoundedPanel();
         };
     }

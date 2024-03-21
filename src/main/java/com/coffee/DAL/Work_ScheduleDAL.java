@@ -88,4 +88,13 @@ public class Work_ScheduleDAL extends Manager {
         }
         return new ArrayList<>();
     }
+
+    public List<Work_Schedule> searchWork_schedulesByStaff(int staff_id, int year, int month) {
+        try {
+            return convertToWork_schedules(executeQuery("SELECT * FROM `work_schedule`WHERE staff_id = " + staff_id + " and YEAR(date) = " + year + " and MONTH(date) = " + month));
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in Work_scheduleDAL.searchWork_schedules(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
 }

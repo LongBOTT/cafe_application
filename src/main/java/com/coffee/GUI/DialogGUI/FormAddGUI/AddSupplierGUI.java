@@ -4,6 +4,7 @@ import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Supplier;
 
 import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.main.Cafe_Application;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
@@ -25,6 +26,8 @@ public class AddSupplierGUI extends DialogForm {
     public AddSupplierGUI() {
         super();
         super.setTitle("Thêm nhà cung cấp");
+        super.setSize(new Dimension(600, 450));
+        super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init();
         setVisible(true);
     }
@@ -36,7 +39,7 @@ public class AddSupplierGUI extends DialogForm {
         buttonCancel = new JButton("Huỷ");
         buttonAdd = new JButton("Thêm");
         content.setLayout(new MigLayout("",
-                "200[]20[]200",
+                "50[]20[]50",
                 "20[]20[]20"));
 
         titleName.setText("Thêm nhà cung cấp");
@@ -44,7 +47,6 @@ public class AddSupplierGUI extends DialogForm {
         titleName.setHorizontalAlignment(JLabel.CENTER);
         titleName.setVerticalAlignment(JLabel.CENTER);
         title.add(titleName, BorderLayout.CENTER);
-
 
 
         for (String string : new String[]{"Tên nhà cung cấp", "Điện thoại", "Địa chỉ", "Email"}) {

@@ -8,6 +8,7 @@ import com.coffee.DTO.Role_detail;
 import com.coffee.DTO.Staff;
 import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.main.Cafe_Application;
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JTextFieldDateEditor;
 import net.miginfocom.swing.MigLayout;
@@ -34,6 +35,8 @@ public class DetailStaffGUI extends DialogForm {
     public DetailStaffGUI(Staff staff) {
         super();
         super.setTitle("Thông Tin Nhân Viên ");
+        super.setSize(new Dimension(600, 700));
+        super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init(staff);
         setVisible(true);
     }
@@ -43,7 +46,7 @@ public class DetailStaffGUI extends DialogForm {
         attributeStaff = new ArrayList<>();
         jTextFieldsStaff = new ArrayList<>();
         content.setLayout(new MigLayout("",
-                "200[]20[]200",
+                "50[]20[]50",
                 "20[]20[]20"));
 
         titleName.setText("Thông Tin Nhân Viên");

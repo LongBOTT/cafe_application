@@ -8,6 +8,7 @@ import com.coffee.GUI.AccountGUI;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.components.AutocompleteJComboBox;
 import com.coffee.GUI.components.StringSearchable;
+import com.coffee.main.Cafe_Application;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
@@ -34,6 +35,8 @@ public class AddAccountGUI extends DialogForm {
     public AddAccountGUI() {
         super();
         super.setTitle("Thêm tài khoản");
+        super.setSize(new Dimension(600, 450));
+        super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init();
         setVisible(true);
     }
@@ -46,7 +49,7 @@ public class AddAccountGUI extends DialogForm {
         buttonAdd = new JButton("Thêm");
         staffList = new ArrayList<String>();
         content.setLayout(new MigLayout("",
-                "200[]20[]200",
+                "50[]20[]50",
                 "20[]20[]20"));
 
         titleName.setText("Thêm tài khoản");

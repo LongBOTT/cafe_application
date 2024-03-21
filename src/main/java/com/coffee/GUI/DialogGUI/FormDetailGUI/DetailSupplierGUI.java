@@ -3,6 +3,7 @@ package com.coffee.GUI.DialogGUI.FormDetailGUI;
 import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.main.Cafe_Application;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
@@ -22,6 +23,8 @@ public class DetailSupplierGUI extends DialogForm {
     public DetailSupplierGUI(Supplier supplier) {
         super();
         super.setTitle("Thông tin nhà cung cấp");
+        super.setSize(new Dimension(600, 450));
+        super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init(supplier);
         setVisible(true);
     }
@@ -31,7 +34,7 @@ public class DetailSupplierGUI extends DialogForm {
         attributeSupplier = new ArrayList<>();
         jTextFieldSupplier = new ArrayList<>();
         content.setLayout(new MigLayout("",
-                "200[]20[]200",
+                "50[]20[]50",
                 "20[]20[]20"));
 
         titleName.setText("Thông tin nhà cung cấp");
@@ -62,7 +65,7 @@ public class DetailSupplierGUI extends DialogForm {
             if (string.equals("Email")) {
                 textField.setText(supplier.getEmail());
             }
-            
+
             textField.setEditable(false);
             textField.setPreferredSize(new Dimension(1000, 30));
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));

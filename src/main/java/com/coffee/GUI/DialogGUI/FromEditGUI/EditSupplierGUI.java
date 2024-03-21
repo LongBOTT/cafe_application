@@ -3,6 +3,7 @@ package com.coffee.GUI.DialogGUI.FromEditGUI;
 import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.main.Cafe_Application;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
@@ -25,6 +26,8 @@ public class EditSupplierGUI extends DialogForm {
     public EditSupplierGUI(Supplier supplier) {
         super();
         super.setTitle("Cập nhật thông tin nhà cung cấp");
+        super.setSize(new Dimension(600, 450));
+        super.setLocationRelativeTo(Cafe_Application.homeGUI);
         this.supplier = supplier;
         init(supplier);
         setVisible(true);
@@ -37,7 +40,7 @@ public class EditSupplierGUI extends DialogForm {
         buttonCancel = new JButton("Huỷ");
         buttonEdit = new JButton("Cập nhật");
         content.setLayout(new MigLayout("",
-                "200[]20[]200",
+                "50[]20[]50",
                 "20[]20[]20"));
 
         titleName.setText("Cập nhật thông tin nhà cung cấp");
@@ -121,7 +124,7 @@ public class EditSupplierGUI extends DialogForm {
 
         Supplier newsSupplier = new Supplier(id, name, phone, address, email, false); // false là tồn tại, true là đã xoá
 
-        result = supplierBLL.updateSupplier(supplier,newsSupplier);
+        result = supplierBLL.updateSupplier(supplier, newsSupplier);
 
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),

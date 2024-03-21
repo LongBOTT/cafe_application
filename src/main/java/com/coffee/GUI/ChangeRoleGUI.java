@@ -221,7 +221,8 @@ public class ChangeRoleGUI extends DialogForm {
                             "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        } else {
+        }
+        if (roleDetail == null || role_id != roleDetail.getRole_id()) {
             entry_date = LocalDateTime.now();
             type_salary = jComboBoxTypeSalary.getSelectedIndex();
             salary = Double.parseDouble(textFieldSalary.getText());

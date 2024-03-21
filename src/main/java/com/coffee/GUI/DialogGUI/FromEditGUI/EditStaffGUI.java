@@ -25,20 +25,15 @@ import java.util.*;
 import java.util.List;
 
 public class EditStaffGUI extends DialogForm {
-
     private JLabel titleName;
     private List<JLabel> attributeStaff;
-
     private JButton buttonCancel;
     private JButton buttonEdit;
-
     private StaffBLL staffBLL = new StaffBLL();
-
     private List<JTextField> jTextFieldsStaff;
     public static JTextField textFieldRole;
     public static boolean changeRole = false;
     private JDateChooser jDateChooser = new JDateChooser();
-
     private Staff staff;
     private HomeGUI homeGUI;
 
@@ -47,6 +42,8 @@ public class EditStaffGUI extends DialogForm {
         super.setTitle("Cập Nhật Thông Tin Nhân Viên");
         this.staff = staff;
         this.homeGUI = homeGUI;
+        super.setSize(new Dimension(600, 700));
+        super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init(staff);
         setVisible(true);
     }
@@ -58,7 +55,7 @@ public class EditStaffGUI extends DialogForm {
         buttonCancel = new JButton("Huỷ");
         buttonEdit = new JButton("Cập nhật");
         content.setLayout(new MigLayout("",
-                "200[]20[]",
+                "50[]20[]50",
                 "20[]20[]20"));
 
         titleName.setText("Cập Nhật Thông Tin Nhân Viên");

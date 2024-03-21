@@ -1,27 +1,29 @@
 package com.coffee.DTO;
 
+import java.util.Date;
+
 public class Payroll {
     private int id;
-    private int staff_id;
+    private String name;
+    private Date entry_date;
     private int month;
     private int year;
-    private double hours_amount;
-    private double bonus_amount;
-    private double deduction_amount;
-    private double salary_amount;
+    private double total_salary;
+    private double paid;
+    private double debt;
 
     public Payroll() {
     }
 
-    public Payroll(int id, int staff_id, int month, int year, double hours_amount, double bonus_amount, double deduction_amount, double salary_amount) {
+    public Payroll(int id, String name, Date entry_date, int month, int year, double total_salary, double paid, double debt) {
         this.id = id;
-        this.staff_id = staff_id;
+        this.name = name;
+        this.entry_date = entry_date;
         this.month = month;
         this.year = year;
-        this.hours_amount = hours_amount;
-        this.bonus_amount = bonus_amount;
-        this.deduction_amount = deduction_amount;
-        this.salary_amount = salary_amount;
+        this.total_salary = total_salary;
+        this.paid = paid;
+        this.debt = debt;
     }
 
     public int getId() {
@@ -32,12 +34,20 @@ public class Payroll {
         this.id = id;
     }
 
-    public int getStaff_id() {
-        return staff_id;
+    public String getName() {
+        return name;
     }
 
-    public void setStaff_id(int staff_id) {
-        this.staff_id = staff_id;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getEntry_date() {
+        return entry_date;
+    }
+
+    public void setEntry_date(Date entry_date) {
+        this.entry_date = entry_date;
     }
 
     public int getMonth() {
@@ -56,47 +66,37 @@ public class Payroll {
         this.year = year;
     }
 
-    public double getHours_amount() {
-        return hours_amount;
+    public double getTotal_salary() {
+        return total_salary;
     }
 
-    public void setHours_amount(double hours_amount) {
-        this.hours_amount = hours_amount;
+    public void setTotal_salary(double total_salary) {
+        this.total_salary = total_salary;
     }
 
-    public double getBonus_amount() {
-        return bonus_amount;
+    public double getPaid() {
+        return paid;
     }
 
-    public void setBonus_amount(double bonus_amount) {
-        this.bonus_amount = bonus_amount;
+    public void setPaid(double paid) {
+        this.paid = paid;
     }
 
-    public double getDeduction_amount() {
-        return deduction_amount;
+    public double getDebt() {
+        return debt;
     }
 
-    public void setDeduction_amount(double deduction_amount) {
-        this.deduction_amount = deduction_amount;
-    }
-
-    public double getSalary_amount() {
-        return salary_amount;
-    }
-
-    public void setSalary_amount(double salary_amount) {
-        this.salary_amount = salary_amount;
+    public void setDebt(double debt) {
+        this.debt = debt;
     }
 
     @Override
     public String toString() {
         return id + " | " +
-                staff_id + " | " +
-                year + " | " +
-                month + " | " +
-                hours_amount + " | " +
-                bonus_amount + " | " +
-                deduction_amount + " | " +
-                salary_amount;
+                "<html>" + name + "</html> | " +
+                month + "/" + year + " | " +
+                total_salary + " | " +
+                paid + " | " +
+                debt;
     }
 }
