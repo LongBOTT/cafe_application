@@ -4,6 +4,7 @@ import com.coffee.BLL.Import_NoteBLL;
 import com.coffee.BLL.StaffBLL;
 import com.coffee.BLL.Work_ScheduleBLL;
 import com.coffee.DTO.Function;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddExportDetailGUI;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddWorkScheduleGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.DataTable;
@@ -58,7 +59,7 @@ public class ImportGUI extends Layout2 {
         this.functions = functions;
         if (functions.stream().anyMatch(f -> f.getName().equals("view"))) detail = true;
         if (functions.stream().anyMatch(f -> f.getName().equals("edit"))) edit = true;
-        if (functions.stream().anyMatch(f -> f.getName().equals("remove"))) remove = true;
+//        if (functions.stream().anyMatch(f -> f.getName().equals("remove"))) remove = true;
         init(functions);
 
     }
@@ -196,7 +197,7 @@ public class ImportGUI extends Layout2 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-
+                    new AddExportDetailGUI();
                     refresh();
                 }
             });
@@ -279,7 +280,7 @@ public class ImportGUI extends Layout2 {
     }
     public void refresh() {
         jTextFieldSearch.setText("");
-        jComboBoxSearch.setSelectedIndex(0);
+//        jComboBoxSearch.setSelectedIndex(0);
         loadDataTable(importNoteBLL.getData(importNoteBLL.searchImport()));
     }
     private void selectFunction() {
