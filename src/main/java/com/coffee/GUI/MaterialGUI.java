@@ -2,11 +2,16 @@ package com.coffee.GUI;
 
 import com.coffee.BLL.MaterialBLL;
 import com.coffee.DTO.Function;
+import com.coffee.DTO.Material;
+import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddMaterialGUI;
+import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailMaterialGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailSupplierGUI;
+import com.coffee.GUI.DialogGUI.FromEditGUI.EditMaterialGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -17,6 +22,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class MaterialGUI extends Layout1 {
     private final MaterialBLL materialBLL = new MaterialBLL();
@@ -43,9 +49,6 @@ public class MaterialGUI extends Layout1 {
             edit = true;
         if (functions.stream().anyMatch(f -> f.getName().equals("remove")))
             remove = true;
-        System.out.println(detail);
-        System.out.println(edit);
-        System.out.println(remove);
         initComponents(functions);
     }
     public void initComponents(List<Function> functions) {
@@ -116,8 +119,8 @@ public class MaterialGUI extends Layout1 {
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(100, 40));
         jButtonSearch.setCursor(new Cursor(Cursor.HAND_CURSOR));
-//        jButtonSearch.addActionListener(e -> searchSuppliers());
-//        SearchPanel.add(jButtonSearch);
+        jButtonSearch.addActionListener(e -> searchMaterial());
+        SearchPanel.add(jButtonSearch);
 //        jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
 //            @Override
 //            public void insertUpdate(DocumentEvent e) {
@@ -238,21 +241,46 @@ public class MaterialGUI extends Layout1 {
             model.addRow(object);
         }
     }
+    private void searchMaterial() {
+        if (jTextFieldSearch.getText().isEmpty()) {
+            loadDataTable(materialBLL.getData(materialBLL.searchMaterials("deleted = 0")));
+        } else {
+            loadDataTable(materialBLL.getData(materialBLL.findMaterials("name", jTextFieldSearch.getText())));
+        }
+        jTextFieldSearch.setText("");
+    }
     private void selectFunction() {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
 
-        if (detail && indexColumn == indexColumnDetail)
-//            new DetailSupplierGUI(materialBLL.searchMaterials("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        if (indexColumn == indexColumnDetail)
+            new DetailMaterialGUI(materialBLL.searchMaterials("deleted = 0").get(indexRow));
 
-        if (detail && indexColumn == indexColumnEdit) {
-//            new EditSupplierGUI(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        if ( indexColumn == indexColumnEdit) {
+            new EditMaterialGUI(materialBLL.searchMaterials("deleted = 0").get(indexRow));
             refresh();
         }
 
-//        if (detail && indexColumn == indexColumnRemove)
-////            deleteSupplier(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-//
+        if ( indexColumn == indexColumnRemove)
+            deleteMaterial(materialBLL.searchMaterials("deleted = 0").get(indexRow));
+
+    }
+    private void deleteMaterial(Material material) {
+        if (dataTable.getSelectedRow() == -1) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn nguyên liệu cần xoá.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        String[] options = new String[]{"Huỷ", "Xác nhận"};
+        int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nguyên liệu?", "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+        if (choice == 1) {
+            Pair<Boolean, String> result = materialBLL.deleteMaterial(material);
+            if (result.getKey()) {
+                JOptionPane.showMessageDialog(null, result.getValue(), "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                refresh();
+            } else {
+                JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
 
