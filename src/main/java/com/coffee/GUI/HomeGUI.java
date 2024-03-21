@@ -316,7 +316,7 @@ public class HomeGUI extends JFrame {
     public JPanel getPanelModule(int id, List<Function> functions) {
         return switch (id) {
             case 1 -> new SaleGUI(account);
-            case 2 -> new WareHouseGUI();
+            case 2 -> new WareHouseGUI(functions);
             case 3 -> new StatisticSalesGUI();
             case 4 -> new StatisticSalaryGUI();
             case 5 -> new StatisticStaffGUI();
