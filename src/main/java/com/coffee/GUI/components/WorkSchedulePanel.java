@@ -1,14 +1,13 @@
 package com.coffee.GUI.components;
 
 
-import com.coffee.BLL.Role_detailBLL;
+import com.coffee.BLL.Role_DetailBLL;
 import com.coffee.BLL.StaffBLL;
 import com.coffee.BLL.Work_ScheduleBLL;
 
-import com.coffee.DTO.Role_detail;
+import com.coffee.DTO.Role_Detail;
 import com.coffee.DTO.Staff;
 import com.coffee.DTO.Work_Schedule;
-import com.coffee.GUI.CreateWorkScheduleGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditWorkScheduleGUI;
 import net.miginfocom.swing.MigLayout;
 
@@ -87,8 +86,8 @@ public class WorkSchedulePanel extends JScrollPane {
 
     public void showWorkSchedule(Date date1, Date date2) {
         List<Integer> staffIDList = new ArrayList<>();
-        List<Role_detail> role_detailList = new Role_detailBLL().searchRole_detailsByRole(role_id);
-        for (Role_detail roleDetail : role_detailList)
+        List<Role_Detail> role_detailList = new Role_DetailBLL().searchRole_detailsByRole(role_id);
+        for (Role_Detail roleDetail : role_detailList)
             if (!staffIDList.contains(roleDetail.getStaff_id()))
                 staffIDList.add(roleDetail.getStaff_id());
 

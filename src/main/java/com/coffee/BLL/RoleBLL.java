@@ -34,6 +34,11 @@ public class RoleBLL extends Manager<Role> {
     public Pair<Boolean, String> addRole(Role role) {
         Pair<Boolean, String> result;
 
+        result = validateName(role.getName());
+        if (!result.getKey()) {
+            return new Pair<>(false, result.getValue());
+        }
+
         result = exists(role);
         if (result.getKey()) {
             return new Pair<>(false, result.getValue());

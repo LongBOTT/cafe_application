@@ -80,7 +80,7 @@ public class Payroll_Detail {
 
     @Override
     public String toString() {
-        String status1 = status ? "Tạm tính" : "Đã trả";
+        String status1 = status ? "Đã trả" : "Tạm tính";
         return payroll_id + " | " +
                 staff_id + " | " +
                 "staff_name" + " | " +

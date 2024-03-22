@@ -245,11 +245,11 @@ public class StaffGUI extends Layout1 {
 
             if (!roles.isEmpty()) {
                 int roleId = roles.get(0).getId();
-                List<Role_detail> roleDetails = new Role_detailBLL().searchRole_details("role_id = " + roleId);
+                List<Role_Detail> roleDetails = new Role_DetailBLL().searchRole_details("role_id = " + roleId);
 
                 if (!roleDetails.isEmpty()) {
                     List<Integer> staffIds = new ArrayList<>();
-                    for (Role_detail roleDetail : roleDetails) {
+                    for (Role_Detail roleDetail : roleDetails) {
                         staffIds.add(roleDetail.getStaff_id());
                     }
                     List<Staff> staffs = new ArrayList<>();
@@ -281,9 +281,9 @@ public class StaffGUI extends Layout1 {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
 
             int staffId = Integer.parseInt((String) data[i][0]);
-            List<Role_detail> role_detailList = new Role_detailBLL().searchRole_detailsByStaff(staffId);
+            List<Role_Detail> role_detailList = new Role_DetailBLL().searchRole_detailsByStaff(staffId);
             if (!role_detailList.isEmpty()) {
-                Role_detail roleDetail = role_detailList.get(0);
+                Role_Detail roleDetail = role_detailList.get(0);
                 Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
                 data[i] = Arrays.copyOf(data[i], data[i].length + 1);
                 data[i][data[i].length - 1] = role.getName();

@@ -1,21 +1,18 @@
 package com.coffee.GUI.DialogGUI.FormDetailGUI;
 
 import com.coffee.BLL.RoleBLL;
-import com.coffee.BLL.Role_detailBLL;
+import com.coffee.BLL.Role_DetailBLL;
 import com.coffee.BLL.StaffBLL;
 import com.coffee.DTO.Role;
-import com.coffee.DTO.Role_detail;
+import com.coffee.DTO.Role_Detail;
 import com.coffee.DTO.Staff;
-import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.main.Cafe_Application;
 import com.toedter.calendar.JDateChooser;
-import com.toedter.calendar.JTextFieldDateEditor;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -110,18 +107,14 @@ public class DetailStaffGUI extends DialogForm {
                     textField.setText(staff.getEmail());
                 }
                 if (string.trim().equals("Chức Vụ")) {
-                    List<Role_detail> roleDetails = new Role_detailBLL().searchRole_details("staff_id = " + staff.getId());
-                    for (Role_detail roleDetail : roleDetails) {
-                        int roleId = roleDetail.getRole_id();
-                        Role role = new RoleBLL().searchRoles("id = " + roleId).get(0);
+                    List<Role_Detail> roleDetails = new Role_DetailBLL().searchRole_detailsByStaff(staff.getId());
+                    if (roleDetails.isEmpty()) {
+                        textField.setText("Chưa có chức vụ");
+                    } else {
+                        Role role = new RoleBLL().searchRoles("id = " + roleDetails.get(0).getRole_id()).get(0);
                         textField.setText(role.getName());
-                        break; // Dừng vòng lặp sau khi tìm thấy một chức vụ
                     }
-
-
                 }
-
-
                 jTextFieldsStaff.add(textField);
                 content.add(textField, "wrap");
             }

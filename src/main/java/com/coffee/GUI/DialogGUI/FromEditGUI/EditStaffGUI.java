@@ -1,9 +1,9 @@
 package com.coffee.GUI.DialogGUI.FromEditGUI;
 
 import com.coffee.BLL.RoleBLL;
-import com.coffee.BLL.Role_detailBLL;
+import com.coffee.BLL.Role_DetailBLL;
 import com.coffee.DTO.Role;
-import com.coffee.DTO.Role_detail;
+import com.coffee.DTO.Role_Detail;
 import com.coffee.DTO.Staff;
 import com.coffee.GUI.ChangeRoleGUI;
 import com.coffee.GUI.CreateWorkScheduleGUI;
@@ -125,10 +125,10 @@ public class EditStaffGUI extends DialogForm {
                     textFieldRole.setPreferredSize(new Dimension(280, 35));
                     textFieldRole.setFont((new Font("Public Sans", Font.PLAIN, 14)));
                     textFieldRole.setBackground(new Color(245, 246, 250));
-                    List<Role_detail> role_detailList = new Role_detailBLL().searchRole_detailsByStaff(staff.getId());
+                    List<Role_Detail> role_detailList = new Role_DetailBLL().searchRole_detailsByStaff(staff.getId());
 
                     if (!role_detailList.isEmpty()) {
-                        Role_detail roleDetail = role_detailList.get(0);
+                        Role_Detail roleDetail = role_detailList.get(0);
                         Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
                         textFieldRole.setText(role.getName());
                     } else {

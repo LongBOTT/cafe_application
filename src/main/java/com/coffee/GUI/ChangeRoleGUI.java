@@ -1,28 +1,31 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.RoleBLL;
-import com.coffee.BLL.Role_detailBLL;
+import com.coffee.BLL.Role_DetailBLL;
 import com.coffee.DTO.Role;
 import com.coffee.DTO.Staff;
-import com.coffee.DTO.Role_detail;
+import com.coffee.DTO.Role_Detail;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditStaffGUI;
+import com.coffee.GUI.components.EventSwitchSelected;
+import com.coffee.GUI.components.RoundedPanel;
+import com.coffee.GUI.components.SwitchButton;
 import com.coffee.main.Cafe_Application;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.time.LocalDate;
+import java.awt.event.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 
-public class ChangeRoleGUI extends DialogForm {
+public class ChangeRoleGUI extends JDialog {
+    private RoundedPanel role_detail_panel;
+    private RoundedPanel role_detail_bonus_panel;
+    private RoundedPanel role_detail_deduction_panel;
     private JLabel titleName;
     private List<JLabel> attributeRole_detail;
     private JComboBox<String> jComboBoxRole;
@@ -32,17 +35,33 @@ public class ChangeRoleGUI extends DialogForm {
     private JTextField textFieldSalary;
     private JButton buttonCancel;
     private JButton buttonSet;
-    private Role_detailBLL role_detailBLL = new Role_detailBLL();
+    private SwitchButton switchButtonBonus;
+    private SwitchButton switchButtonDeduction;
+    private Role_DetailBLL role_detailBLL = new Role_DetailBLL();
     private Staff staff;
-    private Role_detail roleDetail;
+    private Role_Detail roleDetail;
+    private RoundedPanel content = new RoundedPanel();
+    private JScrollPane scrollPaneBonus;
+    private JScrollPane scrollPaneDeduction;
 
     public ChangeRoleGUI(Staff staff) {
-        super();
-        super.setTitle("Thiết lập lương");
-        super.setSize(new Dimension(600, 400));
-        super.setLocationRelativeTo(Cafe_Application.homeGUI);
+        super((Frame) null, "", true);
+        getContentPane().setBackground(new Color(217, 217, 217));
+        setTitle("Thiết lập lương");
+        setLayout(new FlowLayout(FlowLayout.CENTER));
+        setIconImage(new FlatSVGIcon("image/coffee_logo.svg").getImage());
+        setSize(new Dimension(800, 500));
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        setResizable(false);
+        setLocationRelativeTo(Cafe_Application.homeGUI);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                cancel();
+            }
+        });
         this.staff = staff;
-        List<Role_detail> role_detailList = new Role_detailBLL().searchRole_detailsByStaff(staff.getId());
+        List<Role_Detail> role_detailList = new Role_DetailBLL().searchRole_detailsByStaff(staff.getId());
         if (!role_detailList.isEmpty()) {
             roleDetail = role_detailList.get(0);
         } else {
@@ -53,6 +72,9 @@ public class ChangeRoleGUI extends DialogForm {
     }
 
     private void init() {
+        role_detail_panel = new RoundedPanel();
+        role_detail_bonus_panel = new RoundedPanel();
+        role_detail_deduction_panel = new RoundedPanel();
         titleName = new JLabel();
         attributeRole_detail = new ArrayList<>();
         jComboBoxRole = new JComboBox<>();
@@ -61,9 +83,28 @@ public class ChangeRoleGUI extends DialogForm {
         textFieldSalary = new JTextField();
         buttonCancel = new JButton("Huỷ");
         buttonSet = new JButton("Thiết lập");
-        content.setLayout(new MigLayout("",
-                "50[]20[][]50",
-                "20[]20[]20"));
+        switchButtonBonus = new SwitchButton();
+        switchButtonDeduction = new SwitchButton();
+        scrollPaneBonus = new JScrollPane();
+        scrollPaneDeduction = new JScrollPane();
+
+        RoundedPanel title = new RoundedPanel();
+        RoundedPanel containerButton = new RoundedPanel();
+
+        title.setLayout(new BorderLayout());
+        title.setBackground(new Color(232, 206, 180));
+        title.setPreferredSize(new Dimension(700, 40));
+        add(title);
+
+        content.setLayout(new FlowLayout());
+        content.setBackground(new Color(217, 217, 217));
+        content.setPreferredSize(new Dimension(700, 350));
+        add(content);
+
+        containerButton.setLayout(new FlowLayout());
+        containerButton.setBackground(new Color(217, 217, 217));
+        containerButton.setPreferredSize(new Dimension(700, 70));
+        add(containerButton);
 
         titleName.setText("Thiết lập lương");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
@@ -72,19 +113,100 @@ public class ChangeRoleGUI extends DialogForm {
         title.add(titleName, BorderLayout.CENTER);
 
 
+        role_detail_panel.setBackground(Color.white);
+        role_detail_panel.setLayout(new MigLayout("",
+                "50[]20[][]50",
+                "15[]15[]15"));
+        role_detail_panel.setPreferredSize(new Dimension(685, 200));
+        content.add(role_detail_panel);
+
+        role_detail_bonus_panel.setBackground(Color.white);
+        role_detail_bonus_panel.setPreferredSize(new Dimension(685, 50));
+        role_detail_bonus_panel.setLayout(new MigLayout("",
+                "50[]20[]50",
+                "15[]15[]15"));
+        content.add(role_detail_bonus_panel);
+
+        JLabel labelBonus = new JLabel();
+        labelBonus.setPreferredSize(new Dimension(170, 30));
+        labelBonus.setText("Phụ cấp");
+        labelBonus.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+        role_detail_bonus_panel.add(labelBonus);
+
+        switchButtonBonus.addEventSelected(new EventSwitchSelected() {
+            @Override
+            public void onSelected(boolean selected) {
+                if (selected) {
+                    showBonusPanel();
+                } else {
+                    role_detail_bonus_panel.setPreferredSize(new Dimension(685, 50));
+                    content.setPreferredSize(new Dimension(700, content.getHeight() - 130));
+                    content.repaint();
+                    content.revalidate();
+                    setSize(new Dimension(800, getHeight() - 130));
+                    repaint();
+                    revalidate();
+                    setLocationRelativeTo(Cafe_Application.homeGUI);
+                }
+            }
+        });
+        role_detail_bonus_panel.add(switchButtonBonus, "wrap");
+
+        JPanel contentBonus = new JPanel();
+        contentBonus.setPreferredSize(new Dimension(685, 120));
+        role_detail_bonus_panel.add(contentBonus, "span, wrap");
+        contentBonus.add(scrollPaneBonus);
+
+        role_detail_deduction_panel.setBackground(Color.white);
+        role_detail_deduction_panel.setPreferredSize(new Dimension(685, 50));
+        role_detail_deduction_panel.setLayout(new MigLayout("",
+                "50[]20[]50",
+                "15[]15[]15"));
+        content.add(role_detail_deduction_panel);
+
+        JLabel labelDeduction = new JLabel();
+        labelDeduction.setPreferredSize(new Dimension(170, 30));
+        labelDeduction.setText("Giảm trừ");
+        labelDeduction.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+        role_detail_deduction_panel.add(labelDeduction);
+
+        switchButtonDeduction.addEventSelected(new EventSwitchSelected() {
+            @Override
+            public void onSelected(boolean selected) {
+                if (selected) {
+                    showDeductionPanel();
+                } else {
+                    role_detail_deduction_panel.setPreferredSize(new Dimension(685, 50));
+                    content.setPreferredSize(new Dimension(700, content.getHeight() - 130));
+                    content.repaint();
+                    content.revalidate();
+                    setSize(new Dimension(800, getHeight() - 130));
+                    repaint();
+                    revalidate();
+                    setLocationRelativeTo(Cafe_Application.homeGUI);
+                }
+            }
+        });
+        role_detail_deduction_panel.add(switchButtonDeduction, "wrap");
+
+        JPanel contentDeduction = new JPanel();
+        contentDeduction.setPreferredSize(new Dimension(685, 120));
+        role_detail_deduction_panel.add(contentDeduction, "span, wrap");
+        contentDeduction.add(scrollPaneDeduction);
+
         for (String string : new String[]{"Nhân viên", "Chức vụ", "Loại lương", ""}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
             label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
             attributeRole_detail.add(label);
-            content.add(label);
+            role_detail_panel.add(label);
 
 
             if (string.equals("Nhân viên")) {
                 JLabel jLabel = new JLabel(staff.getName());
                 jLabel.setFont((new Font("Public Sans", Font.BOLD, 16)));
-                content.add(jLabel, "wrap");
+                role_detail_panel.add(jLabel, "wrap");
             }
 
             if (string.equals("Chức vụ")) {
@@ -98,7 +220,7 @@ public class ChangeRoleGUI extends DialogForm {
 
                 jComboBoxRole.setPreferredSize(new Dimension(1000, 30));
                 jComboBoxRole.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-                content.add(jComboBoxRole, "wrap");
+                role_detail_panel.add(jComboBoxRole, "wrap");
             }
 
             if (string.equals("Loại lương")) {
@@ -125,7 +247,7 @@ public class ChangeRoleGUI extends DialogForm {
                 jComboBoxTypeSalary.setPreferredSize(new Dimension(1000, 30));
                 jComboBoxTypeSalary.setFont((new Font("Public Sans", Font.PLAIN, 14)));
 
-                content.add(jComboBoxTypeSalary, "wrap");
+                role_detail_panel.add(jComboBoxTypeSalary, "wrap");
             }
 
             if (string.isEmpty()) {
@@ -134,13 +256,13 @@ public class ChangeRoleGUI extends DialogForm {
                 if (roleDetail != null) {
                     textFieldSalary.setText(String.valueOf(roleDetail.getSalary()));
                 }
-                content.add(textFieldSalary);
+                role_detail_panel.add(textFieldSalary);
             }
 
         }
         jLabelTypeSalary = new JLabel("          ");
         jLabelTypeSalary.setFont((new Font("Public Sans", Font.PLAIN, 13)));
-        content.add(jLabelTypeSalary, "wrap");
+        role_detail_panel.add(jLabelTypeSalary, "wrap");
 
         loadTypeSalary();
 
@@ -207,7 +329,7 @@ public class ChangeRoleGUI extends DialogForm {
                 type_salary = jComboBoxTypeSalary.getSelectedIndex();
                 salary = Double.parseDouble(textFieldSalary.getText());
 
-                Role_detail role_detail = new Role_detail(role_id, staff_id, entry_date, salary, type_salary); // false là tồn tại, true là đã xoá
+                Role_Detail role_detail = new Role_Detail(role_id, staff_id, entry_date, salary, type_salary); // false là tồn tại, true là đã xoá
 
                 result = role_detailBLL.updateRole_detail(role_detail);
 
@@ -227,7 +349,7 @@ public class ChangeRoleGUI extends DialogForm {
             type_salary = jComboBoxTypeSalary.getSelectedIndex();
             salary = Double.parseDouble(textFieldSalary.getText());
 
-            Role_detail role_detail = new Role_detail(role_id, staff_id, entry_date, salary, type_salary); // false là tồn tại, true là đã xoá
+            Role_Detail role_detail = new Role_Detail(role_id, staff_id, entry_date, salary, type_salary); // false là tồn tại, true là đã xoá
 
             result = role_detailBLL.addRole_detail(role_detail);
 
@@ -242,5 +364,45 @@ public class ChangeRoleGUI extends DialogForm {
                         "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+    private void showBonusPanel() {
+        role_detail_bonus_panel.setPreferredSize(new Dimension(685, 190));
+        content.setPreferredSize(new Dimension(700, content.getHeight() + 130));
+        content.repaint();
+        content.revalidate();
+        setSize(new Dimension(800, getHeight() + 130));
+        repaint();
+        revalidate();
+        setLocationRelativeTo(Cafe_Application.homeGUI);
+
+        JPanel jPanel = new JPanel();
+        jPanel.setPreferredSize(new Dimension(1000, 500));
+        jPanel.setBackground(Color.PINK);
+        scrollPaneBonus.setViewportView(jPanel);
+    }
+
+    private void showDeductionPanel() {
+        role_detail_deduction_panel.setPreferredSize(new Dimension(685, 190));
+        content.setPreferredSize(new Dimension(700, content.getHeight() + 130));
+        content.repaint();
+        content.revalidate();
+        setSize(new Dimension(800, getHeight() + 130));
+        repaint();
+        revalidate();
+        setLocationRelativeTo(Cafe_Application.homeGUI);
+
+        JPanel jPanel = new JPanel();
+        jPanel.setPreferredSize(new Dimension(1000, 500));
+        jPanel.setBackground(Color.PINK);
+        scrollPaneDeduction.setViewportView(jPanel);
+    }
+
+    public void cancel() {
+        String[] options = new String[]{"Huỷ", "Thoát"};
+        int choice = JOptionPane.showOptionDialog(null, "Bạn có muốn thoát?",
+                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+        if (choice == 1)
+            dispose();
     }
 }

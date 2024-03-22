@@ -1,40 +1,20 @@
 package com.coffee.GUI.DialogGUI.FormAddGUI;
 
 import com.coffee.BLL.RoleBLL;
-import com.coffee.BLL.Role_detailBLL;
 import com.coffee.BLL.StaffBLL;
-import com.coffee.DAL.RoleDAL;
-import com.coffee.DTO.Role;
-import com.coffee.DTO.Role_detail;
 import com.coffee.DTO.Staff;
-import com.coffee.GUI.ChangeRoleGUI;
-import com.coffee.GUI.CreateWorkScheduleGUI;
 import com.coffee.GUI.DialogGUI.DialogForm;
-import com.coffee.GUI.HomeGUI;
 import com.coffee.main.Cafe_Application;
-import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
-import com.toedter.calendar.JTextFieldDateEditor;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.sql.SQLOutput;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import com.coffee.BLL.SupplierBLL;
-import com.coffee.DTO.Supplier;
-import com.coffee.GUI.DialogGUI.DialogForm;
-import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
-import com.coffee.GUI.DialogGUI.DialogFormDetail_2;
-import com.toedter.calendar.JDateChooser;
-import com.toedter.calendar.JTextFieldDateEditor;
 import javafx.util.Pair;
-import net.miginfocom.swing.MigLayout;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;

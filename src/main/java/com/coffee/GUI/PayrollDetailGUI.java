@@ -4,14 +4,13 @@ import com.coffee.BLL.Payroll_DetailBLL;
 import com.coffee.BLL.StaffBLL;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Payroll;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
+import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailPayroll_DetailGUI;
+import com.coffee.GUI.DialogGUI.FromEditGUI.EditPayroll_DetailGUI;
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.Layout1;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JMonthChooser;
-import com.toedter.calendar.JYearChooser;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -21,10 +20,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class PayrollDetailGUI extends Layout1 {
     private Payroll payroll;
@@ -41,6 +38,7 @@ public class PayrollDetailGUI extends Layout1 {
     private HomeGUI homeGUI;
     private List<Function> functions;
 
+    private Object[][] data = new Object[0][0];
 
     public PayrollDetailGUI(Payroll payroll, List<Function> functions, HomeGUI homeGUI) {
         super();
@@ -170,7 +168,7 @@ public class PayrollDetailGUI extends Layout1 {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
 
-        Object[][] data = new Object[objects.length][objects[0].length];
+        data = new Object[objects.length][objects[0].length];
 
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
@@ -198,10 +196,11 @@ public class PayrollDetailGUI extends Layout1 {
         int indexColumn = dataTable.getSelectedColumn();
 
         if (indexColumn == indexColumnDetail)
-//            homeGUI.openModule(new PayrollGUI(functions, homeGUI)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
+            new DetailPayroll_DetailGUI(payrollDetailBLL.searchPayroll_Details("payroll_id = " + payroll.getId(), "staff_id = " + data[indexRow][1]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
-            if (indexColumn == indexColumnEdit) {
-                refresh();
-            }
+        if (indexColumn == indexColumnEdit) {
+            new EditPayroll_DetailGUI(payrollDetailBLL.searchPayroll_Details("payroll_id = " + payroll.getId(), "staff_id = " + data[indexRow][1]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            refresh();
+        }
     }
 }

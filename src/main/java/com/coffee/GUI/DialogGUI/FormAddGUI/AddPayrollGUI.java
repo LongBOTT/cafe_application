@@ -32,7 +32,7 @@ public class AddPayrollGUI extends DialogForm {
     public AddPayrollGUI() {
         super();
         super.setTitle("Thêm bảng lương");
-        super.setSize(new Dimension(600, 300));
+        super.setSize(new Dimension(600, 250));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init();
         setVisible(true);

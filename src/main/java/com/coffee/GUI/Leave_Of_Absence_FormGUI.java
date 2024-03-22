@@ -1,7 +1,7 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.RoleBLL;
-import com.coffee.BLL.Role_detailBLL;
+import com.coffee.BLL.Role_DetailBLL;
 import com.coffee.BLL.StaffBLL;
 import com.coffee.BLL.Leave_Of_Absence_FormBLL;
 import com.coffee.DTO.*;
@@ -227,8 +227,8 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
 
             int staffId = Integer.parseInt(data[i][1].toString());
 
-            List<Role_detail> role_detailList = new Role_detailBLL().searchRole_details("staff_id = " + staffId);
-            Role_detail roleDetail = role_detailList.get(role_detailList.size() - 1);
+            List<Role_Detail> role_detailList = new Role_DetailBLL().searchRole_details("staff_id = " + staffId);
+            Role_Detail roleDetail = role_detailList.get(role_detailList.size() - 1);
             Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
             data[i][0] = role.getName();
 

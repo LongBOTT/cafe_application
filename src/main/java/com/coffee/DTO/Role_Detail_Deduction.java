@@ -1,24 +1,21 @@
 package com.coffee.DTO;
 
-
 import java.time.LocalDateTime;
 
-public class Role_detail {
+public class Role_Detail_Deduction {
     private int role_id;
     private int staff_id;
     private LocalDateTime entry_date;
-    private double salary;
-    private int type_salary;
+    private int deduction_id;
 
-    public Role_detail() {
+    public Role_Detail_Deduction() {
     }
 
-    public Role_detail(int role_id, int staff_id, LocalDateTime entry_date, double salary, int type_salary) {
+    public Role_Detail_Deduction(int role_id, int staff_id, LocalDateTime entry_date, int deduction_id) {
         this.role_id = role_id;
         this.staff_id = staff_id;
         this.entry_date = entry_date;
-        this.salary = salary;
-        this.type_salary = type_salary;
+        this.deduction_id = deduction_id;
     }
 
     public int getRole_id() {
@@ -45,28 +42,19 @@ public class Role_detail {
         this.entry_date = entry_date;
     }
 
-    public double getSalary() {
-        return salary;
+    public int getDeduction_id() {
+        return deduction_id;
     }
 
-    public void setSalary(double salary) {
-        this.salary = salary;
-    }
-
-    public double getType_salary() {
-        return type_salary;
-    }
-
-    public void setType_salary(int type_salary) {
-        this.type_salary = type_salary;
+    public void setDeduction_id(int deduction_id) {
+        this.deduction_id = deduction_id;
     }
 
     @Override
     public String toString() {
-        return role_id + " | " +
-                staff_id + " | " +
-                entry_date + " | " +
-                salary + " | " +
-                type_salary;
+        return getRole_id() + " | " +
+                getStaff_id() + " | " +
+                getEntry_date() + " | " +
+                getDeduction_id();
     }
 }

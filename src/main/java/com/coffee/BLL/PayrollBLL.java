@@ -4,8 +4,6 @@ import com.coffee.DAL.PayrollDAL;
 import com.coffee.DTO.*;
 import javafx.util.Pair;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -42,11 +40,11 @@ public class PayrollBLL extends Manager<Payroll> {
         for (Staff staff : new StaffBLL().searchStaffs("deleted = 0")) {
             List<Work_Schedule> work_scheduleList = new Work_ScheduleBLL().searchWork_schedulesByStaff(staff.getId(), payroll.getYear(), payroll.getMonth());
             if (!work_scheduleList.isEmpty()) {
-                List<Role_detail> role_detailList = new Role_detailBLL().searchRole_detailsByStaff(staff.getId());
+                List<Role_Detail> role_detailList = new Role_DetailBLL().searchRole_detailsByStaff(staff.getId());
                 if (role_detailList.isEmpty()) {
                     return new Pair<>(false, "Vui lòng thiết lập lương nhân viên " + staff.getName());
                 } else {
-                    Role_detail roleDetail = role_detailList.get(0);
+                    Role_Detail roleDetail = role_detailList.get(0);
                     double hours_amount = 0;
                     double salary_amount = 0;
                     DecimalFormat decimalFormat = new DecimalFormat("#.##");
@@ -80,7 +78,7 @@ public class PayrollBLL extends Manager<Payroll> {
             }
         }
 
-//        payroll.setTotal_salary(totalSalary);
+        payroll.setTotal_salary(totalSalary);
         payroll.setDebt(totalSalary);
         Payroll_DetailBLL payrollDetailBLL = new Payroll_DetailBLL();
         if (payrollDAL.addPayroll(payroll) == 0) {
