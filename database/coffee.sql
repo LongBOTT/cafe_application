@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 19, 2024 at 03:49 PM
+-- Generation Time: Mar 23, 2024 at 10:15 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.29
 
@@ -44,6 +44,30 @@ INSERT INTO `account` (`id`, `username`, `password`, `staff_id`) VALUES
 (3, 'ngminhthuan', 'first$2a$12$90R6qSbOd4mDtlFVNqMAaOBvn092WZgPlBUHJvoYEqiEelE6zGbzm', 3),
 (4, 'vminhthuan', 'first$2a$12$ZvUQ7fdYIKZCFIM2Q0kA0eP1nXafaQ38QnLLTySHV2beWuR.7PXey', 4),
 (5, 'ducanh', 'first$2a$12$UO7S87UDtPc3zRlon23nI.Qf1mbcx8DYrrjOu5fg1LJ5Fxbvwcude', 5);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bonus`
+--
+
+CREATE TABLE `bonus` (
+  `id` bigint(20) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `bonus_amount` double DEFAULT NULL,
+  `bonus_type` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `bonus`
+--
+
+INSERT INTO `bonus` (`id`, `name`, `bonus_amount`, `bonus_type`) VALUES
+(1, 'Tiền gửi xe', 5000, 0),
+(2, 'Tip', 200000, 1),
+(3, 'Thưởng', 500000, 1),
+(4, 'aaaaa', 50000, 1),
+(5, 'b', 33, 1);
 
 -- --------------------------------------------------------
 
@@ -125,8 +149,6 @@ INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 (0, 19, 6),
 (0, 20, 1),
 (0, 20, 2),
-(0, 20, 3),
-(0, 20, 4),
 (0, 20, 5),
 (0, 20, 6),
 (1, 14, 1),
@@ -175,8 +197,6 @@ INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 (2, 19, 6),
 (2, 20, 1),
 (2, 20, 2),
-(2, 20, 3),
-(2, 20, 4),
 (2, 20, 5),
 (2, 20, 6),
 (3, 2, 1),
@@ -205,6 +225,30 @@ INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 (4, 10, 1),
 (4, 17, 1),
 (4, 18, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `deduction`
+--
+
+CREATE TABLE `deduction` (
+  `id` bigint(20) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `deduction_amount` double DEFAULT NULL,
+  `deduction_type` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `deduction`
+--
+
+INSERT INTO `deduction` (`id`, `name`, `deduction_amount`, `deduction_type`) VALUES
+(1, 'Đi muộn', 30000, 0),
+(2, 'Về sớm', 30000, 1),
+(3, 'Làm sai đơn hàng', 50000, 2),
+(4, 'abcc', 333.02, 1),
+(5, 'b', 3, 0);
 
 -- --------------------------------------------------------
 
@@ -460,14 +504,48 @@ INSERT INTO `module` (`id`, `name`) VALUES
 
 CREATE TABLE `payroll` (
   `id` bigint(20) NOT NULL,
-  `staff_id` bigint(20) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `entry_date` date DEFAULT NULL,
   `month` int(11) DEFAULT NULL,
   `year` int(11) DEFAULT NULL,
+  `total_salary` double DEFAULT NULL,
+  `paid` double DEFAULT NULL,
+  `debt` double DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `payroll`
+--
+
+INSERT INTO `payroll` (`id`, `name`, `entry_date`, `month`, `year`, `total_salary`, `paid`, `debt`) VALUES
+(1, 'Bảng lương 01/02/2024 - 29/02/2024', '2024-03-20', 2, 2024, 10500001.5, 4000000, 6500000),
+(2, 'Bảng lương 01/03/2024 - 31/03/2024', '2024-03-23', 3, 2024, 1091750, 0, 1091750);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payroll_detail`
+--
+
+CREATE TABLE `payroll_detail` (
+  `payroll_id` bigint(20) NOT NULL,
+  `staff_id` bigint(20) NOT NULL,
   `hours_amount` double DEFAULT NULL,
   `bonus_amount` double DEFAULT NULL,
   `deduction_amount` double DEFAULT NULL,
-  `salary_amount` double DEFAULT NULL
+  `salary_amount` double DEFAULT NULL,
+  `status` bit(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `payroll_detail`
+--
+
+INSERT INTO `payroll_detail` (`payroll_id`, `staff_id`, `hours_amount`, `bonus_amount`, `deduction_amount`, `salary_amount`, `status`) VALUES
+(2, 4, 39, 0, 0, 25000, b'0'),
+(2, 5, 34, 0, 0, 25000, b'0'),
+(2, 6, 16.67, 15000, 90000, 341750, b'0'),
+(2, 7, 28, 0, 0, 700000, b'0');
 
 -- --------------------------------------------------------
 
@@ -849,10 +927,51 @@ INSERT INTO `role_detail` (`role_id`, `staff_id`, `entry_date`, `salary`, `type_
 (1, 1, '2024-02-27 00:00:00', 0, 0),
 (2, 2, '2024-02-28 03:00:00', 7000000, 1),
 (2, 3, '2024-02-28 00:00:00', 7000000, 1),
-(3, 4, '2024-02-28 00:00:00', 25000, 2),
-(4, 5, '2024-02-28 00:00:00', 25000, 2),
+(3, 4, '2024-02-28 00:00:00', 25000, 1),
+(4, 5, '2024-02-28 00:00:00', 25000, 1),
 (4, 6, '2024-03-12 00:00:00', 25000, 2),
-(4, 7, '2024-03-12 00:00:00', 25000.7, 2);
+(4, 7, '2024-03-12 00:00:00', 25000, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `role_detail_bonus`
+--
+
+CREATE TABLE `role_detail_bonus` (
+  `role_id` bigint(20) NOT NULL,
+  `staff_id` bigint(20) NOT NULL,
+  `entry_date` datetime NOT NULL,
+  `bonus_id` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `role_detail_bonus`
+--
+
+INSERT INTO `role_detail_bonus` (`role_id`, `staff_id`, `entry_date`, `bonus_id`) VALUES
+(4, 6, '2024-03-12 00:00:00', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `role_detail_deduction`
+--
+
+CREATE TABLE `role_detail_deduction` (
+  `role_id` bigint(20) NOT NULL,
+  `staff_id` bigint(20) NOT NULL,
+  `entry_date` datetime NOT NULL,
+  `deduction_id` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `role_detail_deduction`
+--
+
+INSERT INTO `role_detail_deduction` (`role_id`, `staff_id`, `entry_date`, `deduction_id`) VALUES
+(4, 6, '2024-03-12 00:00:00', 1),
+(4, 6, '2024-03-12 00:00:00', 2);
 
 -- --------------------------------------------------------
 
@@ -899,7 +1018,8 @@ INSERT INTO `staff` (`id`, `no`, `name`, `gender`, `birthdate`, `phone`, `addres
 (4, '079203023643', 'Vũ Minh Thuận', b'0', '2003-08-30', '0964512941', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'vmiinhthuan@gmail.com', b'0'),
 (5, '079203023645', 'Trần Huỳnh Đức Anh', b'0', '2003-08-30', '0964512940', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'ducanh@gmail.com', b'0'),
 (6, '079203023522', 'Nguyễn Tiến Dũng', b'0', '2003-08-30', '0964512920', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'abc@gmail.com', b'0'),
-(7, '079203023777', 'Nguyễn Tiến Quang', b'0', '2003-08-30', '0964513325', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'abcd@gmail.com', b'0');
+(7, '079203023777', 'Nguyễn Tiến Quang', b'0', '2003-08-30', '0964513325', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'abcd@gmail.com', b'0'),
+(8, '078203032544', 'a', b'0', '2002-03-06', '0985555312', '514', 'colong@gmail.com', b'0');
 
 -- --------------------------------------------------------
 
@@ -946,27 +1066,27 @@ CREATE TABLE `work_schedule` (
 --
 
 INSERT INTO `work_schedule` (`id`, `staff_id`, `date`, `check_in`, `check_out`, `shift`) VALUES
-(1, 4, '2024-03-11', 'null', 'null', 3),
-(2, 4, '2024-03-12', '12:15', 'null', 2),
-(3, 4, '2024-03-13', 'null', 'null', 3),
-(4, 4, '2024-03-14', 'null', 'null', 2),
-(5, 4, '2024-03-15', 'null', 'null', 1),
-(6, 4, '2024-03-16', 'null', 'null', 2),
-(7, 4, '2024-03-17', 'null', 'null', 3),
-(8, 5, '2024-03-11', 'null', 'null', 1),
-(9, 5, '2024-03-12', 'null', 'null', 2),
-(10, 5, '2024-03-13', 'null', 'null', 3),
-(11, 5, '2024-03-14', 'null', 'null', 1),
-(12, 6, '2024-03-14', '8:00', '12:30', 2),
-(13, 6, '2024-03-15', 'null', 'null', 1),
-(14, 6, '2024-03-16', 'null', 'null', 2),
-(15, 7, '2024-03-11', 'null', 'null', 3),
-(16, 7, '2024-03-12', 'null', 'null', 2),
-(18, 5, '2024-03-17', 'null', 'null', 1),
-(19, 5, '2024-03-17', 'null', 'null', 3),
-(20, 7, '2024-03-16', 'null', 'null', 1),
-(21, 7, '2024-03-16', 'null', 'null', 2),
-(22, 7, '2024-03-16', 'null', 'null', 3);
+(1, 4, '2024-03-11', '18:00', '23:00', 3),
+(2, 4, '2024-03-12', '12:00', '18:00', 2),
+(3, 4, '2024-03-13', '18:00', '23:00', 3),
+(4, 4, '2024-03-14', '12:00', '18:00', 2),
+(5, 4, '2024-03-15', '6:00', '12:00', 1),
+(6, 4, '2024-03-16', '12:00', '18:00', 2),
+(7, 4, '2024-03-17', '18:00', '23:00', 3),
+(8, 5, '2024-03-11', '6:00', '12:00', 1),
+(9, 5, '2024-03-12', '12:00', '18:00', 2),
+(10, 5, '2024-03-13', '18:00', '23:00', 3),
+(11, 5, '2024-03-14', '6:00', '12:00', 1),
+(12, 6, '2024-03-14', '12:20', '18:00', 2),
+(13, 6, '2024-03-15', '6:00', '11:30', 1),
+(14, 6, '2024-03-16', '12:00', '17:30', 2),
+(15, 7, '2024-03-11', '18:00', '23:00', 3),
+(16, 7, '2024-03-12', '12:00', '18:00', 2),
+(18, 5, '2024-03-17', '6:00', '12:00', 1),
+(19, 5, '2024-03-17', '18:00', '23:00', 3),
+(20, 7, '2024-03-16', '6:00', '12:00', 1),
+(21, 7, '2024-03-16', '12:00', '18:00', 2),
+(22, 7, '2024-03-16', '18:00', '23:00', 3);
 
 --
 -- Indexes for dumped tables
@@ -980,12 +1100,24 @@ ALTER TABLE `account`
   ADD KEY `fk_account_staff` (`staff_id`);
 
 --
+-- Indexes for table `bonus`
+--
+ALTER TABLE `bonus`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `decentralization`
 --
 ALTER TABLE `decentralization`
   ADD PRIMARY KEY (`role_id`,`module_id`,`function_id`),
   ADD KEY `fk_decentralization_module` (`module_id`),
   ADD KEY `fk_decentralization_function` (`function_id`);
+
+--
+-- Indexes for table `deduction`
+--
+ALTER TABLE `deduction`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `discount`
@@ -1051,7 +1183,13 @@ ALTER TABLE `module`
 -- Indexes for table `payroll`
 --
 ALTER TABLE `payroll`
-  ADD PRIMARY KEY (`id`),
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `payroll_detail`
+--
+ALTER TABLE `payroll_detail`
+  ADD PRIMARY KEY (`payroll_id`,`staff_id`) USING BTREE,
   ADD KEY `fk_payroll_staff` (`staff_id`);
 
 --
@@ -1095,7 +1233,27 @@ ALTER TABLE `role`
 --
 ALTER TABLE `role_detail`
   ADD PRIMARY KEY (`role_id`,`staff_id`,`entry_date`) USING BTREE,
-  ADD KEY `fk_role_detail_staff` (`staff_id`);
+  ADD KEY `fk_role_detail_staff` (`staff_id`),
+  ADD KEY `role_id` (`role_id`),
+  ADD KEY `entry_date` (`entry_date`);
+
+--
+-- Indexes for table `role_detail_bonus`
+--
+ALTER TABLE `role_detail_bonus`
+  ADD PRIMARY KEY (`role_id`,`staff_id`,`entry_date`,`bonus_id`),
+  ADD KEY `fk_bonus_staff` (`staff_id`),
+  ADD KEY `fk_bonus_entrydate` (`entry_date`),
+  ADD KEY `fk_bonusid` (`bonus_id`);
+
+--
+-- Indexes for table `role_detail_deduction`
+--
+ALTER TABLE `role_detail_deduction`
+  ADD PRIMARY KEY (`role_id`,`staff_id`,`entry_date`,`deduction_id`) USING BTREE,
+  ADD KEY `fk_bonus_staff` (`staff_id`),
+  ADD KEY `fk_bonus_entrydate` (`entry_date`),
+  ADD KEY `fk_bonusid` (`deduction_id`);
 
 --
 -- Indexes for table `shipment`
@@ -1197,9 +1355,10 @@ ALTER TABLE `material`
   ADD CONSTRAINT `fk_material_supplier` FOREIGN KEY (`supplier_id`) REFERENCES `supplier` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `payroll`
+-- Constraints for table `payroll_detail`
 --
-ALTER TABLE `payroll`
+ALTER TABLE `payroll_detail`
+  ADD CONSTRAINT `fk_payroll` FOREIGN KEY (`payroll_id`) REFERENCES `payroll` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_payroll_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
@@ -1229,6 +1388,24 @@ ALTER TABLE `recipe`
 ALTER TABLE `role_detail`
   ADD CONSTRAINT `fk_role_detail_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_role_detail_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `role_detail_bonus`
+--
+ALTER TABLE `role_detail_bonus`
+  ADD CONSTRAINT `fk_bonus_entrydate` FOREIGN KEY (`entry_date`) REFERENCES `role_detail` (`entry_date`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_bonus_role` FOREIGN KEY (`role_id`) REFERENCES `role_detail` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_bonus_staff` FOREIGN KEY (`staff_id`) REFERENCES `role_detail` (`staff_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_bonusid` FOREIGN KEY (`bonus_id`) REFERENCES `bonus` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `role_detail_deduction`
+--
+ALTER TABLE `role_detail_deduction`
+  ADD CONSTRAINT `role_detail_deduction_ibfk_1` FOREIGN KEY (`entry_date`) REFERENCES `role_detail` (`entry_date`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `role_detail_deduction_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `role_detail` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `role_detail_deduction_ibfk_3` FOREIGN KEY (`staff_id`) REFERENCES `role_detail` (`staff_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `role_detail_deduction_ibfk_4` FOREIGN KEY (`deduction_id`) REFERENCES `deduction` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `shipment`
