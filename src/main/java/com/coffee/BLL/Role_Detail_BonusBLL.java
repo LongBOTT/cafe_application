@@ -38,9 +38,9 @@ public class Role_Detail_BonusBLL extends Manager<Role_Detail_Bonus> {
 
     public Pair<Boolean, String> deleteRole_Detail_Bonus(Role_Detail_Bonus role_Detail_Bonus) {
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        if (role_Detail_BonusDAL.deleteRole_Detail_Bonus("role_id = " + role_Detail_Bonus.getRole_id() +
-                "staff_id = " + role_Detail_Bonus.getStaff_id() +
-                "entry_date = '" + role_Detail_Bonus.getEntry_date().format(myFormatObj) + "'" +
+        if (role_Detail_BonusDAL.deleteRole_Detail_Bonus("role_id = " + role_Detail_Bonus.getRole_id(),
+                "staff_id = " + role_Detail_Bonus.getStaff_id(),
+                "entry_date = '" + role_Detail_Bonus.getEntry_date().format(myFormatObj) + "'",
                 "bonus_id = " + role_Detail_Bonus.getBonus_id()) == 0)
             return new Pair<>(false, "Xoá phụ cấp không thành công.");
 

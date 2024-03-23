@@ -46,7 +46,7 @@ public class SwitchButton extends Component {
         timer = new Timer(0, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                if (isSelected()) {
+                if (isSelected() && isEnabled()) {
                     int endLocation = getWidth() - getHeight() + 2;
                     if (location < endLocation) {
                         location += speed;
@@ -56,7 +56,8 @@ public class SwitchButton extends Component {
                         location = endLocation;
                         repaint();
                     }
-                } else {
+                }
+                if (!isSelected() && isEnabled()) {
                     int endLocation = 2;
                     if (location > endLocation) {
                         location -= speed;

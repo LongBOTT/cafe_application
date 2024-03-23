@@ -143,20 +143,20 @@ public class EditStaffGUI extends DialogForm {
                         @Override
                         public void mousePressed(MouseEvent e) {
                             changeRole = false;
+                            dispose();
                             new ChangeRoleGUI(staff);
-                            if (changeRole) {
-                                CreateWorkScheduleGUI.refresh();
-                            }
                             if (changeRole && staff.getId() == HomeGUI.staff.getId()) {
                                 JOptionPane.showMessageDialog(null, "Vui lòng đăng nhập lại.",
                                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                                dispose();
                                 homeGUI.dispose();
                                 System.gc();
                                 Cafe_Application.loginGUI.setVisible(true);
+                                return;
                             }
-
-
+                            if (changeRole) {
+                                CreateWorkScheduleGUI.refresh();
+                            }
+                            setVisible(true);
                         }
                     });
                     content.add(iconChangePasswd, "wrap");

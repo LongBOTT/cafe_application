@@ -38,9 +38,9 @@ public class Role_Detail_DeductionBLL extends Manager<Role_Detail_Deduction> {
     public Pair<Boolean, String> deleteRole_Detail_Deduction(Role_Detail_Deduction role_Detail_Deduction) {
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        if (role_Detail_DeductionDAL.deleteRole_Detail_Deduction("role_id = " + role_Detail_Deduction.getRole_id() +
-                "staff_id = " + role_Detail_Deduction.getStaff_id() +
-                "entry_date = '" + role_Detail_Deduction.getEntry_date().format(myFormatObj) + "'" +
+        if (role_Detail_DeductionDAL.deleteRole_Detail_Deduction("role_id = " + role_Detail_Deduction.getRole_id(),
+                "staff_id = " + role_Detail_Deduction.getStaff_id(),
+                "entry_date = '" + role_Detail_Deduction.getEntry_date().format(myFormatObj) + "'",
                 "deduction_id = " + role_Detail_Deduction.getDeduction_id()) == 0)
             return new Pair<>(false, "Xoá giảm trừ không thành công.");
 

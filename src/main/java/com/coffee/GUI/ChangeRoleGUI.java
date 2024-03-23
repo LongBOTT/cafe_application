@@ -1,11 +1,11 @@
 package com.coffee.GUI;
 
-import com.coffee.BLL.RoleBLL;
-import com.coffee.BLL.Role_DetailBLL;
-import com.coffee.DTO.Role;
-import com.coffee.DTO.Staff;
-import com.coffee.DTO.Role_Detail;
-import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.BLL.*;
+import com.coffee.DTO.*;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddBonusGUI;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddDeductionGUI;
+import com.coffee.GUI.DialogGUI.FromEditGUI.EditBonusGUI;
+import com.coffee.GUI.DialogGUI.FromEditGUI.EditDeductionGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditStaffGUI;
 import com.coffee.GUI.components.EventSwitchSelected;
 import com.coffee.GUI.components.RoundedPanel;
@@ -19,10 +19,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
 public class ChangeRoleGUI extends JDialog {
+    private JPanel jPanelBonus;
+    private JPanel jPanelDeduction;
     private RoundedPanel role_detail_panel;
     private RoundedPanel role_detail_bonus_panel;
     private RoundedPanel role_detail_deduction_panel;
@@ -30,11 +33,14 @@ public class ChangeRoleGUI extends JDialog {
     private List<JLabel> attributeRole_detail;
     private JComboBox<String> jComboBoxRole;
     private JComboBox<String> jComboBoxTypeSalary;
-    private JLabel jLabelSalary;
+    private JComboBox<String> jComboBoxBonus;
+    private JComboBox<String> jComboBoxDeduction;
     private JLabel jLabelTypeSalary;
     private JTextField textFieldSalary;
     private JButton buttonCancel;
     private JButton buttonSet;
+    private JButton buttonAddBonus;
+    private JButton buttonAddDeduction;
     private SwitchButton switchButtonBonus;
     private SwitchButton switchButtonDeduction;
     private Role_DetailBLL role_detailBLL = new Role_DetailBLL();
@@ -79,7 +85,6 @@ public class ChangeRoleGUI extends JDialog {
         attributeRole_detail = new ArrayList<>();
         jComboBoxRole = new JComboBox<>();
         jComboBoxTypeSalary = new JComboBox<>();
-        jLabelSalary = new JLabel();
         textFieldSalary = new JTextField();
         buttonCancel = new JButton("Huỷ");
         buttonSet = new JButton("Thiết lập");
@@ -120,15 +125,14 @@ public class ChangeRoleGUI extends JDialog {
         role_detail_panel.setPreferredSize(new Dimension(685, 200));
         content.add(role_detail_panel);
 
-        role_detail_bonus_panel.setBackground(Color.white);
-        role_detail_bonus_panel.setPreferredSize(new Dimension(685, 50));
+        role_detail_bonus_panel.setBackground(new Color(217, 217, 217));
+        role_detail_bonus_panel.setPreferredSize(new Dimension(685, 40));
         role_detail_bonus_panel.setLayout(new MigLayout("",
-                "50[]20[]50",
-                "15[]15[]15"));
+                "50[]445[]50",
+                "15[]5[]5[]"));
         content.add(role_detail_bonus_panel);
 
         JLabel labelBonus = new JLabel();
-        labelBonus.setPreferredSize(new Dimension(170, 30));
         labelBonus.setText("Phụ cấp");
         labelBonus.setFont((new Font("Public Sans", Font.PLAIN, 16)));
         role_detail_bonus_panel.add(labelBonus);
@@ -136,10 +140,11 @@ public class ChangeRoleGUI extends JDialog {
         switchButtonBonus.addEventSelected(new EventSwitchSelected() {
             @Override
             public void onSelected(boolean selected) {
-                if (selected) {
-                    showBonusPanel();
-                } else {
-                    role_detail_bonus_panel.setPreferredSize(new Dimension(685, 50));
+                if (selected && switchButtonBonus.isEnabled()) {
+                    showBonus_DeductionPanel(true);
+                }
+                if (!selected && switchButtonBonus.isEnabled()) {
+                    role_detail_bonus_panel.setPreferredSize(new Dimension(685, 40));
                     content.setPreferredSize(new Dimension(700, content.getHeight() - 130));
                     content.repaint();
                     content.revalidate();
@@ -148,24 +153,39 @@ public class ChangeRoleGUI extends JDialog {
                     revalidate();
                     setLocationRelativeTo(Cafe_Application.homeGUI);
                 }
+                if (!switchButtonBonus.isEnabled()) {
+                    JOptionPane.showMessageDialog(null, "Nhân viên chưa có chức vụ!",
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         role_detail_bonus_panel.add(switchButtonBonus, "wrap");
 
-        JPanel contentBonus = new JPanel();
-        contentBonus.setPreferredSize(new Dimension(685, 120));
-        role_detail_bonus_panel.add(contentBonus, "span, wrap");
-        contentBonus.add(scrollPaneBonus);
+        scrollPaneBonus.setPreferredSize(new Dimension(685, 150));
+        role_detail_bonus_panel.add(scrollPaneBonus, "span, wrap");
 
-        role_detail_deduction_panel.setBackground(Color.white);
-        role_detail_deduction_panel.setPreferredSize(new Dimension(685, 50));
+        buttonAddBonus = new JButton("+ Thêm phụ cấp");
+        buttonAddBonus.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                new AddBonusGUI();
+                List<Bonus> bonusList = new BonusBLL().searchBonuss();
+                Bonus bonus = bonusList.get(bonusList.size() - 1);
+                jComboBoxBonus.addItem(bonus.getName());
+                setVisible(true);
+            }
+        });
+        role_detail_bonus_panel.add(buttonAddBonus, "span, wrap");
+
+        role_detail_deduction_panel.setBackground(new Color(217, 217, 217));
+        role_detail_deduction_panel.setPreferredSize(new Dimension(685, 40));
         role_detail_deduction_panel.setLayout(new MigLayout("",
-                "50[]20[]50",
-                "15[]15[]15"));
+                "50[]440[]50",
+                "15[]5[]5[]"));
         content.add(role_detail_deduction_panel);
 
         JLabel labelDeduction = new JLabel();
-        labelDeduction.setPreferredSize(new Dimension(170, 30));
         labelDeduction.setText("Giảm trừ");
         labelDeduction.setFont((new Font("Public Sans", Font.PLAIN, 16)));
         role_detail_deduction_panel.add(labelDeduction);
@@ -173,10 +193,11 @@ public class ChangeRoleGUI extends JDialog {
         switchButtonDeduction.addEventSelected(new EventSwitchSelected() {
             @Override
             public void onSelected(boolean selected) {
-                if (selected) {
-                    showDeductionPanel();
-                } else {
-                    role_detail_deduction_panel.setPreferredSize(new Dimension(685, 50));
+                if (selected && switchButtonDeduction.isEnabled()) {
+                    showBonus_DeductionPanel(false);
+                }
+                if (!selected && switchButtonDeduction.isEnabled()) {
+                    role_detail_deduction_panel.setPreferredSize(new Dimension(685, 40));
                     content.setPreferredSize(new Dimension(700, content.getHeight() - 130));
                     content.repaint();
                     content.revalidate();
@@ -185,14 +206,31 @@ public class ChangeRoleGUI extends JDialog {
                     revalidate();
                     setLocationRelativeTo(Cafe_Application.homeGUI);
                 }
+                if (!switchButtonDeduction.isEnabled()) {
+                    JOptionPane.showMessageDialog(null, "Nhân viên chưa có chức vụ!",
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         role_detail_deduction_panel.add(switchButtonDeduction, "wrap");
 
-        JPanel contentDeduction = new JPanel();
-        contentDeduction.setPreferredSize(new Dimension(685, 120));
-        role_detail_deduction_panel.add(contentDeduction, "span, wrap");
-        contentDeduction.add(scrollPaneDeduction);
+        scrollPaneDeduction.setPreferredSize(new Dimension(685, 150));
+        role_detail_deduction_panel.add(scrollPaneDeduction, "span, wrap");
+
+        buttonAddDeduction = new JButton("+ Thêm giảm trừ");
+        buttonAddDeduction.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                new AddDeductionGUI();
+                List<Deduction> deductionList = new DeductionBLL().searchDeductions();
+                Deduction deduction = deductionList.get(deductionList.size() - 1);
+                jComboBoxDeduction.addItem(deduction.getName());
+                setVisible(true);
+            }
+        });
+        role_detail_deduction_panel.add(buttonAddDeduction, "span, wrap");
+
 
         for (String string : new String[]{"Nhân viên", "Chức vụ", "Loại lương", ""}) {
             JLabel label = new JLabel();
@@ -256,6 +294,14 @@ public class ChangeRoleGUI extends JDialog {
                 if (roleDetail != null) {
                     textFieldSalary.setText(String.valueOf(roleDetail.getSalary()));
                 }
+                textFieldSalary.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyTyped(KeyEvent e) {
+                        if (!Character.isDigit(e.getKeyChar())) {
+                            e.consume();
+                        }
+                    }
+                });
                 role_detail_panel.add(textFieldSalary);
             }
 
@@ -296,6 +342,11 @@ public class ChangeRoleGUI extends JDialog {
             }
         });
         containerButton.add(buttonSet);
+
+        if (roleDetail == null) {
+            switchButtonBonus.setEnabled(false);
+            switchButtonDeduction.setEnabled(false);
+        }
     }
 
     private void loadTypeSalary() {
@@ -366,8 +417,14 @@ public class ChangeRoleGUI extends JDialog {
         }
     }
 
-    private void showBonusPanel() {
-        role_detail_bonus_panel.setPreferredSize(new Dimension(685, 190));
+    private void showBonus_DeductionPanel(boolean flag) {
+
+        if (flag) {
+            role_detail_bonus_panel.setPreferredSize(new Dimension(685, 190));
+        } else {
+            role_detail_deduction_panel.setPreferredSize(new Dimension(685, 190));
+        }
+
         content.setPreferredSize(new Dimension(700, content.getHeight() + 130));
         content.repaint();
         content.revalidate();
@@ -376,26 +433,258 @@ public class ChangeRoleGUI extends JDialog {
         revalidate();
         setLocationRelativeTo(Cafe_Application.homeGUI);
 
-        JPanel jPanel = new JPanel();
-        jPanel.setPreferredSize(new Dimension(1000, 500));
-        jPanel.setBackground(Color.PINK);
-        scrollPaneBonus.setViewportView(jPanel);
+        JLabel titleName = new JLabel();
+        JLabel titleAmount = new JLabel();
+        JLabel titleType = new JLabel();
+
+        if (flag) {
+            jPanelBonus = new JPanel();
+            jPanelBonus.setBackground(new Color(245, 246, 250));
+            jPanelBonus.setLayout(new MigLayout("", "10[]10[]10[]70[]0[]0"));
+
+            titleName.setText("Tên phụ cấp");
+            titleAmount.setText("Số tiền phụ cấp");
+            titleType.setText("Loại phụ cấp");
+
+            jPanelBonus.add(titleName);
+            jPanelBonus.add(titleAmount);
+            jPanelBonus.add(titleType, "span, wrap");
+        } else {
+            jPanelDeduction = new JPanel();
+            jPanelDeduction.setBackground(new Color(245, 246, 250));
+            jPanelDeduction.setLayout(new MigLayout("", "10[]10[]10[]100[]0[]0"));
+
+            titleName.setText("Tên giảm trừ");
+            titleAmount.setText("Số tiền giảm trừ");
+            titleType.setText("Loại giảm trừ");
+
+            jPanelDeduction.add(titleName);
+            jPanelDeduction.add(titleAmount);
+            jPanelDeduction.add(titleType, "span, wrap");
+        }
+
+        titleName.setPreferredSize(new Dimension(120, 30));
+        titleName.setFont((new Font("Public Sans", Font.BOLD, 13)));
+
+        titleAmount.setPreferredSize(new Dimension(120, 30));
+        titleAmount.setFont((new Font("Public Sans", Font.BOLD, 13)));
+
+
+        titleType.setPreferredSize(new Dimension(120, 30));
+        titleType.setFont((new Font("Public Sans", Font.BOLD, 13)));
+
+
+        if (flag) {
+            jComboBoxBonus = new JComboBox<>();
+            jComboBoxBonus.addItem("--Chon loại phụ cấp--");
+            for (Bonus bonus : new BonusBLL().searchBonuss())
+                jComboBoxBonus.addItem(bonus.getName());
+
+            jComboBoxBonus.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    addRole_Detail_Bonus();
+                }
+            });
+        } else {
+            jComboBoxDeduction = new JComboBox<>();
+            jComboBoxDeduction.addItem("--Chon loại giảm trừ--");
+            for (Deduction deduction : new DeductionBLL().searchDeductions())
+                jComboBoxDeduction.addItem(deduction.getName());
+
+            jComboBoxDeduction.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    addRole_Detail_Deduction();
+                }
+            });
+        }
+
+        if (roleDetail != null) {
+            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            if (flag) {
+                List<Role_Detail_Bonus> roleDetailBonusList = new Role_Detail_BonusBLL().searchRole_Detail_Bonuss(
+                        "role_id = " + roleDetail.getRole_id(),
+                        "staff_id = " + roleDetail.getStaff_id(),
+                        "entry_date = '" + roleDetail.getEntry_date().format(myFormatObj) + "'");
+                if (!roleDetailBonusList.isEmpty()) {
+                    for (Role_Detail_Bonus roleDetailBonus : roleDetailBonusList) {
+                        Bonus bonus = new BonusBLL().searchBonuss("id = " + roleDetailBonus.getBonus_id()).get(0);
+
+                        jComboBoxBonus.removeItem(bonus.getName());
+
+                        JLabel jLabelBonusName = new JLabel(bonus.getName());
+                        jLabelBonusName.setPreferredSize(new Dimension(120, 30));
+                        jLabelBonusName.setFont((new Font("Public Sans", Font.PLAIN, 13)));
+                        jPanelBonus.add(jLabelBonusName);
+
+                        JLabel jLabelBonusAmount = new JLabel(String.valueOf(bonus.getBonus_amount()));
+                        jLabelBonusAmount.setPreferredSize(new Dimension(120, 30));
+                        jLabelBonusAmount.setFont((new Font("Public Sans", Font.PLAIN, 13)));
+                        jPanelBonus.add(jLabelBonusAmount);
+
+                        JLabel jLabelBonusType = new JLabel();
+                        if (bonus.getBonus_type() == 0)
+                            jLabelBonusType.setText("Phụ cấp theo ngày làm");
+                        if (bonus.getBonus_type() == 1)
+                            jLabelBonusType.setText("Phụ cấp theo tháng làm");
+                        jLabelBonusType.setPreferredSize(new Dimension(120, 30));
+                        jLabelBonusType.setFont((new Font("Public Sans", Font.PLAIN, 13)));
+                        jPanelBonus.add(jLabelBonusType);
+
+                        JLabel jLabelIconEdit = new JLabel(new FlatSVGIcon("icon/edit.svg"));
+                        jLabelIconEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                        jLabelIconEdit.addMouseListener(new MouseAdapter() {
+                            @Override
+                            public void mousePressed(MouseEvent e) {
+                                setVisible(false);
+                                role_detail_bonus_panel.setPreferredSize(new Dimension(685, 40));
+                                content.setPreferredSize(new Dimension(700, content.getHeight() - 130));
+                                content.repaint();
+                                content.revalidate();
+                                setSize(new Dimension(800, getHeight() - 130));
+                                repaint();
+                                revalidate();
+                                setLocationRelativeTo(Cafe_Application.homeGUI);
+                                new EditBonusGUI(bonus);
+                                showBonus_DeductionPanel(true);
+                                setVisible(true);
+                                pack();
+                            }
+                        });
+                        jPanelBonus.add(jLabelIconEdit);
+
+                        JLabel jLabelIconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
+                        jLabelIconRemove.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                        jLabelIconRemove.addMouseListener(new MouseAdapter() {
+                            @Override
+                            public void mousePressed(MouseEvent e) {
+                                deleteRole_Detail_Bonus(roleDetailBonus);
+                                showBonus_DeductionPanel(true);
+                            }
+                        });
+                        jPanelBonus.add(jLabelIconRemove, "wrap");
+                    }
+                }
+            } else {
+                List<Role_Detail_Deduction> roleDetailDeductionList = new Role_Detail_DeductionBLL().searchRole_Detail_Deductions(
+                        "role_id = " + roleDetail.getRole_id(),
+                        "staff_id = " + roleDetail.getStaff_id(),
+                        "entry_date = '" + roleDetail.getEntry_date().format(myFormatObj) + "'");
+                if (!roleDetailDeductionList.isEmpty()) {
+                    for (Role_Detail_Deduction roleDetailDeduction : roleDetailDeductionList) {
+                        Deduction deduction = new DeductionBLL().searchDeductions("id = " + roleDetailDeduction.getDeduction_id()).get(0);
+
+                        jComboBoxDeduction.removeItem(deduction.getName());
+
+                        JLabel jLabelDeductionName = new JLabel(deduction.getName());
+                        jLabelDeductionName.setFont((new Font("Public Sans", Font.PLAIN, 13)));
+                        jPanelDeduction.add(jLabelDeductionName);
+
+                        JLabel jLabelDeductionAmount = new JLabel(String.valueOf(deduction.getDeduction_amount()));
+                        jLabelDeductionAmount.setFont((new Font("Public Sans", Font.PLAIN, 13)));
+                        jPanelDeduction.add(jLabelDeductionAmount);
+
+                        JLabel jLabelDeductionType = new JLabel();
+                        if (deduction.getDeduction_type() == 0)
+                            jLabelDeductionType.setText("Giảm trừ đi muộn");
+                        if (deduction.getDeduction_type() == 1)
+                            jLabelDeductionType.setText("Giảm trừ về sớm");
+                        if (deduction.getDeduction_type() == 2)
+                            jLabelDeductionType.setText("Giảm trừ cố định");
+                        jLabelDeductionType.setFont((new Font("Public Sans", Font.PLAIN, 13)));
+                        jPanelDeduction.add(jLabelDeductionType);
+
+                        RoundedPanel roundedPanel = new RoundedPanel();
+                        roundedPanel.setBackground(Color.white);
+                        roundedPanel.setLayout(new GridBagLayout());
+
+                        JLabel jLabelIconEdit = new JLabel(new FlatSVGIcon("icon/edit.svg"));
+                        jLabelIconEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                        jLabelIconEdit.addMouseListener(new MouseAdapter() {
+                            @Override
+                            public void mousePressed(MouseEvent e) {
+                                setVisible(false);
+                                role_detail_deduction_panel.setPreferredSize(new Dimension(685, 40));
+                                content.setPreferredSize(new Dimension(700, content.getHeight() - 130));
+                                content.repaint();
+                                content.revalidate();
+                                setSize(new Dimension(800, getHeight() - 130));
+                                repaint();
+                                revalidate();
+                                setLocationRelativeTo(Cafe_Application.homeGUI);
+                                new EditDeductionGUI(deduction);
+                                showBonus_DeductionPanel(false);
+                                setVisible(true);
+                            }
+                        });
+                        jPanelDeduction.add(jLabelIconEdit);
+
+                        JLabel jLabelIconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
+                        jLabelIconRemove.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                        jLabelIconRemove.addMouseListener(new MouseAdapter() {
+                            @Override
+                            public void mousePressed(MouseEvent e) {
+                                deleteRole_Detail_Deduction(roleDetailDeduction);
+                                showBonus_DeductionPanel(false);
+                            }
+                        });
+                        jPanelDeduction.add(jLabelIconRemove, "wrap");
+                    }
+                }
+            }
+        }
+
+        if (flag) {
+            jComboBoxBonus.setSelectedIndex(0);
+            jPanelBonus.add(jComboBoxBonus);
+            scrollPaneBonus.setViewportView(jPanelBonus);
+        } else {
+            jComboBoxDeduction.setSelectedIndex(0);
+            jPanelDeduction.add(jComboBoxDeduction);
+            scrollPaneDeduction.setViewportView(jPanelDeduction);
+        }
+
     }
 
-    private void showDeductionPanel() {
-        role_detail_deduction_panel.setPreferredSize(new Dimension(685, 190));
-        content.setPreferredSize(new Dimension(700, content.getHeight() + 130));
-        content.repaint();
-        content.revalidate();
-        setSize(new Dimension(800, getHeight() + 130));
-        repaint();
-        revalidate();
-        setLocationRelativeTo(Cafe_Application.homeGUI);
+    private void deleteRole_Detail_Bonus(Role_Detail_Bonus roleDetailBonus) {
+        Pair<Boolean, String> result = new Role_Detail_BonusBLL().deleteRole_Detail_Bonus(roleDetailBonus);
 
-        JPanel jPanel = new JPanel();
-        jPanel.setPreferredSize(new Dimension(1000, 500));
-        jPanel.setBackground(Color.PINK);
-        scrollPaneDeduction.setViewportView(jPanel);
+        if (result.getKey()) {
+            JOptionPane.showMessageDialog(null, result.getValue(),
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            role_detail_bonus_panel.setPreferredSize(new Dimension(685, 40));
+            content.setPreferredSize(new Dimension(700, content.getHeight() - 130));
+            content.repaint();
+            content.revalidate();
+            setSize(new Dimension(800, getHeight() - 130));
+            repaint();
+            revalidate();
+            setLocationRelativeTo(Cafe_Application.homeGUI);
+        } else {
+            JOptionPane.showMessageDialog(null, result.getValue(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void deleteRole_Detail_Deduction(Role_Detail_Deduction roleDetailDeduction) {
+        Pair<Boolean, String> result = new Role_Detail_DeductionBLL().deleteRole_Detail_Deduction(roleDetailDeduction);
+
+        if (result.getKey()) {
+            JOptionPane.showMessageDialog(null, result.getValue(),
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            role_detail_deduction_panel.setPreferredSize(new Dimension(685, 40));
+            content.setPreferredSize(new Dimension(700, content.getHeight() - 130));
+            content.repaint();
+            content.revalidate();
+            setSize(new Dimension(800, getHeight() - 130));
+            repaint();
+            revalidate();
+            setLocationRelativeTo(Cafe_Application.homeGUI);
+        } else {
+            JOptionPane.showMessageDialog(null, result.getValue(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void cancel() {
@@ -404,5 +693,59 @@ public class ChangeRoleGUI extends JDialog {
                 "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
         if (choice == 1)
             dispose();
+    }
+
+    private void addRole_Detail_Bonus() {
+        int selectedIndex = jComboBoxBonus.getSelectedIndex();
+        if (selectedIndex != 0) {
+            Bonus bonus = new BonusBLL().searchBonuss("name = '" + jComboBoxBonus.getSelectedItem() + "'").get(0);
+            Role_Detail_Bonus roleDetailBonus = new Role_Detail_Bonus(roleDetail.getRole_id(), roleDetail.getStaff_id(), roleDetail.getEntry_date(), bonus.getId());
+
+            Pair<Boolean, String> result = new Role_Detail_BonusBLL().addRole_Detail_Bonus(roleDetailBonus);
+
+            if (result.getKey()) {
+                JOptionPane.showMessageDialog(null, result.getValue(),
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                role_detail_bonus_panel.setPreferredSize(new Dimension(685, 40));
+                content.setPreferredSize(new Dimension(700, content.getHeight() - 130));
+                content.repaint();
+                content.revalidate();
+                setSize(new Dimension(800, getHeight() - 130));
+                repaint();
+                revalidate();
+                setLocationRelativeTo(Cafe_Application.homeGUI);
+                showBonus_DeductionPanel(true);
+            } else {
+                JOptionPane.showMessageDialog(null, result.getValue(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void addRole_Detail_Deduction() {
+        int selectedIndex = jComboBoxDeduction.getSelectedIndex();
+        if (selectedIndex != 0) {
+            Deduction deduction = new DeductionBLL().searchDeductions("name = '" + jComboBoxDeduction.getSelectedItem() + "'").get(0);
+            Role_Detail_Deduction roleDetailDeduction = new Role_Detail_Deduction(roleDetail.getRole_id(), roleDetail.getStaff_id(), roleDetail.getEntry_date(), deduction.getId());
+
+            Pair<Boolean, String> result = new Role_Detail_DeductionBLL().addRole_Detail_Deduction(roleDetailDeduction);
+
+            if (result.getKey()) {
+                JOptionPane.showMessageDialog(null, result.getValue(),
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                role_detail_deduction_panel.setPreferredSize(new Dimension(685, 40));
+                content.setPreferredSize(new Dimension(700, content.getHeight() - 130));
+                content.repaint();
+                content.revalidate();
+                setSize(new Dimension(800, getHeight() - 130));
+                repaint();
+                revalidate();
+                setLocationRelativeTo(Cafe_Application.homeGUI);
+                showBonus_DeductionPanel(false);
+            } else {
+                JOptionPane.showMessageDialog(null, result.getValue(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 }
