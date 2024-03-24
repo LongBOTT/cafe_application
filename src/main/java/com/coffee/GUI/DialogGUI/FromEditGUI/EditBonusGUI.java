@@ -139,6 +139,11 @@ public class EditBonusGUI extends DialogForm {
 
         id = bonus.getId();
         name = jTextFieldBonus.get(0).getText();
+        if (jTextFieldBonus.get(1).getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng nhập số phụ cấp!",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         bonus_amount = Double.parseDouble(jTextFieldBonus.get(1).getText());
         bonus_type = jComboBoxBonusType.getSelectedIndex();
 

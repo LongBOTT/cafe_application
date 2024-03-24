@@ -47,21 +47,27 @@ public class WorkSchedulePanel extends JScrollPane {
         panel = new RoundedPanel();
         jLabelsDay = new ArrayList<>();
 
-        panel.setLayout(new GridLayout(shifts.size() + 1, 7 + 1));
+        if (role_id == 2)
+            panel.setLayout(new GridLayout(shifts.size() + 1, 7 + 1));
+        else
+            panel.setLayout(new GridLayout(shifts.size(), 7 + 1));
         panel.setBackground(Color.white);
 
         int i, j;
-        panel.add(new JLabel());
-        for (i = 0; i < 7; i++) {
-            JLabel jLabel = new JLabel();
-            jLabel.setBackground(Color.white);
-            jLabel.setVerticalAlignment(JLabel.CENTER);
-            jLabel.setHorizontalAlignment(JLabel.CENTER);
-            jLabel.setFont(new Font("Inter", Font.BOLD, 14));
-            jLabel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
-            panel.add(jLabel);
-            jLabelsDay.add(jLabel);
+        if (role_id == 2) {
+            panel.add(new JLabel());
+            for (i = 0; i < 7; i++) {
+                JLabel jLabel = new JLabel();
+                jLabel.setBackground(Color.white);
+                jLabel.setVerticalAlignment(JLabel.CENTER);
+                jLabel.setHorizontalAlignment(JLabel.CENTER);
+                jLabel.setFont(new Font("Inter", Font.BOLD, 14));
+                jLabel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+                panel.add(jLabel);
+                jLabelsDay.add(jLabel);
+            }
         }
+
         for (i = 0; i < shifts.size(); i++) {
             String shift = shifts.get(i);
             JLabel jLabel = new JLabel(shift);
@@ -86,10 +92,10 @@ public class WorkSchedulePanel extends JScrollPane {
 
     public void showWorkSchedule(Date date1, Date date2) {
         List<Integer> staffIDList = new ArrayList<>();
-        List<Role_Detail> role_detailList = new Role_DetailBLL().searchRole_detailsByRole(role_id);
+        List<Role_Detail> role_detailList = new Role_DetailBLL().searchRole_detailsByRole(role_id, new SimpleDateFormat("yyyy-MM-dd").format(date2));
         for (Role_Detail roleDetail : role_detailList)
-            if (!staffIDList.contains(roleDetail.getStaff_id()))
-                staffIDList.add(roleDetail.getStaff_id());
+//            if (!staffIDList.contains(roleDetail.getStaff_id()))
+            staffIDList.add(roleDetail.getStaff_id());
 
         List<Work_Schedule> work_schedules = new ArrayList<>();
         for (Integer id : staffIDList) {
@@ -99,12 +105,14 @@ public class WorkSchedulePanel extends JScrollPane {
         }
 
         List<Date> dates = getDaysBetween(date1, date2);
-        for (int i = 0; i < dates.size(); i++) {
-            DateTimeFormatter dtfInput = DateTimeFormatter.ofPattern("u-M-d", Locale.ENGLISH);
-            DateTimeFormatter dtfOutput = DateTimeFormatter.ofPattern("EEEE", Locale.ENGLISH);
-            String date = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(dates.get(i)), dtfInput).format(dtfOutput) +
-                    " (" + LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(dates.get(i)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")";
-            jLabelsDay.get(i).setText(date);
+        if (role_id == 2) {
+            for (int i = 0; i < dates.size(); i++) {
+                DateTimeFormatter dtfInput = DateTimeFormatter.ofPattern("u-M-d", Locale.ENGLISH);
+                DateTimeFormatter dtfOutput = DateTimeFormatter.ofPattern("EEEE", Locale.ENGLISH);
+                String date = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(dates.get(i)), dtfInput).format(dtfOutput) +
+                        " (" + LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(dates.get(i)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")";
+                jLabelsDay.get(i).setText(date);
+            }
         }
 
         for (JPanel[] jPanel : roundedPanels)

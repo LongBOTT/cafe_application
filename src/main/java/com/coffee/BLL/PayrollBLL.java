@@ -46,6 +46,9 @@ public class PayrollBLL extends Manager<Payroll> {
         for (Staff staff : new StaffBLL().searchStaffs("deleted = 0")) {
             List<Work_Schedule> work_scheduleList = new Work_ScheduleBLL().searchWork_schedulesByStaff(staff.getId(), payroll.getYear(), payroll.getMonth());
             if (!work_scheduleList.isEmpty()) {
+                // nếu đang làm thì thay đổi chức vụ
+                //
+                //
                 List<Role_Detail> role_detailList = new Role_DetailBLL().searchRole_detailsByStaff(staff.getId());
                 if (role_detailList.isEmpty()) {
                     return new Pair<>(false, "Vui lòng thiết lập lương nhân viên " + staff.getName());
@@ -68,28 +71,39 @@ public class PayrollBLL extends Manager<Payroll> {
 
                     // tinh luương theo giờ làm
                     DecimalFormat decimalFormat = new DecimalFormat("#.##");
-                    for (Work_Schedule work_schedule : work_scheduleList) {
-                        if (Objects.equals(work_schedule.getCheck_in(), "null") || Objects.equals(work_schedule.getCheck_out(), "null"))
-                            return new Pair<>(false, "Vui lòng chấm công nhân viên " + staff.getName() + " ca " + work_schedule.getShift() + " vào ngày: " + work_schedule.getDate());
-                        String[] checkinArr, checkoutArr;
-                        double checkin, checkout;
 
-                        checkinArr = work_schedule.getCheck_in().split(":");
-                        double v = Double.parseDouble(checkinArr[1]) / 60;
-                        checkin = Double.parseDouble(checkinArr[0]) + v;
-
-                        checkoutArr = work_schedule.getCheck_out().split(":");
-                        v = Double.parseDouble(checkoutArr[1]) / 60;
-                        checkout = Double.parseDouble(checkoutArr[0]) + v;
-
-                        hours_amount += Math.abs(checkout - checkin);
-                    }
-                    hours_amount = Double.parseDouble(decimalFormat.format(hours_amount));
-                    if (roleDetail.getType_salary() == 1)
+                    if (roleDetail.getType_salary() == 1) {
                         salary_amount = roleDetail.getSalary();
+                    }
 
-                    if (roleDetail.getType_salary() == 2)
+                    System.out.println(staff.getName());/////////////////////////////
+
+                    if (roleDetail.getType_salary() == 2) {
+                        for (Work_Schedule work_schedule : work_scheduleList) {
+
+                            System.out.println(work_schedule.getDate());/////////////////////////////
+
+                            if (Objects.equals(work_schedule.getCheck_in(), "null") || Objects.equals(work_schedule.getCheck_out(), "null"))
+                                return new Pair<>(false, "Vui lòng chấm công nhân viên " + staff.getName() + " ca " + work_schedule.getShift() + " vào ngày: " + work_schedule.getDate());
+                            String[] checkinArr, checkoutArr;
+                            double checkin, checkout;
+
+                            checkinArr = work_schedule.getCheck_in().split(":");
+                            double v = Double.parseDouble(checkinArr[1]) / 60;
+                            checkin = Double.parseDouble(checkinArr[0]) + v;
+
+                            checkoutArr = work_schedule.getCheck_out().split(":");
+                            v = Double.parseDouble(checkoutArr[1]) / 60;
+                            checkout = Double.parseDouble(checkoutArr[0]) + v;
+
+                            hours_amount += Math.abs(checkout - checkin);
+
+                            System.out.println("Gio lam " + Math.abs(checkout - checkin));/////////////////////////////
+
+                        }
+                        hours_amount = Double.parseDouble(decimalFormat.format(hours_amount));
                         salary_amount = hours_amount * roleDetail.getSalary();
+                    }
                     salary_amount = Double.parseDouble(decimalFormat.format(salary_amount));
 
                     // tính tiền phụ cấp
@@ -104,12 +118,17 @@ public class PayrollBLL extends Manager<Payroll> {
                                     dates.add(work_schedule.getDate());
                             }
                             bonus_amount += dates.size() * bonus.getBonus_amount();
+
+                            System.out.println("So ngay lam " + dates.size());/////////////////////////////
+                            System.out.println("Tien phu cap " + dates.size() * bonus.getBonus_amount());/////////////////////////////
                         }
 
                         if (bonus.getBonus_type() == 1) {
                             bonus_amount += bonus.getBonus_amount();
+                            System.out.println("Tien phu cap thang " + bonus.getBonus_amount());/////////////////////////////
                         }
                     }
+                    System.out.println("Tien phu cap tong cong " + bonus_amount);/////////////////////////////
 
                     // tính tiền giảm trừ
 
@@ -137,10 +156,15 @@ public class PayrollBLL extends Manager<Payroll> {
                                 long minutesLate = ChronoUnit.MINUTES.between(timeShiftStart, checkin);
 
                                 if (minutesLate >= maxMinutesCheckInLate) {
+                                    System.out.println("Ngay di muon " + work_schedule.getDate());/////////////////////////////
+                                    System.out.println("Thoi gian di muon " + minutesLate);/////////////////////////////
                                     shifts += 1;
                                 }
                             }
                             deduction_amount += shifts * deduction.getDeduction_amount();
+                            System.out.println("So ca di muon " + shifts);/////////////////////////////
+                            System.out.println("Tien giam tru di muon " + shifts * deduction.getDeduction_amount());/////////////////////////////
+
                         }
 
                         if (deduction.getDeduction_type() == 1) {
@@ -164,19 +188,36 @@ public class PayrollBLL extends Manager<Payroll> {
                                 long minutesLate = ChronoUnit.MINUTES.between(checkout, timeShiftEnd);
 
                                 if (minutesLate >= maxMinutesCheckInLate) {
+                                    System.out.println("Ngay ve som " + work_schedule.getDate());/////////////////////////////
+                                    System.out.println("Thoi gian ve som " + minutesLate);
                                     shifts += 1;
                                 }
                             }
                             deduction_amount += shifts * deduction.getDeduction_amount();
+                            System.out.println("So ca ve som " + shifts);/////////////////////////////
+                            System.out.println("Tien giam tru ve som " + shifts * deduction.getDeduction_amount());/////////////////////////////
                         }
 
                         if (deduction.getDeduction_type() == 2) {
                             deduction_amount += deduction.getDeduction_amount();
+                            System.out.println("Tien giam tru co dinh " + deduction.getDeduction_amount());/////////////////////////////
                         }
                     }
 
+                    System.out.println("Tien giam tru tong cong " + deduction_amount);
+
                     salary_amount += bonus_amount;
                     salary_amount -= deduction_amount;
+
+                    if (roleDetail.getType_salary() == 1) {
+                        List<Date> dates = new ArrayList<>();
+                        for (Work_Schedule work_schedule : work_scheduleList) {
+                            if (!dates.contains(work_schedule.getDate()))
+                                dates.add(work_schedule.getDate());
+                        }
+                        salary_amount = salary_amount / 26 * dates.size(); // lương tháng cố định = (lương thoả thuận + phụ cấp - giảm trừ)/26 * số ngày làm thực tế
+                    }
+                    salary_amount = Double.parseDouble(decimalFormat.format(salary_amount));
 
                     Payroll_Detail payrollDetail = new Payroll_Detail(payroll.getId(), staff.getId(), hours_amount, bonus_amount, deduction_amount, salary_amount, false);
                     payrollDetails.add(payrollDetail);

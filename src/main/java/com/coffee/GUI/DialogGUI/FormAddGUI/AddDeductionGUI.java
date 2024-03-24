@@ -132,6 +132,11 @@ public class AddDeductionGUI extends DialogForm {
 
         id = deductionBLL.getAutoID(deductionBLL.searchDeductions()); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
         name = jTextFieldDeduction.get(0).getText();
+        if (jTextFieldDeduction.get(1).getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền giảm trừ!",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         deduction_amount = Double.parseDouble(jTextFieldDeduction.get(1).getText());
         deduction_type = jComboBoxDeductionType.getSelectedIndex();
 

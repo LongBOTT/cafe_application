@@ -23,6 +23,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
     private JLabel iconNext;
     private JLabel iconPrev;
     private List<Function> functions;
+    private static WorkSchedulePanel workSchedulePanelManager;
     private static WorkSchedulePanel workSchedulePanelStaffSale;
     private static WorkSchedulePanel workSchedulePanelStaffWarehouse;
     private boolean edit = false;
@@ -42,13 +43,17 @@ public class CreateWorkScheduleGUI extends Layout1 {
         iconNext = new JLabel(new FlatSVGIcon("icon/next.svg"));
         iconPrev = new JLabel(new FlatSVGIcon("icon/previous.svg"));
         weekDates = new ArrayList<>();
+        workSchedulePanelManager = new WorkSchedulePanel(new RoleBLL().searchRoles("name = 'Quản lý'").get(0).getId());
         workSchedulePanelStaffSale = new WorkSchedulePanel(new RoleBLL().searchRoles("name = 'Nhân viên bán hàng'").get(0).getId());
         workSchedulePanelStaffWarehouse = new WorkSchedulePanel(new RoleBLL().searchRoles("name = 'Nhân viên kho'").get(0).getId());
+        RoundedPanel TitlePanelManager = new RoundedPanel();
         RoundedPanel TitlePanelStaffSale = new RoundedPanel();
         RoundedPanel TitlePanelStaffWarehouse = new RoundedPanel();
+        RoundedPanel ContentPanelManager = new RoundedPanel();
         RoundedPanel ContentPanelStaffSale = new RoundedPanel();
         RoundedPanel ContentPanelStaffWarehouse = new RoundedPanel();
         JPanel jPanelDate = new JPanel();
+        JLabel jLabelTitleManager = new JLabel("    Nhân Viên Quản Lý");
         JLabel jLabelTitleSale = new JLabel("    Nhân Viên Bán Hàng");
         JLabel jLabelTitleWarehouse = new JLabel("    Nhân Viên Kho");
 
@@ -143,6 +148,20 @@ public class CreateWorkScheduleGUI extends Layout1 {
         bottom.setBackground(Color.white);
         bottom.setLayout(new FlowLayout(FlowLayout.LEFT));
 
+        TitlePanelManager.setLayout(new FlowLayout(FlowLayout.LEFT));
+        TitlePanelManager.setBackground(Color.white);
+        bottom.add(TitlePanelManager);
+
+        jLabelTitleManager.setFont(new Font("Lexend", Font.BOLD, 15));
+        TitlePanelManager.add(jLabelTitleManager);
+
+        ContentPanelManager.setLayout(new BorderLayout());
+        ContentPanelManager.setPreferredSize(new Dimension(1160, 185));
+        ContentPanelManager.setBackground(Color.white);
+        bottom.add(ContentPanelManager);
+
+        ContentPanelManager.add(workSchedulePanelManager);
+
         TitlePanelStaffSale.setLayout(new FlowLayout(FlowLayout.LEFT));
         TitlePanelStaffSale.setBackground(Color.white);
         bottom.add(TitlePanelStaffSale);
@@ -151,7 +170,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
         TitlePanelStaffSale.add(jLabelTitleSale);
 
         ContentPanelStaffSale.setLayout(new BorderLayout());
-        ContentPanelStaffSale.setPreferredSize(new Dimension(1160, 300));
+        ContentPanelStaffSale.setPreferredSize(new Dimension(1160, 185));
         ContentPanelStaffSale.setBackground(Color.white);
         bottom.add(ContentPanelStaffSale);
 
@@ -165,7 +184,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
         TitlePanelStaffWarehouse.add(jLabelTitleWarehouse);
 
         ContentPanelStaffWarehouse.setLayout(new BorderLayout());
-        ContentPanelStaffWarehouse.setPreferredSize(new Dimension(1160, 300));
+        ContentPanelStaffWarehouse.setPreferredSize(new Dimension(1160, 185));
         ContentPanelStaffWarehouse.setBackground(Color.white);
         bottom.add(ContentPanelStaffWarehouse);
 
@@ -204,6 +223,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
     public static void refresh() {
         today = java.sql.Date.valueOf(LocalDate.now());
         loadDate();
+        workSchedulePanelManager.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
         workSchedulePanelStaffSale.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
         workSchedulePanelStaffWarehouse.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
 
@@ -216,6 +236,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
         today = calendar.getTime();
 
         loadDate();
+        workSchedulePanelManager.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
         workSchedulePanelStaffSale.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
         workSchedulePanelStaffWarehouse.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
     }
@@ -227,6 +248,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
         today = calendar.getTime();
 
         loadDate();
+        workSchedulePanelManager.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
         workSchedulePanelStaffSale.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
         workSchedulePanelStaffWarehouse.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
     }

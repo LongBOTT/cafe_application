@@ -141,6 +141,11 @@ public class EditDeductionGUI extends DialogForm {
 
         id = deduction.getId();
         name = jTextFieldDeduction.get(0).getText();
+        if (jTextFieldDeduction.get(1).getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền giảm trừ!",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         deduction_amount = Double.parseDouble(jTextFieldDeduction.get(1).getText());
         deduction_type = jComboBoxDeductionType.getSelectedIndex();
 

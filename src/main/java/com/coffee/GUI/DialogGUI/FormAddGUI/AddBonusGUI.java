@@ -131,6 +131,11 @@ public class AddBonusGUI extends DialogForm {
 
         id = bonusBLL.getAutoID(bonusBLL.searchBonuss()); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
         name = jTextFieldBonus.get(0).getText();
+        if (jTextFieldBonus.get(1).getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền phụ cấp!",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         bonus_amount = Double.parseDouble(jTextFieldBonus.get(1).getText());
         bonus_type = jComboBoxBonusType.getSelectedIndex();
 

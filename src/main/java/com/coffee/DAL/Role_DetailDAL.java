@@ -75,11 +75,12 @@ public class Role_DetailDAL extends Manager {
         return new ArrayList<>();
     }
 
-    public List<Role_Detail> searchRole_detailsByRole(int role_id) {
+    public List<Role_Detail> searchRole_detailsByRole(int role_id, String end) {
         try {
             return convertToRole_details(executeQuery("SELECT rd.role_id, rd.staff_id, rd.entry_date, rd.salary, rd.type_salary \n" +
                     "FROM (SELECT staff_id, MAX(entry_date) as entry_date\n" +
                     "\t\t\tFROM `role_detail` \n" +
+                    "\t\t\tWHERE entry_date <= '" + end + "'\n" +
                     "\t\t\tGROUP BY staff_id) tb1 JOIN role_detail rd on tb1.staff_id = rd.staff_id AND tb1.entry_date = rd.entry_date\n" +
                     "WHERE rd.role_id = " + role_id));
         } catch (SQLException | IOException e) {
