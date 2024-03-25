@@ -73,6 +73,14 @@ public class PayrollBLL extends Manager<Payroll> {
                     DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
                     if (roleDetail.getType_salary() == 1) {
+                        for (Work_Schedule work_schedule : work_scheduleList) {
+
+                            System.out.println(work_schedule.getDate());/////////////////////////////
+
+                            if (Objects.equals(work_schedule.getCheck_in(), "null") || Objects.equals(work_schedule.getCheck_out(), "null"))
+                                return new Pair<>(false, "Vui lòng chấm công nhân viên " + staff.getName() + " ca " + work_schedule.getShift() + " vào ngày: " + work_schedule.getDate());
+
+                        }
                         salary_amount = roleDetail.getSalary();
                     }
 
@@ -185,11 +193,11 @@ public class PayrollBLL extends Manager<Payroll> {
                                     timeShiftEnd = LocalTime.of(23, 0);
 
                                 assert timeShiftEnd != null;
-                                long minutesLate = ChronoUnit.MINUTES.between(checkout, timeShiftEnd);
+                                long minutesEarly = ChronoUnit.MINUTES.between(checkout, timeShiftEnd);
 
-                                if (minutesLate >= maxMinutesCheckInLate) {
+                                if (minutesEarly >= maxMinutesCheckOutEarly) {
                                     System.out.println("Ngay ve som " + work_schedule.getDate());/////////////////////////////
-                                    System.out.println("Thoi gian ve som " + minutesLate);
+                                    System.out.println("Thoi gian ve som " + minutesEarly);
                                     shifts += 1;
                                 }
                             }
