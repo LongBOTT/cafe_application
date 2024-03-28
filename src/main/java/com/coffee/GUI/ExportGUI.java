@@ -3,6 +3,7 @@ package com.coffee.GUI;
 import com.coffee.BLL.DiscountBLL;
 import com.coffee.BLL.Export_NoteBLL;
 import com.coffee.DTO.Function;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddExportDetailGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailExportGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailSupplierGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
@@ -60,7 +61,7 @@ public class ExportGUI extends Layout2 {
         this.functions = functions;
         if (functions.stream().anyMatch(f -> f.getName().equals("view"))) detail = true;
         if (functions.stream().anyMatch(f -> f.getName().equals("edit"))) edit = true;
-        if (functions.stream().anyMatch(f -> f.getName().equals("remove"))) remove = true;
+//        if (functions.stream().anyMatch(f -> f.getName().equals("remove"))) remove = true;
         init(functions);
     }
 
@@ -199,6 +200,8 @@ public class ExportGUI extends Layout2 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
+
+
                     refresh();
                 }
             });
@@ -238,7 +241,7 @@ public class ExportGUI extends Layout2 {
     }
     public void refresh() {
         jTextFieldSearch.setText("");
-        jComboBoxSearch.setSelectedIndex(0);
+//        jComboBoxSearch.setSelectedIndex(0);
         loadDataTable(exportNoteBLL.getData(exportNoteBLL.searchExport_Note()));
     }
 
