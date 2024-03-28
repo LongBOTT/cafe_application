@@ -29,12 +29,12 @@ public class ProductBLL extends Manager<Product>{
     }
 
     public Pair<Boolean, String> addProduct(Product product) {
-        Pair<Boolean, String> result;
-
-        result = validateProductAll(product);
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
+//        Pair<Boolean, String> result;
+//
+////        result = validateProductAll(product);
+////        if(!result.getKey()){
+////            return new Pair<>(false,result.getValue());
+////        }
 
         if (productDAL.addProduct(product) == 0)
             return new Pair<>(false, "Thêm sản phẩm không thành công.");
@@ -92,7 +92,7 @@ public class ProductBLL extends Manager<Product>{
         }
         return new Pair<>(false, "");
     }
-    private Pair<Boolean, String> validateProductAll(Product product){
+    public Pair<Boolean, String> validateProductAll(Product product){
         Pair<Boolean, String> result;
 
         result = validateName(product.getName());
@@ -115,14 +115,14 @@ public class ProductBLL extends Manager<Product>{
         }
         return new Pair<>(true,"");
     }
-    private Pair<Boolean, String> validateName(String name) {
+    public Pair<Boolean, String> validateName(String name) {
         if (name.isBlank())
             return new Pair<>(false, "Tên sản phẩm không được để trống.");
         if (VNString.containsSpecial(name))
             return new Pair<>(false, "Tên sản phẩm không được chứa ký tự đặc biệt.");
         return new Pair<>(true, "");
     }
-    private Pair<Boolean, String> validateCategory(String category) {
+    public Pair<Boolean, String> validateCategory(String category) {
         if (category.isBlank())
             return new Pair<>(false, "Thể loại không được để trống.");
         if (VNString.containsSpecial(category))
@@ -130,7 +130,7 @@ public class ProductBLL extends Manager<Product>{
         return new Pair<>(true, "");
     }
 
-    private Pair<Boolean, String> validatePrice(String price) {
+    public Pair<Boolean, String> validatePrice(String price) {
         if (price.isBlank())
             return new Pair<>(false, "Giá bán của sản phẩm không được để trống.");
         if (!VNString.checkUnsignedNumber(price))

@@ -2,19 +2,15 @@ package com.coffee.GUI.DialogGUI.FormDetailGUI;
 
 import com.coffee.DTO.Staff;
 import com.coffee.GUI.DialogGUI.DialogExportForm;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.DataTable;
-import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class DetailExportGUI extends DialogExportForm {

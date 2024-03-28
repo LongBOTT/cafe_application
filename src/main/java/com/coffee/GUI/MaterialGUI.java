@@ -3,12 +3,9 @@ package com.coffee.GUI;
 import com.coffee.BLL.MaterialBLL;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Material;
-import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddMaterialGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailMaterialGUI;
-import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailSupplierGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditMaterialGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
@@ -19,10 +16,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class MaterialGUI extends Layout1 {
     private final MaterialBLL materialBLL = new MaterialBLL();

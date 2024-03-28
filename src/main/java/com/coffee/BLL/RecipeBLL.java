@@ -109,7 +109,7 @@ public class RecipeBLL extends Manager<Recipe> {
         for (Recipe recipe : searchRecipes("product_id = " + product_id, "size = '" + size + "'")) {
             List<Object> objects = new ArrayList<>();
             Material material = new MaterialBLL().searchMaterials("id = " + recipe.getMaterial_id()).get(0);
-//            objects.add(material.getId());
+            objects.add(material.getId());
             objects.add(material.getName());
             objects.add(recipe.getQuantity());
             objects.add(recipe.getUnit());

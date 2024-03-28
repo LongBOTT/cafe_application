@@ -1,24 +1,16 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.ProductBLL;
-import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Product;
-import com.coffee.DTO.Supplier;
-import com.coffee.GUI.DialogGUI.DialogForm;
-import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddProductGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailProductGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditProductGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
-import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -372,14 +364,20 @@ public void loadCategory() {
     private void selectFunction() {
         int indexColumn = dataTable.getSelectedColumn();
         int indexRow = dataTable.getSelectedRow();
-        if (indexColumn == indexColumnDetail)
-            new DetailProductGUI();
+        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+        Object selectedValue = model.getValueAt(indexRow,1);
+
+        if (indexColumn == indexColumnDetail) {
+            System.out.println(selectedValue);
+            List<Product> p = productBLL.findProductsBy(Map.of("name", selectedValue.toString()));
+            for(Product product: p){
+                System.out.println(p);
+            }
+            new DetailProductGUI( productBLL.findProductsBy(Map.of("name", selectedValue.toString())));
+        }
+
 
         if ( indexColumn == indexColumnEdit) {
-            DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
-
-            Object selectedValue = model.getValueAt(indexRow,1);
-
             new EditProductGUI(ConvertProductUnique(productBLL.getData(productBLL.findProducts("name", selectedValue.toString()))));
 
 
