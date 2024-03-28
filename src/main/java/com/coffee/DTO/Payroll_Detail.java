@@ -33,6 +33,7 @@ public class Payroll_Detail {
         return payroll_id;
     }
 
+
     public void setPayroll_id(int payroll_id) {
         this.payroll_id = payroll_id;
     }
