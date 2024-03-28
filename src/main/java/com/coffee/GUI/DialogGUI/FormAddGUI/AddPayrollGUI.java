@@ -13,6 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -111,7 +112,7 @@ public class AddPayrollGUI extends DialogForm {
         int id, month, year;
         String name;
         Date entry_date;
-        double total_salary, paid, debt;
+        BigDecimal total_salary, paid, debt;
 
         month = jMonthChooser.getMonth() + 1;
         year = jYearChooser.getYear();
@@ -122,9 +123,9 @@ public class AddPayrollGUI extends DialogForm {
         id = payrollBLL.getAutoID(payrollBLL.searchPayrolls()); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
         name = "Bảng lương " + formatter.format(start) + " - " + formatter.format(end);
         entry_date = java.sql.Date.valueOf(LocalDate.now());
-        total_salary = 0;
-        paid = 0;
-        debt = 0;
+        total_salary = BigDecimal.valueOf(0);
+        paid = BigDecimal.valueOf(0);
+        debt = BigDecimal.valueOf(0);
         Payroll payroll = new Payroll(id, name, entry_date, month, year, total_salary, paid, debt); // false là tồn tại, true là đã xoá
 
         result = payrollBLL.addPayroll(payroll);

@@ -7,8 +7,17 @@ import java.awt.*;
 import java.awt.event.MouseListener;
 
 public class CustomPanelRenderer extends DefaultTableCellRenderer {
+    private boolean flag = true;
     private static final Color GRID_COLOR = Color.GRAY;
     private static final int GRID_THICKNESS = 1;
+
+    public CustomPanelRenderer() {
+    }
+
+    public CustomPanelRenderer(boolean flag) {
+        this.flag = flag;
+    }
+
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
@@ -22,18 +31,21 @@ public class CustomPanelRenderer extends DefaultTableCellRenderer {
         if (value instanceof String) {
             JLabel label = new JLabel((String) value);
 //            label.setHorizontalAlignment(SwingConstants.CENTER); // Căn giữa nội dung
-            label.setBorder(border);
+            if (flag)
+                label.setBorder(border);
             return label;
         }
         if (value instanceof CustomPopupMenu) {
 
             CustomPopupMenu popupMenu = (CustomPopupMenu) value;
-            popupMenu.setBorder(border);
+            if (flag)
+                popupMenu.setBorder(border);
             return popupMenu;
         }
         if (value instanceof JLabel) {
             JLabel label = (JLabel) value;
-            label.setBorder(border);
+            if (flag)
+                label.setBorder(border);
             return label;
         }
         return (Component) value;

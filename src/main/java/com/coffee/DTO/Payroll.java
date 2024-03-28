@@ -1,5 +1,6 @@
 package com.coffee.DTO;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class Payroll {
@@ -8,14 +9,14 @@ public class Payroll {
     private Date entry_date;
     private int month;
     private int year;
-    private double total_salary;
-    private double paid;
-    private double debt;
+    private BigDecimal total_salary;
+    private BigDecimal paid;
+    private BigDecimal debt;
 
     public Payroll() {
     }
 
-    public Payroll(int id, String name, Date entry_date, int month, int year, double total_salary, double paid, double debt) {
+    public Payroll(int id, String name, Date entry_date, int month, int year, BigDecimal total_salary, BigDecimal paid, BigDecimal debt) {
         this.id = id;
         this.name = name;
         this.entry_date = entry_date;
@@ -66,27 +67,27 @@ public class Payroll {
         this.year = year;
     }
 
-    public double getTotal_salary() {
+    public BigDecimal getTotal_salary() {
         return total_salary;
     }
 
-    public void setTotal_salary(double total_salary) {
+    public void setTotal_salary(BigDecimal total_salary) {
         this.total_salary = total_salary;
     }
 
-    public double getPaid() {
+    public BigDecimal getPaid() {
         return paid;
     }
 
-    public void setPaid(double paid) {
+    public void setPaid(BigDecimal paid) {
         this.paid = paid;
     }
 
-    public double getDebt() {
+    public BigDecimal getDebt() {
         return debt;
     }
 
-    public void setDebt(double debt) {
+    public void setDebt(BigDecimal debt) {
         this.debt = debt;
     }
 

@@ -18,6 +18,7 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -260,10 +261,18 @@ public class ChangeRoleGUI extends JDialog {
                 if (roleDetail != null) {
                     Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
                     jComboBoxRole.setSelectedItem(role.getName());
+                    jComboBoxRole.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            checkDate();
+                        }
+                    });
                 }
 
                 jComboBoxRole.setPreferredSize(new Dimension(1000, 30));
                 jComboBoxRole.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+
+
                 role_detail_panel.add(jComboBoxRole, "wrap");
             }
 
@@ -369,6 +378,17 @@ public class ChangeRoleGUI extends JDialog {
                 Deduction deduction = new DeductionBLL().searchDeductions("id = " + roleDetailDeduction.getDeduction_id()).get(0);
                 deductionList.add(deduction);
             }
+        }
+    }
+
+    private void checkDate() {
+        LocalDate currentDate = LocalDate.now();
+        LocalDate firstDayOfMonth = currentDate.withDayOfMonth(1);
+        if (!firstDayOfMonth.equals(LocalDate.now())) {
+            Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
+            jComboBoxRole.setSelectedItem(role.getName());
+            JOptionPane.showMessageDialog(null, "Vui lòng thay đổi chức vụ vào ngày đầu tiên của tháng.",
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 23, 2024 at 10:15 AM
--- Server version: 10.4.24-MariaDB
--- PHP Version: 7.4.29
+-- Generation Time: Mar 28, 2024 at 04:06 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -32,7 +32,7 @@ CREATE TABLE `account` (
   `username` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `staff_id` bigint(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `account`
@@ -56,7 +56,7 @@ CREATE TABLE `bonus` (
   `name` varchar(255) DEFAULT NULL,
   `bonus_amount` double DEFAULT NULL,
   `bonus_type` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `bonus`
@@ -79,7 +79,7 @@ CREATE TABLE `decentralization` (
   `role_id` bigint(20) NOT NULL,
   `module_id` bigint(20) NOT NULL,
   `function_id` bigint(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `decentralization`
@@ -237,7 +237,7 @@ CREATE TABLE `deduction` (
   `name` varchar(255) DEFAULT NULL,
   `deduction_amount` double DEFAULT NULL,
   `deduction_type` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `deduction`
@@ -261,7 +261,7 @@ CREATE TABLE `discount` (
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
   `status` bit(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `discount`
@@ -283,7 +283,7 @@ CREATE TABLE `discount_detail` (
   `discount_id` bigint(20) NOT NULL,
   `product_id` bigint(20) NOT NULL,
   `percent` double DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `discount_detail`
@@ -306,7 +306,7 @@ CREATE TABLE `export_detail` (
   `shipment_id` bigint(20) NOT NULL,
   `quantity` double DEFAULT NULL,
   `reason` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -319,7 +319,7 @@ CREATE TABLE `export_note` (
   `staff_id` bigint(20) DEFAULT NULL,
   `total` double DEFAULT NULL,
   `invoice_date` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `export_note`
@@ -337,7 +337,7 @@ INSERT INTO `export_note` (`id`, `staff_id`, `total`, `invoice_date`) VALUES
 CREATE TABLE `function` (
   `id` bigint(20) NOT NULL,
   `name` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `function`
@@ -362,7 +362,7 @@ CREATE TABLE `import_note` (
   `staff_id` bigint(20) DEFAULT NULL,
   `total` double DEFAULT NULL,
   `received_date` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `import_note`
@@ -386,7 +386,7 @@ CREATE TABLE `leave_of_absence_form` (
   `end_date` date DEFAULT NULL,
   `reason` varchar(255) DEFAULT NULL,
   `status` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `leave_of_absence_form`
@@ -408,7 +408,7 @@ CREATE TABLE `material` (
   `remain` double DEFAULT NULL,
   `unit` varchar(255) DEFAULT NULL,
   `deleted` bit(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `material`
@@ -468,7 +468,7 @@ INSERT INTO `material` (`id`, `name`, `supplier_id`, `remain`, `unit`, `deleted`
 CREATE TABLE `module` (
   `id` bigint(20) NOT NULL,
   `name` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `module`
@@ -511,15 +511,14 @@ CREATE TABLE `payroll` (
   `total_salary` double DEFAULT NULL,
   `paid` double DEFAULT NULL,
   `debt` double DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `payroll`
 --
 
 INSERT INTO `payroll` (`id`, `name`, `entry_date`, `month`, `year`, `total_salary`, `paid`, `debt`) VALUES
-(1, 'Bảng lương 01/02/2024 - 29/02/2024', '2024-03-20', 2, 2024, 10500001.5, 4000000, 6500000),
-(2, 'Bảng lương 01/03/2024 - 31/03/2024', '2024-03-23', 3, 2024, 1091750, 0, 1091750);
+(2, 'Bảng lương 01/03/2024 - 31/03/2024', '2024-03-28', 3, 2024, 2941750, 1056750, 1885000);
 
 -- --------------------------------------------------------
 
@@ -534,18 +533,20 @@ CREATE TABLE `payroll_detail` (
   `bonus_amount` double DEFAULT NULL,
   `deduction_amount` double DEFAULT NULL,
   `salary_amount` double DEFAULT NULL,
-  `status` bit(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `status` bit(1) DEFAULT NULL,
+  `role_id` bigint(20) DEFAULT NULL,
+  `entry_date` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `payroll_detail`
 --
 
-INSERT INTO `payroll_detail` (`payroll_id`, `staff_id`, `hours_amount`, `bonus_amount`, `deduction_amount`, `salary_amount`, `status`) VALUES
-(2, 4, 39, 0, 0, 25000, b'0'),
-(2, 5, 34, 0, 0, 25000, b'0'),
-(2, 6, 16.67, 15000, 90000, 341750, b'0'),
-(2, 7, 28, 0, 0, 700000, b'0');
+INSERT INTO `payroll_detail` (`payroll_id`, `staff_id`, `hours_amount`, `bonus_amount`, `deduction_amount`, `salary_amount`, `status`, `role_id`, `entry_date`) VALUES
+(2, 4, 39, 35000, 0, 1010000, b'0', 3, '2024-03-28 07:49:54'),
+(2, 5, 34, 25000, 0, 875000, b'0', 4, '2024-03-28 09:46:57'),
+(2, 6, 16.67, 15000, 90000, 341750, b'1', 4, '2024-03-28 09:48:38'),
+(2, 7, 28, 15000, 0, 715000, b'1', 4, '2024-03-28 09:46:31');
 
 -- --------------------------------------------------------
 
@@ -561,7 +562,7 @@ CREATE TABLE `product` (
   `price` double DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL,
   `deleted` bit(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `product`
@@ -628,7 +629,7 @@ CREATE TABLE `receipt` (
   `invoice_date` date DEFAULT NULL,
   `received` double DEFAULT NULL,
   `excess` double DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `receipt`
@@ -648,7 +649,7 @@ CREATE TABLE `receipt_detail` (
   `product_id` bigint(20) NOT NULL,
   `quantity` double DEFAULT NULL,
   `price` double DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -662,7 +663,7 @@ CREATE TABLE `recipe` (
   `quantity` double DEFAULT NULL,
   `size` varchar(255) NOT NULL,
   `unit` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `recipe`
@@ -892,7 +893,7 @@ INSERT INTO `recipe` (`product_id`, `material_id`, `quantity`, `size`, `unit`) V
 CREATE TABLE `role` (
   `id` bigint(20) NOT NULL,
   `name` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `role`
@@ -917,7 +918,7 @@ CREATE TABLE `role_detail` (
   `entry_date` datetime NOT NULL,
   `salary` float DEFAULT NULL,
   `type_salary` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `role_detail`
@@ -926,11 +927,20 @@ CREATE TABLE `role_detail` (
 INSERT INTO `role_detail` (`role_id`, `staff_id`, `entry_date`, `salary`, `type_salary`) VALUES
 (1, 1, '2024-02-27 00:00:00', 0, 0),
 (2, 2, '2024-02-28 03:00:00', 7000000, 1),
+(2, 2, '2024-03-28 09:47:27', 7000000, 1),
 (2, 3, '2024-02-28 00:00:00', 7000000, 1),
-(3, 4, '2024-02-28 00:00:00', 25000, 1),
-(4, 5, '2024-02-28 00:00:00', 25000, 1),
+(2, 3, '2024-03-28 09:48:02', 7000000, 1),
+(3, 4, '2024-02-28 00:00:00', 25000, 2),
+(3, 4, '2024-03-28 07:49:54', 25000, 2),
+(4, 5, '2024-02-28 00:00:00', 25000, 2),
+(4, 5, '2024-03-28 07:50:09', 25000, 2),
+(4, 5, '2024-03-28 09:46:57', 25000, 2),
 (4, 6, '2024-03-12 00:00:00', 25000, 2),
-(4, 7, '2024-03-12 00:00:00', 25000, 2);
+(4, 6, '2024-03-27 12:35:13', 25000, 2),
+(4, 6, '2024-03-28 09:48:38', 25000, 2),
+(4, 7, '2024-03-12 00:00:00', 25000, 2),
+(4, 7, '2024-03-28 07:50:27', 25000, 2),
+(4, 7, '2024-03-28 09:46:31', 25000, 2);
 
 -- --------------------------------------------------------
 
@@ -943,14 +953,19 @@ CREATE TABLE `role_detail_bonus` (
   `staff_id` bigint(20) NOT NULL,
   `entry_date` datetime NOT NULL,
   `bonus_id` bigint(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `role_detail_bonus`
 --
 
 INSERT INTO `role_detail_bonus` (`role_id`, `staff_id`, `entry_date`, `bonus_id`) VALUES
-(4, 6, '2024-03-12 00:00:00', 1);
+(2, 2, '2024-03-28 09:47:27', 1),
+(2, 3, '2024-03-28 09:48:02', 1),
+(3, 4, '2024-03-28 07:49:54', 1),
+(4, 5, '2024-03-28 09:46:57', 1),
+(4, 6, '2024-03-28 09:48:38', 1),
+(4, 7, '2024-03-28 09:46:31', 1);
 
 -- --------------------------------------------------------
 
@@ -963,15 +978,21 @@ CREATE TABLE `role_detail_deduction` (
   `staff_id` bigint(20) NOT NULL,
   `entry_date` datetime NOT NULL,
   `deduction_id` bigint(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `role_detail_deduction`
 --
 
 INSERT INTO `role_detail_deduction` (`role_id`, `staff_id`, `entry_date`, `deduction_id`) VALUES
-(4, 6, '2024-03-12 00:00:00', 1),
-(4, 6, '2024-03-12 00:00:00', 2);
+(3, 4, '2024-03-28 07:49:54', 1),
+(3, 4, '2024-03-28 07:49:54', 2),
+(4, 5, '2024-03-28 09:46:57', 1),
+(4, 5, '2024-03-28 09:46:57', 2),
+(4, 6, '2024-03-28 09:48:38', 1),
+(4, 6, '2024-03-28 09:48:38', 2),
+(4, 7, '2024-03-28 09:46:31', 1),
+(4, 7, '2024-03-28 09:46:31', 2);
 
 -- --------------------------------------------------------
 
@@ -987,7 +1008,7 @@ CREATE TABLE `shipment` (
   `unit_price` double DEFAULT NULL,
   `mfg` date DEFAULT NULL,
   `exp` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1005,7 +1026,7 @@ CREATE TABLE `staff` (
   `address` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `deleted` bit(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `staff`
@@ -1034,7 +1055,7 @@ CREATE TABLE `supplier` (
   `address` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `deleted` bit(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `supplier`
@@ -1059,7 +1080,7 @@ CREATE TABLE `work_schedule` (
   `check_in` varchar(255) DEFAULT 'null',
   `check_out` varchar(255) DEFAULT 'null',
   `shift` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `work_schedule`

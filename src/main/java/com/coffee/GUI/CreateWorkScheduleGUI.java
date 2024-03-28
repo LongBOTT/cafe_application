@@ -37,7 +37,6 @@ public class CreateWorkScheduleGUI extends Layout1 {
         init();
     }
 
-    //
     private void init() {
         jLabelDateWork = new JLabel();
         iconNext = new JLabel(new FlatSVGIcon("icon/next.svg"));

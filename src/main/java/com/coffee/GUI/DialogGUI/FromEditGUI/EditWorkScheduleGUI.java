@@ -14,10 +14,7 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.SimpleDateFormat;
@@ -197,6 +194,24 @@ public class EditWorkScheduleGUI extends DialogForm {
                     textField2.setText(workSchedule.getCheck_in().split(":")[1]);
                 }
 
+                textField1.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyTyped(KeyEvent e) {
+                        if (!Character.isDigit(e.getKeyChar())) {
+                            e.consume();
+                        }
+                    }
+                });
+
+                textField2.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyTyped(KeyEvent e) {
+                        if (!Character.isDigit(e.getKeyChar())) {
+                            e.consume();
+                        }
+                    }
+                });
+
                 jTextFieldWork_Schedule.add(textField1);
                 jTextFieldWork_Schedule.add(textField2);
 
@@ -363,6 +378,7 @@ public class EditWorkScheduleGUI extends DialogForm {
             if (result.getKey()) {
                 JOptionPane.showMessageDialog(null, result.getValue(),
                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                CreateWorkScheduleGUI.refresh();
                 dispose();
             } else {
                 JOptionPane.showMessageDialog(null, result.getValue(),

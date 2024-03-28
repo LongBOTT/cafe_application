@@ -3,6 +3,7 @@ package com.coffee.DAL;
 import com.coffee.DTO.Payroll;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -25,16 +26,15 @@ public class PayrollDAL extends Manager {
     public List<Payroll> convertToPayrolls(List<List<String>> data) {
         return convert(data, row -> {
             try {
-                DecimalFormat decimalFormat = new DecimalFormat("#.##");
                 return new Payroll(
                         Integer.parseInt(row.get(0)), // id
                         row.get(1), // name
                         Date.valueOf(row.get(2)), //entry_date
                         Integer.parseInt(row.get(3)), // month
                         Integer.parseInt(row.get(4)), // year
-                        Double.parseDouble(decimalFormat.format(Double.parseDouble(row.get(5)) / 1000)), // total_salary
-                        Double.parseDouble(decimalFormat.format(Double.parseDouble(row.get(6)) / 1000)), // paid
-                        Double.parseDouble(decimalFormat.format(Double.parseDouble(row.get(7)) / 1000)) // debt
+                        new BigDecimal(row.get(5)), // total_salary
+                        new BigDecimal(row.get(6)), // paid
+                        new BigDecimal(row.get(7)) // debt
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in RoleDAL.convertToPayroll(): " + e.getMessage());
