@@ -566,13 +566,14 @@ private boolean addProductBySize(String size){
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
 
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String imageFile = "SP" + productID + "_" + timeStamp + ".svg";
-            String imageName =  "SP" + productID + "_" + timeStamp;
+//            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFile = "SP" + productID + ".svg";
+            String imageName =  "SP" + productID ;
             java.nio.file.Path destinationPath = Paths.get(System.getProperty("user.dir"), "src", "main", "resources","image","Product", imageFile);
-
+            java.nio.file.Path destinationPathTarget = Paths.get(System.getProperty("user.dir"), "target", "classes","image","Product", imageFile);
             try {
                 Files.copy(selectedFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(selectedFile.toPath(), destinationPathTarget, StandardCopyOption.REPLACE_EXISTING);
                 InputStream inputStream = Files.newInputStream(destinationPath);
                 ImageIcon icon = new FlatSVGIcon( inputStream);
                 Image image = icon.getImage();
