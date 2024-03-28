@@ -28,7 +28,6 @@ public class DetailProductGUI extends DialogFormDetail_1 {
     private RoundedPanel containerAtributeProduct;
     private RoundedPanel containerImage;
 
-    private JButton btnImage;
     private JLabel lblListMaterial;
     private JLabel material;
     private DataTable dataTable;
@@ -95,12 +94,9 @@ public class DetailProductGUI extends DialogFormDetail_1 {
 
         PanelImage.add(lblImage);
 
-        btnImage = new JButton("Thêm ảnh");
-        btnImage.setPreferredSize(new Dimension(100, 30));
+
 
         containerImage.add(PanelImage, "alignx center,wrap");
-        containerImage.add(btnImage, "alignx center");
-
         top.add(containerAtributeProduct);
         top.add(containerImage);
         EmptyBorder emptyBorder = new EmptyBorder(0, 30, 0, 0);
@@ -233,6 +229,7 @@ public class DetailProductGUI extends DialogFormDetail_1 {
         textField.setPreferredSize(new Dimension(350, 30));
         textField.setFont(new Font("Public Sans", Font.PLAIN, 14));
         textField.setBackground(new Color(245, 246, 250));
+//        textField.setEditable(false);
         textField.setFocusable(false);
         return textField;
     }
