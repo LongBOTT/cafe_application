@@ -39,6 +39,7 @@ public class AddAccountGUI extends DialogForm {
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init();
         setVisible(true);
+
     }
 
     private void init() {

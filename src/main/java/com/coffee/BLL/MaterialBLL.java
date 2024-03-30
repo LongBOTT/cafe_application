@@ -7,13 +7,11 @@ import com.coffee.DTO.Module;
 import com.coffee.utils.VNString;
 import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MaterialBLL extends Manager<Material> {
     private MaterialDAL materialDAL;
+    private SupplierBLL supplierBLL = new SupplierBLL();
 
     public MaterialBLL() {
         materialDAL = new MaterialDAL();
@@ -34,10 +32,19 @@ public class MaterialBLL extends Manager<Material> {
     public Pair<Boolean, String> addMaterial(Material material) {
         Pair<Boolean, String> result;
 
-        result = exists(material);
-        if (result.getKey()) {
+        result = validateName(material.getName());
+        if (!result.getKey()) {
             return new Pair<>(false, result.getValue());
         }
+
+        result = validateUnit(material.getUnit());
+        if (!result.getKey()) {
+            return new Pair<>(false, result.getValue());
+        }
+
+//        result = validateSupplier(String.valueOf(material.getSupplier_id()));
+//        if(!result.getKey())
+//            return new Pair<>(false,result.getValue());
 
         if (materialDAL.addMaterial(material) == 0)
             return new Pair<>(false, "Thêm nguyên liệu không thành công.");
@@ -45,9 +52,29 @@ public class MaterialBLL extends Manager<Material> {
         return new Pair<>(true, "Thêm nguyên liệu thành công.");
     }
 
-    public Pair<Boolean, String> updateMaterial(Material material) {
+    public Pair<Boolean, String> updateMaterial(Material newMaterial, Material oldMaterial) {
+        List<String> errorMessages = new ArrayList<>();
 
-        if (materialDAL.updateMaterial(material) == 0)
+        if (!Objects.equals(oldMaterial.getName(), newMaterial.getName())) {
+            Pair<Boolean, String> nameResult = validateName(newMaterial.getName());
+            if (!nameResult.getKey()) {
+                errorMessages.add(nameResult.getValue());
+            }
+        }
+
+        if (!Objects.equals(oldMaterial.getUnit(), newMaterial.getUnit())) {
+            Pair<Boolean, String> phoneResult = validateUnit(newMaterial.getUnit());
+            if (!phoneResult.getKey()) {
+                errorMessages.add(phoneResult.getValue());
+            }
+        }
+
+        if (!errorMessages.isEmpty()) {
+            String errorMessage = String.join("\n", errorMessages);
+            return new Pair<>(false, errorMessage);
+        }
+
+        if (materialDAL.updateMaterial(newMaterial) == 0)
             return new Pair<>(false, "Cập nhật nguyên liệu không thành công.");
 
         return new Pair<>(true, "Cập nhật nguyên liệu thành công.");
@@ -90,13 +117,13 @@ public class MaterialBLL extends Manager<Material> {
         return materials;
     }
 
-    private static Pair<Boolean, String> validateName(String name) {
+    public Pair<Boolean, String> validateName(String name) {
         if (name.isBlank())
             return new Pair<>(false, "Tên nguyên liệu được để trống.");
-        if (VNString.containsSpecial(name))
-            return new Pair<>(false, "Tên nguyên liêu không được chứa ký tự đặc biệt.");
-        if (VNString.containsNumber(name))
-            return new Pair<>(false, "Tên nguyên liệu không được chứa số.");
+        List<Material> materials = materialDAL.searchMaterials("name = '" + name + "'");
+        if (!materials.isEmpty()) {
+            return new Pair<>(false, "Nguyên liệu đã tồn tại.");
+        }
         return new Pair<>(true, name);
     }
 
@@ -119,6 +146,31 @@ public class MaterialBLL extends Manager<Material> {
             return new Pair<>(true, "Nguyên liệu đã tồn tại trong công thức.");
         }
         return new Pair<>(false, "");
+    }
+
+    public Pair<Boolean, String> validateQuantity(String quantity) {
+        if (quantity.isBlank())
+            return new Pair<>(false, "Số lượng không được để trống");
+        if (!VNString.checkUnsignedNumber(quantity))
+            return new Pair<>(false, "Số lượng phải là số lớn hơn không");
+        return new Pair<>(true, "Số lượng hợp lệ");
+    }
+
+    public Pair<Boolean, String> validateUnit(String name) {
+        if (name.isBlank())
+            return new Pair<>(false, "Đơn vị không được để trống.");
+        if (VNString.containsSpecial(name))
+            return new Pair<>(false, "Đơn vị không được chứa ký tự đặc biệt.");
+        if (VNString.containsNumber(name))
+            return new Pair<>(false, "Đơn không được chứa số.");
+        return new Pair<>(true, name);
+    }
+
+    public Pair<Boolean, String> validateSupplier(String id) {
+        List<Supplier> suppliers = supplierBLL.findSuppliers("id", id);
+        if (suppliers.isEmpty())
+            return new Pair<>(false, "Nhà cung cấp không tồn tại!");
+        return new Pair<>(true, "");
     }
 
     @Override

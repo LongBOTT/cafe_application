@@ -41,9 +41,9 @@ public class ProductDAL extends Manager{
         try {
             return create(product.getId(),
                     product.getName(),
+                    product.getSize(),
                     product.getCategory(),
                     product.getPrice(),
-                    product.getSize(),
                     product.getImage(),
                     false
             ); // product khi tạo mặc định deleted = 0

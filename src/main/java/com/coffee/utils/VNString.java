@@ -106,7 +106,7 @@ public class VNString {
 
     public static boolean checkUnsignedNumber(String str) {
         try {
-            return Double.parseDouble(str) > 0;
+            return Double.parseDouble(str) >= 0;
         } catch (Exception e) {
             return false;
         }

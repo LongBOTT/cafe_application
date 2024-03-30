@@ -1,24 +1,16 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.ProductBLL;
-import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Product;
-import com.coffee.DTO.Supplier;
-import com.coffee.GUI.DialogGUI.DialogForm;
-import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddProductGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailProductGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditProductGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
-import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -281,12 +273,6 @@ public void loadDataTable(Object[][] objects) {
 
 }
 public ArrayList<Object[]> ConvertProductUnique(Object[][] objects){
-    for (Object[] objArray : objects) {
-        for (Object obj : objArray) {
-            System.out.print(obj + " ");
-        }
-        System.out.println();
-    }
      ArrayList<Object[]> allProducts = new ArrayList<>();
     for (Object[] product : objects) {
         String productID = (String) product[0];
@@ -378,16 +364,22 @@ public void loadCategory() {
     private void selectFunction() {
         int indexColumn = dataTable.getSelectedColumn();
         int indexRow = dataTable.getSelectedRow();
-        if (indexColumn == indexColumnDetail)
-            new DetailProductGUI();
+        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+        Object selectedValue = model.getValueAt(indexRow,1);
+
+        if (indexColumn == indexColumnDetail) {
+            new DetailProductGUI( productBLL.findProductsBy(Map.of("name", selectedValue.toString())));
+        }
 
         if ( indexColumn == indexColumnEdit) {
-            new EditProductGUI(ConvertProductUnique(productBLL.getData(productBLL.searchProducts("deleted = 0"))));
-//            refresh();
+            new EditProductGUI(productBLL.findProductsBy(Map.of("name", selectedValue.toString())));
+            refresh();
         }
-        if (indexColumn == indexColumnRemove)
-           deleteProduct(productBLL.searchProducts("deleted = 0").get(indexRow));
-        refresh();
+
+        if (indexColumn == indexColumnRemove) {
+            deleteProduct(productBLL.searchProducts("deleted = 0").get(indexRow));
+            refresh();
+        }
     }
     private void deleteProduct(Product product) {
         String[] options = new String[]{"Huỷ", "Xác nhận"};
