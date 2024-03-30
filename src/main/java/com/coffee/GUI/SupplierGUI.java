@@ -239,6 +239,10 @@ public class SupplierGUI extends Layout1 {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
 
+        if (objects.length == 0) {
+            return;
+        }
+
         Object[][] data = new Object[objects.length][objects[0].length];
 
         for (int i = 0; i < objects.length; i++) {

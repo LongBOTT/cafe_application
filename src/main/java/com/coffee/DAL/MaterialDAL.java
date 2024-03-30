@@ -7,12 +7,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MaterialDAL extends Manager{
+public class MaterialDAL extends Manager {
     public MaterialDAL() {
         super("material",
                 List.of("id",
                         "name",
-                        "supplier_id",
                         "remain",
                         "unit",
                         "deleted"));
@@ -24,10 +23,9 @@ public class MaterialDAL extends Manager{
                 return new Material(
                         Integer.parseInt(row.get(0)), // id
                         row.get(1), // name
-                        Integer.parseInt(row.get(2)), // supplier_id
-                        Double.parseDouble(row.get(3)), // remain
-                        row.get(4), // unit
-                        Boolean.parseBoolean(row.get(5)) // deleted
+                        Double.parseDouble(row.get(2)), // remain
+                        row.get(3), // unit
+                        Boolean.parseBoolean(row.get(4)) // deleted
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in MaterialDAL.convertToMaterials(): " + e.getMessage());
@@ -40,7 +38,6 @@ public class MaterialDAL extends Manager{
         try {
             return create(material.getId(),
                     material.getName(),
-                    material.getSupplier_id(),
                     material.getRemain(),
                     material.getUnit(),
                     false
@@ -56,7 +53,6 @@ public class MaterialDAL extends Manager{
             List<Object> updateValues = new ArrayList<>();
             updateValues.add(material.getId());
             updateValues.add(material.getName());
-            updateValues.add(material.getSupplier_id());
             updateValues.add(material.getRemain());
             updateValues.add(material.getUnit());
             updateValues.add(material.isDeleted());

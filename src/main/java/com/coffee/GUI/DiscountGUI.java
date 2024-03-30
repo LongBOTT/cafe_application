@@ -175,6 +175,7 @@ public class DiscountGUI extends Layout2 {
 
             dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
             dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
+            dateTextField[i].setBackground(new Color(245, 246, 250));
 
             if (i == 0) {
                 JLabel jLabel = new JLabel("Từ Ngày");
@@ -302,6 +303,10 @@ public class DiscountGUI extends Layout2 {
     public void loadDataTable(Object[][] objects) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
+
+        if (objects.length == 0) {
+            return;
+        }
 
         Object[][] data = new Object[objects.length][objects[0].length];
 

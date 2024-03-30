@@ -8,13 +8,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShipmentDAL extends Manager{
+public class ShipmentDAL extends Manager {
     public ShipmentDAL() {
-        super ("shipment",
+        super("shipment",
                 List.of("id",
                         "material_id",
+                        "supplier_id",
                         "import_id",
                         "quantity",
+                        "remain",
                         "unit_price",
                         "mfg",
                         "exp"));
@@ -27,10 +29,12 @@ public class ShipmentDAL extends Manager{
                         Integer.parseInt(row.get(0)),
                         Integer.parseInt(row.get(1)),
                         Integer.parseInt(row.get(2)),
-                        Double.parseDouble(row.get(3)),
+                        Integer.parseInt(row.get(3)),
                         Double.parseDouble(row.get(4)),
-                        Date.valueOf(row.get(5)),
-                        Date.valueOf(row.get(6))
+                        Double.parseDouble(row.get(5)),
+                        Double.parseDouble(row.get(6)),
+                        Date.valueOf(row.get(7)),
+                        Date.valueOf(row.get(8))
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in ShipmentDAL.convertToShipment(): " + e.getMessage());
@@ -43,8 +47,10 @@ public class ShipmentDAL extends Manager{
         try {
             return create(shipment.getId(),
                     shipment.getMaterial_id(),
+                    shipment.getSupplier_id(),
                     shipment.getImport_id(),
                     shipment.getQuantity(),
+                    shipment.getRemain(),
                     shipment.getUnit_price(),
                     shipment.getMfg(),
                     shipment.getExp()
@@ -60,8 +66,10 @@ public class ShipmentDAL extends Manager{
             List<Object> updateValues = new ArrayList<>();
             updateValues.add(shipment.getId());
             updateValues.add(shipment.getMaterial_id());
+            updateValues.add(shipment.getSupplier_id());
             updateValues.add(shipment.getImport_id());
             updateValues.add(shipment.getQuantity());
+            updateValues.add(shipment.getRemain());
             updateValues.add(shipment.getUnit_price());
             updateValues.add(shipment.getMfg());
             updateValues.add(shipment.getExp());

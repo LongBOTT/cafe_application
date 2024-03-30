@@ -21,9 +21,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
 
 public class ReceiptGUI extends Layout2 {
@@ -36,29 +34,22 @@ public class ReceiptGUI extends Layout2 {
     private JButton jButtonSearch;
     private List<Function> functions;
     private ReceiptBLL receiptBLL = new ReceiptBLL();
-   // private Work_ScheduleBLL workScheduleBLL = new Work_ScheduleBLL();
     private DataTable dataTable;
     private RoundedScrollPane scrollPane;
     private int indexColumnDetail = -1;
-    private int indexColumnEdit = -1;
-    private int indexColumnRemove = -1;
     private boolean detail = false;
-    private boolean edit = false;
-    private boolean remove = false;
     private String[] columnNames;
     private StaffBLL staffBLL = new StaffBLL();
     private Date date;
+
     public ReceiptGUI(List<Function> functions) {
         super();
         this.functions = functions;
         if (functions.stream().anyMatch(f -> f.getName().equals("view")))
             detail = true;
-        if (functions.stream().anyMatch(f -> f.getName().equals("edit")))
-            edit = true;
-        if (functions.stream().anyMatch(f -> f.getName().equals("remove")))
-            remove = true;
         init(functions);
     }
+
     private void init(List<Function> functions) {
         date = new Date();
         containerSearch = new RoundedPanel();
@@ -69,27 +60,16 @@ public class ReceiptGUI extends Layout2 {
         dateTextField = new JTextField[2];
         jTextFieldDate = new JTextField[2];
 
-        columnNames = new String[]{"Mã hóa đơn", "Mã Nhân Viên", "Tổng tiền", "Ngày lập", "Tiền nhận", "Tiền thối"};
+        columnNames = new String[]{"Mã Hóa Đơn", "Nhân Viên", "Tổng Tiền", "Ngày Lập"};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
             columnNames[indexColumnDetail] = "Xem";
         }
-        if (edit) {
-            columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
-            indexColumnEdit = columnNames.length - 1;
-            columnNames[indexColumnEdit] = "Sửa";
-        }
-
-        if (remove) {
-            columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
-            indexColumnRemove = columnNames.length - 1;
-            columnNames[indexColumnRemove] = "Xoá";
-        }
 
         dataTable = new DataTable(new Object[0][0], columnNames,
                 e -> selectFunction(),
-                detail, edit, remove, 6);
+                detail, false, false, 4);
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
@@ -107,6 +87,7 @@ public class ReceiptGUI extends Layout2 {
 
             dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
             dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
+            dateTextField[i].setBackground(new Color(245, 246, 250));
 
             if (i == 0) {
                 JLabel jLabel = new JLabel("Từ Ngày");
@@ -132,22 +113,22 @@ public class ReceiptGUI extends Layout2 {
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập tên nhân viên cần tìm kiếm");
         jTextFieldSearch.setPreferredSize(new Dimension(250, 30));
-       /* jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
+        jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                searchWork_schedules();
+                searchReceipts();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                searchWork_schedules();
+                searchReceipts();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                searchWork_schedules();
+                searchReceipts();
             }
-        });*/
+        });
         containerSearch.add(jTextFieldSearch);
 
         jButtonSearch.setBackground(new Color(29, 78, 216));
@@ -176,26 +157,6 @@ public class ReceiptGUI extends Layout2 {
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
         refreshPanel.add(refreshLabel);
 
-        if (functions.stream().anyMatch(f -> f.getName().equals("add"))) {
-            RoundedPanel roundedPanel = new RoundedPanel();
-            roundedPanel.setLayout(new GridBagLayout());
-            roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
-            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            roundedPanel.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-
-                    refresh();
-                }
-            });
-            FunctionPanel.add(roundedPanel);
-
-            JLabel panel = new JLabel("Thêm mới");
-            panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-            panel.setIcon(new FlatSVGIcon("icon/add.svg"));
-            roundedPanel.add(panel);
-        }
         if (functions.stream().anyMatch(f -> f.getName().equals("excel"))) {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new GridBagLayout());
@@ -223,56 +184,84 @@ public class ReceiptGUI extends Layout2 {
             roundedPanel.add(panel);
         }
     }
+
     public void refresh() {
         jTextFieldSearch.setText("");
         jDateChooser[0].getDateEditor().setDate(null);
         jDateChooser[1].getDateEditor().setDate(null);
         loadDataTable(receiptBLL.getData(receiptBLL.searchReceipts()));
     }
-    private void searchReceipts() {
 
+    private void searchReceipts() {
+        List<Receipt> receiptList = receiptBLL.searchReceipts();
+        if (jTextFieldSearch.getText().isEmpty() && jDateChooser[0].getDateEditor().getDate() == null && jDateChooser[1].getDateEditor().getDate() == null) {
+            loadDataTable(receiptBLL.getData(receiptList));
+        } else {
+            if (!jTextFieldSearch.getText().isEmpty()) {
+                List<Integer> staffIDList = new ArrayList<>();
+                for (Staff staff : staffBLL.findStaffs("name", jTextFieldSearch.getText()))
+                    staffIDList.add(staff.getId());
+                receiptList.removeIf(receipt -> !staffIDList.contains(receipt.getStaff_id()));
+            }
+            if (jDateChooser[0].getDateEditor().getDate() != null || jDateChooser[1].getDateEditor().getDate() != null) {
+                if (jDateChooser[0].getDateEditor().getDate() != null && jDateChooser[1].getDateEditor().getDate() != null) {
+                    Date startDate = jDateChooser[0].getDate();
+                    Date endDate = jDateChooser[1].getDate();
+                    if (startDate.after(endDate)) {
+                        JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
+                                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    receiptList.removeIf(receipt -> (receipt.getInvoice_date().before(startDate) || receipt.getInvoice_date().after(endDate)));
+                } else {
+                    if (jDateChooser[0].getDateEditor().getDate() == null) {
+                        Date endDate = jDateChooser[1].getDate();
+                        receiptList.removeIf(receipt -> (receipt.getInvoice_date().before(java.sql.Date.valueOf("1000-1-1")) || receipt.getInvoice_date().after(endDate)));
+                    } else {
+                        Date startDate = jDateChooser[0].getDate();
+                        receiptList.removeIf(receipt -> (receipt.getInvoice_date().before(startDate)));
+                    }
+                }
+            }
+            loadDataTable(receiptBLL.getData(receiptList));
+        }
     }
+
     public void loadDataTable(Object[][] objects) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
+
+        if (objects.length == 0) {
+            return;
+        }
 
         Object[][] data = new Object[objects.length][objects[0].length];
 
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
 
+            int staff_id = Integer.parseInt(data[i][1].toString());
+            data[i][1] = staffBLL.findStaffsBy(Map.of("id", staff_id)).get(0).getName();
+
             if (detail) {
                 JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
                 data[i] = Arrays.copyOf(data[i], data[i].length + 1);
                 data[i][data[i].length - 1] = iconDetail;
             }
-
-
         }
-
 
         for (Object[] object : data) {
             model.addRow(object);
         }
     }
+
     private void selectFunction() {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
 
-        if (detail && indexColumn == indexColumnDetail){
+        if (detail && indexColumn == indexColumnDetail) {
             new DetailReceiptGUI(receiptBLL.searchReceipts().get(indexRow));
         }
-            // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-        if (edit && indexColumn == indexColumnEdit) {
-           // new EditStaffGUI(staffBLL.searchStaffs().get(indexRow));
-            // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-            refresh();
-        }
-//        if (remove && indexColumn == indexColumnRemove)
-//            deleteStaff(staffBLL.searchStaffs("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-//
-
-
     }
 
 }

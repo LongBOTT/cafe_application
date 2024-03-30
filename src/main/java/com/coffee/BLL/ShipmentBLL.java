@@ -14,16 +14,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class ShipmentBLL extends Manager<Shipment>{
+public class ShipmentBLL extends Manager<Shipment> {
     private ShipmentDAL shipmentDAL;
 
     public ShipmentBLL() {
         shipmentDAL = new ShipmentDAL();
     }
 
-    public ShipmentDAL getShipmentDAL() { return shipmentDAL; }
+    public ShipmentDAL getShipmentDAL() {
+        return shipmentDAL;
+    }
 
-    public void setShipmentDAL(ShipmentDAL shipmentDAL) {this.shipmentDAL=shipmentDAL;}
+    public void setShipmentDAL(ShipmentDAL shipmentDAL) {
+        this.shipmentDAL = shipmentDAL;
+    }
 
     public Object[][] getData() {
         return getData(shipmentDAL.searchShipments());
@@ -32,21 +36,21 @@ public class ShipmentBLL extends Manager<Shipment>{
     public Pair<Boolean, String> addShipment(Shipment shipment) {
         Pair<Boolean, String> result;
         result = validateQuantity(String.valueOf(shipment.getQuantity()));
-        if(!result.getKey())
-            return  new Pair<>(false, result.getValue());
+        if (!result.getKey())
+            return new Pair<>(false, result.getValue());
 
         result = validatePrice(String.valueOf(shipment.getUnit_price()));
-        if(!result.getKey())
-            return new Pair<>(false,result.getValue());
+        if (!result.getKey())
+            return new Pair<>(false, result.getValue());
 
         result = exists(shipment);
-        if(result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if (result.getKey()) {
+            return new Pair<>(false, result.getValue());
         }
 
         result = validateDate(shipment.getMfg(), shipment.getExp());
         if (!result.getKey()) {
-            return new Pair<>(false,result.getValue());
+            return new Pair<>(false, result.getValue());
         }
 
         if (shipmentDAL.addShipment(shipment) == 0)
@@ -58,16 +62,16 @@ public class ShipmentBLL extends Manager<Shipment>{
     public Pair<Boolean, String> updateShipment(Shipment shipment) {
         Pair<Boolean, String> result;
         result = validateQuantity(String.valueOf(shipment.getQuantity()));
-        if(!result.getKey())
-            return  new Pair<>(false, result.getValue());
+        if (!result.getKey())
+            return new Pair<>(false, result.getValue());
 
         result = validatePrice(String.valueOf(shipment.getUnit_price()));
-        if(!result.getKey())
-            return new Pair<>(false,result.getValue());
+        if (!result.getKey())
+            return new Pair<>(false, result.getValue());
 
         result = validateDate(shipment.getMfg(), shipment.getExp());
         if (!result.getKey()) {
-            return new Pair<>(false,result.getValue());
+            return new Pair<>(false, result.getValue());
         }
 
         if (shipmentDAL.updateShipment(shipment) == 0)
@@ -104,13 +108,13 @@ public class ShipmentBLL extends Manager<Shipment>{
                 "import_id", shipment.getImport_id()
         ));
 
-        if(!shipments.isEmpty()){
+        if (!shipments.isEmpty()) {
             return new Pair<>(true, "Nguyên liệu đã được nhập.");
         }
         return new Pair<>(false, "");
     }
 
-    private static Pair<Boolean, String> validateDate(Date mfg, Date exp){
+    private static Pair<Boolean, String> validateDate(Date mfg, Date exp) {
         if (mfg == null)
             return new Pair<>(false, "Ngày sản xuất không được để trống.");
         if (exp == null)
@@ -121,27 +125,32 @@ public class ShipmentBLL extends Manager<Shipment>{
             return new Pair<>(false, "Ngày sản xuất phải trước ngày hết hạn.");
         return new Pair<>(true, "Hạn sử dụng hợp lệ.");
     }
-    private Pair<Boolean, String> validatePrice(String price){
-        if(price.isBlank())
-            return new Pair<>(false,"Giá nhập không được để trống");
-        if(!VNString.checkUnsignedNumber(price))
-            return new Pair<>(false,"Giá nhập phải là số lớn hơn không");
-        return new Pair<>(true,"Giá nhập hợp lệ");
+
+    private Pair<Boolean, String> validatePrice(String price) {
+        if (price.isBlank())
+            return new Pair<>(false, "Giá nhập không được để trống");
+        if (!VNString.checkUnsignedNumber(price))
+            return new Pair<>(false, "Giá nhập phải là số lớn hơn không");
+        return new Pair<>(true, "Giá nhập hợp lệ");
     }
-    private Pair<Boolean, String> validateQuantity(String quantity){
-        if(quantity.isBlank())
-            return new Pair<>(false,"Số lượng không được để trống");
-        if(!VNString.checkUnsignedNumber(quantity))
-            return new Pair<>(false,"Số lượng phải là số lớn hơn không");
-        return new Pair<>(true,"Số lượng hợp lệ");
+
+    private Pair<Boolean, String> validateQuantity(String quantity) {
+        if (quantity.isBlank())
+            return new Pair<>(false, "Số lượng không được để trống");
+        if (!VNString.checkUnsignedNumber(quantity))
+            return new Pair<>(false, "Số lượng phải là số lớn hơn không");
+        return new Pair<>(true, "Số lượng hợp lệ");
     }
+
     @Override
     public Object getValueByKey(Shipment shipment, String key) {
         return switch (key) {
             case "id" -> shipment.getId();
             case "material_id" -> shipment.getMaterial_id();
+            case "supplier_id" -> shipment.getSupplier_id();
             case "import_id" -> shipment.getImport_id();
             case "quantity" -> shipment.getQuantity();
+            case "remain" -> shipment.getRemain();
             case "unit_price" -> shipment.getUnit_price();
             case "mfg" -> shipment.getMfg();
             case "exp" -> shipment.getExp();
@@ -150,12 +159,12 @@ public class ShipmentBLL extends Manager<Shipment>{
     }
 
     public static void main(String[] args) {
-        ShipmentBLL shipmentBLL = new ShipmentBLL();
-        Shipment shipment = new Shipment(shipmentBLL.getAutoID(shipmentBLL.searchShipments()), 2, 1, 0, 0, java.sql.Date.valueOf("2024-02-07"), java.sql.Date.valueOf("2024-02-10"));
-        shipmentBLL.addShipment(shipment);
-
-        shipment.setQuantity(50);
-        shipmentBLL.updateShipment(shipment);
+//        ShipmentBLL shipmentBLL = new ShipmentBLL();
+//        Shipment shipment = new Shipment(shipmentBLL.getAutoID(shipmentBLL.searchShipments()), 2, 1, 0, 0, java.sql.Date.valueOf("2024-02-07"), java.sql.Date.valueOf("2024-02-10"));
+//        shipmentBLL.addShipment(shipment);
+//
+//        shipment.setQuantity(50);
+//        shipmentBLL.updateShipment(shipment);
     }
 
 

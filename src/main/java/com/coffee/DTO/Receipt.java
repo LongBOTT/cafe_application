@@ -75,8 +75,6 @@ public class Receipt {
         return id + " | " +
                 staff_id + " | " +
                 total + " | " +
-                invoice_date + " | " +
-                received + " | " +
-                excess;
+                invoice_date;
     }
 }

@@ -41,22 +41,22 @@ public class Layout3 extends RoundedPanel {
         add(center, BorderLayout.CENTER);
 
         Category.setLayout(new FlowLayout(FlowLayout.LEFT));
-        Category.setBackground(new Color(173, 228, 246));
+        Category.setBackground(Color.white);
 
         center.add(scrollPane, BorderLayout.CENTER);
 
         bottom.setLayout(new BorderLayout());
         bottom.setPreferredSize(new Dimension(1165, 625));
-        bottom.setBackground(new Color(0x7A7A6C));
+        bottom.setBackground(Color.white);
         add(bottom, BorderLayout.SOUTH);
 
         SearchPanel.setLayout(new GridBagLayout());
-        SearchPanel.setBackground(new Color(0x4CFD8F8F, true));
+        SearchPanel.setBackground(Color.white);
         SearchPanel.setPreferredSize(new Dimension(510, 50));
         top.add(SearchPanel, BorderLayout.WEST);
 
         FunctionPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        FunctionPanel.setBackground(new Color(0xC7D9D9D9, true));
+        FunctionPanel.setBackground(Color.white);
         FunctionPanel.setPreferredSize(new Dimension(620, 50));
         top.add(FunctionPanel, BorderLayout.EAST);
 

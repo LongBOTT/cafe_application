@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Receipt_DetailBLL extends Manager<Receipt_Detail>{
+public class Receipt_DetailBLL extends Manager<Receipt_Detail> {
     private Receipt_DetailDAL receipt_DetailDAL;
 
     public Receipt_DetailBLL() {
@@ -35,13 +35,13 @@ public class Receipt_DetailBLL extends Manager<Receipt_Detail>{
         Pair<Boolean, String> result;
 
         result = validateQuantity(String.valueOf(receipt_Detail.getQuantity()));
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if (!result.getKey()) {
+            return new Pair<>(false, result.getValue());
         }
 
         result = exists(receipt_Detail);
-        if(result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if (result.getKey()) {
+            return new Pair<>(false, result.getValue());
         }
 
         if (receipt_DetailDAL.addReceipt_Detail(receipt_Detail) == 0)
@@ -75,26 +75,30 @@ public class Receipt_DetailBLL extends Manager<Receipt_Detail>{
     public Pair<Boolean, String> exists(Receipt_Detail receipt_Detail) {
         List<Receipt_Detail> receipt_Details = findReceipt_DetailsBy(Map.of(
                 "receipt_id", receipt_Detail.getProduct_id(),
-                "product_id", receipt_Detail.getQuantity()
+                "product_id", receipt_Detail.getQuantity(),
+                "size", receipt_Detail.getSize()
         ));
 
-        if(!receipt_Details.isEmpty()){
+        if (!receipt_Details.isEmpty()) {
             return new Pair<>(true, "Sản phẩm đã được thêm vào hoá đơn.");
         }
         return new Pair<>(false, "");
     }
-    private Pair<Boolean, String> validateQuantity(String quantity){
-        if(quantity.isBlank())
-            return new Pair<>(false,"Số lượng không được để trống");
-        if(!VNString.checkUnsignedNumber(quantity))
-            return new Pair<>(false,"Số lượng phải là số lớn hơn không");
-        return new Pair<>(true,"Số lượng hợp lệ");
+
+    private Pair<Boolean, String> validateQuantity(String quantity) {
+        if (quantity.isBlank())
+            return new Pair<>(false, "Số lượng không được để trống");
+        if (!VNString.checkUnsignedNumber(quantity))
+            return new Pair<>(false, "Số lượng phải là số lớn hơn không");
+        return new Pair<>(true, "Số lượng hợp lệ");
     }
+
     @Override
     public Object getValueByKey(Receipt_Detail receipt_Detail, String key) {
         return switch (key) {
             case "receipt_id" -> receipt_Detail.getReceipt_id();
             case "product_id" -> receipt_Detail.getProduct_id();
+            case "size" -> receipt_Detail.getSize();
             case "quantity" -> receipt_Detail.getQuantity();
             case "price" -> receipt_Detail.getPrice();
             default -> null;
@@ -103,7 +107,7 @@ public class Receipt_DetailBLL extends Manager<Receipt_Detail>{
 
     public static void main(String[] args) {
         Receipt_DetailBLL receiptNoteBLL = new Receipt_DetailBLL();
-        Receipt_Detail receiptNote = new Receipt_Detail(1, 2, 0, 0);
-        receiptNoteBLL.addReceipt_Detail(receiptNote);
+//        Receipt_Detail receiptNote = new Receipt_Detail(1, 2, 0, 0);
+//        receiptNoteBLL.addReceipt_Detail(receiptNote);
     }
 }

@@ -3,15 +3,17 @@ package com.coffee.DTO;
 public class Receipt_Detail {
     private int receipt_id;
     private int product_id;
+    private String size;
     private double quantity;
     private double price;
 
     public Receipt_Detail() {
     }
 
-    public Receipt_Detail(int receipt_id, int product_id, double quantity, double price) {
+    public Receipt_Detail(int receipt_id, int product_id, String size, double quantity, double price) {
         this.receipt_id = receipt_id;
         this.product_id = product_id;
+        this.size = size;
         this.quantity = quantity;
         this.price = price;
     }
@@ -30,6 +32,14 @@ public class Receipt_Detail {
 
     public void setProduct_id(int product_id) {
         this.product_id = product_id;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 
     public double getQuantity() {
@@ -52,6 +62,7 @@ public class Receipt_Detail {
     public String toString() {
         return receipt_id + " | " +
                 product_id + " | " +
+                size + " | " +
                 quantity + " | " +
                 price;
     }

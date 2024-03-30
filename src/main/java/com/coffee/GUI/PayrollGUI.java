@@ -62,29 +62,34 @@ public class PayrollGUI extends Layout1 {
         bottom.add(scrollPane, BorderLayout.CENTER);
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
-        containerSearch.setBackground(new Color(245, 246, 250));
         containerSearch.setPreferredSize(new Dimension(500, 40));
         SearchPanel.add(containerSearch);
 
         jMonthChooserStart = new JMonthChooser();
         jMonthChooserStart.setPreferredSize(new Dimension(100, 50));
+        jMonthChooserStart.setBackground(new Color(245, 246, 250));
         jMonthChooserStart.setMonth(0);
         containerSearch.add(jMonthChooserStart);
 
         jYearChooserStart = new JYearChooser();
         jYearChooserStart.setPreferredSize(new Dimension(100, 50));
+        jYearChooserStart.setBackground(new Color(245, 246, 250));
         jYearChooserStart.setYear(2000);
         containerSearch.add(jYearChooserStart);
 
-        containerSearch.add(new JLabel(" Đến "));
+        JLabel jLabel = new JLabel("Đến");
+        jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
+        containerSearch.add(jLabel);
 
         jMonthChooserEnd = new JMonthChooser();
         jMonthChooserEnd.setPreferredSize(new Dimension(100, 50));
+        jMonthChooserEnd.setBackground(new Color(245, 246, 250));
         jMonthChooserEnd.setMonth(LocalDate.now().getMonth().getValue() - 1);
         containerSearch.add(jMonthChooserEnd);
 
         jYearChooserEnd = new JYearChooser();
         jYearChooserEnd.setPreferredSize(new Dimension(100, 50));
+        jYearChooserEnd.setBackground(new Color(245, 246, 250));
         jYearChooserEnd.setYear(LocalDate.now().getYear());
         containerSearch.add(jYearChooserEnd);
 
@@ -174,6 +179,10 @@ public class PayrollGUI extends Layout1 {
     public void loadDataTable(Object[][] objects) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
+
+        if (objects.length == 0) {
+            return;
+        }
 
         Object[][] data = new Object[objects.length][objects[0].length];
 

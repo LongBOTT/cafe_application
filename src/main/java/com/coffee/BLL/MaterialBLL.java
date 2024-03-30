@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class MaterialBLL extends Manager<Material>{
+public class MaterialBLL extends Manager<Material> {
     private MaterialDAL materialDAL;
 
     public MaterialBLL() {
@@ -35,8 +35,8 @@ public class MaterialBLL extends Manager<Material>{
         Pair<Boolean, String> result;
 
         result = exists(material);
-        if(result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if (result.getKey()) {
+            return new Pair<>(false, result.getValue());
         }
 
         if (materialDAL.addMaterial(material) == 0)
@@ -57,8 +57,8 @@ public class MaterialBLL extends Manager<Material>{
         Pair<Boolean, String> result;
 
         result = checkMaterial(material);
-        if(result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if (result.getKey()) {
+            return new Pair<>(false, result.getValue());
         }
 
         if (materialDAL.deleteMaterial("id = " + material.getId()) == 0)
@@ -83,11 +83,13 @@ public class MaterialBLL extends Manager<Material>{
     }
 
     public List<Material> findMaterialsBy(Map<String, Object> conditions) {
-        List<Material> materials = materialDAL.searchMaterials("deleted = 0");;
+        List<Material> materials = materialDAL.searchMaterials("deleted = 0");
+        ;
         for (Map.Entry<String, Object> entry : conditions.entrySet())
             materials = findObjectsBy(entry.getKey(), entry.getValue(), materials);
         return materials;
     }
+
     private static Pair<Boolean, String> validateName(String name) {
         if (name.isBlank())
             return new Pair<>(false, "Tên nguyên liệu được để trống.");
@@ -97,9 +99,10 @@ public class MaterialBLL extends Manager<Material>{
             return new Pair<>(false, "Tên nguyên liệu không được chứa số.");
         return new Pair<>(true, name);
     }
-    public Pair<Boolean, String> exists(Material newMaterial){
+
+    public Pair<Boolean, String> exists(Material newMaterial) {
         List<Material> materials = materialDAL.searchMaterials("name = '" + newMaterial.getName() + "'");
-        if(!materials.isEmpty()){
+        if (!materials.isEmpty()) {
             return new Pair<>(true, "Nguyên liệu đã tồn tại.");
         }
 
@@ -112,7 +115,7 @@ public class MaterialBLL extends Manager<Material>{
                 "material_id", material.getId()
         ));
 
-        if(!recipes.isEmpty()){
+        if (!recipes.isEmpty()) {
             return new Pair<>(true, "Nguyên liệu đã tồn tại trong công thức.");
         }
         return new Pair<>(false, "");
@@ -123,7 +126,6 @@ public class MaterialBLL extends Manager<Material>{
         return switch (key) {
             case "id" -> material.getId();
             case "name" -> material.getName();
-            case "supplier_id" -> material.getSupplier_id();
             case "remain" -> material.getRemain();
             case "unit" -> material.getUnit();
             default -> null;
@@ -131,14 +133,14 @@ public class MaterialBLL extends Manager<Material>{
     }
 
     public static void main(String[] args) {
-        MaterialBLL materialBLL = new MaterialBLL();
-        Material material = new Material(materialBLL.getAutoID(materialBLL.searchMaterials()), "xzy", 1, 1, "d", false);
+//        MaterialBLL materialBLL = new MaterialBLL();
+//        Material material = new Material(materialBLL.getAutoID(materialBLL.searchMaterials()), "xzy", 1, 1, "d", false);
 
 //        System.out.println(materialBLL.addMaterial(material).getValue());
 
-        material.setId(2);
+//        material.setId(2);
 
 //        materialBLL.updateMaterial(material);
-        materialBLL.deleteMaterial(material);
+//        materialBLL.deleteMaterial(material);
     }
 }

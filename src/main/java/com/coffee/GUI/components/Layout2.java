@@ -34,7 +34,7 @@ public class Layout2 extends RoundedPanel {
 
         bottom.setLayout(new BorderLayout());
         bottom.setPreferredSize(new Dimension(1165, 630));
-        bottom.setBackground(new Color(0x7A7A6C));
+        bottom.setBackground(Color.white);
         add(bottom, BorderLayout.SOUTH);
 
         containerSearchPanel.setLayout(new FlowLayout());
@@ -42,19 +42,19 @@ public class Layout2 extends RoundedPanel {
         containerSearchPanel.setPreferredSize(new Dimension(800, 100));
         top.add(containerSearchPanel, BorderLayout.WEST);
 
-        FunctionPanel.setLayout(new FlowLayout());
-        FunctionPanel.setBackground(new Color(0xC7D9D9D9, true));
+        FunctionPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        FunctionPanel.setBackground(Color.white);
         FunctionPanel.setPreferredSize(new Dimension(300, 50));
         top.add(FunctionPanel, BorderLayout.EAST);
 
         FilterDatePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        FilterDatePanel.setBackground(new Color(0x7E9D2E));
+        FilterDatePanel.setBackground(Color.white);
         FilterDatePanel.setPreferredSize(new Dimension(800, 40));
         containerSearchPanel.add(FilterDatePanel);
 
         SearchPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        SearchPanel.setBackground(new Color(0x4CFD8F8F, true));
+        SearchPanel.setBackground(Color.white);
         SearchPanel.setPreferredSize(new Dimension(800, 50));
         containerSearchPanel.add(SearchPanel);
     }

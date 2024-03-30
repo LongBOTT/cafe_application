@@ -10,14 +10,14 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class DialogFormReceipt extends JDialog {
+public class DialogFormDetail extends JDialog {
     public RoundedPanel title;
     public RoundedPanel contenttop;
     public RoundedPanel contentmid;
     public RoundedPanel contentbot;
     public RoundedPanel containerButton;
 
-    public DialogFormReceipt() {
+    public DialogFormDetail() {
         super((Frame) null, "", true);
         getContentPane().setBackground(new Color(217, 217, 217));
 
@@ -45,32 +45,29 @@ public class DialogFormReceipt extends JDialog {
         containerButton = new RoundedPanel();
 
         title.setLayout(new BorderLayout());
-        title.setBackground(new Color(232, 206, 180));
+        title.setBackground(new Color(217, 217, 217));
         title.setPreferredSize(new Dimension(1000, 50));
         add(title, "wrap, span, center");
 
         contenttop.setLayout(new MigLayout("", "20[]20[]20", "20[]20[]20"));
-        contenttop.setBackground(new Color(255, 255, 255));
+        contenttop.setBackground(new Color(217, 217, 217));
         contenttop.setPreferredSize(new Dimension(1000, 100));
         add(contenttop, "wrap");
 
         contentmid.setLayout(new MigLayout());
         contentmid.setBackground(new Color(255, 255, 255));
-        contentmid.setPreferredSize(new Dimension(1000, 300));
+        contentmid.setPreferredSize(new Dimension(1000, 350));
         add(contentmid, "wrap");
 
         contentbot.setLayout(new MigLayout("", "20[]20[]20", "20[]20[]20"));
-        contentbot.setBackground(new Color(255, 255, 255));
+        contentbot.setBackground(new Color(217, 217, 217));
         contentbot.setPreferredSize(new Dimension(1000, 200));
         add(contentbot, "wrap");
 
         containerButton.setLayout(new FlowLayout());
         containerButton.setBackground(new Color(217, 217, 217));
-        containerButton.setPreferredSize(new Dimension(1000, 100));
+        containerButton.setPreferredSize(new Dimension(1000, 50));
         add(containerButton, "wrap");
-
-
-
     }
 
     public void cancel() {

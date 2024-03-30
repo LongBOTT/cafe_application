@@ -100,7 +100,8 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
 
             dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
             dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
-
+            dateTextField[i].setBackground(new Color(245, 246, 250));
+            
             if (i == 0) {
                 JLabel jLabel = new JLabel("Từ Ngày");
                 jLabel.setFont(new Font("Lexend", Font.BOLD, 14));

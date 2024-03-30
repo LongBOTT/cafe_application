@@ -7,11 +7,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Receipt_DetailDAL extends Manager{
+public class Receipt_DetailDAL extends Manager {
     public Receipt_DetailDAL() {
         super("receipt_detail",
                 List.of("receipt_id",
                         "product_id",
+                        "size",
                         "quantity",
                         "price"));
     }
@@ -22,8 +23,9 @@ public class Receipt_DetailDAL extends Manager{
                 return new Receipt_Detail(
                         Integer.parseInt(row.get(0)), // receipt_id
                         Integer.parseInt(row.get(1)), // product_id
-                        Double.parseDouble(row.get(2)), // quantity
-                        Double.parseDouble(row.get(3)) // price
+                        row.get(2), // size
+                        Double.parseDouble(row.get(3)), // quantity
+                        Double.parseDouble(row.get(4)) // price
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in Receipt_DetailDAL.convertToReceipt_Details(): " + e.getMessage());
@@ -36,6 +38,7 @@ public class Receipt_DetailDAL extends Manager{
         try {
             return create(receipt_detail.getReceipt_id(),
                     receipt_detail.getProduct_id(),
+                    receipt_detail.getSize(),
                     receipt_detail.getQuantity(),
                     receipt_detail.getPrice()
             );

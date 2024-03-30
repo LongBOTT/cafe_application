@@ -2,6 +2,8 @@ package com.coffee.GUI;
 
 import com.coffee.BLL.MaterialBLL;
 import com.coffee.DTO.Function;
+import com.coffee.DTO.Material;
+import com.coffee.DTO.Shipment;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailSupplierGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.*;
@@ -9,21 +11,27 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
-public class MaterialGUI extends Layout1 {
+public class MaterialGUI extends Layout2 {
     private final MaterialBLL materialBLL = new MaterialBLL();
     private List<Function> functions;
     private RoundedPanel containerSearch;
     private JLabel iconSearch;
     private JTextField jTextFieldSearch;
     private JButton jButtonSearch;
+    private ButtonGroup btgroup;
     private boolean detail = false;
     private boolean edit = false;
     private boolean remove = false;
@@ -33,6 +41,7 @@ public class MaterialGUI extends Layout1 {
     private int indexColumnEdit = -1;
     private int indexColumnRemove = -1;
     private String[] columnNames;
+
     public MaterialGUI(List<Function> functions) {
         super();
         this.functions = functions;
@@ -47,13 +56,14 @@ public class MaterialGUI extends Layout1 {
         System.out.println(remove);
         initComponents(functions);
     }
+
     public void initComponents(List<Function> functions) {
         containerSearch = new RoundedPanel();
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
 
-        columnNames = new String[]{"ID","Tên nguyên liệu", "Số lượng", "Đơn vị", };
+        columnNames = new String[]{"ID", "Tên nguyên liệu", "Số lượng", "Đơn vị",};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
@@ -80,6 +90,33 @@ public class MaterialGUI extends Layout1 {
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
+
+        JLabel jLabelStatus = new JLabel("Trạng thái: ");
+        jLabelStatus.setFont(new Font("Lexend", Font.BOLD, 14));
+        FilterDatePanel.add(jLabelStatus);
+
+        JRadioButton radio1 = new JRadioButton("Tất cả");
+        radio1.setSelected(true);
+        radio1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchMaterials();
+            }
+        });
+        FilterDatePanel.add(radio1);
+        JRadioButton radio2 = new JRadioButton("Sắp hết hàng");
+        radio2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchMaterials();
+            }
+        });
+        FilterDatePanel.add(radio2);
+
+        btgroup = new ButtonGroup();
+        btgroup.add(radio1);
+        btgroup.add(radio2);
+
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
         containerSearch.setBackground(new Color(245, 246, 250));
         containerSearch.setPreferredSize(new Dimension(280, 40));
@@ -115,24 +152,24 @@ public class MaterialGUI extends Layout1 {
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(100, 40));
         jButtonSearch.setCursor(new Cursor(Cursor.HAND_CURSOR));
-//        jButtonSearch.addActionListener(e -> searchSuppliers());
-//        SearchPanel.add(jButtonSearch);
-//        jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
-//            @Override
-//            public void insertUpdate(DocumentEvent e) {
-//                searchSuppliers();
-//            }
-//
-//            @Override
-//            public void removeUpdate(DocumentEvent e) {
-//                searchSuppliers();
-//            }
-//
-//            @Override
-//            public void changedUpdate(DocumentEvent e) {
-//                searchSuppliers();
-//            }
-//        });
+        jButtonSearch.addActionListener(e -> searchMaterials());
+        SearchPanel.add(jButtonSearch);
+        jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                searchMaterials();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                searchMaterials();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                searchMaterials();
+            }
+        });
         loadDataTable(materialBLL.getData(materialBLL.searchMaterials("deleted = 0")));
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
@@ -200,21 +237,27 @@ public class MaterialGUI extends Layout1 {
 
 
     }
+
     public void refresh() {
         jTextFieldSearch.setText("");
         loadDataTable(materialBLL.getData(materialBLL.searchMaterials("deleted = 0")));
     }
+
     public void loadDataTable(Object[][] objects) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
 
+        if (objects.length == 0) {
+            return;
+        }
+
         Object[][] data = new Object[objects.length][4];
 
         for (int i = 0; i < objects.length; i++) {
-           data[i][0] = objects[i][0];
-           data[i][1] = objects[i][1];
-            data[i][2] = objects[i][3];
-            data[i][3] = objects[i][4];
+            data[i][0] = objects[i][0];
+            data[i][1] = objects[i][1];
+            data[i][2] = objects[i][2];
+            data[i][3] = objects[i][3];
 
             if (detail) {
                 JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
@@ -237,6 +280,7 @@ public class MaterialGUI extends Layout1 {
             model.addRow(object);
         }
     }
+
     private void selectFunction() {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
@@ -244,15 +288,41 @@ public class MaterialGUI extends Layout1 {
         if (detail && indexColumn == indexColumnDetail)
 //            new DetailSupplierGUI(materialBLL.searchMaterials("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
-        if (detail && indexColumn == indexColumnEdit) {
+            if (edit && indexColumn == indexColumnEdit) {
 //            new EditSupplierGUI(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-            refresh();
-        }
+                refresh();
+            }
 
 //        if (detail && indexColumn == indexColumnRemove)
 ////            deleteSupplier(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 //
     }
 
+    private void searchMaterials() {
+        List<Material> materialList = materialBLL.searchMaterials();
+        String status = "";
+        for (Enumeration<AbstractButton> buttons = btgroup.getElements(); buttons.hasMoreElements(); ) {
+            AbstractButton button = buttons.nextElement();
+            if (button.isSelected()) {
+                status = button.getText();
+                break;
+            }
+        }
+        if (status.equals("Tất cả")) {
+            materialList = materialBLL.searchMaterials();
+        }
+        if (status.equals("Sắp hết hàng")) {
+            materialList = materialBLL.searchMaterials("remain < 30");
+        }
+        if (jTextFieldSearch.getText().isEmpty()) {
+            loadDataTable(materialBLL.getData(materialList));
+        } else {
+            List<Integer> materialIDList = new ArrayList<>();
+            for (Material material : new MaterialBLL().findMaterials("name", jTextFieldSearch.getText()))
+                materialIDList.add(material.getId());
+            materialList.removeIf(material -> !materialIDList.contains(material.getId()));
+            loadDataTable(materialBLL.getData(materialList));
+        }
+    }
 
 }

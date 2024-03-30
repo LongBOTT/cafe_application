@@ -1,7 +1,7 @@
 package com.coffee.GUI.DialogGUI.FormDetailGUI;
 
 import com.coffee.BLL.*;
-import com.coffee.DTO.Receipt;
+import com.coffee.DTO.Import_Note;
 import com.coffee.GUI.DialogGUI.DialogFormDetail;
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.RoundedPanel;
@@ -13,30 +13,32 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-public class DetailReceiptGUI extends DialogFormDetail {
+public class DetailImportGUI extends DialogFormDetail {
     private JLabel titleName;
-    private List<JLabel> attributeReceipt;
-    private Receipt_DetailBLL receipt_detailBLL = new Receipt_DetailBLL();
-
+    private List<JLabel> attributeImport_Note;
+    private Import_NoteBLL import_NoteBLL = new Import_NoteBLL();
+    private ShipmentBLL shipmentBLL = new ShipmentBLL();
     private DataTable dataTable;
     private String[] columnNames;
     private RoundedScrollPane scrollPane;
 
-    public DetailReceiptGUI(Receipt receipt) {
+    public DetailImportGUI(Import_Note import_note) {
         super();
-        super.setTitle("Thông tin hóa đơn");
-        super.setSize(new Dimension(600, 700));
+        super.setTitle("Thông tin phiếu nhập");
+        super.setSize(new Dimension(1000, 700));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
-        init(receipt);
+        init(import_note);
         setVisible(true);
     }
 
-    private void init(Receipt receipt) {
+    private void init(Import_Note import_note) {
         titleName = new JLabel();
-        attributeReceipt = new ArrayList<>();
+        attributeImport_Note = new ArrayList<>();
         contenttop.setLayout(new MigLayout("",
                 "50[]20[]50",
                 "10[]10[]10"));
@@ -44,77 +46,66 @@ public class DetailReceiptGUI extends DialogFormDetail {
                 "50[]20[]50",
                 "10[]10[]10"));
 
-        titleName.setText("Thông tin Hóa Đơn");
+        titleName.setText("Thông tin Phiếu Nhập");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
         titleName.setHorizontalAlignment(JLabel.CENTER);
         titleName.setVerticalAlignment(JLabel.CENTER);
         title.add(titleName, BorderLayout.CENTER);
 
-        for (String string : new String[]{"Mã Hóa Đơn", "Nhân Viên", "Ngày Tạo"}) {
+        for (String string : new String[]{"Mã Phiếu Nhập", "Nhân Viên", "Ngày Nhập"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
             label.setFont((new Font("Public Sans", Font.BOLD, 16)));
-            attributeReceipt.add(label);
+            attributeImport_Note.add(label);
             contenttop.add(label);
             JLabel textField = new JLabel();
             textField.setPreferredSize(new Dimension(1000, 30));
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
-            if (string.trim().equals("Ngày Tạo")) {
-                textField.setText(receipt.getInvoice_date().toString());
+            if (string.trim().equals("Ngày Nhập")) {
+                textField.setText(import_note.getReceived_date().toString());
             }
-            if (string.trim().equals("Mã Hóa Đơn")) {
-                String receiptId = Integer.toString(receipt.getId());
-                textField.setText(receiptId);
+            if (string.trim().equals("Mã Phiếu Nhập")) {
+                String import_noteId = Integer.toString(import_note.getId());
+                textField.setText(import_noteId);
             }
             if (string.equals("Nhân Viên")) {
-                String name = new StaffBLL().findStaffsBy(Map.of("id", receipt.getStaff_id())).get(0).getName();
+                String name = new StaffBLL().findStaffsBy(Map.of("id", import_note.getStaff_id())).get(0).getName();
                 textField.setText(name);
             }
             contenttop.add(textField, "wrap");
 
         }
 
-        columnNames = new String[]{"Sản Phẩm", "Size", "SL", "Giá",};
+        columnNames = new String[]{"Mã Lô", "Nguyên Liệu", "Tên NCC", "SL", "Đơn Giá", "MFG", "EXP",};
         dataTable = new DataTable(new Object[0][0], columnNames);
-        dataTable.getColumnModel().getColumn(1).setMaxWidth(50);
-        dataTable.getColumnModel().getColumn(2).setMaxWidth(50);
-        dataTable.getColumnModel().getColumn(3).setMaxWidth(250);
+        dataTable.getColumnModel().getColumn(0).setMaxWidth(100);
+        dataTable.getColumnModel().getColumn(1).setMaxWidth(500);
+        dataTable.getColumnModel().getColumn(2).setMaxWidth(400);
+        dataTable.getColumnModel().getColumn(3).setMaxWidth(50);
+        dataTable.getColumnModel().getColumn(4).setMaxWidth(250);
+        dataTable.getColumnModel().getColumn(5).setMaxWidth(250);
+        dataTable.getColumnModel().getColumn(6).setMaxWidth(250);
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         contentmid.add(scrollPane, BorderLayout.CENTER);
 
-        loadDataTable(receipt_detailBLL.getData(receipt_detailBLL.findReceipt_DetailsBy(Map.of("receipt_id", receipt.getId()))));
+        loadDataTable(shipmentBLL.getData(shipmentBLL.findShipmentsBy(Map.of("import_id", import_note.getId()))));
 
-        for (String string : new String[]{"Tổng Tiền", "Tiền Nhận", "Tiền Thối"}) {
-            JLabel label = new JLabel();
-            label.setPreferredSize(new Dimension(170, 30));
-            label.setText(string);
-            label.setFont((new Font("Public Sans", Font.BOLD, 16)));
-            attributeReceipt.add(label);
-            contentbot.add(label);
+        JLabel label = new JLabel();
+        label.setPreferredSize(new Dimension(170, 30));
+        label.setText("Tổng Tiền");
+        label.setFont((new Font("Public Sans", Font.BOLD, 16)));
+        contentbot.add(label);
 
-            JLabel textField = new JLabel();
-
-            if (string.equals("Tổng Tiền")) {
-                String total = Double.toString(receipt.getTotal());
-                textField.setText(total);
-            }
-            if (string.equals("Tiền Nhận")) {
-                String total = Double.toString(receipt.getReceived());
-                textField.setText(total);
-            }
-            if (string.equals("Tiền Thối")) {
-                String total = Double.toString(receipt.getExcess());
-                textField.setText(total);
-            }
-
-            textField.setPreferredSize(new Dimension(1000, 30));
-            textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-            textField.setBackground(new Color(245, 246, 250));
-            contentbot.add(textField, "wrap");
-        }
+        JLabel textField = new JLabel();
+        String total = Double.toString(import_note.getTotal());
+        textField.setText(total);
+        textField.setPreferredSize(new Dimension(1000, 30));
+        textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+        textField.setBackground(new Color(245, 246, 250));
+        contentbot.add(textField, "wrap");
 
         RoundedPanel roundedPanel = new RoundedPanel();
         roundedPanel.setLayout(new GridBagLayout());
@@ -123,7 +114,7 @@ public class DetailReceiptGUI extends DialogFormDetail {
         roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         containerButton.add(roundedPanel);
 
-        JLabel panel = new JLabel("In hoá đơn");
+        JLabel panel = new JLabel("In phiếu nhập");
         panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
         panel.setIcon(new FlatSVGIcon("icon/print.svg"));
         roundedPanel.add(panel);
@@ -142,15 +133,20 @@ public class DetailReceiptGUI extends DialogFormDetail {
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
 
-            int product_id = Integer.parseInt(data[i][1].toString());
-            data[i][1] = "<html>" + new ProductBLL().findProductsBy(Map.of("id", product_id)).get(0).getName() + "</html>";
+            int material_id = Integer.parseInt(data[i][1].toString());
+            data[i][1] = "<html>" + new MaterialBLL().findMaterialsBy(Map.of("id", material_id)).get(0).getName() + "</html>";
 
-            if (data[i][2].equals("0"))
-                data[i][2] = "";
+            int supplier_id = Integer.parseInt(data[i][2].toString());
+            data[i][2] = "<html>" + new SupplierBLL().findSuppliersBy(Map.of("id", supplier_id)).get(0).getName() + "</html>";
+
+            
         }
 
         for (Object[] object : data) {
-            object = Arrays.copyOfRange(object, 1, 5);
+            Object[] objects1 = object;
+            System.arraycopy(objects1, 0, object, 0, 3);
+            System.arraycopy(objects1, 4, object, 3, 4);
+            object = Arrays.copyOfRange(object, 0, 7);
             model.addRow(object);
         }
     }

@@ -52,6 +52,7 @@ public class Export_Detail {
     public String toString() {
         return export_id + " | " +
                 shipment_id + " | " +
+                "Name" + " | " +
                 quantity + " | " +
                 reason;
     }
