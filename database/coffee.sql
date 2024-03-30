@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 28, 2024 at 04:06 AM
+-- Generation Time: Mar 30, 2024 at 07:06 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -200,6 +200,8 @@ INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 (2, 20, 5),
 (2, 20, 6),
 (3, 2, 1),
+(3, 2, 5),
+(3, 2, 6),
 (3, 7, 1),
 (3, 7, 5),
 (3, 7, 6),
@@ -308,6 +310,17 @@ CREATE TABLE `export_detail` (
   `reason` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `export_detail`
+--
+
+INSERT INTO `export_detail` (`export_id`, `shipment_id`, `quantity`, `reason`) VALUES
+(1, 1, 30, 'Bán'),
+(1, 2, 30, 'Bán'),
+(1, 3, 30, 'Bán'),
+(1, 4, 30, 'Bán'),
+(1, 5, 30, 'Huỷ');
+
 -- --------------------------------------------------------
 
 --
@@ -404,7 +417,6 @@ INSERT INTO `leave_of_absence_form` (`id`, `staff_id`, `date`, `start_date`, `en
 CREATE TABLE `material` (
   `id` bigint(20) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
-  `supplier_id` bigint(20) DEFAULT NULL,
   `remain` double DEFAULT NULL,
   `unit` varchar(255) DEFAULT NULL,
   `deleted` bit(1) DEFAULT NULL
@@ -414,50 +426,50 @@ CREATE TABLE `material` (
 -- Dumping data for table `material`
 --
 
-INSERT INTO `material` (`id`, `name`, `supplier_id`, `remain`, `unit`, `deleted`) VALUES
-(3, 'Cà phê bột truyền thống', 2, 10, 'kg', b'0'),
-(4, 'Đường túi', 2, 50, 'Túi', b'0'),
-(5, 'Bánh cookie', 2, 100, 'Cái', b'0'),
-(6, 'Đá viên', 2, 20000, 'g', b'0'),
-(7, 'Sữa đặc', 1, 100, 'ml', b'0'),
-(8, 'Nước nóng', 1, 100, 'ml', b'0'),
-(9, 'Syrup hạnh nhân', 4, 100, 'ml', b'0'),
-(10, 'Sữa tươi', 2, 100, 'ml', b'0'),
-(11, 'Sữa Béo (NDC)', 4, 100, 'ml', b'0'),
-(12, 'Thạch Cà Phê', 4, 500, 'g', b'0'),
-(13, 'Milk foam', 1, 200, 'ml', b'0'),
-(14, 'Bột chocolate trang trí', 2, 50, 'g', b'0'),
-(15, 'Sốt chocolate', 1, 200, 'ml', b'0'),
-(16, 'Cà phê đen pha sẵn', 3, 500, 'ml', b'0'),
-(18, 'Đường nước ', 2, 100, 'g', b'0'),
-(19, 'Trà đào pha sẵn ', 1, 100, 'ml', b'0'),
-(20, 'Đào lát', 3, 100, 'g', b'0'),
-(21, 'Hạt sen', 1, 200, 'g', b'0'),
-(22, 'Củ năng', 2, 500, 'g', b'0'),
-(23, 'Syrup vải', 1, 200, 'ml', b'0'),
-(24, 'Nước vải ngâm', 1, 500, 'ml', b'0'),
-(25, 'Vải trái', 1, 200, 'trái', b'0'),
-(26, 'Thạch vải ', 3, 100, 'g', b'0'),
-(27, 'Bột freeze mix', 3, 200, 'g', b'0'),
-(28, 'Whipping cream ', 2, 50, 'g', b'0'),
-(29, 'Bột cà phê espresso', 2, 1, 'lít', b'0'),
-(30, 'Bột green tea mix mới ', 2, 100, 'g', b'0'),
-(31, 'Thạch trà xanh ', 2, 500, 'g', b'0'),
-(32, 'Bột trà xanh trang trí', 2, 200, 'g', b'0'),
-(33, 'Hỗn hợp sữa pha sẵn', 3, 500, 'ml', b'0'),
-(34, 'Bột chocolate ', 3, 200, 'g', b'0'),
-(35, 'Sốt chocolate trang trí', 2, 50, 'ml', b'0'),
-(36, 'Cà phê sữa pha sẵn', 1, 500, 'ml', b'0'),
-(37, 'Thạch cà phê', 3, 300, 'g', b'0'),
-(38, 'Trà oolong pha sẵn ', 1, 200, 'ml', b'0'),
-(39, 'Thạch Đào', 2, 200, 'g', b'0'),
-(40, 'Syrup Đào', 3, 100, 'ml', b'0'),
-(41, 'Syrup sả', 2, 100, 'ml', b'0'),
-(42, 'Sốt caramel', 2, 100, 'ml', b'0'),
-(43, 'Bánh Chuối', 1, 10, 'cái', b'0'),
-(44, 'Bánh Su Kem', 1, 12, 'cái', b'0'),
-(45, 'Phô Mai Chanh Dây', 1, 15, 'cái', b'0'),
-(46, 'Phô Mai Trà Xanh', 1, 10, 'cái', b'0');
+INSERT INTO `material` (`id`, `name`, `remain`, `unit`, `deleted`) VALUES
+(3, 'Cà phê bột truyền thống', 10, 'kg', b'0'),
+(4, 'Đường túi', 50, 'Túi', b'0'),
+(5, 'Bánh cookie', 100, 'Cái', b'0'),
+(6, 'Đá viên', 20000, 'g', b'0'),
+(7, 'Sữa đặc', 100, 'ml', b'0'),
+(8, 'Nước nóng', 100, 'ml', b'0'),
+(9, 'Syrup hạnh nhân', 100, 'ml', b'0'),
+(10, 'Sữa tươi', 100, 'ml', b'0'),
+(11, 'Sữa Béo (NDC)', 100, 'ml', b'0'),
+(12, 'Thạch Cà Phê', 500, 'g', b'0'),
+(13, 'Milk foam', 200, 'ml', b'0'),
+(14, 'Bột chocolate trang trí', 50, 'g', b'0'),
+(15, 'Sốt chocolate', 200, 'ml', b'0'),
+(16, 'Cà phê đen pha sẵn', 500, 'ml', b'0'),
+(18, 'Đường nước ', 100, 'g', b'0'),
+(19, 'Trà đào pha sẵn ', 100, 'ml', b'0'),
+(20, 'Đào lát', 100, 'g', b'0'),
+(21, 'Hạt sen', 200, 'g', b'0'),
+(22, 'Củ năng', 500, 'g', b'0'),
+(23, 'Syrup vải', 200, 'ml', b'0'),
+(24, 'Nước vải ngâm', 500, 'ml', b'0'),
+(25, 'Vải trái', 200, 'trái', b'0'),
+(26, 'Thạch vải ', 100, 'g', b'0'),
+(27, 'Bột freeze mix', 200, 'g', b'0'),
+(28, 'Whipping cream ', 50, 'g', b'0'),
+(29, 'Bột cà phê espresso', 1, 'lít', b'0'),
+(30, 'Bột green tea mix mới ', 100, 'g', b'0'),
+(31, 'Thạch trà xanh ', 500, 'g', b'0'),
+(32, 'Bột trà xanh trang trí', 200, 'g', b'0'),
+(33, 'Hỗn hợp sữa pha sẵn', 500, 'ml', b'0'),
+(34, 'Bột chocolate ', 200, 'g', b'0'),
+(35, 'Sốt chocolate trang trí', 50, 'ml', b'0'),
+(36, 'Cà phê sữa pha sẵn', 500, 'ml', b'0'),
+(37, 'Thạch cà phê', 300, 'g', b'0'),
+(38, 'Trà oolong pha sẵn ', 200, 'ml', b'0'),
+(39, 'Thạch Đào', 200, 'g', b'0'),
+(40, 'Syrup Đào', 100, 'ml', b'0'),
+(41, 'Syrup sả', 100, 'ml', b'0'),
+(42, 'Sốt caramel', 100, 'ml', b'0'),
+(43, 'Bánh Chuối', 10, 'cái', b'0'),
+(44, 'Bánh Su Kem', 12, 'cái', b'0'),
+(45, 'Phô Mai Chanh Dây', 15, 'cái', b'0'),
+(46, 'Phô Mai Trà Xanh', 10, 'cái', b'0');
 
 -- --------------------------------------------------------
 
@@ -518,7 +530,7 @@ CREATE TABLE `payroll` (
 --
 
 INSERT INTO `payroll` (`id`, `name`, `entry_date`, `month`, `year`, `total_salary`, `paid`, `debt`) VALUES
-(2, 'Bảng lương 01/03/2024 - 31/03/2024', '2024-03-28', 3, 2024, 2941750, 1056750, 1885000);
+(2, 'Bảng lương 01/03/2024 - 31/03/2024', '2024-03-28', 3, 2024, 2941750, 715000, 2226750);
 
 -- --------------------------------------------------------
 
@@ -545,7 +557,7 @@ CREATE TABLE `payroll_detail` (
 INSERT INTO `payroll_detail` (`payroll_id`, `staff_id`, `hours_amount`, `bonus_amount`, `deduction_amount`, `salary_amount`, `status`, `role_id`, `entry_date`) VALUES
 (2, 4, 39, 35000, 0, 1010000, b'0', 3, '2024-03-28 07:49:54'),
 (2, 5, 34, 25000, 0, 875000, b'0', 4, '2024-03-28 09:46:57'),
-(2, 6, 16.67, 15000, 90000, 341750, b'1', 4, '2024-03-28 09:48:38'),
+(2, 6, 16.67, 15000, 90000, 341750, b'0', 4, '2024-03-28 09:48:38'),
 (2, 7, 28, 15000, 0, 715000, b'1', 4, '2024-03-28 09:46:31');
 
 -- --------------------------------------------------------
@@ -636,7 +648,7 @@ CREATE TABLE `receipt` (
 --
 
 INSERT INTO `receipt` (`id`, `staff_id`, `total`, `invoice_date`, `received`, `excess`) VALUES
-(1, 1, 0, '2024-02-07', 0, 0);
+(1, 1, 40, '2024-02-07', 10, 30);
 
 -- --------------------------------------------------------
 
@@ -647,9 +659,25 @@ INSERT INTO `receipt` (`id`, `staff_id`, `total`, `invoice_date`, `received`, `e
 CREATE TABLE `receipt_detail` (
   `receipt_id` bigint(20) NOT NULL,
   `product_id` bigint(20) NOT NULL,
+  `size` varchar(255) NOT NULL,
   `quantity` double DEFAULT NULL,
   `price` double DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `receipt_detail`
+--
+
+INSERT INTO `receipt_detail` (`receipt_id`, `product_id`, `size`, `quantity`, `price`) VALUES
+(1, 1, 'M', 2, 200),
+(1, 2, 'L', 2, 200),
+(1, 3, 'M', 2, 200),
+(1, 4, 'L', 2, 200),
+(1, 5, 'M', 2, 200),
+(1, 6, 'L', 2, 200),
+(1, 7, 'L', 2, 200),
+(1, 8, '0', 2, 200),
+(1, 9, '0', 2, 200);
 
 -- --------------------------------------------------------
 
@@ -1003,12 +1031,25 @@ INSERT INTO `role_detail_deduction` (`role_id`, `staff_id`, `entry_date`, `deduc
 CREATE TABLE `shipment` (
   `id` bigint(20) NOT NULL,
   `material_id` bigint(20) DEFAULT NULL,
+  `supplier_id` bigint(20) DEFAULT NULL,
   `import_id` bigint(20) DEFAULT NULL,
   `quantity` double DEFAULT NULL,
+  `remain` double DEFAULT NULL,
   `unit_price` double DEFAULT NULL,
   `mfg` date DEFAULT NULL,
   `exp` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `shipment`
+--
+
+INSERT INTO `shipment` (`id`, `material_id`, `supplier_id`, `import_id`, `quantity`, `remain`, `unit_price`, `mfg`, `exp`) VALUES
+(1, 3, 1, 1, 30, 30, 200, '2024-03-03', '2024-04-01'),
+(2, 4, 1, 1, 30, 30, 200, '2024-03-03', '2024-04-01'),
+(3, 5, 1, 1, 30, 30, 200, '2024-03-03', '2024-04-01'),
+(4, 6, 1, 1, 30, 20, 200, '2024-03-03', '2024-04-01'),
+(5, 7, 1, 1, 30, 30, 200, '2024-03-03', '2024-04-01');
 
 -- --------------------------------------------------------
 
@@ -1191,8 +1232,7 @@ ALTER TABLE `leave_of_absence_form`
 -- Indexes for table `material`
 --
 ALTER TABLE `material`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_material_supplier` (`supplier_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `module`
@@ -1232,8 +1272,9 @@ ALTER TABLE `receipt`
 -- Indexes for table `receipt_detail`
 --
 ALTER TABLE `receipt_detail`
-  ADD PRIMARY KEY (`receipt_id`,`product_id`),
-  ADD KEY `fk_receipt_detail_product` (`product_id`);
+  ADD PRIMARY KEY (`receipt_id`,`product_id`,`size`) USING BTREE,
+  ADD KEY `fk_receipt_detail_product` (`product_id`),
+  ADD KEY `receipt_detail_product_size_fk` (`size`);
 
 --
 -- Indexes for table `recipe`
@@ -1282,7 +1323,8 @@ ALTER TABLE `role_detail_deduction`
 ALTER TABLE `shipment`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_shipment_import_note` (`import_id`),
-  ADD KEY `fk_shipment_material` (`material_id`);
+  ADD KEY `fk_shipment_material` (`material_id`),
+  ADD KEY `fk_shipment_supplier` (`supplier_id`);
 
 --
 -- Indexes for table `staff`
@@ -1370,12 +1412,6 @@ ALTER TABLE `leave_of_absence_form`
   ADD CONSTRAINT `fk_leave_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `material`
---
-ALTER TABLE `material`
-  ADD CONSTRAINT `fk_material_supplier` FOREIGN KEY (`supplier_id`) REFERENCES `supplier` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
 -- Constraints for table `payroll_detail`
 --
 ALTER TABLE `payroll_detail`
@@ -1393,7 +1429,8 @@ ALTER TABLE `receipt`
 --
 ALTER TABLE `receipt_detail`
   ADD CONSTRAINT `fk_receipt_detail_product` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_receipt_detail_receipt` FOREIGN KEY (`receipt_id`) REFERENCES `receipt` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_receipt_detail_receipt` FOREIGN KEY (`receipt_id`) REFERENCES `receipt` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `receipt_detail_product_size_fk` FOREIGN KEY (`size`) REFERENCES `product` (`size`);
 
 --
 -- Constraints for table `recipe`
@@ -1433,7 +1470,8 @@ ALTER TABLE `role_detail_deduction`
 --
 ALTER TABLE `shipment`
   ADD CONSTRAINT `fk_shipment_import_note` FOREIGN KEY (`import_id`) REFERENCES `import_note` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_shipment_material` FOREIGN KEY (`material_id`) REFERENCES `material` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_shipment_material` FOREIGN KEY (`material_id`) REFERENCES `material` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_shipment_supplier` FOREIGN KEY (`supplier_id`) REFERENCES `supplier` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `work_schedule`
