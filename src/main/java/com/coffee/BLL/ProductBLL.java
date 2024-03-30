@@ -43,12 +43,12 @@ public class ProductBLL extends Manager<Product>{
     }
 
     public Pair<Boolean, String> updateProduct(Product product) {
-        Pair<Boolean, String> result;
+//        Pair<Boolean, String> result;
 
-        result = validateProductAll(product);
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
+//        result = validateProductAll(product);
+//        if(!result.getKey()){
+//            return new Pair<>(false,result.getValue());
+//        }
 
         if (productDAL.updateProduct(product) == 0)
             return new Pair<>(false, "Cập nhật sản phẩm không thành công.");

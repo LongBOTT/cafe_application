@@ -190,12 +190,48 @@ public class AddProductGUI extends DialogFormDetail_1 {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String selectedSize = (String) cbSize.getSelectedItem();
-                if (!addedLabels.contains(selectedSize)) {
-                    if (selectedLabel != null) {
-                        selectedLabel.setBackground(Color.WHITE);
-                        selectedLabel.setForeground(Color.BLACK);
+                if (selectedLabel != null) {
+                    selectedLabel.setBackground(Color.WHITE);
+                    selectedLabel.setForeground(Color.BLACK);
+                }
+                if ("0".equals(selectedSize)) {
+                    panelSize.removeAll();
+                    addedLabels.clear();
+                    addedLabels.add("0");
+                    if (!addProductBySize("0")) {
+                        return;
                     }
-                    if(!addProductBySize(selectedSize)){
+                    JLabel label = new JLabel("0");
+                    label.setPreferredSize(new Dimension(30,30));
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
+                    label.setFocusable(true);
+                    label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                    label.setOpaque(true);
+                    label.setBackground(new Color(59, 130, 198));
+                    label.setForeground(Color.WHITE);
+                    selectedLabel = label;
+                    label.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            if (selectedLabel != null) {
+                                selectedLabel.setBackground(Color.WHITE);
+                                selectedLabel.setForeground(Color.BLACK);
+                            }
+                            label.setBackground(new Color(59, 130, 198));
+                            label.setForeground(Color.WHITE);
+                            selectedLabel = label;
+                            loadPriceBySize("0");
+                            loadRecipeBySize("0");
+                        }
+                    });
+                    panelSize.add(label);
+                } else {
+                    if (addedLabels.contains("0")) {
+                        panelSize.removeAll();
+                        addedLabels.remove("0");
+                    }
+                    if (!addProductBySize(selectedSize)) {
                         return;
                     }
                     JLabel label = new JLabel(selectedSize);
@@ -209,7 +245,6 @@ public class AddProductGUI extends DialogFormDetail_1 {
                     label.setForeground(Color.WHITE);
                     selectedLabel = label;
                     addedLabels.add(selectedSize);
-
                     label.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mouseClicked(MouseEvent e) {
@@ -225,13 +260,13 @@ public class AddProductGUI extends DialogFormDetail_1 {
                         }
                     });
                     panelSize.add(label);
-                    panelSize.revalidate();
-                    panelSize.repaint();
-
-                  resetTxt();
                 }
+                panelSize.revalidate();
+                panelSize.repaint();
+                resetTxt();
             }
         });
+
 
         JButton deleteSize = new JButton();
         deleteSize.setPreferredSize(new Dimension(30,30));

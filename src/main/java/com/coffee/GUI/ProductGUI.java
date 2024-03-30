@@ -368,24 +368,18 @@ public void loadCategory() {
         Object selectedValue = model.getValueAt(indexRow,1);
 
         if (indexColumn == indexColumnDetail) {
-            System.out.println(selectedValue);
-            List<Product> p = productBLL.findProductsBy(Map.of("name", selectedValue.toString()));
-            for(Product product: p){
-                System.out.println(p);
-            }
             new DetailProductGUI( productBLL.findProductsBy(Map.of("name", selectedValue.toString())));
         }
 
-
         if ( indexColumn == indexColumnEdit) {
-            new EditProductGUI(ConvertProductUnique(productBLL.getData(productBLL.findProducts("name", selectedValue.toString()))));
-
-
-//            refresh();
+            new EditProductGUI(productBLL.findProductsBy(Map.of("name", selectedValue.toString())));
+            refresh();
         }
-        if (indexColumn == indexColumnRemove)
-           deleteProduct(productBLL.searchProducts("deleted = 0").get(indexRow));
-        refresh();
+
+        if (indexColumn == indexColumnRemove) {
+            deleteProduct(productBLL.searchProducts("deleted = 0").get(indexRow));
+            refresh();
+        }
     }
     private void deleteProduct(Product product) {
         String[] options = new String[]{"Huỷ", "Xác nhận"};
