@@ -15,6 +15,7 @@ public class DetailMaterialGUI extends DialogForm {
     private java.util.List<JLabel> attributeMaterial;
     private List<JTextField> jTextFieldMaterial;
     private SupplierBLL supplierBLL = new SupplierBLL();
+
     public DetailMaterialGUI(Material material) {
         super();
         super.setTitle("Chi tiết nguyên liệu");
@@ -37,7 +38,7 @@ public class DetailMaterialGUI extends DialogForm {
         titleName.setVerticalAlignment(JLabel.CENTER);
         title.add(titleName, BorderLayout.CENTER);
 
-        for (String string : new String[]{"Tên nguyên liệu", "Số lượng", "Đơn vị", "Nhà cung cấp"}) {
+        for (String string : new String[]{"Tên nguyên liệu", "Số lượng", "Đơn vị"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
@@ -56,7 +57,7 @@ public class DetailMaterialGUI extends DialogForm {
         jTextFieldMaterial.get(0).setText(material.getName());
         jTextFieldMaterial.get(1).setText(String.valueOf(material.getRemain()));
         jTextFieldMaterial.get(2).setText(material.getUnit());
-        jTextFieldMaterial.get(3).setText(supplierBLL.findSuppliers("id",String.valueOf(material.getSupplier_id())).get(0).getName());
+//        jTextFieldMaterial.get(3).setText(supplierBLL.findSuppliers("id",String.valueOf(material.getSupplier_id())).get(0).getName());
 
     }
 

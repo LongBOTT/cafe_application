@@ -54,58 +54,58 @@ public class AddMaterialGUI extends DialogForm {
         titleName.setVerticalAlignment(JLabel.CENTER);
         title.add(titleName, BorderLayout.CENTER);
 
-        for (String string : new String[]{"Tên nguyên liệu", "Đơn vị", "Nhà cung cấp"}) {
+        for (String string : new String[]{"Tên nguyên liệu", "Đơn vị"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
             label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
             attributeMaterial.add(label);
             content.add(label);
-            if(string.equals("Nhà cung cấp")){
-                listSupplier = new JComboBox<>();
-                listSupplier.setPreferredSize(new Dimension(1000, 30));
-                listSupplier.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-                listSupplier.setBackground(new Color(245, 246, 250));
-                content.add(listSupplier);
-
-                Object[][] objects = supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0"));
-                loadDataSupplier(objects);
-
-                JButton btnThem = new JButton();
-                ImageIcon icon = new FlatSVGIcon("icon/add.svg");
-                Image image = icon.getImage();
-                Image newImg = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
-                icon = new ImageIcon(newImg);
-                btnThem.setIcon(icon);
-                btnThem.setPreferredSize(new Dimension(30, 30));
-                btnThem.setBackground(new Color(0, 182, 62));
-                btnThem.setFont(new Font("Public Sans", Font.BOLD, 16));
-                btnThem.setForeground(Color.WHITE);
-                btnThem.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-                btnThem.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                        new AddSupplierGUI();
-                        Object[][] objects = supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0"));
-                        loadDataSupplier(objects);
-                    }
-                });
-                content.add(btnThem,"wrap");
-                continue;
-            }
-            if(string.equals("Đơn vị")){
+//            if(string.equals("Nhà cung cấp")){
+//                listSupplier = new JComboBox<>();
+//                listSupplier.setPreferredSize(new Dimension(1000, 30));
+//                listSupplier.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+//                listSupplier.setBackground(new Color(245, 246, 250));
+//                content.add(listSupplier);
+//
+//                Object[][] objects = supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0"));
+//                loadDataSupplier(objects);
+//
+//                JButton btnThem = new JButton();
+//                ImageIcon icon = new FlatSVGIcon("icon/add.svg");
+//                Image image = icon.getImage();
+//                Image newImg = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+//                icon = new ImageIcon(newImg);
+//                btnThem.setIcon(icon);
+//                btnThem.setPreferredSize(new Dimension(30, 30));
+//                btnThem.setBackground(new Color(0, 182, 62));
+//                btnThem.setFont(new Font("Public Sans", Font.BOLD, 16));
+//                btnThem.setForeground(Color.WHITE);
+//                btnThem.setCursor(new Cursor(Cursor.HAND_CURSOR));
+//
+//                btnThem.addMouseListener(new MouseAdapter() {
+//                    @Override
+//                    public void mousePressed(MouseEvent e) {
+//                        new AddSupplierGUI();
+//                        Object[][] objects = supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0"));
+//                        loadDataSupplier(objects);
+//                    }
+//                });
+//                content.add(btnThem,"wrap");
+//                continue;
+//            }
+            if (string.equals("Đơn vị")) {
                 listUnit = new JComboBox<>();
                 listUnit.setPreferredSize(new Dimension(1000, 30));
                 listUnit.setFont((new Font("Public Sans", Font.PLAIN, 14)));
                 listUnit.setBackground(new Color(245, 246, 250));
 
-                String[] units = {"Chọn đơn vị","kg", "g", "ml", "túi", "cái","trái","hạt"};
+                String[] units = {"Chọn đơn vị", "kg", "g", "ml", "túi", "cái", "trái", "hạt"};
 
                 for (String unit : units) {
                     listUnit.addItem(unit);
                 }
-                content.add(listUnit,"wrap");
+                content.add(listUnit, "wrap");
                 continue;
             }
             JTextField textField = new JTextField();
@@ -154,58 +154,58 @@ public class AddMaterialGUI extends DialogForm {
         Pair<Boolean, String> result;
         int id;
         String name, unit;
-        int id_Supplier;
+//        int id_Supplier;
 
         id = materialBLL.getAutoID(materialBLL.searchMaterials());
         name = jTextFieldMaterial.get(0).getText();
 
         unit = listUnit.getSelectedItem().toString();
-        if(unit.equals("Chọn đơn vị")){
+        if (unit.equals("Chọn đơn vị")) {
             JOptionPane.showMessageDialog(null, "Chưa chọn đơn vị",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         String supplier = listSupplier.getSelectedItem().toString();
-        if(supplier.equals("Chọn nhà cung cấp")){
+        if (supplier.equals("Chọn nhà cung cấp")) {
             JOptionPane.showMessageDialog(null, "Chưa chọn nhà cung cấp",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
         String[] parts = supplier.split(" - ");
         result = materialBLL.validateSupplier(parts[0]);
-        if(!result.getKey()){
+        if (!result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        id_Supplier = Integer.parseInt(parts[0]);
-        Material material = new Material(id, name, id_Supplier, 0, unit, false);
+//        id_Supplier = Integer.parseInt(parts[0]);
+        Material material = new Material(id, name, 0, unit, false);
         result = materialBLL.addMaterial(material);
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                dispose();
-            } else {
-                JOptionPane.showMessageDialog(null, result.getValue(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
-            }
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(null, result.getValue(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
+    }
 
-        public void loadDataSupplier (Object[][]objects){
-            Object[][] data = new Object[objects.length][objects[0].length];
+    public void loadDataSupplier(Object[][] objects) {
+        Object[][] data = new Object[objects.length][objects[0].length];
 
-            for (int i = 0; i < objects.length; i++) {
-                System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
-            }
-            listSupplier.removeAllItems();
-            listSupplier.addItem("Chọn nhà cung cấp");
-            listSupplier.setSelectedItem("Chọn nhà cung cấp");
-            for (Object[] object : data) {
-                String id = object[0].toString();
-                String name = object[1].toString();
-                listSupplier.addItem(id + " - " + name);
-            }
+        for (int i = 0; i < objects.length; i++) {
+            System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
         }
+        listSupplier.removeAllItems();
+        listSupplier.addItem("Chọn nhà cung cấp");
+        listSupplier.setSelectedItem("Chọn nhà cung cấp");
+        for (Object[] object : data) {
+            String id = object[0].toString();
+            String name = object[1].toString();
+            listSupplier.addItem(id + " - " + name);
+        }
+    }
 
 }
