@@ -71,6 +71,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
     private JComboBox<String> cbSize;
     private JPanel panelSize;
     private JTextField txtPrice;
+    private JTextField txtCapitalPrice;
     private JTextField txtCategory;
     private JTextField txtQuantity;
     private JTextField txtUnit;
@@ -128,7 +129,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         top.setLayout(new FlowLayout());
 
         containerAtributeProduct = new RoundedPanel();
-        containerAtributeProduct.setLayout(new MigLayout("", "[]40[][][]100", "15[]15[]15[]15"));
+        containerAtributeProduct.setLayout(new MigLayout("", "[]40[][][]100", "10[]10[]10[]10"));
         containerAtributeProduct.setBackground(new Color(217, 217, 217));
         containerAtributeProduct.setPreferredSize(new Dimension(600, 200));
 
@@ -173,6 +174,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         JLabel lblCategory = createLabel("Thể loại");
         JLabel lblSize = createLabel("Size");
         JLabel lblPrice = createLabel("Giá bán");
+        JLabel lblCapitalPrice = createLabel("Giá Vốn");
 
         txtNameProduct = createTextField();
         txtCategory = createTextField();
@@ -298,6 +300,8 @@ public class AddProductGUI extends DialogFormDetail_1 {
         });
 
         txtPrice = createTextField();
+        txtCapitalPrice = createTextField();
+        txtCapitalPrice.setFocusable(false);
 
         txtNameProduct.addFocusListener(new FocusAdapter() {
             @Override
@@ -337,6 +341,11 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
         containerAtributeProduct.add(lblPrice);
         containerAtributeProduct.add(txtPrice, "wrap");
+
+        containerAtributeProduct.add(lblCapitalPrice);
+        containerAtributeProduct.add(txtCapitalPrice, "wrap");
+
+
 
 
         lblListMaterial = new JLabel("Danh sách nguyên liệu");
@@ -427,21 +436,18 @@ public class AddProductGUI extends DialogFormDetail_1 {
         containerInforMaterial.add(txtUnit);
         containerInforMaterial.add(btnThem);
 
-        columnNames = new String[]{"STT", "Tên nguyên liệu", "Số lượng", "Đơn vị"};
-        columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
-        columnNames[columnNames.length - 1] = "Sửa";
+        columnNames = new String[]{"ID", "Tên nguyên liệu", "Đơn vị","Giá vốn", "SL","T.Tiền"};
         columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
         columnNames[columnNames.length - 1] = "Xóa";
         dataTable = new DataTable(new Object[0][0], columnNames,
                 e -> selectFunction(),
-                false, true, true, 4);
-        int[] columnWidths = {50, 300, 50, 50};
+                false, true, true, 6,true,4);
+        int[] columnWidths = {50, 300, 50, 50, 50, 50};
 
         for (int i = 0; i < columnWidths.length; i++) {
             dataTable.getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
         }
-        dataTable.getColumnModel().getColumn(4).setCellRenderer(new CustomPanelRenderer());
-        dataTable.getColumnModel().getColumn(5).setCellRenderer(new CustomPanelRenderer());
+
 
 
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -606,7 +612,6 @@ public class AddProductGUI extends DialogFormDetail_1 {
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
 
-//            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             String imageFile = "SP" + productID + ".svg";
             String imageName = "SP" + productID;
             java.nio.file.Path destinationPath = Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "image", "Product", imageFile);
@@ -673,7 +678,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
     private void addDataToTable(int materialID, String name, String quantity, String unit) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
-        Object[] rowData = {materialID, name, quantity, unit, iconDetail, iconRemove};
+        Object[] rowData = {materialID, name,unit,"5000",quantity,"2000",  iconDetail, iconRemove};
         model.addRow(rowData);
 
         txtSearch.setText("");
@@ -702,15 +707,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
-
-        if (indexColumn == 4) {
-//            listMaterial.setSelectedItem(dataTable.getValueAt(indexRow, 1).toString());
-            txtQuantity.setText(dataTable.getValueAt(indexRow, 2).toString());
-            txtUnit.setText(dataTable.getValueAt(indexRow, 3).toString());
-//            listMaterial.setEnabled(false);
-        }
-
-        if (indexColumn == 5) {
+        if (indexColumn == 6) {
             String[] options = new String[]{"Huỷ", "Xác nhận"};
             int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nguyên liệu?",
                     "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
@@ -779,7 +776,8 @@ public class AddProductGUI extends DialogFormDetail_1 {
             if (recipe.getSize().equals(size)) {
                 Material material = materialBLL.findMaterialsBy(Map.of("id", recipe.getMaterial_id())).get(0);
                 String materialName = material.getName();
-                Object[] rowData = {recipe.getMaterial_id(), materialName, recipe.getQuantity(), recipe.getUnit(), iconDetail, iconRemove};
+                String materialPrice = String.valueOf(material.getUnit_price());
+                Object[] rowData = {recipe.getMaterial_id(), materialName, recipe.getUnit(),materialPrice,recipe.getQuantity(),"2000", iconRemove};
                 model.addRow(rowData);
             }
         }
@@ -852,7 +850,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
     }
 
     private void txtSearchMouseClicked(java.awt.event.MouseEvent evt) {
-        if (search.getItemSize() > 0) {
+        if (search.getItemSize() > 0 && !txtSearch.getText().isEmpty()) {
             menu.show(txtSearch, 0, txtSearch.getHeight());
             search.clearSelected();
         }
@@ -863,7 +861,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         if (evt.getKeyCode() != KeyEvent.VK_UP && evt.getKeyCode() != KeyEvent.VK_DOWN && evt.getKeyCode() != KeyEvent.VK_ENTER) {
             String text = txtSearch.getText().trim().toLowerCase();
             search.setData(search(text));
-            if (search.getItemSize() > 0) {
+            if (search.getItemSize() > 0 && !txtSearch.getText().isEmpty()) {
                 menu.show(txtSearch, 0, txtSearch.getHeight());
                 menu.setPopupSize(menu.getWidth(), (search.getItemSize() * 35) + 2);
             } else {
@@ -875,8 +873,12 @@ public class AddProductGUI extends DialogFormDetail_1 {
     private List<DataSearch> search(String text) {
         List<DataSearch> list = new ArrayList<>();
         List<Material> materials = materialBLL.findMaterials("name", text);
-        for (Material m : materials)
+        for (Material m : materials){
+            if(list.size() == 7){
+                break;
+            }
             list.add(new DataSearch(m.getName()));
+        }
         return list;
     }
 

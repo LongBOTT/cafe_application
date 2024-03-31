@@ -22,6 +22,7 @@ public class CustomTableCellRenderer extends DefaultTableCellRenderer {
         }
         ((JComponent) cellComponent).setBorder(border);
 
+
         return cellComponent;
     }
 }
