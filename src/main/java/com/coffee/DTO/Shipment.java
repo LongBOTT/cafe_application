@@ -9,21 +9,19 @@ public class Shipment {
     private int import_id;
     private double quantity;
     private double remain;
-    private double unit_price;
     private Date mfg;
     private Date exp;
 
     public Shipment() {
     }
 
-    public Shipment(int id, int material_id, int supplier_id, int import_id, double quantity, double remain, double unit_price, Date mfg, Date exp) {
+    public Shipment(int id, int material_id, int supplier_id, int import_id, double quantity, double remain, Date mfg, Date exp) {
         this.id = id;
         this.material_id = material_id;
         this.supplier_id = supplier_id;
         this.import_id = import_id;
         this.quantity = quantity;
         this.remain = remain;
-        this.unit_price = unit_price;
         this.mfg = mfg;
         this.exp = exp;
     }
@@ -76,14 +74,6 @@ public class Shipment {
         this.remain = remain;
     }
 
-    public double getUnit_price() {
-        return unit_price;
-    }
-
-    public void setUnit_price(double unit_price) {
-        this.unit_price = unit_price;
-    }
-
     public Date getMfg() {
         return mfg;
     }
@@ -106,8 +96,8 @@ public class Shipment {
                 material_id + " | " +
                 supplier_id + " | " +
                 import_id + " | " +
+                quantity + " | " +
                 remain + " | " +
-                unit_price + " | " +
                 mfg + " | " +
                 exp;
     }
