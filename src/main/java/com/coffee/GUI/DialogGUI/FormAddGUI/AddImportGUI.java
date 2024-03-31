@@ -254,7 +254,13 @@ public class AddImportGUI extends DialogFormDetail {
 
 
         columnNames = new String[]{"Mã Lô", "Nguyên Liệu", "Tên NCC", "SL Nhập", "SL Tồn", "MFG", "EXP",};
-        dataTable = new DataTable(new Object[0][0], columnNames);
+        columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
+        columnNames[columnNames.length - 1] = "Xóa";
+        dataTable = new DataTable(new Object[0][0], columnNames,
+                e -> selectFunction(), e -> {
+        },
+                false, false, true, 7, true, 3);
+
         dataTable.getColumnModel().getColumn(0).setMaxWidth(100);
         dataTable.getColumnModel().getColumn(1).setMaxWidth(500);
         dataTable.getColumnModel().getColumn(2).setMaxWidth(500);
@@ -290,6 +296,9 @@ public class AddImportGUI extends DialogFormDetail {
             }
         });
         containerButton.add(buttonAdd);
+    }
+
+    private void selectFunction() {
     }
 
     private void addShipment() {
@@ -346,7 +355,9 @@ public class AddImportGUI extends DialogFormDetail {
             int supplier_id = Integer.parseInt(data[i][2].toString());
             data[i][2] = "<html>" + new SupplierBLL().findSuppliersBy(Map.of("id", supplier_id)).get(0).getName() + "</html>";
 
-
+            JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
+            data[i] = Arrays.copyOf(data[i], data[i].length + 1);
+            data[i][data[i].length - 1] = iconRemove;
         }
 
         for (Object[] object : data) {

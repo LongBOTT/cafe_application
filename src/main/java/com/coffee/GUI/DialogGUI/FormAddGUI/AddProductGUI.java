@@ -346,8 +346,6 @@ public class AddProductGUI extends DialogFormDetail_1 {
         containerAtributeProduct.add(txtCapitalPrice, "wrap");
 
 
-
-
         lblListMaterial = new JLabel("Danh sách nguyên liệu");
         lblListMaterial.setFont(new Font("Public Sans", Font.BOLD, 16));
 
@@ -436,18 +434,17 @@ public class AddProductGUI extends DialogFormDetail_1 {
         containerInforMaterial.add(txtUnit);
         containerInforMaterial.add(btnThem);
 
-        columnNames = new String[]{"ID", "Tên nguyên liệu", "Đơn vị","Giá vốn", "SL","T.Tiền"};
+        columnNames = new String[]{"ID", "Tên nguyên liệu", "Đơn vị", "Giá vốn", "SL", "T.Tiền"};
         columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
         columnNames[columnNames.length - 1] = "Xóa";
         dataTable = new DataTable(new Object[0][0], columnNames,
-                e -> selectFunction(),
-                false, true, true, 6,true,4);
+                e -> selectFunction(), e -> {
+        }, false, true, true, 6, true, 4);
         int[] columnWidths = {50, 300, 50, 50, 50, 50};
 
         for (int i = 0; i < columnWidths.length; i++) {
             dataTable.getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
         }
-
 
 
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -678,7 +675,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
     private void addDataToTable(int materialID, String name, String quantity, String unit) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
-        Object[] rowData = {materialID, name,unit,"5000",quantity,"2000",  iconDetail, iconRemove};
+        Object[] rowData = {materialID, name, unit, "5000", quantity, "2000", iconRemove};
         model.addRow(rowData);
 
         txtSearch.setText("");
@@ -777,7 +774,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
                 Material material = materialBLL.findMaterialsBy(Map.of("id", recipe.getMaterial_id())).get(0);
                 String materialName = material.getName();
                 String materialPrice = String.valueOf(material.getUnit_price());
-                Object[] rowData = {recipe.getMaterial_id(), materialName, recipe.getUnit(),materialPrice,recipe.getQuantity(),"2000", iconRemove};
+                Object[] rowData = {recipe.getMaterial_id(), materialName, recipe.getUnit(), materialPrice, recipe.getQuantity(), "2000", iconRemove};
                 model.addRow(rowData);
             }
         }
@@ -873,8 +870,8 @@ public class AddProductGUI extends DialogFormDetail_1 {
     private List<DataSearch> search(String text) {
         List<DataSearch> list = new ArrayList<>();
         List<Material> materials = materialBLL.findMaterials("name", text);
-        for (Material m : materials){
-            if(list.size() == 7){
+        for (Material m : materials) {
+            if (list.size() == 7) {
                 break;
             }
             list.add(new DataSearch(m.getName()));
