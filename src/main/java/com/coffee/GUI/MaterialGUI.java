@@ -1,9 +1,11 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.MaterialBLL;
+import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Material;
 import com.coffee.DTO.Shipment;
+import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailSupplierGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddMaterialGUI;
@@ -37,6 +39,7 @@ public class MaterialGUI extends Layout2 {
     private JLabel iconSearch;
     private JLabel jLabelRemain;
     private JTextField jTextFieldSearch;
+    private JComboBox<String> jComboBoxSupplier;
     private JSlider jSliderRemain;
     private JButton jButtonSearch;
     private ButtonGroup btgroup;
@@ -69,6 +72,7 @@ public class MaterialGUI extends Layout2 {
         jTextFieldSearch = new JTextField();
         jSliderRemain = new JSlider(0, 200, 30);
         jButtonSearch = new JButton("Tìm kiếm");
+        jComboBoxSupplier = new JComboBox<>();
 
         columnNames = new String[]{"ID", "Tên nguyên liệu", "Tồn kho", "Đơn vị", "Giá vốn"};
         if (detail) {
