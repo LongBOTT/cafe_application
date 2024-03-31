@@ -13,7 +13,10 @@ public class MaterialDAL extends Manager {
                 List.of("id",
                         "name",
                         "remain",
+                        "min_remain",
+                        "max_remain",
                         "unit",
+                        "unit_price",
                         "deleted"));
     }
 
@@ -24,8 +27,11 @@ public class MaterialDAL extends Manager {
                         Integer.parseInt(row.get(0)), // id
                         row.get(1), // name
                         Double.parseDouble(row.get(2)), // remain
-                        row.get(3), // unit
-                        Boolean.parseBoolean(row.get(4)) // deleted
+                        Double.parseDouble(row.get(3)), // remain
+                        Double.parseDouble(row.get(4)), // remain
+                        row.get(5), // unit
+                        Double.parseDouble(row.get(6)), // unit_price
+                        Boolean.parseBoolean(row.get(7)) // deleted
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in MaterialDAL.convertToMaterials(): " + e.getMessage());
@@ -39,7 +45,10 @@ public class MaterialDAL extends Manager {
             return create(material.getId(),
                     material.getName(),
                     material.getRemain(),
+                    material.getMinRemain(),
+                    material.getMaxRemain(),
                     material.getUnit(),
+                    material.getUnit_price(),
                     false
             );
         } catch (SQLException | IOException e) {
@@ -54,7 +63,10 @@ public class MaterialDAL extends Manager {
             updateValues.add(material.getId());
             updateValues.add(material.getName());
             updateValues.add(material.getRemain());
+            updateValues.add(material.getMinRemain());
+            updateValues.add(material.getMaxRemain());
             updateValues.add(material.getUnit());
+            updateValues.add(material.getUnit_price());
             updateValues.add(material.isDeleted());
             return update(updateValues, "id = " + material.getId());
         } catch (SQLException | IOException e) {

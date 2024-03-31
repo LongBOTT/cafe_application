@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 30, 2024 at 07:06 AM
+-- Generation Time: Mar 31, 2024 at 04:20 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -88,6 +88,9 @@ CREATE TABLE `decentralization` (
 INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 (0, 1, 1),
 (0, 2, 1),
+(0, 2, 2),
+(0, 2, 3),
+(0, 2, 4),
 (0, 2, 5),
 (0, 2, 6),
 (0, 3, 1),
@@ -134,23 +137,17 @@ INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 (0, 15, 3),
 (0, 15, 4),
 (0, 16, 1),
-(0, 16, 2),
-(0, 16, 3),
-(0, 16, 4),
-(0, 16, 5),
-(0, 16, 6),
 (0, 17, 1),
 (0, 18, 1),
+(0, 18, 2),
+(0, 18, 3),
+(0, 18, 4),
+(0, 18, 5),
+(0, 18, 6),
 (0, 19, 1),
 (0, 19, 2),
-(0, 19, 3),
-(0, 19, 4),
 (0, 19, 5),
 (0, 19, 6),
-(0, 20, 1),
-(0, 20, 2),
-(0, 20, 5),
-(0, 20, 6),
 (1, 14, 1),
 (1, 14, 2),
 (1, 15, 1),
@@ -188,18 +185,20 @@ INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 (2, 13, 2),
 (2, 13, 3),
 (2, 13, 4),
-(2, 16, 1),
+(2, 18, 1),
+(2, 18, 2),
+(2, 18, 3),
+(2, 18, 4),
+(2, 18, 5),
+(2, 18, 6),
 (2, 19, 1),
 (2, 19, 2),
-(2, 19, 3),
-(2, 19, 4),
 (2, 19, 5),
 (2, 19, 6),
-(2, 20, 1),
-(2, 20, 2),
-(2, 20, 5),
-(2, 20, 6),
 (3, 2, 1),
+(3, 2, 2),
+(3, 2, 3),
+(3, 2, 4),
 (3, 2, 5),
 (3, 2, 6),
 (3, 7, 1),
@@ -218,15 +217,12 @@ INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 (3, 11, 3),
 (3, 11, 4),
 (3, 16, 1),
-(3, 16, 2),
-(3, 16, 3),
-(3, 16, 4),
 (3, 17, 1),
-(3, 18, 1),
 (4, 1, 1),
+(4, 2, 1),
 (4, 10, 1),
-(4, 17, 1),
-(4, 18, 1);
+(4, 16, 1),
+(4, 17, 1);
 
 -- --------------------------------------------------------
 
@@ -418,7 +414,10 @@ CREATE TABLE `material` (
   `id` bigint(20) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
   `remain` double DEFAULT NULL,
+  `min_remain` double DEFAULT NULL,
+  `max_remain` double DEFAULT NULL,
   `unit` varchar(255) DEFAULT NULL,
+  `unit_price` double DEFAULT NULL,
   `deleted` bit(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -426,50 +425,50 @@ CREATE TABLE `material` (
 -- Dumping data for table `material`
 --
 
-INSERT INTO `material` (`id`, `name`, `remain`, `unit`, `deleted`) VALUES
-(3, 'Cà phê bột truyền thống', 10, 'kg', b'0'),
-(4, 'Đường túi', 50, 'Túi', b'0'),
-(5, 'Bánh cookie', 100, 'Cái', b'0'),
-(6, 'Đá viên', 20000, 'g', b'0'),
-(7, 'Sữa đặc', 100, 'ml', b'0'),
-(8, 'Nước nóng', 100, 'ml', b'0'),
-(9, 'Syrup hạnh nhân', 100, 'ml', b'0'),
-(10, 'Sữa tươi', 100, 'ml', b'0'),
-(11, 'Sữa Béo (NDC)', 100, 'ml', b'0'),
-(12, 'Thạch Cà Phê', 500, 'g', b'0'),
-(13, 'Milk foam', 200, 'ml', b'0'),
-(14, 'Bột chocolate trang trí', 50, 'g', b'0'),
-(15, 'Sốt chocolate', 200, 'ml', b'0'),
-(16, 'Cà phê đen pha sẵn', 500, 'ml', b'0'),
-(18, 'Đường nước ', 100, 'g', b'0'),
-(19, 'Trà đào pha sẵn ', 100, 'ml', b'0'),
-(20, 'Đào lát', 100, 'g', b'0'),
-(21, 'Hạt sen', 200, 'g', b'0'),
-(22, 'Củ năng', 500, 'g', b'0'),
-(23, 'Syrup vải', 200, 'ml', b'0'),
-(24, 'Nước vải ngâm', 500, 'ml', b'0'),
-(25, 'Vải trái', 200, 'trái', b'0'),
-(26, 'Thạch vải ', 100, 'g', b'0'),
-(27, 'Bột freeze mix', 200, 'g', b'0'),
-(28, 'Whipping cream ', 50, 'g', b'0'),
-(29, 'Bột cà phê espresso', 1, 'lít', b'0'),
-(30, 'Bột green tea mix mới ', 100, 'g', b'0'),
-(31, 'Thạch trà xanh ', 500, 'g', b'0'),
-(32, 'Bột trà xanh trang trí', 200, 'g', b'0'),
-(33, 'Hỗn hợp sữa pha sẵn', 500, 'ml', b'0'),
-(34, 'Bột chocolate ', 200, 'g', b'0'),
-(35, 'Sốt chocolate trang trí', 50, 'ml', b'0'),
-(36, 'Cà phê sữa pha sẵn', 500, 'ml', b'0'),
-(37, 'Thạch cà phê', 300, 'g', b'0'),
-(38, 'Trà oolong pha sẵn ', 200, 'ml', b'0'),
-(39, 'Thạch Đào', 200, 'g', b'0'),
-(40, 'Syrup Đào', 100, 'ml', b'0'),
-(41, 'Syrup sả', 100, 'ml', b'0'),
-(42, 'Sốt caramel', 100, 'ml', b'0'),
-(43, 'Bánh Chuối', 10, 'cái', b'0'),
-(44, 'Bánh Su Kem', 12, 'cái', b'0'),
-(45, 'Phô Mai Chanh Dây', 15, 'cái', b'0'),
-(46, 'Phô Mai Trà Xanh', 10, 'cái', b'0');
+INSERT INTO `material` (`id`, `name`, `remain`, `min_remain`, `max_remain`, `unit`, `unit_price`, `deleted`) VALUES
+(3, 'Cà phê bột truyền thống', 10, 50, 100, 'kg', 20000, b'0'),
+(4, 'Đường túi', 50, 50, 100, 'Túi', 20000, b'0'),
+(5, 'Bánh cookie', 100, 50, 100, 'Cái', 20000, b'0'),
+(6, 'Đá viên', 20000, 50, 100, 'g', 20000, b'0'),
+(7, 'Sữa đặc', 100, 50, 100, 'ml', 20000, b'0'),
+(8, 'Nước nóng', 100, 50, 100, 'ml', 20000, b'0'),
+(9, 'Syrup hạnh nhân', 100, 50, 100, 'ml', 20000, b'0'),
+(10, 'Sữa tươi', 100, 50, 100, 'ml', 20000, b'0'),
+(11, 'Sữa Béo (NDC)', 100, 50, 100, 'ml', 20000, b'0'),
+(12, 'Thạch Cà Phê', 500, 50, 100, 'g', 20000, b'0'),
+(13, 'Milk foam', 200, 50, 100, 'ml', 20000, b'0'),
+(14, 'Bột chocolate trang trí', 50, 50, 100, 'g', 20000, b'0'),
+(15, 'Sốt chocolate', 200, 50, 100, 'ml', 20000, b'0'),
+(16, 'Cà phê đen pha sẵn', 500, 50, 100, 'ml', 20000, b'0'),
+(18, 'Đường nước ', 100, 50, 100, 'g', 20000, b'0'),
+(19, 'Trà đào pha sẵn ', 100, 50, 100, 'ml', 20000, b'0'),
+(20, 'Đào lát', 100, 50, 100, 'g', 20000, b'0'),
+(21, 'Hạt sen', 200, 50, 100, 'g', 20000, b'0'),
+(22, 'Củ năng', 500, 50, 100, 'g', 20000, b'0'),
+(23, 'Syrup vải', 200, 50, 100, 'ml', 20000, b'0'),
+(24, 'Nước vải ngâm', 500, 50, 100, 'ml', 20000, b'0'),
+(25, 'Vải trái', 200, 50, 100, 'trái', 20000, b'0'),
+(26, 'Thạch vải ', 100, 50, 100, 'g', 20000, b'0'),
+(27, 'Bột freeze mix', 200, 50, 100, 'g', 20000, b'0'),
+(28, 'Whipping cream ', 50, 50, 100, 'g', 20000, b'0'),
+(29, 'Bột cà phê espresso', 1, 50, 100, 'lít', 20000, b'0'),
+(30, 'Bột green tea mix mới ', 100, 50, 100, 'g', 20000, b'0'),
+(31, 'Thạch trà xanh ', 500, 50, 100, 'g', 20000, b'0'),
+(32, 'Bột trà xanh trang trí', 200, 50, 100, 'g', 20000, b'0'),
+(33, 'Hỗn hợp sữa pha sẵn', 500, 50, 100, 'ml', 20000, b'0'),
+(34, 'Bột chocolate ', 200, 50, 100, 'g', 20000, b'0'),
+(35, 'Sốt chocolate trang trí', 50, 50, 100, 'ml', 20000, b'0'),
+(36, 'Cà phê sữa pha sẵn', 500, 50, 100, 'ml', 20000, b'0'),
+(37, 'Thạch cà phê', 300, 50, 100, 'g', 20000, b'0'),
+(38, 'Trà oolong pha sẵn ', 200, 50, 100, 'ml', 20000, b'0'),
+(39, 'Thạch Đào', 200, 50, 100, 'g', 20000, b'0'),
+(40, 'Syrup Đào', 100, 50, 100, 'ml', 20000, b'0'),
+(41, 'Syrup sả', 100, 50, 100, 'ml', 20000, b'0'),
+(42, 'Sốt caramel', 100, 50, 100, 'ml', 20000, b'0'),
+(43, 'Bánh Chuối', 10, 50, 100, 'cái', 20000, b'0'),
+(44, 'Bánh Su Kem', 12, 50, 100, 'cái', 20000, b'0'),
+(45, 'Phô Mai Chanh Dây', 15, 50, 100, 'cái', 20000, b'0'),
+(46, 'Phô Mai Trà Xanh', 10, 50, 100, 'cái', 20000, b'0');
 
 -- --------------------------------------------------------
 
@@ -502,11 +501,10 @@ INSERT INTO `module` (`id`, `name`) VALUES
 (13, 'Đơn nghỉ phép'),
 (14, 'Tài khoản'),
 (15, 'Phân quyền'),
-(16, 'Nguyên liệu'),
-(17, 'Thông tin'),
-(18, 'Lịch làm việc'),
-(19, 'Xếp ca làm'),
-(20, 'Tính lương');
+(16, 'Thông tin'),
+(17, 'Lịch làm việc'),
+(18, 'Xếp ca làm'),
+(19, 'Tính lương');
 
 -- --------------------------------------------------------
 
@@ -1035,7 +1033,6 @@ CREATE TABLE `shipment` (
   `import_id` bigint(20) DEFAULT NULL,
   `quantity` double DEFAULT NULL,
   `remain` double DEFAULT NULL,
-  `unit_price` double DEFAULT NULL,
   `mfg` date DEFAULT NULL,
   `exp` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -1044,12 +1041,12 @@ CREATE TABLE `shipment` (
 -- Dumping data for table `shipment`
 --
 
-INSERT INTO `shipment` (`id`, `material_id`, `supplier_id`, `import_id`, `quantity`, `remain`, `unit_price`, `mfg`, `exp`) VALUES
-(1, 3, 1, 1, 30, 30, 200, '2024-03-03', '2024-04-01'),
-(2, 4, 1, 1, 30, 30, 200, '2024-03-03', '2024-04-01'),
-(3, 5, 1, 1, 30, 30, 200, '2024-03-03', '2024-04-01'),
-(4, 6, 1, 1, 30, 20, 200, '2024-03-03', '2024-04-01'),
-(5, 7, 1, 1, 30, 30, 200, '2024-03-03', '2024-04-01');
+INSERT INTO `shipment` (`id`, `material_id`, `supplier_id`, `import_id`, `quantity`, `remain`, `mfg`, `exp`) VALUES
+(1, 3, 1, 1, 30, 30, '2024-03-03', '2024-04-01'),
+(2, 4, 1, 1, 30, 30, '2024-03-03', '2024-04-01'),
+(3, 5, 1, 1, 30, 30, '2024-03-03', '2024-04-01'),
+(4, 6, 1, 1, 30, 20, '2024-03-03', '2024-04-01'),
+(5, 7, 1, 1, 30, 30, '2024-03-03', '2024-04-01');
 
 -- --------------------------------------------------------
 
@@ -1077,7 +1074,7 @@ INSERT INTO `staff` (`id`, `no`, `name`, `gender`, `birthdate`, `phone`, `addres
 (1, '079203023641', 'Admin', b'0', '2003-08-30', '0961234946', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'admin@gmail.com', b'0'),
 (2, '079203023644', 'Nguyễn Hoàng Long', b'0', '2003-08-30', '0963333946', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'colong30082003@gmail.com', b'0'),
 (3, '079203023642', 'Nguyễn Minh Thuận', b'0', '2003-08-30', '0964512947', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'nguyenminhthuan@gmail.com', b'0'),
-(4, '079203023643', 'Vũ Minh Thuận', b'0', '2003-08-30', '0964512941', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'vmiinhthuan@gmail.com', b'0'),
+(4, '079203023643', 'Vũ Minh Thuận', b'0', '2003-08-30', '0964512944', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'vmiinhthuan@gmail.com', b'0'),
 (5, '079203023645', 'Trần Huỳnh Đức Anh', b'0', '2003-08-30', '0964512940', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'ducanh@gmail.com', b'0'),
 (6, '079203023522', 'Nguyễn Tiến Dũng', b'0', '2003-08-30', '0964512920', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'abc@gmail.com', b'0'),
 (7, '079203023777', 'Nguyễn Tiến Quang', b'0', '2003-08-30', '0964513325', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'abcd@gmail.com', b'0'),

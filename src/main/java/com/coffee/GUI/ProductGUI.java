@@ -39,7 +39,6 @@ public class ProductGUI extends Layout3 {
     private String[] columnNames;
 
 
-
     public ProductGUI(List<Function> functions) {
         super();
         this.functions = functions;
@@ -97,11 +96,11 @@ public class ProductGUI extends Layout3 {
 
         bottom.add(scrollPane, BorderLayout.CENTER);
 
-        containerSearch.setLayout(new FlowLayout(FlowLayout.LEFT,10,5));
+        containerSearch.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
         containerSearch.setBackground(new Color(245, 246, 250));
         containerSearch.setPreferredSize(new Dimension(380, 40));
 
-        SearchPanel.setLayout(new FlowLayout(FlowLayout.LEFT,10,5));
+        SearchPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
         SearchPanel.add(containerSearch);
         SearchPanel.add(jButtonSearch);
 
@@ -117,7 +116,7 @@ public class ProductGUI extends Layout3 {
 
         jButtonSearch.setBackground(new Color(29, 78, 216));
         jButtonSearch.setForeground(Color.white);
-        jButtonSearch.setPreferredSize(new Dimension(100, 40));
+        jButtonSearch.setPreferredSize(new Dimension(100, 30));
         jButtonSearch.setCursor(new Cursor(Cursor.HAND_CURSOR));
         jButtonSearch.addActionListener(e -> searchProducts());
         SearchPanel.add(jButtonSearch);
@@ -211,103 +210,105 @@ public class ProductGUI extends Layout3 {
         loadDataTable(productBLL.getData(productBLL.searchProducts("deleted = 0")));
     }
 
-public void loadDataTable(Object[][] objects) {
+    public void loadDataTable(Object[][] objects) {
 
-    DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
-    int columnCount = model.getColumnCount();
-    model.setRowCount(0);
-    int columnWidth = dataTable.getColumnModel().getColumn(0).getPreferredWidth();
-    int rowHeight = dataTable.getRowHeight(0);
-    // Mảng chứa tất cả các sản phẩm
-     ArrayList<Object[]> allProducts = ConvertProductUnique(objects);
+        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+        int columnCount = model.getColumnCount();
+        model.setRowCount(0);
+        int columnWidth = dataTable.getColumnModel().getColumn(0).getPreferredWidth();
+        int rowHeight = dataTable.getRowHeight(0);
+        // Mảng chứa tất cả các sản phẩm
+        ArrayList<Object[]> allProducts = ConvertProductUnique(objects);
 
-    // Duyệt qua mảng allProducts để thêm dữ liệu vào bảng
-    for (Object[] productArray : allProducts) {
-        String productName = (String) productArray[1];
-        ArrayList<String> sizes = (ArrayList<String>) productArray[4];
-        ArrayList<Double> prices = (ArrayList<Double>) productArray[3];
+        // Duyệt qua mảng allProducts để thêm dữ liệu vào bảng
+        for (Object[] productArray : allProducts) {
+            String productName = (String) productArray[1];
+            ArrayList<String> sizes = (ArrayList<String>) productArray[4];
+            ArrayList<Double> prices = (ArrayList<Double>) productArray[3];
 
-        ImageIcon icon = new FlatSVGIcon("image/Product/" + productArray[5] + ".svg");
-        Image image = icon.getImage();
-        Image newImg = image.getScaledInstance(columnWidth, rowHeight, java.awt.Image.SCALE_SMOOTH);
-        icon = new ImageIcon(newImg);
-        JLabel productImage = new JLabel(icon);
-        productImage.scrollRectToVisible(new Rectangle());
+            ImageIcon icon = new FlatSVGIcon("image/Product/" + productArray[5] + ".svg");
+            Image image = icon.getImage();
+            Image newImg = image.getScaledInstance(columnWidth, rowHeight, java.awt.Image.SCALE_SMOOTH);
+            icon = new ImageIcon(newImg);
+            JLabel productImage = new JLabel(icon);
+            productImage.scrollRectToVisible(new Rectangle());
 
-        CustomPopupMenu popupMenuSize = new CustomPopupMenu();
-        CustomPopupMenu popupMenuPrice = new CustomPopupMenu();
-        for (String size : sizes) {
-            popupMenuSize.addMenuItem(size);
+            CustomPopupMenu popupMenuSize = new CustomPopupMenu();
+            CustomPopupMenu popupMenuPrice = new CustomPopupMenu();
+            for (String size : sizes) {
+                popupMenuSize.addMenuItem(size);
+            }
+            for (Double price : prices) {
+                popupMenuPrice.addMenuItem(String.valueOf(price));
+            }
+            JLabel iconDetail = null;
+            JLabel iconEdit = null;
+            JLabel iconRemove = null;
+            if (detail) {
+                iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
+            }
+            if (edit) {
+                iconEdit = new JLabel(new FlatSVGIcon("icon/edit.svg"));
+            }
+            if (remove) {
+                iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
+
+            }
+
+            Object[] rowData;
+            if (columnCount == 7) {
+                rowData = new Object[]{productImage, productName, popupMenuSize, popupMenuPrice, iconDetail, iconEdit, iconRemove};
+            } else if (columnCount == 6) {
+                rowData = new Object[]{productImage, productName, popupMenuSize, popupMenuPrice, iconDetail, iconEdit};
+            } else if (columnCount == 5) {
+                rowData = new Object[]{productImage, productName, popupMenuSize, popupMenuPrice, iconDetail};
+            } else {
+                rowData = new Object[]{productImage, productName, popupMenuSize, popupMenuPrice};
+            }
+
+            model.addRow(rowData);
+
         }
-        for (Double price : prices){
-            popupMenuPrice.addMenuItem(String.valueOf(price));
-        }
-        JLabel iconDetail = null;
-        JLabel iconEdit = null;
-        JLabel iconRemove = null;
-        if (detail) {
-            iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
-        }
-        if (edit) {
-             iconEdit = new JLabel(new FlatSVGIcon("icon/edit.svg"));
-        }
-        if (remove) {
-             iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
-
-        }
-
-        Object[] rowData;
-        if (columnCount == 7) {
-            rowData = new Object[]{productImage, productName, popupMenuSize, popupMenuPrice, iconDetail,iconEdit,iconRemove};
-        } else if (columnCount == 6) {
-            rowData = new Object[]{productImage, productName, popupMenuSize, popupMenuPrice,  iconDetail, iconEdit};
-        } else if (columnCount == 5) {
-            rowData = new Object[]{productImage, productName, popupMenuSize, popupMenuPrice, iconDetail};
-        } else {
-            rowData = new Object[]{productImage, productName, popupMenuSize, popupMenuPrice};
-        }
-
-        model.addRow(rowData);
 
     }
 
-}
-public ArrayList<Object[]> ConvertProductUnique(Object[][] objects){
-     ArrayList<Object[]> allProducts = new ArrayList<>();
-    for (Object[] product : objects) {
-        String productID = (String) product[0];
-        String productName = (String) product[1];
-        String category = (String) product[2];
-        double price = Double.parseDouble((String) product[3]);
-        String size = (String) product[4];
-        String productImage = (String) product[5];
+    public ArrayList<Object[]> ConvertProductUnique(Object[][] objects) {
+        ArrayList<Object[]> allProducts = new ArrayList<>();
+        for (Object[] product : objects) {
+            String productID = (String) product[0];
+            String productName = (String) product[1];
+            String category = (String) product[2];
+            double price = Double.parseDouble((String) product[3]);
+            String size = (String) product[4];
+            String productImage = (String) product[5];
 
-        boolean productExists = false;
-        for (Object[] productArray : allProducts) {
-            String existingProductName = (String) productArray[1];
-            if (existingProductName.equals(productName)) {
-                productExists = true;
+            boolean productExists = false;
+            for (Object[] productArray : allProducts) {
+                String existingProductName = (String) productArray[1];
+                if (existingProductName.equals(productName)) {
+                    productExists = true;
 
-                ((ArrayList<String>) productArray[4]).add(size);
-                ((ArrayList<Double>) productArray[3]).add(price);
-                break;
+                    ((ArrayList<String>) productArray[4]).add(size);
+                    ((ArrayList<Double>) productArray[3]).add(price);
+                    break;
+                }
+            }
+
+            if (!productExists) {
+                ArrayList<String> sizes = new ArrayList<>();
+                sizes.add(size);
+
+                ArrayList<Double> prices = new ArrayList<>();
+                prices.add(price);
+
+                Object[] productArray = {productID, productName, category, prices, sizes, productImage};
+                allProducts.add(productArray);
             }
         }
-
-        if (!productExists) {
-            ArrayList<String> sizes = new ArrayList<>();
-            sizes.add(size);
-
-            ArrayList<Double> prices = new ArrayList<>();
-            prices.add(price);
-
-            Object[] productArray = {productID,productName,category,prices,sizes,productImage};
-            allProducts.add(productArray);
-        }
+        return allProducts;
     }
-    return allProducts;
-}
-public void loadCategory() {
+
+    public void loadCategory() {
         Category.removeAll();
         categoriesName.removeAll(categoriesName);
         categoriesName.add("TẤT CẢ");
@@ -365,13 +366,13 @@ public void loadCategory() {
         int indexColumn = dataTable.getSelectedColumn();
         int indexRow = dataTable.getSelectedRow();
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
-        Object selectedValue = model.getValueAt(indexRow,1);
+        Object selectedValue = model.getValueAt(indexRow, 1);
 
         if (indexColumn == indexColumnDetail) {
-            new DetailProductGUI( productBLL.findProductsBy(Map.of("name", selectedValue.toString())));
+            new DetailProductGUI(productBLL.findProductsBy(Map.of("name", selectedValue.toString())));
         }
 
-        if ( indexColumn == indexColumnEdit) {
+        if (indexColumn == indexColumnEdit) {
             new EditProductGUI(productBLL.findProductsBy(Map.of("name", selectedValue.toString())));
             refresh();
         }
@@ -381,6 +382,7 @@ public void loadCategory() {
             refresh();
         }
     }
+
     private void deleteProduct(Product product) {
         String[] options = new String[]{"Huỷ", "Xác nhận"};
         int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá sản phẩm?",

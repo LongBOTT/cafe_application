@@ -114,13 +114,13 @@ public class StaffGUI extends Layout1 {
 //        });
         jButtonSearch.setBackground(new Color(29, 78, 216));
         jButtonSearch.setForeground(Color.white);
-        jButtonSearch.setPreferredSize(new Dimension(100, 35));
+        jButtonSearch.setPreferredSize(new Dimension(100, 30));
         jButtonSearch.addActionListener(e -> searchStaffs());
         SearchPanel.add(jButtonSearch);
 
         jComboBoxSearch.setBackground(new Color(29, 78, 216));
         jComboBoxSearch.setForeground(Color.white);
-        jComboBoxSearch.setPreferredSize(new Dimension(120, 35));
+        jComboBoxSearch.setPreferredSize(new Dimension(120, 30));
         jComboBoxSearch.addActionListener(e -> selectSearchFilter());
         SearchPanel.add(jComboBoxSearch);
 

@@ -164,11 +164,8 @@ public class EditMaterialGUI extends DialogForm {
         name = jTextFieldMaterial.get(0).getText();
 
         unit = listUnit.getSelectedItem().toString();
-        String supplier = listSupplier.getSelectedItem().toString();
-        String[] parts = supplier.split(" - ");
-//        id_Supplier = Integer.parseInt(parts[0]);
 
-        Material newMaterial = new Material(id, name, material.getRemain(), unit, false);
+        Material newMaterial = new Material(id, name, material.getRemain(), 0, 0, unit, 0, false);
         result = materialBLL.updateMaterial(newMaterial, material);
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),
