@@ -290,8 +290,8 @@ public class MaterialGUI extends Layout2 {
         if (indexColumn == indexColumnDetail)
             new DetailMaterialGUI(materialBLL.searchMaterials("deleted = 0").get(indexRow));
 
-        if (edit && indexColumn == indexColumnEdit) {
-//            new EditSupplierGUI(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        if (indexColumn == indexColumnEdit) {
+            new EditMaterialGUI(materialBLL.searchMaterials("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
             refresh();
         }
 
