@@ -5,7 +5,7 @@
  */
 package com.coffee.GUI.components.swing;
 
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -14,7 +14,6 @@ import java.util.Objects;
 import net.miginfocom.swing.MigLayout;
 
 /**
- *
  * @author RAVEN
  */
 public class PanelSearch extends javax.swing.JPanel {
@@ -28,6 +27,7 @@ public class PanelSearch extends javax.swing.JPanel {
 
     public PanelSearch() {
         initComponents();
+        setAutoscrolls(true);
         setLayout(new MigLayout("fillx", "0[]0", "0[]0"));
     }
 
@@ -118,12 +118,12 @@ public class PanelSearch extends javax.swing.JPanel {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 438, Short.MAX_VALUE)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 438, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 0, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 

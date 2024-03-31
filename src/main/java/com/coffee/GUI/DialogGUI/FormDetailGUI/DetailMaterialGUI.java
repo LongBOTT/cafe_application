@@ -45,7 +45,7 @@ public class DetailMaterialGUI extends DialogFormDetail {
 
     private void init(Material material) {
         titleName = new JLabel();
-        jComboBoxRemain = new JComboBox<>(new String[]{"Tất cả", "Còn hàng", "Hết hàng"});
+        jComboBoxRemain = new JComboBox<>(new String[]{"Tất cả", "Còn hàng", "Hết hàng", "Sắp hết hạn"});
         jComboBoxSupplier = new JComboBox<>();
         attributeMaterial = new ArrayList<>();
         contenttop.setLayout(new MigLayout("",
@@ -154,6 +154,9 @@ public class DetailMaterialGUI extends DialogFormDetail {
         }
         if (jComboBoxRemain.getSelectedIndex() == 2) {
             shipmentList.removeIf(shipment -> shipment.getRemain() > 0);
+        }
+        if (jComboBoxRemain.getSelectedIndex() == 3) {
+            shipmentList = shipmentBLL.searchShipments("material_id = " + material.getId(), "DATEDIFF(exp,NOW()) > 0", "DATEDIFF(exp,NOW()) <= 15");
         }
         if (jComboBoxSupplier.getSelectedIndex() != 0) {
             shipmentList.removeIf(shipment -> shipment.getSupplier_id() != jComboBoxSupplier.getSelectedIndex());
