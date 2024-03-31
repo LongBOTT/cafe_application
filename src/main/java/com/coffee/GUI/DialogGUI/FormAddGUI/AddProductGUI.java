@@ -418,14 +418,8 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
         btnThem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int selectedRow = dataTable.getSelectedRow();
-                if (selectedRow == -1) {
                     addMaterialTemp();
-                } else {
-                    updateDataTable(selectedRow);
-                }
             }
-
         });
 
         containerInforMaterial.add(lblNameMaterial);
@@ -638,8 +632,6 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
     private void addMaterialTemp() {
         String name = txtSearch.getText();
-//        Material material = materialBLL.findMaterialsBy(Map.of("name",name )).get(0);
-//        materialID = material.getId();
         String quantity = txtQuantity.getText();
         String unit = txtUnit.getText();
         String size = selectedLabel.getText();
@@ -678,29 +670,24 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
     private void addDataToTable(int materialID, String name, String quantity, String unit) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
-        Object[] rowData = {materialID, name,unit,"5000",quantity,"2000",  iconDetail, iconRemove};
+        Material material = materialBLL.findMaterialsBy(Map.of("id",materialID)).get(0);
+        String materialName = material.getName();
+        String materialPrice = String.valueOf(material.getUnit_price());
+        double materialPriceD = material.getUnit_price();
+        double totalAmount = materialPriceD * Double.parseDouble(quantity);
+        Object[] rowData = {materialID, materialName, unit,materialPrice,Double.parseDouble(quantity),totalAmount, iconRemove};
         model.addRow(rowData);
 
         txtSearch.setText("");
         txtQuantity.setText("");
         txtUnit.setText("");
-    }
-
-    private void updateDataTable(int selectedRow) {
-        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
-
-        String quantity = txtQuantity.getText();
-        Pair<Boolean, String> result = materialBLL.validateQuantity(quantity);
-        if (result.getKey()) {
-            model.setValueAt(quantity, selectedRow, 2);
-//            listMaterial.setSelectedItem("");
-            txtQuantity.setText("");
-            txtUnit.setText("");
-//            listMaterial.setEnabled(true);
-            dataTable.clearSelection();
-        } else
-            JOptionPane.showMessageDialog(null, result.getValue(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        if(txtCapitalPrice.getText().isEmpty()){
+            txtCapitalPrice.setText(materialPrice);
+        }
+        else{
+           double capitalPrice = Double.parseDouble(txtCapitalPrice.getText()) ;
+           txtCapitalPrice.setText(String.valueOf(capitalPrice+totalAmount));
+        }
     }
 
     private void selectFunction() {
@@ -715,6 +702,9 @@ public class AddProductGUI extends DialogFormDetail_1 {
                 Iterator<Recipe> iterator = materialList.iterator();
                 String labelText = selectedLabel.getText();
                 int id = (int) model.getValueAt(indexRow, 0);
+                double totalAount =  (double) model.getValueAt(indexRow,5);
+                double capitalPrice = Double.parseDouble(txtCapitalPrice.getText());
+                txtCapitalPrice.setText(String.valueOf(capitalPrice-totalAount));
                 while (iterator.hasNext()) {
                     Recipe recipe = iterator.next();
                     if (recipe.getProduct_id() == productID && recipe.getMaterial_id() == id && recipe.getSize().equals(labelText)) {
@@ -740,13 +730,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
     }
 
     private void removeRecipeByProduct(Product product) {
-        Iterator<Recipe> iterator = materialList.iterator();
-        while ((iterator.hasNext())) {
-            Recipe recipe = iterator.next();
-            if (recipe.getProduct_id() == product.getId() && recipe.getSize().equals(product.getSize())) {
-                iterator.remove();
-            }
-        }
+        materialList.removeIf(recipe -> recipe.getProduct_id() == product.getId() && recipe.getSize().equals(product.getSize()));
     }
 
     private void resetTxt() {
@@ -772,18 +756,23 @@ public class AddProductGUI extends DialogFormDetail_1 {
     private void loadRecipeBySize(String size) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
+        double capitalPrice = 0.0;
         for (Recipe recipe : materialList) {
             if (recipe.getSize().equals(size)) {
                 Material material = materialBLL.findMaterialsBy(Map.of("id", recipe.getMaterial_id())).get(0);
                 String materialName = material.getName();
                 String materialPrice = String.valueOf(material.getUnit_price());
-                Object[] rowData = {recipe.getMaterial_id(), materialName, recipe.getUnit(),materialPrice,recipe.getQuantity(),"2000", iconRemove};
+                double materialPriceD = material.getUnit_price();
+                double totalAmount = materialPriceD * recipe.getQuantity();
+                Object[] rowData = {recipe.getMaterial_id(), materialName, recipe.getUnit(),materialPrice,recipe.getQuantity(),totalAmount, iconRemove};
                 model.addRow(rowData);
+                capitalPrice  += totalAmount;
             }
         }
         txtSearch.setText("");
         txtQuantity.setText("");
         txtUnit.setText("");
+        txtCapitalPrice.setText(Double.toString(capitalPrice));
     }
 
     private JLabel createLabelMaterial(String text) {
