@@ -51,7 +51,7 @@ public class InfoGUI extends InfoPanel {
         TitleInfoStaff.add(jLabelStaff, BorderLayout.WEST);
 
         JLabel jLabelUsername = new JLabel("Tên đăng nhập");
-        jLabelUsername.setFont(new Font("Lexend", Font.BOLD, 14));
+        jLabelUsername.setFont(new Font("Lexend", Font.BOLD, 16));
         InfoAccountPanel.add(jLabelUsername);
 
         JTextField textFieldUsername = new JTextField();
@@ -62,7 +62,7 @@ public class InfoGUI extends InfoPanel {
         InfoAccountPanel.add(textFieldUsername, "wrap");
 
         JLabel jLabelPassword = new JLabel("Mật khẩu");
-        jLabelPassword.setFont(new Font("Lexend", Font.BOLD, 14));
+        jLabelPassword.setFont(new Font("Lexend", Font.BOLD, 16));
         InfoAccountPanel.add(jLabelPassword);
 
         JTextField jPasswordField = new JTextField("⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫");
@@ -84,29 +84,37 @@ public class InfoGUI extends InfoPanel {
         for (String string : new String[]{"Tên Nhân Viên", "CCCD", "Giới Tính", "Ngày Sinh", "Số Điện Thoại", "Địa Chỉ", "Email"}) {
             JLabel label = new JLabel();
             label.setText(string);
-            label.setFont(new Font("Lexend", Font.BOLD, 14));
+            label.setFont(new Font("Lexend", Font.BOLD, 16));
             InfoStaffPanel.add(label);
 
             JTextField textField = new JTextField();
             if (string.equals("Tên Nhân Viên")) {
-                textField.setText(staff.getName());
-                textField.setEditable(false);
+                JLabel jLabel = new JLabel(staff.getName());
+                jLabel.setFont(new Font("Lexend", Font.PLAIN, 14));
+                InfoStaffPanel.add(jLabel, "wrap");
+                continue;
             }
             if (string.equals("CCCD")) {
-                textField.setText(staff.getStaffNo());
-                textField.setEditable(false);
+                JLabel jLabel = new JLabel(staff.getStaffNo());
+                jLabel.setFont(new Font("Lexend", Font.PLAIN, 14));
+                InfoStaffPanel.add(jLabel, "wrap");
+                continue;
             }
             if (string.equals("Giới Tính")) {
                 boolean gender = staff.isGender();
                 String gender1 = gender ? "Nam" : "Nữ";
-                textField.setText(gender1);
-                textField.setEditable(false);
+                JLabel jLabel = new JLabel(gender1);
+                jLabel.setFont(new Font("Lexend", Font.PLAIN, 14));
+                InfoStaffPanel.add(jLabel, "wrap");
+                continue;
             }
 
             if (string.equals("Ngày Sinh")) {
                 Date birthDate = staff.getBirthdate();
-                textField.setText(new SimpleDateFormat("dd/MM/yyyy").format(birthDate));
-                textField.setEditable(false);
+                JLabel jLabel = new JLabel(new SimpleDateFormat("dd/MM/yyyy").format(birthDate));
+                jLabel.setFont(new Font("Lexend", Font.PLAIN, 14));
+                InfoStaffPanel.add(jLabel, "wrap");
+                continue;
             }
             if (string.equals("Số Điện Thoại")) {
                 textField.setText(staff.getPhone());
@@ -162,13 +170,13 @@ public class InfoGUI extends InfoPanel {
         Pair<Boolean, String> result;
         String phone, address, email;
 
-        phone = jTextFieldsStaff.get(4).getText();
-        address = jTextFieldsStaff.get(5).getText();
-        email = jTextFieldsStaff.get(6).getText();
+        phone = jTextFieldsStaff.get(0).getText();
+        address = jTextFieldsStaff.get(1).getText();
+        email = jTextFieldsStaff.get(2).getText();
 
         Staff newstaff = new Staff(staff.getId(), staff.getStaffNo(), staff.getName(), staff.isGender(), staff.getBirthdate(), phone, address, email, false); // false là tồn tại, true là đã xoá
 
-        result = new StaffBLL().updateStaff(staff,newstaff);
+        result = new StaffBLL().updateStaff(staff, newstaff);
 
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),
@@ -182,15 +190,8 @@ public class InfoGUI extends InfoPanel {
     }
 
     private void refresh() {
-        jTextFieldsStaff.get(0).setText(staff.getName());
-        jTextFieldsStaff.get(1).setText(staff.getStaffNo());
-        boolean gender = staff.isGender();
-        String gender1 = gender ? "Nam" : "Nữ";
-        jTextFieldsStaff.get(2).setText(gender1);
-        Date birthDate = staff.getBirthdate();
-        jTextFieldsStaff.get(3).setText(new SimpleDateFormat("dd/MM/yyyy").format(birthDate));
-        jTextFieldsStaff.get(4).setText(staff.getPhone());
-        jTextFieldsStaff.get(5).setText(staff.getAddress());
-        jTextFieldsStaff.get(6).setText(staff.getEmail());
+        jTextFieldsStaff.get(0).setText(staff.getPhone());
+        jTextFieldsStaff.get(1).setText(staff.getAddress());
+        jTextFieldsStaff.get(2).setText(staff.getEmail());
     }
 }

@@ -15,6 +15,8 @@ import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -33,7 +35,9 @@ public class MaterialGUI extends Layout2 {
     private List<Function> functions;
     private RoundedPanel containerSearch;
     private JLabel iconSearch;
+    private JLabel jLabelRemain;
     private JTextField jTextFieldSearch;
+    private JSlider jSliderRemain;
     private JButton jButtonSearch;
     private ButtonGroup btgroup;
     private boolean detail = false;
@@ -61,10 +65,12 @@ public class MaterialGUI extends Layout2 {
     public void initComponents(List<Function> functions) {
         containerSearch = new RoundedPanel();
         iconSearch = new JLabel();
+        jLabelRemain = new JLabel();
         jTextFieldSearch = new JTextField();
+        jSliderRemain = new JSlider(0, 200, 30);
         jButtonSearch = new JButton("Tìm kiếm");
 
-        columnNames = new String[]{"ID", "Tên nguyên liệu", "Số lượng", "Đơn vị",};
+        columnNames = new String[]{"ID", "Tên nguyên liệu", "Tồn kho", "Đơn vị", "Giá vốn"};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
@@ -85,14 +91,14 @@ public class MaterialGUI extends Layout2 {
 
         dataTable = new DataTable(new Object[0][0], columnNames,
                 e -> selectFunction(),
-                detail, edit, remove, 4);
+                detail, edit, remove, 5);
 
 
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
 
-        JLabel jLabelStatus = new JLabel("Trạng thái: ");
+        JLabel jLabelStatus = new JLabel("Tồn kho: ");
         jLabelStatus.setFont(new Font("Lexend", Font.BOLD, 14));
         FilterDatePanel.add(jLabelStatus);
 
@@ -105,7 +111,8 @@ public class MaterialGUI extends Layout2 {
             }
         });
         FilterDatePanel.add(radio1);
-        JRadioButton radio2 = new JRadioButton("Sắp hết hàng");
+
+        JRadioButton radio2 = new JRadioButton("Dưới định mức tồn");
         radio2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -114,9 +121,58 @@ public class MaterialGUI extends Layout2 {
         });
         FilterDatePanel.add(radio2);
 
+        JRadioButton radio3 = new JRadioButton("Vượt định mức tồn");
+        radio3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchMaterials();
+            }
+        });
+        FilterDatePanel.add(radio3);
+
+        JRadioButton radio4 = new JRadioButton("Còn hàng");
+        radio4.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchMaterials();
+            }
+        });
+        FilterDatePanel.add(radio4);
+
+        JRadioButton radio5 = new JRadioButton("Hết hàng");
+        radio5.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchMaterials();
+            }
+        });
+        FilterDatePanel.add(radio5);
+
         btgroup = new ButtonGroup();
         btgroup.add(radio1);
         btgroup.add(radio2);
+        btgroup.add(radio3);
+        btgroup.add(radio4);
+        btgroup.add(radio5);
+
+//        jLabelRemain.setText("30");
+//        jLabelRemain.setPreferredSize(new Dimension(50, 40));
+//        FilterDatePanel.add(jLabelRemain);
+//
+//        jSliderRemain.setPaintTrack(true);
+//        jSliderRemain.setPaintTicks(true);
+//        jSliderRemain.setMinorTickSpacing(10);
+//        jSliderRemain.setMajorTickSpacing(50);
+//        jSliderRemain.setPreferredSize(new Dimension(200, 40));
+//        jSliderRemain.addChangeListener(new ChangeListener() {
+//            @Override
+//            public void stateChanged(ChangeEvent e) {
+//                jLabelRemain.setText(String.valueOf(jSliderRemain.getValue()));
+//                searchMaterials();
+//            }
+//        });
+//        jSliderRemain.setEnabled(false);
+//        FilterDatePanel.add(jSliderRemain);
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
         containerSearch.setBackground(new Color(245, 246, 250));
@@ -151,7 +207,7 @@ public class MaterialGUI extends Layout2 {
 
         jButtonSearch.setBackground(new Color(29, 78, 216));
         jButtonSearch.setForeground(Color.white);
-        jButtonSearch.setPreferredSize(new Dimension(100, 40));
+        jButtonSearch.setPreferredSize(new Dimension(100, 30));
         jButtonSearch.setCursor(new Cursor(Cursor.HAND_CURSOR));
         jButtonSearch.addActionListener(e -> searchMaterials());
         SearchPanel.add(jButtonSearch);
@@ -253,13 +309,14 @@ public class MaterialGUI extends Layout2 {
             return;
         }
 
-        Object[][] data = new Object[objects.length][4];
+        Object[][] data = new Object[objects.length][5];
 
         for (int i = 0; i < objects.length; i++) {
             data[i][0] = objects[i][0];
             data[i][1] = objects[i][1];
             data[i][2] = objects[i][2];
             data[i][3] = objects[i][3];
+            data[i][4] = objects[i][4];
 
             if (detail) {
                 JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
@@ -291,7 +348,7 @@ public class MaterialGUI extends Layout2 {
             new DetailMaterialGUI(materialBLL.searchMaterials("deleted = 0").get(indexRow));
 
         if (edit && indexColumn == indexColumnEdit) {
-//            new EditSupplierGUI(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            new EditMaterialGUI(materialBLL.searchMaterials("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
             refresh();
         }
 
@@ -329,10 +386,12 @@ public class MaterialGUI extends Layout2 {
             }
         }
         if (status.equals("Tất cả")) {
+            jSliderRemain.setEnabled(false);
             materialList = materialBLL.searchMaterials();
         }
-        if (status.equals("Sắp hết hàng")) {
-            materialList = materialBLL.searchMaterials("remain < 30");
+        if (status.equals("SL tồn dưới: ")) {
+            jSliderRemain.setEnabled(true);
+            materialList = materialBLL.searchMaterials("remain < " + jLabelRemain.getText());
         }
         if (jTextFieldSearch.getText().isEmpty()) {
             loadDataTable(materialBLL.getData(materialList));

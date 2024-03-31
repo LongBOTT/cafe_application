@@ -295,7 +295,7 @@ public class HomeGUI extends JFrame {
     public JPanel getPanelModule(int id, List<Function> functions) {
         return switch (id) {
             case 1 -> new SaleGUI(account);
-            case 2 -> new WareHouseGUI(functions);
+            case 2 -> new MaterialGUI(functions);
             case 3 -> new StatisticSalesGUI();
             case 4 -> new StatisticSalaryGUI();
             case 5 -> new StatisticStaffGUI();
@@ -309,11 +309,10 @@ public class HomeGUI extends JFrame {
             case 13 -> new Leave_Of_Absence_FormGUI(functions);
             case 14 -> new AccountGUI(functions);
             case 15 -> new DecentralizationGUI(functions);
-            case 16 -> new MaterialGUI(functions);
-            case 17 -> new InfoGUI(account, staff);
-            case 18 -> new MyWorkScheduleGUI(staff);
-            case 19 -> new CreateWorkScheduleGUI();
-            case 20 -> new PayrollGUI(functions, this);
+            case 16 -> new InfoGUI(account, staff);
+            case 17 -> new MyWorkScheduleGUI(staff);
+            case 18 -> new CreateWorkScheduleGUI();
+            case 19 -> new PayrollGUI(functions, this);
             default -> new RoundedPanel();
         };
     }

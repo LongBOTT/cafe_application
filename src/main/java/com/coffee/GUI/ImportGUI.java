@@ -5,10 +5,8 @@ import com.coffee.BLL.StaffBLL;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Import_Note;
 import com.coffee.DTO.Staff;
-import com.coffee.GUI.DialogGUI.FormAddGUI.AddExportDetailGUI;
-import com.coffee.GUI.DialogGUI.FormAddGUI.AddWorkScheduleGUI;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddImportGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailImportGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.Layout2;
@@ -171,7 +169,7 @@ public class ImportGUI extends Layout2 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-//                    new AddExportDetailGUI();
+                    new AddImportGUI();
                     refresh();
                 }
             });

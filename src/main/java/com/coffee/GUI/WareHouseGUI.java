@@ -3,6 +3,7 @@ package com.coffee.GUI;
 import com.coffee.BLL.*;
 import com.coffee.DTO.*;
 
+import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailShipmentGUI;
 import com.coffee.GUI.components.*;
 import com.coffee.GUI.components.Layout2;
 import com.coffee.GUI.components.RoundedPanel;
@@ -13,6 +14,8 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -28,7 +31,9 @@ import java.util.List;
 public class WareHouseGUI extends Layout2 {
     private RoundedPanel containerSearch;
     private JLabel iconSearch;
+    private JLabel jLabelRemain;
     private JTextField jTextFieldSearch;
+    private JSlider jSliderRemain;
     private JButton jButtonSearch;
     private ButtonGroup btgroup;
     private List<Function> functions;
@@ -50,7 +55,9 @@ public class WareHouseGUI extends Layout2 {
     private void init(List<Function> functions) {
         containerSearch = new RoundedPanel();
         iconSearch = new JLabel();
+        jLabelRemain = new JLabel();
         jTextFieldSearch = new JTextField();
+        jSliderRemain = new JSlider(0, 200, 30);
         jButtonSearch = new JButton("Tìm kiếm");
 
         columnNames = new String[]{"Mã Lô", "Tên Nguyên Liệu", "Nhà Cung Cấp", "SL Tồn", "Ngày Sản Xuất", "Ngày Hết Hạn"};
@@ -79,14 +86,7 @@ public class WareHouseGUI extends Layout2 {
             }
         });
         FilterDatePanel.add(radio1);
-        JRadioButton radio2 = new JRadioButton("Sắp hết hàng");
-        radio2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                searchShipments();
-            }
-        });
-        FilterDatePanel.add(radio2);
+
         JRadioButton radio3 = new JRadioButton("Sắp hết hạn");
         radio3.addActionListener(new ActionListener() {
             @Override
@@ -96,10 +96,38 @@ public class WareHouseGUI extends Layout2 {
         });
         FilterDatePanel.add(radio3);
 
+        JRadioButton radio2 = new JRadioButton("SL tồn dưới: ");
+        radio2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchShipments();
+            }
+        });
+        FilterDatePanel.add(radio2);
+
         btgroup = new ButtonGroup();
         btgroup.add(radio1);
         btgroup.add(radio2);
         btgroup.add(radio3);
+
+        jLabelRemain.setText("30");
+        jLabelRemain.setPreferredSize(new Dimension(50, 40));
+        FilterDatePanel.add(jLabelRemain);
+
+        jSliderRemain.setPaintTrack(true);
+        jSliderRemain.setPaintTicks(true);
+        jSliderRemain.setMinorTickSpacing(10);
+        jSliderRemain.setMajorTickSpacing(50);
+        jSliderRemain.setPreferredSize(new Dimension(200, 40));
+        jSliderRemain.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                jLabelRemain.setText(String.valueOf(jSliderRemain.getValue()));
+                searchShipments();
+            }
+        });
+        jSliderRemain.setEnabled(false);
+        FilterDatePanel.add(jSliderRemain);
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
         containerSearch.setBackground(new Color(245, 246, 250));
@@ -203,12 +231,15 @@ public class WareHouseGUI extends Layout2 {
             }
         }
         if (status.equals("Tất cả")) {
+            jSliderRemain.setEnabled(false);
             shipmentList = shipmentBLL.searchShipments();
         }
-        if (status.equals("Sắp hết hàng")) {
-            shipmentList = shipmentBLL.searchShipments("remain < 30");
+        if (status.equals("SL tồn dưới: ")) {
+            jSliderRemain.setEnabled(true);
+            shipmentList = shipmentBLL.searchShipments("remain < " + jLabelRemain.getText());
         }
         if (status.equals("Sắp hết hạn")) {
+            jSliderRemain.setEnabled(false);
             shipmentList = shipmentBLL.searchShipments("DATEDIFF(exp,NOW()) > 0", "DATEDIFF(exp,NOW()) <= 15");
         }
         if (jTextFieldSearch.getText().isEmpty()) {
@@ -263,7 +294,7 @@ public class WareHouseGUI extends Layout2 {
         int indexColumn = dataTable.getSelectedColumn();
 
         if (detail && indexColumn == indexColumnDetail) {
-//            new DetailSupplierGUI(shipmentBLL.searchShipments("").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            new DetailShipmentGUI(shipmentBLL.searchShipments().get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
         }
 
     }

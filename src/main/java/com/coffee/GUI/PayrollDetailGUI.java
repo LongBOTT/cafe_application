@@ -106,7 +106,7 @@ public class PayrollDetailGUI extends Layout1 {
 
         jButtonSearch.setBackground(new Color(29, 78, 216));
         jButtonSearch.setForeground(Color.white);
-        jButtonSearch.setPreferredSize(new Dimension(110, 35));
+        jButtonSearch.setPreferredSize(new Dimension(110, 30));
         jButtonSearch.addActionListener(e -> searchPayroll_Details());
         SearchPanel.add(jButtonSearch);
 

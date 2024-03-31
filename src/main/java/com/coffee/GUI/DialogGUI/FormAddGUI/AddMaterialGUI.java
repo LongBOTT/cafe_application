@@ -180,7 +180,7 @@ public class AddMaterialGUI extends DialogForm {
             return;
         }
 //        id_Supplier = Integer.parseInt(parts[0]);
-        Material material = new Material(id, name, 0, unit, false);
+        Material material = new Material(id, name, 0, 0, 0, unit, 0, false);
         result = materialBLL.addMaterial(material);
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),
