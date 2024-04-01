@@ -104,20 +104,20 @@ public class RecipeBLL extends Manager<Recipe> {
         };
     }
 
-    public List<List<Object>> searchRecipesByProduct(int product_id, String size) {
-        List<List<Object>> result = new ArrayList<>();
-        for (Recipe recipe : searchRecipes("product_id = " + product_id, "size = '" + size + "'")) {
-            List<Object> objects = new ArrayList<>();
-            Material material = new MaterialBLL().searchMaterials("id = " + recipe.getMaterial_id()).get(0);
-            objects.add(material.getId());
-            objects.add(material.getName());
-            objects.add(recipe.getQuantity());
-            objects.add(recipe.getUnit());
-
-            result.add(objects);
-        }
-        return result;
-    }
+//    public List<List<Object>> searchRecipesByProduct(int product_id, String size) {
+//        List<List<Object>> result = new ArrayList<>();
+//        for (Recipe recipe : searchRecipes("product_id = " + product_id, "size = '" + size + "'")) {
+//            List<Object> objects = new ArrayList<>();
+//            Material material = new MaterialBLL().searchMaterials("id = " + recipe.getMaterial_id()).get(0);
+//            objects.add(material.getId());
+//            objects.add(material.getName());
+//            objects.add(recipe.getQuantity());
+//            objects.add(recipe.getUnit());
+//
+//            result.add(objects);
+//        }
+//        return result;
+//    }
 
     public static void main(String[] args) {
         RecipeBLL receiptBLL = new RecipeBLL();

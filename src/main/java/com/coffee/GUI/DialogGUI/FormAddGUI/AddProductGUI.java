@@ -702,9 +702,9 @@ public class AddProductGUI extends DialogFormDetail_1 {
                 Iterator<Recipe> iterator = materialList.iterator();
                 String labelText = selectedLabel.getText();
                 int id = (int) model.getValueAt(indexRow, 0);
-                double totalAount =  (double) model.getValueAt(indexRow,5);
+                double totalAmount =  (double) model.getValueAt(indexRow,5);
                 double capitalPrice = Double.parseDouble(txtCapitalPrice.getText());
-                txtCapitalPrice.setText(String.valueOf(capitalPrice-totalAount));
+                txtCapitalPrice.setText(String.valueOf(capitalPrice-totalAmount));
                 while (iterator.hasNext()) {
                     Recipe recipe = iterator.next();
                     if (recipe.getProduct_id() == productID && recipe.getMaterial_id() == id && recipe.getSize().equals(labelText)) {
