@@ -6,6 +6,7 @@ import com.coffee.DTO.Material;
 import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.SupplierGUI;
+import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -13,11 +14,11 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class AddMaterialGUI extends DialogForm {
     private JLabel titleName;
@@ -25,7 +26,6 @@ public class AddMaterialGUI extends DialogForm {
     private List<JTextField> jTextFieldMaterial;
     private JButton buttonCancel;
     private JButton buttonAdd;
-    private JComboBox<String> listSupplier;
     private JComboBox<String> listUnit;
 
     private MaterialBLL materialBLL = new MaterialBLL();
@@ -34,6 +34,8 @@ public class AddMaterialGUI extends DialogForm {
     public AddMaterialGUI() {
         super();
         super.setTitle("Thêm nguyên liệu");
+        super.setSize(new Dimension(600, 450));
+        super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init();
         setVisible(true);
     }
@@ -45,56 +47,24 @@ public class AddMaterialGUI extends DialogForm {
         buttonCancel = new JButton("Huỷ");
         buttonAdd = new JButton("Thêm");
         content.setLayout(new MigLayout("",
-                "200[]20[]20[]200",
+                "50[]20[]50",
                 "20[]20[]20"));
 
-        titleName.setText("Thêm nguyên liệu");
+        titleName.setText("Thêm Nguyên Liệu");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
         titleName.setHorizontalAlignment(JLabel.CENTER);
         titleName.setVerticalAlignment(JLabel.CENTER);
         title.add(titleName, BorderLayout.CENTER);
 
-        for (String string : new String[]{"Tên nguyên liệu", "Đơn vị"}) {
+        for (String string : new String[]{"Tên Nguyên Liệu", "Tồn Kho Tối Thiểu", "Tồn Kho Tối Đa", "Đơn Vị", "Giá Vốn"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
             label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
             attributeMaterial.add(label);
             content.add(label);
-//            if(string.equals("Nhà cung cấp")){
-//                listSupplier = new JComboBox<>();
-//                listSupplier.setPreferredSize(new Dimension(1000, 30));
-//                listSupplier.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-//                listSupplier.setBackground(new Color(245, 246, 250));
-//                content.add(listSupplier);
-//
-//                Object[][] objects = supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0"));
-//                loadDataSupplier(objects);
-//
-//                JButton btnThem = new JButton();
-//                ImageIcon icon = new FlatSVGIcon("icon/add.svg");
-//                Image image = icon.getImage();
-//                Image newImg = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
-//                icon = new ImageIcon(newImg);
-//                btnThem.setIcon(icon);
-//                btnThem.setPreferredSize(new Dimension(30, 30));
-//                btnThem.setBackground(new Color(0, 182, 62));
-//                btnThem.setFont(new Font("Public Sans", Font.BOLD, 16));
-//                btnThem.setForeground(Color.WHITE);
-//                btnThem.setCursor(new Cursor(Cursor.HAND_CURSOR));
-//
-//                btnThem.addMouseListener(new MouseAdapter() {
-//                    @Override
-//                    public void mousePressed(MouseEvent e) {
-//                        new AddSupplierGUI();
-//                        Object[][] objects = supplierBLL.getData(supplierBLL.searchSuppliers("deleted = 0"));
-//                        loadDataSupplier(objects);
-//                    }
-//                });
-//                content.add(btnThem,"wrap");
-//                continue;
-//            }
-            if (string.equals("Đơn vị")) {
+
+            if (string.equals("Đơn Vị")) {
                 listUnit = new JComboBox<>();
                 listUnit.setPreferredSize(new Dimension(1000, 30));
                 listUnit.setFont((new Font("Public Sans", Font.PLAIN, 14)));
@@ -109,6 +79,16 @@ public class AddMaterialGUI extends DialogForm {
                 continue;
             }
             JTextField textField = new JTextField();
+            if (string.equals("Tồn Kho Tối Thiểu") || string.equals("Tồn Kho Tối Đa") || string.equals("Giá Vốn")) {
+                textField.addKeyListener(new KeyAdapter() {
+                    public void keyTyped(KeyEvent e) {
+                        if (!Character.isDigit(e.getKeyChar())) {
+                            e.consume();
+                        }
+                    }
+                });
+            }
+
             textField.setPreferredSize(new Dimension(1000, 30));
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
@@ -154,33 +134,42 @@ public class AddMaterialGUI extends DialogForm {
         Pair<Boolean, String> result;
         int id;
         String name, unit;
-//        int id_Supplier;
+        double min_remain, max_remain, unit_price;
 
         id = materialBLL.getAutoID(materialBLL.searchMaterials());
         name = jTextFieldMaterial.get(0).getText();
 
-        unit = listUnit.getSelectedItem().toString();
+        unit = Objects.requireNonNull(listUnit.getSelectedItem()).toString();
+
+        if (jTextFieldMaterial.get(1).getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng nhập tồn kho tối thiểu!",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (jTextFieldMaterial.get(2).getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng nhập tồn kho tối đa!",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        min_remain = Double.parseDouble(jTextFieldMaterial.get(1).getText());
+        max_remain = Double.parseDouble(jTextFieldMaterial.get(2).getText());
+
         if (unit.equals("Chọn đơn vị")) {
             JOptionPane.showMessageDialog(null, "Chưa chọn đơn vị",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        String supplier = listSupplier.getSelectedItem().toString();
-        if (supplier.equals("Chọn nhà cung cấp")) {
-            JOptionPane.showMessageDialog(null, "Chưa chọn nhà cung cấp",
+        if (jTextFieldMaterial.get(3).getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng nhập giá vốn!",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        String[] parts = supplier.split(" - ");
-        result = materialBLL.validateSupplier(parts[0]);
-        if (!result.getKey()) {
-            JOptionPane.showMessageDialog(null, result.getValue(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-//        id_Supplier = Integer.parseInt(parts[0]);
-        Material material = new Material(id, name, 0, 0, 0, unit, 0, false);
+        unit_price = Double.parseDouble(jTextFieldMaterial.get(3).getText());
+
+        Material material = new Material(id, name, 0, min_remain, max_remain, unit, unit_price, false);
         result = materialBLL.addMaterial(material);
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),
@@ -189,22 +178,6 @@ public class AddMaterialGUI extends DialogForm {
         } else {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    public void loadDataSupplier(Object[][] objects) {
-        Object[][] data = new Object[objects.length][objects[0].length];
-
-        for (int i = 0; i < objects.length; i++) {
-            System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
-        }
-        listSupplier.removeAllItems();
-        listSupplier.addItem("Chọn nhà cung cấp");
-        listSupplier.setSelectedItem("Chọn nhà cung cấp");
-        for (Object[] object : data) {
-            String id = object[0].toString();
-            String name = object[1].toString();
-            listSupplier.addItem(id + " - " + name);
         }
     }
 

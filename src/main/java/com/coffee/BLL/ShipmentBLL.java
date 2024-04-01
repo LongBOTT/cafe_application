@@ -39,7 +39,6 @@ public class ShipmentBLL extends Manager<Shipment> {
         if (!result.getKey())
             return new Pair<>(false, result.getValue());
 
-        result = validatePrice(String.valueOf(shipment.getUnit_price()));
         if (!result.getKey())
             return new Pair<>(false, result.getValue());
 
@@ -65,7 +64,6 @@ public class ShipmentBLL extends Manager<Shipment> {
         if (!result.getKey())
             return new Pair<>(false, result.getValue());
 
-        result = validatePrice(String.valueOf(shipment.getUnit_price()));
         if (!result.getKey())
             return new Pair<>(false, result.getValue());
 
@@ -151,7 +149,6 @@ public class ShipmentBLL extends Manager<Shipment> {
             case "import_id" -> shipment.getImport_id();
             case "quantity" -> shipment.getQuantity();
             case "remain" -> shipment.getRemain();
-            case "unit_price" -> shipment.getUnit_price();
             case "mfg" -> shipment.getMfg();
             case "exp" -> shipment.getExp();
             default -> null;

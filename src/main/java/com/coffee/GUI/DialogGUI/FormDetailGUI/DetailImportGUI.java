@@ -30,7 +30,7 @@ public class DetailImportGUI extends DialogFormDetail {
     public DetailImportGUI(Import_Note import_note) {
         super();
         super.setTitle("Thông tin phiếu nhập");
-        super.setSize(new Dimension(1000, 700));
+        super.setSize(new Dimension(1100, 700));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init(import_note);
         setVisible(true);
@@ -78,15 +78,16 @@ public class DetailImportGUI extends DialogFormDetail {
 
         }
 
-        columnNames = new String[]{"Mã Lô", "Nguyên Liệu", "Tên NCC", "SL", "Đơn Giá", "MFG", "EXP",};
+        columnNames = new String[]{"Mã Lô", "Nguyên Liệu", "Tên NCC", "SL Nhập", "SL Tồn", "MFG", "EXP",};
         dataTable = new DataTable(new Object[0][0], columnNames);
         dataTable.getColumnModel().getColumn(0).setMaxWidth(100);
         dataTable.getColumnModel().getColumn(1).setMaxWidth(500);
-        dataTable.getColumnModel().getColumn(2).setMaxWidth(400);
-        dataTable.getColumnModel().getColumn(3).setMaxWidth(50);
-        dataTable.getColumnModel().getColumn(4).setMaxWidth(250);
+        dataTable.getColumnModel().getColumn(2).setMaxWidth(500);
+        dataTable.getColumnModel().getColumn(3).setMaxWidth(100);
+        dataTable.getColumnModel().getColumn(4).setMaxWidth(100);
         dataTable.getColumnModel().getColumn(5).setMaxWidth(250);
         dataTable.getColumnModel().getColumn(6).setMaxWidth(250);
+        dataTable.setRowHeight(60);
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         contentmid.add(scrollPane, BorderLayout.CENTER);
@@ -139,7 +140,7 @@ public class DetailImportGUI extends DialogFormDetail {
             int supplier_id = Integer.parseInt(data[i][2].toString());
             data[i][2] = "<html>" + new SupplierBLL().findSuppliersBy(Map.of("id", supplier_id)).get(0).getName() + "</html>";
 
-            
+
         }
 
         for (Object[] object : data) {

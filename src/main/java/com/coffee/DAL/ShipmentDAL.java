@@ -32,9 +32,8 @@ public class ShipmentDAL extends Manager {
                         Integer.parseInt(row.get(3)),
                         Double.parseDouble(row.get(4)),
                         Double.parseDouble(row.get(5)),
-                        Double.parseDouble(row.get(6)),
-                        Date.valueOf(row.get(7)),
-                        Date.valueOf(row.get(8))
+                        Date.valueOf(row.get(6)),
+                        Date.valueOf(row.get(7))
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in ShipmentDAL.convertToShipment(): " + e.getMessage());
@@ -51,7 +50,6 @@ public class ShipmentDAL extends Manager {
                     shipment.getImport_id(),
                     shipment.getQuantity(),
                     shipment.getRemain(),
-                    shipment.getUnit_price(),
                     shipment.getMfg(),
                     shipment.getExp()
             );
@@ -70,7 +68,6 @@ public class ShipmentDAL extends Manager {
             updateValues.add(shipment.getImport_id());
             updateValues.add(shipment.getQuantity());
             updateValues.add(shipment.getRemain());
-            updateValues.add(shipment.getUnit_price());
             updateValues.add(shipment.getMfg());
             updateValues.add(shipment.getExp());
             return update(updateValues, "id = " + shipment.getId());

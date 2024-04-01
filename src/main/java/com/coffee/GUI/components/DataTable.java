@@ -238,12 +238,13 @@ public class DataTable extends JTable {
         JTableHeader jTableHeader = getTableHeader();
         jTableHeader.setBackground(new Color(217, 217, 217));
     }
-    public DataTable(Object[][] data, Object[] columnNames, ActionListener actionListener,
-                     boolean detail, boolean edit, boolean remove, int numberOfColumns,boolean material, int quantity) {
+
+    public DataTable(Object[][] data, Object[] columnNames, ActionListener actionListener, ActionListener actionListenerChange,
+                     boolean detail, boolean edit, boolean remove, int numberOfColumns, boolean material, int quantity) {
         super(new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 4;
+                return column == quantity;
             }
 
         });
@@ -255,20 +256,23 @@ public class DataTable extends JTable {
                 if (e.getType() == TableModelEvent.UPDATE) {
                     int row = e.getFirstRow();
                     int col = e.getColumn();
-                    if (col == 4) {
-                        Object valueAtColumn4 =  getModel().getValueAt(row, 4);
-                        Object valueAtColumn3 =  getModel().getValueAt(row, 3);
-                        if (valueAtColumn4 != null && valueAtColumn3 != null) {
-                            try {
-                                Double newValue = Double.parseDouble(valueAtColumn4.toString())* Double.parseDouble(valueAtColumn3.toString());
-                                getModel().setValueAt(newValue, row, 5);
-                            } catch (NumberFormatException ex) {
-                                JOptionPane.showMessageDialog(null, "Số lượng không phải là số hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                                SwingUtilities.invokeLater(() -> {
-                                    editCellAt(row, col);
-                                    getEditorComponent().requestFocusInWindow();
-                                });
-                            }
+                    if (col == quantity && row != -1) {
+//                        Object valueAtColumn4 = getModel().getValueAt(row, quantity);
+//                        Object valueAtColumn3 = getModel().getValueAt(row, quantity - 1);
+//                        if (valueAtColumn4 != null && valueAtColumn3 != null) {
+//                            try {
+//                                Double newValue = Double.parseDouble(valueAtColumn4.toString()) * Double.parseDouble(valueAtColumn3.toString());
+//                                getModel().setValueAt(newValue, row, quantity + 1);
+//                            } catch (NumberFormatException ex) {
+//                                JOptionPane.showMessageDialog(null, "Số lượng không phải là số hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+//                                SwingUtilities.invokeLater(() -> {
+//                                    editCellAt(row, col);
+//                                    getEditorComponent().requestFocusInWindow();
+//                                });
+//                            }
+//                        }
+                        if (actionListenerChange != null) {
+                            actionListenerChange.actionPerformed(null);
                         }
                     }
                 }

@@ -1,13 +1,8 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.MaterialBLL;
-import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Material;
-import com.coffee.DTO.Shipment;
-import com.coffee.DTO.Supplier;
-import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailSupplierGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddMaterialGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailMaterialGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditMaterialGUI;
@@ -17,8 +12,6 @@ import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -37,10 +30,7 @@ public class MaterialGUI extends Layout2 {
     private List<Function> functions;
     private RoundedPanel containerSearch;
     private JLabel iconSearch;
-    private JLabel jLabelRemain;
     private JTextField jTextFieldSearch;
-    private JComboBox<String> jComboBoxSupplier;
-    private JSlider jSliderRemain;
     private JButton jButtonSearch;
     private ButtonGroup btgroup;
     private boolean detail = false;
@@ -68,11 +58,8 @@ public class MaterialGUI extends Layout2 {
     public void initComponents(List<Function> functions) {
         containerSearch = new RoundedPanel();
         iconSearch = new JLabel();
-        jLabelRemain = new JLabel();
         jTextFieldSearch = new JTextField();
-        jSliderRemain = new JSlider(0, 200, 30);
         jButtonSearch = new JButton("Tìm kiếm");
-        jComboBoxSupplier = new JComboBox<>();
 
         columnNames = new String[]{"ID", "Tên nguyên liệu", "Tồn kho", "Đơn vị", "Giá vốn"};
         if (detail) {
@@ -158,25 +145,6 @@ public class MaterialGUI extends Layout2 {
         btgroup.add(radio3);
         btgroup.add(radio4);
         btgroup.add(radio5);
-
-//        jLabelRemain.setText("30");
-//        jLabelRemain.setPreferredSize(new Dimension(50, 40));
-//        FilterDatePanel.add(jLabelRemain);
-//
-//        jSliderRemain.setPaintTrack(true);
-//        jSliderRemain.setPaintTicks(true);
-//        jSliderRemain.setMinorTickSpacing(10);
-//        jSliderRemain.setMajorTickSpacing(50);
-//        jSliderRemain.setPreferredSize(new Dimension(200, 40));
-//        jSliderRemain.addChangeListener(new ChangeListener() {
-//            @Override
-//            public void stateChanged(ChangeEvent e) {
-//                jLabelRemain.setText(String.valueOf(jSliderRemain.getValue()));
-//                searchMaterials();
-//            }
-//        });
-//        jSliderRemain.setEnabled(false);
-//        FilterDatePanel.add(jSliderRemain);
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
         containerSearch.setBackground(new Color(245, 246, 250));
@@ -301,6 +269,13 @@ public class MaterialGUI extends Layout2 {
     }
 
     public void refresh() {
+        for (Enumeration<AbstractButton> buttons = btgroup.getElements(); buttons.hasMoreElements(); ) {
+            AbstractButton button = buttons.nextElement();
+            if (button.getText().equals("Tất cả")) {
+                button.setSelected(true);
+                break;
+            }
+        }
         jTextFieldSearch.setText("");
         loadDataTable(materialBLL.getData(materialBLL.searchMaterials("deleted = 0")));
     }
@@ -356,9 +331,10 @@ public class MaterialGUI extends Layout2 {
             refresh();
         }
 
-        if (indexColumn == indexColumnRemove)
+        if (indexColumn == indexColumnRemove) {
             deleteMaterial(materialBLL.searchMaterials("deleted = 0").get(indexRow));
-
+            refresh();
+        }
     }
 
     private void deleteMaterial(Material material) {
@@ -390,12 +366,19 @@ public class MaterialGUI extends Layout2 {
             }
         }
         if (status.equals("Tất cả")) {
-            jSliderRemain.setEnabled(false);
             materialList = materialBLL.searchMaterials();
         }
-        if (status.equals("SL tồn dưới: ")) {
-            jSliderRemain.setEnabled(true);
-            materialList = materialBLL.searchMaterials("remain < " + jLabelRemain.getText());
+        if (status.equals("Dưới định mức tồn")) {
+            materialList = materialBLL.searchMaterials("remain < min_remain");
+        }
+        if (status.equals("Vượt định mức tồn")) {
+            materialList = materialBLL.searchMaterials("remain > max_remain ");
+        }
+        if (status.equals("Còn hàng")) {
+            materialList = materialBLL.searchMaterials("remain > 0");
+        }
+        if (status.equals("Hết hàng")) {
+            materialList = materialBLL.searchMaterials("remain = 0");
         }
         if (jTextFieldSearch.getText().isEmpty()) {
             loadDataTable(materialBLL.getData(materialList));
