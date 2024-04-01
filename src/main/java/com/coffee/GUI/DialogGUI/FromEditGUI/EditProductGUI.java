@@ -168,7 +168,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
         columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
         columnNames[columnNames.length - 1] = "Xóa";
         dataTable = new DataTable(new Object[0][0], columnNames,
-                e -> selectFunction(),
+                e -> selectFunction(),e->updateQuantity(),
                 false, true, true, 6,true,4);
         int[] columnWidths = {50, 300, 50, 50, 50, 50};
 
@@ -856,6 +856,27 @@ public class EditProductGUI extends DialogFormDetail_1 {
                 }
             }
         }
+    }
+
+    private void updateQuantity(){
+        int indexRow = dataTable.getSelectedRow();
+        int indexColumn = dataTable.getSelectedColumn();
+
+        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+        String quantity = model.getValueAt(indexRow, indexColumn).toString();
+        String capitalPrice = model.getValueAt(indexRow, indexColumn - 1).toString();
+                        if (quantity  != null &&  capitalPrice != null) {
+                            try {
+                                Double newValue = Double.parseDouble(quantity) * Double.parseDouble(capitalPrice);
+                                model.setValueAt(newValue, indexRow, indexColumn);
+                            } catch (NumberFormatException ex) {
+                                JOptionPane.showMessageDialog(null, "Số lượng không phải là số hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                SwingUtilities.invokeLater(() -> {
+                                    dataTable.editCellAt(indexRow, indexColumn);
+                                    dataTable.getEditorComponent().requestFocusInWindow();
+                                });
+                            }
+                        }
     }
     private void txtSearchMouseClicked(java.awt.event.MouseEvent evt) {
         if (search.getItemSize() > 0) {
