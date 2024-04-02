@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ProductBLL extends Manager<Product>{
+public class ProductBLL extends Manager<Product> {
     private ProductDAL productDAL;
 
     public ProductBLL() {
@@ -85,36 +85,38 @@ public class ProductBLL extends Manager<Product>{
         return products;
     }
 
-    public Pair<Boolean, String> exists(Product newProduct){
+    public Pair<Boolean, String> exists(Product newProduct) {
         List<Product> products = productDAL.searchProducts("name = '" + newProduct.getName() + "'", "size = '" + newProduct.getSize() + "'", "deleted = 0");
-        if(!products.isEmpty()){
+        if (!products.isEmpty()) {
             return new Pair<>(true, "Sản phẩm đã tồn tại.");
         }
         return new Pair<>(false, "");
     }
-    public Pair<Boolean, String> validateProductAll(Product product){
+
+    public Pair<Boolean, String> validateProductAll(Product product) {
         Pair<Boolean, String> result;
 
         result = validateName(product.getName());
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if (!result.getKey()) {
+            return new Pair<>(false, result.getValue());
         }
 
         result = exists(product);
-        if(result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if (result.getKey()) {
+            return new Pair<>(false, result.getValue());
         }
         result = validateCategory(product.getCategory());
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if (!result.getKey()) {
+            return new Pair<>(false, result.getValue());
         }
 
         result = validatePrice(String.valueOf(product.getPrice()));
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if (!result.getKey()) {
+            return new Pair<>(false, result.getValue());
         }
-        return new Pair<>(true,"");
+        return new Pair<>(true, "");
     }
+
     public Pair<Boolean, String> validateName(String name) {
         if (name.isBlank())
             return new Pair<>(false, "Tên sản phẩm không được để trống.");
@@ -122,6 +124,7 @@ public class ProductBLL extends Manager<Product>{
             return new Pair<>(false, "Tên sản phẩm không được chứa ký tự đặc biệt.");
         return new Pair<>(true, "");
     }
+
     public Pair<Boolean, String> validateCategory(String category) {
         if (category.isBlank())
             return new Pair<>(false, "Thể loại không được để trống.");
@@ -134,8 +137,8 @@ public class ProductBLL extends Manager<Product>{
         if (price.isBlank())
             return new Pair<>(false, "Giá bán của sản phẩm không được để trống.");
         if (!VNString.checkUnsignedNumber(price))
-            return new Pair<>(false,"Giá bán của sản phẩm phải lớn hơn 0.");
-        return new Pair<>(true,price);
+            return new Pair<>(false, "Giá bán của sản phẩm phải lớn hơn 0.");
+        return new Pair<>(true, price);
     }
 
     @Override
@@ -146,6 +149,7 @@ public class ProductBLL extends Manager<Product>{
             case "size" -> product.getSize();
             case "category" -> product.getCategory();
             case "price" -> product.getPrice();
+            case "capital_price" -> product.getCapital_price();
             case "image" -> product.getImage();
             default -> null;
         };

@@ -589,7 +589,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        Product product = new Product(productID, name, size, category, 0, imageProduct, false);
+        Product product = new Product(productID, name, size, category, 0, 0, imageProduct, false);
         result = productBLL.validateProductAll(product);
         if (!result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),

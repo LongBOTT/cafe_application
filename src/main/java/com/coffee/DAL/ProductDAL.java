@@ -7,18 +7,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductDAL extends Manager{
+public class ProductDAL extends Manager {
     public ProductDAL() {
         super("product",
                 List.of("id",
                         "name",
                         "size",
                         "category",
+                        "capital_price",
                         "price",
                         "image",
                         "deleted"));
     }
-    public List<Product> convertToProducts(List<List<String>> data){
+
+    public List<Product> convertToProducts(List<List<String>> data) {
         return convert(data, row -> {
             try {
                 return new Product(
@@ -26,9 +28,10 @@ public class ProductDAL extends Manager{
                         row.get(1), // name
                         row.get(2), // size
                         row.get(3), // category
-                        Double.parseDouble(row.get(4)), //price
-                        row.get(5),//image
-                        Boolean.parseBoolean(row.get(6)) //deleted
+                        Double.parseDouble(row.get(4)), //capital_price
+                        Double.parseDouble(row.get(5)), //price
+                        row.get(6),//image
+                        Boolean.parseBoolean(row.get(7)) //deleted
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in ProductDAL.convertToProducts(): " + e.getMessage());
@@ -43,6 +46,7 @@ public class ProductDAL extends Manager{
                     product.getName(),
                     product.getSize(),
                     product.getCategory(),
+                    product.getCapital_price(),
                     product.getPrice(),
                     product.getImage(),
                     false
@@ -52,6 +56,7 @@ public class ProductDAL extends Manager{
         }
         return 0;
     }
+
     public int updateProduct(Product product) {
         try {
             List<Object> updateValues = new ArrayList<>();
@@ -59,6 +64,7 @@ public class ProductDAL extends Manager{
             updateValues.add(product.getName());
             updateValues.add(product.getSize());
             updateValues.add(product.getCategory());
+            updateValues.add(product.getCapital_price());
             updateValues.add(product.getPrice());
             updateValues.add(product.getImage());
             updateValues.add(product.isDeleted());
@@ -93,7 +99,7 @@ public class ProductDAL extends Manager{
         List<String> categories = new ArrayList<>();
         try {
             List<List<String>> result = executeQuery("SELECT DISTINCT `category` FROM `product` ");
-            for(List<String> category : result) {
+            for (List<String> category : result) {
                 categories.add(category.get(0));
             }
             return categories;
@@ -103,7 +109,7 @@ public class ProductDAL extends Manager{
     }
 
     public static void main(String[] args) {
-       ProductDAL s = new ProductDAL();
+        ProductDAL s = new ProductDAL();
         System.out.println(s.searchProducts());
     }
 }

@@ -5,6 +5,7 @@ public class Product {
     private String name;
     private String size;
     private String category;
+    private double capital_price;
     private double price;
     private String image;
     private boolean deleted;
@@ -12,10 +13,11 @@ public class Product {
     public Product() {
     }
 
-    public Product(int id, String name, String size, String category, double price, String image, boolean deleted) {
+    public Product(int id, String name, String size, String category, double capital_price, double price, String image, boolean deleted) {
         this.id = id;
         this.name = name;
         this.category = category;
+        this.capital_price = capital_price;
         this.price = price;
         this.size = size;
         this.image = image;
@@ -44,6 +46,14 @@ public class Product {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public double getCapital_price() {
+        return capital_price;
+    }
+
+    public void setCapital_price(double capital_price) {
+        this.capital_price = capital_price;
     }
 
     public Double getPrice() {
