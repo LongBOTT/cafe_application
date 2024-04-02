@@ -43,12 +43,6 @@ public class ProductBLL extends Manager<Product> {
     }
 
     public Pair<Boolean, String> updateProduct(Product product) {
-//        Pair<Boolean, String> result;
-
-//        result = validateProductAll(product);
-//        if(!result.getKey()){
-//            return new Pair<>(false,result.getValue());
-//        }
 
         if (productDAL.updateProduct(product) == 0)
             return new Pair<>(false, "Cập nhật sản phẩm không thành công.");
@@ -86,7 +80,7 @@ public class ProductBLL extends Manager<Product> {
     }
 
     public Pair<Boolean, String> exists(Product newProduct) {
-        List<Product> products = productDAL.searchProducts("name = '" + newProduct.getName() + "'", "size = '" + newProduct.getSize() + "'", "deleted = 0");
+        List<Product> products = productDAL.searchProducts("id = '" + newProduct.getId() + "'", "size = '" + newProduct.getSize() + "'");
         if (!products.isEmpty()) {
             return new Pair<>(true, "Sản phẩm đã tồn tại.");
         }

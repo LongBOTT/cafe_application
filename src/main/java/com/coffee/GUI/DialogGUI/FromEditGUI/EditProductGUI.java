@@ -21,6 +21,8 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
@@ -45,7 +47,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
     private final RecipeBLL recipeBLL = new RecipeBLL();
     private List<Product> productList;
     private List<Product> deletedProductList = new ArrayList<>();
-    private List<Recipe> newProductList = new ArrayList<>();
+    private List<Product> newProductList = new ArrayList<>();
     private List<Recipe> recipeList;
     private List<Recipe> deletedRecipeList = new ArrayList<>();
     private List<Recipe> newRecipeList = new ArrayList<>();
@@ -238,6 +240,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
                 label.setBackground(new Color(59, 130, 198));
                 label.setForeground(Color.WHITE);
                 loadPriceBySize(size);
+                loadCapitalPriceBySize(size);
                 loadRecipeBySize(size);
             }
 
@@ -252,6 +255,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
                     label.setForeground(Color.WHITE);
                     selectedLabel = label;
                     loadPriceBySize(size);
+                    loadCapitalPriceBySize(size);
                     loadRecipeBySize(size);
                 }
             });
@@ -285,7 +289,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
                     }
 
                     addedLabels.clear();
-                    removeSizeProduct("0");
+                    removeAllProductSelectSize0(selectedSize);
                     addedLabels.add("0");
                     if (!addProductBySize("0")) {
                         return;
@@ -303,6 +307,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
                             label.setForeground(Color.WHITE);
                             selectedLabel = label;
                             loadPriceBySize("0");
+                            loadCapitalPriceBySize("0");
                             loadRecipeBySize("0");
                         }
                     });
@@ -331,6 +336,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
                             label.setForeground(Color.WHITE);
                             selectedLabel = label;
                             loadPriceBySize(selectedSize);
+                            loadCapitalPriceBySize(selectedSize);
                             loadRecipeBySize(selectedSize);
                         }
                     });
@@ -387,33 +393,80 @@ public class EditProductGUI extends DialogFormDetail_1 {
             }
         });
 
-        txtPrice = createTextField();
-
-        txtNameProduct.addFocusListener(new FocusAdapter() {
+        txtNameProduct.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
-                if (!productList.isEmpty())
+            public void insertUpdate(DocumentEvent e) {
+                if (!productList.isEmpty() || !newProductList.isEmpty())
+                    updateProductByName();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                if (!productList.isEmpty() || !newProductList.isEmpty())
+                    updateProductByName();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                if (!productList.isEmpty() || !newProductList.isEmpty())
                     updateProductByName();
             }
         });
-
-        txtCategory.addFocusListener(new FocusAdapter() {
+        txtCategory.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
-                if (!productList.isEmpty())
+            public void insertUpdate(DocumentEvent e) {
+                if (!productList.isEmpty() || !newProductList.isEmpty())
+                    updateProductByCategory();
+            }
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                if (!productList.isEmpty() || !newProductList.isEmpty())
+                    updateProductByCategory();
+            }
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                if (!productList.isEmpty() || !newProductList.isEmpty())
                     updateProductByCategory();
             }
         });
-        txtPrice.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
-                updatePriceProductBySize();
-            }
-        });
 
+        txtPrice.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (!Character.isDigit(e.getKeyChar())) {
+                    e.consume();
+                }
+            }
+
+//            @Override
+//            public void keyPressed(KeyEvent e) {
+//                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+//                    calculateExcess();
+//                }
+//            }
+        });
+//        txtPrice.getDocument().addDocumentListener(new DocumentListener() {
+//            @Override
+//            public void insertUpdate(DocumentEvent e) {
+//                if (!productList.isEmpty() || !newProductList.isEmpty()){
+//                    updatePriceProductBySize();
+//                }
+//            }
+//
+//            @Override
+//            public void removeUpdate(DocumentEvent e) {
+//                if (!productList.isEmpty() || !newProductList.isEmpty()){
+////                    updatePriceProductBySize();
+//                }
+//            }
+//
+//            @Override
+//            public void changedUpdate(DocumentEvent e) {
+//                if (!productList.isEmpty() || !newProductList.isEmpty()){
+//                    updatePriceProductBySize();
+//                }
+//            }
+//        });
         containerAtributeProduct.add(lblName);
         containerAtributeProduct.add(txtNameProduct, "wrap");
 
@@ -514,7 +567,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
 
 
         buttonCancel = new JButton("Huỷ");
-        JButton buttonAdd = new JButton("Cập nhật");
+        JButton buttonUpdate = new JButton("Cập nhật");
         buttonCancel.setPreferredSize(new Dimension(100, 30));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -535,13 +588,13 @@ public class EditProductGUI extends DialogFormDetail_1 {
         });
         containerButton.add(buttonCancel);
 
-        buttonAdd.setPreferredSize(new Dimension(100, 30));
-        buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
-        buttonAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        buttonAdd.addMouseListener(new MouseAdapter() {
+       buttonUpdate.setPreferredSize(new Dimension(100, 30));
+       buttonUpdate.setFont(new Font("Public Sans", Font.BOLD, 15));
+       buttonUpdate.setCursor(new Cursor(Cursor.HAND_CURSOR));
+       buttonUpdate.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (removeRecipe() && addNewRecipe() && updateRecipe()) {
+                if (removeProduct() && addNewProduct() && updateAllProducts()&&removeRecipe() && addNewRecipe() && updateRecipe()) {
                     JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                     dispose();
                 } else {
@@ -549,7 +602,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
                 }
             }
         });
-        containerButton.add(buttonAdd);
+        containerButton.add(buttonUpdate);
 
     }
 
@@ -588,15 +641,24 @@ public class EditProductGUI extends DialogFormDetail_1 {
         String size = selectedLabel.getText();
         Pair<Boolean, String> result;
         String price = txtPrice.getText();
-        result = productBLL.validatePrice(price);
-        if (!result.getKey()) {
-            JOptionPane.showMessageDialog(null, result.getValue(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txtPrice.requestFocus();
-            return;
-        }
+//        result = productBLL.validatePrice(price);
+//
+//        if (!result.getKey()) {
+//            JOptionPane.showMessageDialog(null, result.getValue(),
+//                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+//            txtPrice.requestFocus();
+//            return;
+//        }
         if (!productList.isEmpty()) {
             for (Product product : productList) {
+                if (product.getSize().equals(size)) {
+                    product.setPrice(Double.parseDouble(price));
+                    return;
+                }
+            }
+        }
+        if (!newProductList.isEmpty()) {
+            for (Product product : newProductList) {
                 if (product.getSize().equals(size)) {
                     product.setPrice(Double.parseDouble(price));
                     return;
@@ -615,9 +677,24 @@ public class EditProductGUI extends DialogFormDetail_1 {
             txtNameProduct.requestFocus();
             return;
         }
-        for (Product product : productList) {
-            product.setName(name);
+        String size = selectedLabel.getText();
+        if (!productList.isEmpty()) {
+            for (Product product : productList) {
+                if (product.getSize().equals(size)) {
+                    product.setName(name);
+                    return;
+                }
+            }
         }
+        if (!newProductList.isEmpty()) {
+            for (Product product : newProductList) {
+                if (product.getSize().equals(size)) {
+                    product.setName(name);
+                    return;
+                }
+            }
+        }
+
     }
 
     private void updateProductByCategory() {
@@ -630,20 +707,29 @@ public class EditProductGUI extends DialogFormDetail_1 {
             txtCategory.requestFocus();
             return;
         }
-        for (Product product : productList) {
-            product.setCategory(category);
+        String size = selectedLabel.getText();
+        if (!productList.isEmpty()) {
+            for (Product product : productList) {
+                if (product.getSize().equals(size)) {
+                    product.setCategory(category);
+                    return;
+                }
+            }
+        }
+        if (!newProductList.isEmpty()) {
+            for (Product product : newProductList) {
+                if (product.getSize().equals(size)) {
+                    product.setCategory(category);
+                    return;
+                }
+            }
         }
     }
 
     private boolean addProductBySize(String size) {
-        String name, category;
-        if (productList.isEmpty()) {
-            newProductID = productBLL.getAutoID(productBLL.searchProducts());
-            name = txtNameProduct.getText();
-        } else {
-            newProductID = productList.get(0).getId();
-            name = productList.get(0).getName();
-        }
+        String name,category;
+        name = txtNameProduct.getText();
+
         Pair<Boolean, String> result;
         result = productBLL.validateName(name);
         if (!result.getKey()) {
@@ -658,8 +744,12 @@ public class EditProductGUI extends DialogFormDetail_1 {
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        Product product = new Product(newProductID, name, size, category, 0, 0, imageProduct, false);
-        productList.add(product);
+        Product product = new Product(product_id, name, size, category, 0, 0, imageProduct, false);
+        if(result.getKey())
+            productList.add(product);
+        else
+            newProductList.add(product);
+
         return true;
     }
 
@@ -765,7 +855,6 @@ public class EditProductGUI extends DialogFormDetail_1 {
             String[] options = new String[]{"Huỷ", "Xác nhận"};
             int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nguyên liệu?",
                     "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-            System.out.println("Trước khi xóa: " + recipeList.size());
             if (choice == 1) {
                 Iterator<Recipe> iterator = recipeList.iterator();
                 String labelText = selectedLabel.getText();
@@ -788,31 +877,41 @@ public class EditProductGUI extends DialogFormDetail_1 {
             }
         }
     }
-
-    private void removeSizeProduct(String size) {
-        if ("0".equals(size)) {
-            for (Product product : productList) {
-                removeRecipeByProduct(product);
-            }
+private void removeAllProductSelectSize0(String size0) {
+    if ("0".equals(size0)) {
+        for (Product product : productList) {
+            removeRecipeByProduct(product);
             productList.clear();
-        } else {
+        }
+    }
+}
+    private void removeSizeProduct(String size) {
             Iterator<Product> iterator = productList.iterator();
             while (iterator.hasNext()) {
                 Product product = iterator.next();
                 if (product.getSize().equals(size)) {
+                    deletedProductList.add(product);
                     iterator.remove();
                     removeRecipeByProduct(product);
                 }
             }
-        }
     }
 
     private void removeRecipeByProduct(Product product) {
-        recipeList.removeIf(recipe -> recipe.getProduct_id() == product.getId() && recipe.getSize().equals(product.getSize()));
+        Iterator<Recipe> iterator = recipeList.iterator();
+        while (iterator.hasNext()) {
+            Recipe recipe = iterator.next();
+            if (recipe.getProduct_id() == product.getId() && recipe.getSize().equals(product.getSize())) {
+                deletedRecipeList.add(recipe);
+                iterator.remove();
+            }
+        }
     }
+
 
     private void resetTxt() {
         txtPrice.setText("0");
+        txtCapitalPrice.setText("0");
         txtSearch.setText("");
         txtQuantity.setText("");
         txtUnit.setText("");
@@ -821,14 +920,45 @@ public class EditProductGUI extends DialogFormDetail_1 {
     }
 
     private void loadPriceBySize(String size) {
-        for (Product product : productList) {
-            if (product.getSize().equals(size)) {
-                String price = product.getPrice().toString();
-                txtPrice.setText(price);
-                return;
+        if(!productList.isEmpty()){
+            for (Product product : productList) {
+                if (product.getSize().equals(size)) {
+                    String price = product.getPrice().toString();
+                    txtPrice.setText(price);
+                    return;
+                }
             }
         }
-        txtPrice.setText("0");
+        if(!newProductList.isEmpty()){
+            for (Product product : newProductList) {
+                if (product.getSize().equals(size)) {
+                    String price = product.getPrice().toString();
+                    txtPrice.setText(price);
+                    return;
+                }
+            }
+        }
+
+    }
+    private void loadCapitalPriceBySize(String size) {
+        if(!productList.isEmpty()){
+            for (Product product : productList) {
+                if (product.getSize().equals(size)) {
+                    String capital_price = String.valueOf(product.getCapital_price());
+                    txtCapitalPrice.setText(capital_price);
+                    return;
+                }
+            }
+        }
+        if(!newProductList.isEmpty()){
+            for (Product product : newProductList) {
+                if (product.getSize().equals(size)) {
+                    String capital_price = String.valueOf(product.getCapital_price());
+                    txtCapitalPrice.setText(capital_price);
+                    return;
+                }
+            }
+        }
     }
 
     private void loadRecipeBySize(String size) {
@@ -854,20 +984,40 @@ public class EditProductGUI extends DialogFormDetail_1 {
 
     }
 
-    private void updateAllProducts() {
-        boolean allProductsAdded = true;
+    private boolean updateAllProducts() {
         for (Product product : productList) {
             Pair<Boolean, String> result = productBLL.updateProduct(product);
             if (!result.getKey()) {
-                allProductsAdded = false;
                 JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                break;
+                return false;
             }
         }
-        if (allProductsAdded) {
-            JOptionPane.showMessageDialog(null, "Thêm sản phẩm thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            dispose();
+        return true;
+    }
+    private boolean removeProduct() {
+        if (!deletedProductList.isEmpty()) {
+            for (Product product : deletedProductList) {
+                Pair<Boolean, String> result = productBLL.deleteProduct(product);
+                if (!result.getKey()) {
+                    System.out.println(result.getValue());
+                    return false;
+                }
+            }
         }
+        return true;
+    }
+    private boolean addNewProduct() {
+        if (!newProductList.isEmpty()) {
+            for (Product product : newProductList) {
+                System.out.println(product.toString());
+                Pair<Boolean, String> result = productBLL.addProduct(product);
+                if (!result.getKey()) {
+                    System.out.println(result.getValue());
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private boolean updateRecipe() {
