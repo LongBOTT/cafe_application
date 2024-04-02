@@ -38,14 +38,14 @@ public class RecipeBLL extends Manager<Recipe> {
         }
 
         if (recipeDAL.addRecipe(recipe) == 0)
-            return new Pair<>(false, "Thêm công thức thành công.");
+            return new Pair<>(false, "Thêm công thức không thành công.");
         return new Pair<>(true, "");
     }
 
     public Pair<Boolean, String> updateRecipe(Recipe recipe) {
 
         if (recipeDAL.updateRecipe(recipe) == 0)
-            return new Pair<>(false, "Cập nhật công thức thành công.");
+            return new Pair<>(false, "Cập nhật công thức không thành công.");
         return new Pair<>(true, "");
     }
 

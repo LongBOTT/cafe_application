@@ -257,20 +257,6 @@ public class DataTable extends JTable {
                     int row = e.getFirstRow();
                     int col = e.getColumn();
                     if (col == quantity && row != -1) {
-//                        Object valueAtColumn4 = getModel().getValueAt(row, quantity);
-//                        Object valueAtColumn3 = getModel().getValueAt(row, quantity - 1);
-//                        if (valueAtColumn4 != null && valueAtColumn3 != null) {
-//                            try {
-//                                Double newValue = Double.parseDouble(valueAtColumn4.toString()) * Double.parseDouble(valueAtColumn3.toString());
-//                                getModel().setValueAt(newValue, row, quantity + 1);
-//                            } catch (NumberFormatException ex) {
-//                                JOptionPane.showMessageDialog(null, "Số lượng không phải là số hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-//                                SwingUtilities.invokeLater(() -> {
-//                                    editCellAt(row, col);
-//                                    getEditorComponent().requestFocusInWindow();
-//                                });
-//                            }
-//                        }
                         if (actionListenerChange != null) {
                             actionListenerChange.actionPerformed(null);
                         }

@@ -217,10 +217,8 @@ public class ProductGUI extends Layout3 {
         model.setRowCount(0);
         int columnWidth = dataTable.getColumnModel().getColumn(0).getPreferredWidth();
         int rowHeight = dataTable.getRowHeight(0);
-        // Mảng chứa tất cả các sản phẩm
         ArrayList<Object[]> allProducts = ConvertProductUnique(objects);
 
-        // Duyệt qua mảng allProducts để thêm dữ liệu vào bảng
         for (Object[] productArray : allProducts) {
             String productName = (String) productArray[1];
             ArrayList<String> sizes = (ArrayList<String>) productArray[4];

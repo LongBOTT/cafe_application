@@ -44,6 +44,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
+
 public class AddProductGUI extends DialogFormDetail_1 {
     private MaterialBLL materialBLL = new MaterialBLL();
     private ProductBLL productBLL = new ProductBLL();
@@ -199,21 +201,17 @@ public class AddProductGUI extends DialogFormDetail_1 {
                 }
                 if ("0".equals(selectedSize)) {
                     panelSize.removeAll();
+                    for(String s : addedLabels){
+                        cbSize.addItem(s);
+                    }
+                    removeSizeProduct("0");
                     addedLabels.clear();
                     addedLabels.add("0");
                     if (!addProductBySize("0")) {
                         return;
                     }
-                    JLabel label = new JLabel("0");
-                    label.setPreferredSize(new Dimension(30, 30));
-                    label.setHorizontalAlignment(SwingConstants.CENTER);
-                    label.setFocusable(true);
-                    label.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                    label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                    label.setOpaque(true);
-                    label.setBackground(new Color(59, 130, 198));
-                    label.setForeground(Color.WHITE);
-                    selectedLabel = label;
+                    JLabel label =  createSize("0");
+                    selectedLabel =label;
                     label.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mouseClicked(MouseEvent e) {
@@ -229,45 +227,54 @@ public class AddProductGUI extends DialogFormDetail_1 {
                         }
                     });
                     panelSize.add(label);
+                    cbSize.removeItem(selectedSize);
                 } else {
                     if (addedLabels.contains("0")) {
                         panelSize.removeAll();
                         addedLabels.remove("0");
+                        removeSizeProduct("0");
                     }
-                    if (!addProductBySize(selectedSize)) {
-                        return;
-                    }
-                    JLabel label = new JLabel(selectedSize);
-                    label.setPreferredSize(new Dimension(30, 30));
-                    label.setHorizontalAlignment(SwingConstants.CENTER);
-                    label.setFocusable(true);
-                    label.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                    label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                    label.setOpaque(true);
-                    label.setBackground(new Color(59, 130, 198));
-                    label.setForeground(Color.WHITE);
-                    selectedLabel = label;
-                    addedLabels.add(selectedSize);
-                    label.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mouseClicked(MouseEvent e) {
-                            if (selectedLabel != null) {
-                                selectedLabel.setBackground(Color.WHITE);
-                                selectedLabel.setForeground(Color.BLACK);
-                            }
-                            label.setBackground(new Color(59, 130, 198));
-                            label.setForeground(Color.WHITE);
-                            selectedLabel = label;
-                            loadPriceBySize(selectedSize);
-                            loadRecipeBySize(selectedSize);
+                        if (!addProductBySize(selectedSize)) {
+                            return;
                         }
-                    });
-                    panelSize.add(label);
+                        JLabel label = createSize(selectedSize);
+                        selectedLabel = label;
+                        addedLabels.add(selectedSize);
+                        label.addMouseListener(new MouseAdapter() {
+                            @Override
+                            public void mouseClicked(MouseEvent e) {
+                                if (selectedLabel != null) {
+                                    selectedLabel.setBackground(Color.WHITE);
+                                    selectedLabel.setForeground(Color.BLACK);
+                                }
+                                label.setBackground(new Color(59, 130, 198));
+                                label.setForeground(Color.WHITE);
+                                selectedLabel = label;
+                                loadPriceBySize(selectedSize);
+                                loadRecipeBySize(selectedSize);
+                            }
+                        });
+                        panelSize.add(label);
+                        cbSize.removeItem(selectedSize);
+
+                    boolean containsZero = false;
+                    for (int i = 0; i < cbSize.getItemCount(); i++) {
+                        Object item = cbSize.getItemAt(i);
+                        if (item != null && item.equals("0")) {
+                            containsZero = true;
+                            break;
+                        }
+                    }
+
+                    if (!containsZero) {
+                        cbSize.addItem("0");
+                    }
+
+                    }
+                    panelSize.revalidate();
+                    panelSize.repaint();
+                    resetTxt();
                 }
-                panelSize.revalidate();
-                panelSize.repaint();
-                resetTxt();
-            }
         });
 
 
@@ -291,8 +298,10 @@ public class AddProductGUI extends DialogFormDetail_1 {
                     panelSize.revalidate();
                     panelSize.repaint();
                     resetTxt();
-                    removeSizeProduct();
+                    removeSizeProduct(labelText);
                     selectedLabel = null;
+                    cbSize.addItem(labelText);
+
                 } else {
                     JOptionPane.showMessageDialog(null, "Chọn size muốn xóa");
                 }
@@ -715,17 +724,22 @@ public class AddProductGUI extends DialogFormDetail_1 {
         }
     }
 
-    private void removeSizeProduct() {
-        Iterator<Product> iterator = productList.iterator();
-        String labelText = selectedLabel.getText();
-        while (iterator.hasNext()) {
-            Product product = iterator.next();
-            if (product.getSize().equals(labelText)) {
-                iterator.remove();
+    private void removeSizeProduct(String size) {
+        if ("0".equals(size)) {
+            for (Product product : productList) {
                 removeRecipeByProduct(product);
             }
+            productList.clear();
+        } else {
+            Iterator<Product> iterator = productList.iterator();
+            while (iterator.hasNext()) {
+                Product product = iterator.next();
+                if (product.getSize().equals(size)) {
+                    iterator.remove();
+                    removeRecipeByProduct(product);
+                }
+            }
         }
-
     }
 
     private void removeRecipeByProduct(Product product) {
@@ -811,6 +825,18 @@ public class AddProductGUI extends DialogFormDetail_1 {
         textField.setFont(new Font("Public Sans", Font.PLAIN, 14));
         textField.setBackground(new Color(245, 246, 250));
         return textField;
+    }
+    private JLabel createSize(String size){
+        JLabel label = new JLabel(size);
+        label.setPreferredSize(new Dimension(30, 30));
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setFocusable(true);
+        label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        label.setOpaque(true);
+        label.setBackground(new Color(59, 130, 198));
+        label.setForeground(Color.WHITE);
+        return label;
     }
 
     private void addAllProducts() {
