@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 31, 2024 at 04:20 AM
+-- Generation Time: Apr 02, 2024 at 04:50 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -315,7 +315,10 @@ INSERT INTO `export_detail` (`export_id`, `shipment_id`, `quantity`, `reason`) V
 (1, 2, 30, 'Bán'),
 (1, 3, 30, 'Bán'),
 (1, 4, 30, 'Bán'),
-(1, 5, 30, 'Huỷ');
+(1, 5, 30, 'Huỷ'),
+(2, 1, 20, 'Bán'),
+(2, 10, 3, 'Huỷ'),
+(2, 11, 10, 'Huỷ');
 
 -- --------------------------------------------------------
 
@@ -335,7 +338,8 @@ CREATE TABLE `export_note` (
 --
 
 INSERT INTO `export_note` (`id`, `staff_id`, `total`, `invoice_date`) VALUES
-(1, 1, 0, '2024-02-07');
+(1, 1, 0, '2024-02-07'),
+(2, 4, 660000, '2024-04-02');
 
 -- --------------------------------------------------------
 
@@ -379,7 +383,10 @@ CREATE TABLE `import_note` (
 
 INSERT INTO `import_note` (`id`, `staff_id`, `total`, `received_date`) VALUES
 (1, 1, 0, '2024-02-06'),
-(2, 1, 0, '2024-02-07');
+(2, 1, 0, '2024-02-07'),
+(3, 4, 60000, '2024-03-31'),
+(4, 4, 120000, '2024-03-31'),
+(5, 4, 260000, '2024-03-31');
 
 -- --------------------------------------------------------
 
@@ -426,7 +433,7 @@ CREATE TABLE `material` (
 --
 
 INSERT INTO `material` (`id`, `name`, `remain`, `min_remain`, `max_remain`, `unit`, `unit_price`, `deleted`) VALUES
-(3, 'Cà phê bột truyền thống', 10, 50, 100, 'kg', 20000, b'0'),
+(3, 'Cà phê bột truyền thống', 60, 50, 100, 'kg', 20000, b'0'),
 (4, 'Đường túi', 50, 50, 100, 'Túi', 20000, b'0'),
 (5, 'Bánh cookie', 100, 50, 100, 'Cái', 20000, b'0'),
 (6, 'Đá viên', 20000, 50, 100, 'g', 20000, b'0'),
@@ -451,7 +458,7 @@ INSERT INTO `material` (`id`, `name`, `remain`, `min_remain`, `max_remain`, `uni
 (26, 'Thạch vải ', 100, 50, 100, 'g', 20000, b'0'),
 (27, 'Bột freeze mix', 200, 50, 100, 'g', 20000, b'0'),
 (28, 'Whipping cream ', 50, 50, 100, 'g', 20000, b'0'),
-(29, 'Bột cà phê espresso', 1, 50, 100, 'lít', 20000, b'0'),
+(29, 'Bột cà phê espresso', 0, 50, 100, 'lít', 20000, b'0'),
 (30, 'Bột green tea mix mới ', 100, 50, 100, 'g', 20000, b'0'),
 (31, 'Thạch trà xanh ', 500, 50, 100, 'g', 20000, b'0'),
 (32, 'Bột trà xanh trang trí', 200, 50, 100, 'g', 20000, b'0'),
@@ -569,6 +576,7 @@ CREATE TABLE `product` (
   `name` varchar(255) DEFAULT NULL,
   `size` varchar(255) NOT NULL,
   `category` varchar(255) DEFAULT NULL,
+  `capital_price` double DEFAULT NULL,
   `price` double DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL,
   `deleted` bit(1) DEFAULT NULL
@@ -578,53 +586,53 @@ CREATE TABLE `product` (
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`id`, `name`, `size`, `category`, `price`, `image`, `deleted`) VALUES
-(1, 'Phin Đen Đá', 'L', 'CÀ PHÊ PHIN', 39, 'SP01', b'0'),
-(1, 'Phin Đen Đá', 'M', 'CÀ PHÊ PHIN', 35, 'SP01', b'0'),
-(1, 'Phin Đen Đá', 'S', 'CÀ PHÊ PHIN', 29, 'SP01', b'0'),
-(2, 'Phin Sữa Đá', 'L', 'CÀ PHÊ PHIN', 45, 'SP02', b'0'),
-(2, 'Phin Sữa Đá', 'M', 'CÀ PHÊ PHIN', 39, 'SP02', b'0'),
-(2, 'Phin Sữa Đá', 'S', 'CÀ PHÊ PHIN', 29, 'SP02', b'0'),
-(3, 'Bạc Xỉu', 'L', 'CÀ PHÊ PHIN', 45, 'SP03', b'0'),
-(3, 'Bạc Xỉu', 'M', 'CÀ PHÊ PHIN', 39, 'SP03', b'0'),
-(3, 'Bạc Xỉu', 'S', 'CÀ PHÊ PHIN', 29, 'SP03', b'0'),
-(4, 'Trà Sen Vàng', 'L', 'TRÀ', 65, 'SP04', b'0'),
-(4, 'Trà Sen Vàng', 'M', 'TRÀ', 55, 'SP04', b'0'),
-(4, 'Trà Sen Vàng', 'S', 'TRÀ', 45, 'SP04', b'0'),
-(5, 'Trà Thạch Đào', 'L', 'TRÀ', 65, 'SP05', b'0'),
-(5, 'Trà Thạch Đào', 'M', 'TRÀ', 55, 'SP05', b'0'),
-(5, 'Trà Thạch Đào', 'S', 'TRÀ', 45, 'SP05', b'0'),
-(6, 'Trà Thanh Đào', 'L', 'TRÀ', 65, 'SP06', b'0'),
-(6, 'Trà Thanh Đào', 'M', 'TRÀ', 55, 'SP06', b'0'),
-(6, 'Trà Thanh Đào', 'S', 'TRÀ', 45, 'SP06', b'0'),
-(7, 'Trà Thạch Vãi', 'L', 'TRÀ', 65, 'SP07', b'0'),
-(7, 'Trà Thạch Vãi', 'M', 'TRÀ', 55, 'SP07', b'0'),
-(7, 'Trà Thạch Vãi', 'S', 'TRÀ', 45, 'SP07', b'0'),
-(8, 'Bánh Chuối', '0', 'BÁNH', 29, 'SP08', b'0'),
-(9, 'Bánh Su Kem', '0', 'BÁNH', 29, 'SP09', b'0'),
-(10, 'Phô Mai Chanh Dây', '0', 'BÁNH', 29, 'SP10', b'0'),
-(11, 'Phô Mai Trà Xanh', '0', 'BÁNH', 29, 'SP11', b'0'),
-(12, 'PhinDi Hạnh Nhân', 'L', 'PHINDI', 55, 'SP12', b'0'),
-(12, 'PhinDi Hạnh Nhân', 'M', 'PHINDI', 49, 'SP12', b'0'),
-(12, 'PhinDi Hạnh Nhân', 'S', 'PHINDI', 45, 'SP12', b'0'),
-(13, 'PhinDi Kem Sữa', 'L', 'PHINDI', 55, 'SP13', b'0'),
-(13, 'PhinDi Kem Sữa', 'M', 'PHINDI', 49, 'SP13', b'0'),
-(13, 'PhinDi Kem Sữa', 'S', 'PHINDI', 45, 'SP13', b'0'),
-(14, 'PhinDi Choco', 'L', 'PHINDI', 55, 'SP14', b'0'),
-(14, 'PhinDi Choco', 'M', 'PHINDI', 49, 'SP14', b'0'),
-(14, 'PhinDi Choco', 'S', 'PHINDI', 45, 'SP14', b'0'),
-(15, 'Freeze Trà Xanh', 'L', 'FREEZE ', 69, 'SP15', b'0'),
-(15, 'Freeze Trà Xanh', 'M', 'FREEZE', 65, 'SP15', b'0'),
-(15, 'Freeze Trà Xanh', 'S', 'FREEZE', 55, 'SP15', b'0'),
-(16, 'Caramel Phin Freeze', 'L', 'FREEZE', 69, 'SP16', b'0'),
-(16, 'Caramel Phin Freeze', 'M', 'FREEZE', 65, 'SP16', b'0'),
-(16, 'Caramel Phin Freeze', 'S', 'FREEZE', 55, 'SP16', b'0'),
-(17, 'Freeze Sô-Cô-La', 'L', 'FREEZE', 69, 'SP17', b'0'),
-(17, 'Freeze Sô-Cô-La', 'M', 'FREEZE', 65, 'SP17', b'0'),
-(17, 'Freeze Sô-Cô-La', 'S', 'FREEZE', 55, 'SP17', b'0'),
-(18, 'Classic Phin Freeze', 'L', 'FREEZE', 69, 'SP18', b'0'),
-(18, 'Classic Phin Freeze', 'M', 'FREEZE', 65, 'SP18', b'0'),
-(18, 'Classic Phin Freeze', 'S', 'FREEZE', 55, 'SP18', b'0');
+INSERT INTO `product` (`id`, `name`, `size`, `category`, `capital_price`, `price`, `image`, `deleted`) VALUES
+(1, 'Phin Đen Đá', 'L', 'CÀ PHÊ PHIN', 39, 39, 'SP01', b'0'),
+(1, 'Phin Đen Đá', 'M', 'CÀ PHÊ PHIN', 35, 35, 'SP01', b'0'),
+(1, 'Phin Đen Đá', 'S', 'CÀ PHÊ PHIN', 29, 29, 'SP01', b'0'),
+(2, 'Phin Sữa Đá', 'L', 'CÀ PHÊ PHIN', 45, 45, 'SP02', b'0'),
+(2, 'Phin Sữa Đá', 'M', 'CÀ PHÊ PHIN', 39, 39, 'SP02', b'0'),
+(2, 'Phin Sữa Đá', 'S', 'CÀ PHÊ PHIN', 29, 29, 'SP02', b'0'),
+(3, 'Bạc Xỉu', 'L', 'CÀ PHÊ PHIN', 45, 45, 'SP03', b'0'),
+(3, 'Bạc Xỉu', 'M', 'CÀ PHÊ PHIN', 39, 39, 'SP03', b'0'),
+(3, 'Bạc Xỉu', 'S', 'CÀ PHÊ PHIN', 29, 29, 'SP03', b'0'),
+(4, 'Trà Sen Vàng', 'L', 'TRÀ', 65, 65, 'SP04', b'0'),
+(4, 'Trà Sen Vàng', 'M', 'TRÀ', 55, 55, 'SP04', b'0'),
+(4, 'Trà Sen Vàng', 'S', 'TRÀ', 45, 45, 'SP04', b'0'),
+(5, 'Trà Thạch Đào', 'L', 'TRÀ', 65, 65, 'SP05', b'0'),
+(5, 'Trà Thạch Đào', 'M', 'TRÀ', 55, 55, 'SP05', b'0'),
+(5, 'Trà Thạch Đào', 'S', 'TRÀ', 45, 45, 'SP05', b'0'),
+(6, 'Trà Thanh Đào', 'L', 'TRÀ', 65, 65, 'SP06', b'0'),
+(6, 'Trà Thanh Đào', 'M', 'TRÀ', 55, 55, 'SP06', b'0'),
+(6, 'Trà Thanh Đào', 'S', 'TRÀ', 45, 45, 'SP06', b'0'),
+(7, 'Trà Thạch Vãi', 'L', 'TRÀ', 65, 65, 'SP07', b'0'),
+(7, 'Trà Thạch Vãi', 'M', 'TRÀ', 55, 55, 'SP07', b'0'),
+(7, 'Trà Thạch Vãi', 'S', 'TRÀ', 45, 45, 'SP07', b'0'),
+(8, 'Bánh Chuối', '0', 'BÁNH', 29, 29, 'SP08', b'0'),
+(9, 'Bánh Su Kem', '0', 'BÁNH', 29, 29, 'SP09', b'0'),
+(10, 'Phô Mai Chanh Dây', '0', 'BÁNH', 29, 29, 'SP10', b'0'),
+(11, 'Phô Mai Trà Xanh', '0', 'BÁNH', 29, 29, 'SP11', b'0'),
+(12, 'PhinDi Hạnh Nhân', 'L', 'PHINDI', 55, 55, 'SP12', b'0'),
+(12, 'PhinDi Hạnh Nhân', 'M', 'PHINDI', 49, 49, 'SP12', b'0'),
+(12, 'PhinDi Hạnh Nhân', 'S', 'PHINDI', 45, 45, 'SP12', b'0'),
+(13, 'PhinDi Kem Sữa', 'L', 'PHINDI', 55, 55, 'SP13', b'0'),
+(13, 'PhinDi Kem Sữa', 'M', 'PHINDI', 49, 49, 'SP13', b'0'),
+(13, 'PhinDi Kem Sữa', 'S', 'PHINDI', 45, 45, 'SP13', b'0'),
+(14, 'PhinDi Choco', 'L', 'PHINDI', 55, 55, 'SP14', b'0'),
+(14, 'PhinDi Choco', 'M', 'PHINDI', 49, 49, 'SP14', b'0'),
+(14, 'PhinDi Choco', 'S', 'PHINDI', 45, 45, 'SP14', b'0'),
+(15, 'Freeze Trà Xanh', 'L', 'FREEZE ', 69, 69, 'SP15', b'0'),
+(15, 'Freeze Trà Xanh', 'M', 'FREEZE', 65, 65, 'SP15', b'0'),
+(15, 'Freeze Trà Xanh', 'S', 'FREEZE', 55, 55, 'SP15', b'0'),
+(16, 'Caramel Phin Freeze', 'L', 'FREEZE', 69, 69, 'SP16', b'0'),
+(16, 'Caramel Phin Freeze', 'M', 'FREEZE', 65, 65, 'SP16', b'0'),
+(16, 'Caramel Phin Freeze', 'S', 'FREEZE', 55, 55, 'SP16', b'0'),
+(17, 'Freeze Sô-Cô-La', 'L', 'FREEZE', 69, 69, 'SP17', b'0'),
+(17, 'Freeze Sô-Cô-La', 'M', 'FREEZE', 65, 65, 'SP17', b'0'),
+(17, 'Freeze Sô-Cô-La', 'S', 'FREEZE', 55, 55, 'SP17', b'0'),
+(18, 'Classic Phin Freeze', 'L', 'FREEZE', 69, 69, 'SP18', b'0'),
+(18, 'Classic Phin Freeze', 'M', 'FREEZE', 65, 65, 'SP18', b'0'),
+(18, 'Classic Phin Freeze', 'S', 'FREEZE', 55, 55, 'SP18', b'0');
 
 -- --------------------------------------------------------
 
@@ -1042,11 +1050,17 @@ CREATE TABLE `shipment` (
 --
 
 INSERT INTO `shipment` (`id`, `material_id`, `supplier_id`, `import_id`, `quantity`, `remain`, `mfg`, `exp`) VALUES
-(1, 3, 1, 1, 30, 30, '2024-03-03', '2024-04-01'),
-(2, 4, 1, 1, 30, 30, '2024-03-03', '2024-04-01'),
-(3, 5, 1, 1, 30, 30, '2024-03-03', '2024-04-01'),
-(4, 6, 1, 1, 30, 20, '2024-03-03', '2024-04-01'),
-(5, 7, 1, 1, 30, 30, '2024-03-03', '2024-04-01');
+(1, 3, 1, 1, 30, 10, '2024-03-03', '2024-04-15'),
+(2, 4, 1, 1, 30, 30, '2024-03-03', '2024-04-15'),
+(3, 5, 1, 1, 30, 30, '2024-03-03', '2024-04-15'),
+(4, 6, 1, 1, 30, 20, '2024-03-03', '2024-04-15'),
+(5, 7, 1, 1, 30, 30, '2024-03-03', '2024-04-15'),
+(6, 3, 1, 1, 30, 0, '2024-03-03', '2024-04-15'),
+(7, 3, 2, 1, 30, 20, '2024-03-03', '2024-04-15'),
+(8, 3, 1, 1, 30, 20, '2024-03-03', '2024-04-15'),
+(9, 3, 1, 1, 30, 30, '2024-03-03', '2024-04-15'),
+(10, 6, 1, 5, 3, 0, '2024-03-08', '2024-03-21'),
+(11, 9, 1, 5, 10, 0, '2024-03-14', '2024-03-15');
 
 -- --------------------------------------------------------
 
