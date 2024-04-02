@@ -248,9 +248,9 @@ public class DetailProductGUI extends DialogFormDetail_1 {
         System.out.println(product_id);
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
-        List<List<Object>> searchResults = recipeBLL.searchRecipesByProduct(product_id, size);
-        for (List<Object> row : searchResults) {
-            model.addRow(row.toArray());
-        }
+//        List<List<Object>> searchResults = recipeBLL.searchRecipesByProduct(product_id, size);
+//        for (List<Object> row : searchResults) {
+//            model.addRow(row.toArray());
+//        }
     }
 }

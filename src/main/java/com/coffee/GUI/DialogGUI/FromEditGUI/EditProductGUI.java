@@ -8,12 +8,10 @@ import com.coffee.DTO.Product;
 import com.coffee.DTO.Recipe;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddMaterialGUI;
-import com.coffee.GUI.ProductGUI;
 import com.coffee.GUI.components.swing.DataSearch;
 import com.coffee.GUI.components.swing.EventClick;
 import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.GUI.components.swing.PanelSearch;
-import com.coffee.GUI.components.CustomPanelRenderer;
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
@@ -33,40 +31,30 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
-import com.coffee.BLL.MaterialBLL;
-import com.coffee.DTO.Material;
-
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class EditProductGUI extends DialogFormDetail_1 {
-    private MaterialBLL materialBLL = new MaterialBLL();
-    private ProductBLL productBLL = new ProductBLL();
-    private RecipeBLL recipeBLL = new RecipeBLL();
-    //    private List<Material> listMaterials = new ArrayList<>();
-    private List<Recipe> materialList = new ArrayList<>();
-    ;
-
-    private JLabel titleName;
-    private RoundedPanel containerAtributeProduct;
-    private RoundedPanel containerImage;
+    private final MaterialBLL materialBLL = new MaterialBLL();
+    private final ProductBLL productBLL = new ProductBLL();
+    private final RecipeBLL recipeBLL = new RecipeBLL();
+    private List<Product> productList;
+    private List<Product> deletedProductList = new ArrayList<>();
+    private List<Recipe> newProductList = new ArrayList<>();
+    private List<Recipe> recipeList;
+    private List<Recipe> deletedRecipeList = new ArrayList<>();
+    private List<Recipe> newRecipeList = new ArrayList<>();
+    private final JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
     private JLabel lblImage;
     private JButton btnImage;
-    private JLabel lblListMaterial;
     private DataTable dataTable;
     private JButton buttonCancel;
-    private JButton buttonAdd;
-
-    private RoundedPanel containerInforMaterial;
-    private RoundedScrollPane scrollPane;
-    private RoundedPanel containerDataTable;
-    private String[] columnNames;
+    private final int product_id;
     private JTextField txtNameProduct;
     private JComboBox<String> cbSize;
     private JPanel panelSize;
@@ -74,19 +62,15 @@ public class EditProductGUI extends DialogFormDetail_1 {
     private JTextField txtCategory;
     private JTextField txtQuantity;
     private JTextField txtUnit;
-    private JButton btnAddMaterial;
-    private JPopupMenu menu;
-    private PanelSearch search;
+
+    private JTextField txtCapitalPrice;
+    private final JPopupMenu menu;
+    private final PanelSearch search;
     private MyTextField txtSearch;
     private JLabel selectedLabel;
-    private int productID;
+    private int newProductID;
     private int materialID;
     private String imageProduct;
-    private List<Product> productList;
-    private int product_id;
-
-    private JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/edit.svg"));
-    private JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
 
     public EditProductGUI(List<Product> Products) {
         super();
@@ -127,7 +111,9 @@ public class EditProductGUI extends DialogFormDetail_1 {
     }
 
     public void init(List<Product> Products) {
-        titleName = new JLabel("Sửa sản phẩm");
+        recipeList = recipeBLL.searchRecipes("product_id = " + product_id);
+        System.out.println(recipeList);
+        JLabel titleName = new JLabel("Sửa sản phẩm");
         title.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
         title.add(titleName);
@@ -137,21 +123,26 @@ public class EditProductGUI extends DialogFormDetail_1 {
         txtQuantity = createTextFieldMaterial();
         top.setLayout(new FlowLayout());
 
-        containerAtributeProduct = new RoundedPanel();
-        containerAtributeProduct.setLayout(new MigLayout("", "[]40[][][]100", "15[]15[]15[]15"));
+        RoundedPanel containerAtributeProduct = new RoundedPanel();
+        containerAtributeProduct.setLayout(new MigLayout("", "[]40[][][]100", "10[]10[]10[]10"));
         containerAtributeProduct.setBackground(new Color(217, 217, 217));
         containerAtributeProduct.setPreferredSize(new Dimension(600, 200));
 
-        containerImage = new RoundedPanel();
+        RoundedPanel containerImage = new RoundedPanel();
         containerImage.setLayout(new MigLayout("", "[]", "[][]"));
         containerImage.setBackground(new Color(217, 217, 217));
         containerImage.setPreferredSize(new Dimension(200, 200));
 
         JPanel PanelImage = new JPanel();
         PanelImage.setPreferredSize(new Dimension(150, 150));
-//        PanelImage.setBackground(new Color(217,217,217));
+        PanelImage.setBackground(new Color(217, 217, 217));
 
         lblImage = new JLabel();
+        ImageIcon iconProduct = new FlatSVGIcon("image/Product/" + imageProduct + ".svg");
+        Image imgProduct = iconProduct.getImage();
+        Image newImgProduct = imgProduct.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
+        iconProduct = new ImageIcon(newImgProduct);
+        lblImage.setIcon(iconProduct);
         PanelImage.add(lblImage);
 
 
@@ -178,25 +169,22 @@ public class EditProductGUI extends DialogFormDetail_1 {
         top.add(containerImage);
         EmptyBorder emptyBorder = new EmptyBorder(0, 30, 0, 0);
         top.setBorder(emptyBorder);
-        columnNames = new String[]{"ID nguyên liệu", "Tên nguyên liệu", "Số lượng", "Đơn vị"};
-        columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
-        columnNames[columnNames.length - 1] = "Sửa";
+
+        String[] columnNames = new String[]{"ID", "Tên nguyên liệu", "Đơn vị", "Giá vốn", "SL", "T.Tiền"};
         columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
         columnNames[columnNames.length - 1] = "Xóa";
         dataTable = new DataTable(new Object[0][0], columnNames,
-                e -> selectFunction(),
-                false, true, true, 4);
-        int[] columnWidths = {50, 300, 50, 50};
+                e -> selectFunction(), e -> updateQuantity(),
+                false, true, true, 6, true, 4);
+        int[] columnWidths = {50, 300, 50, 50, 50, 50};
 
         for (int i = 0; i < columnWidths.length; i++) {
             dataTable.getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
         }
-        dataTable.getColumnModel().getColumn(4).setCellRenderer(new CustomPanelRenderer());
-        dataTable.getColumnModel().getColumn(5).setCellRenderer(new CustomPanelRenderer());
 
 
-        scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        containerDataTable = new RoundedPanel();
+        RoundedScrollPane scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        RoundedPanel containerDataTable = new RoundedPanel();
         containerDataTable.setLayout(new BorderLayout());
         containerDataTable.setBackground(new Color(217, 217, 217));
         EmptyBorder emptyBorderTop = new EmptyBorder(20, 0, 0, 0);
@@ -212,10 +200,13 @@ public class EditProductGUI extends DialogFormDetail_1 {
         JLabel lblCategory = createLabel("Thể loại");
         JLabel lblSize = createLabel("Size");
         JLabel lblPrice = createLabel("Giá bán");
+        JLabel lblCapitalPrice = createLabel("Giá Vốn");
 
         txtNameProduct = createTextField();
         txtCategory = createTextField();
         txtPrice = createTextField();
+        txtCapitalPrice = createTextField();
+        txtCapitalPrice.setFocusable(false);
 
         txtNameProduct.setText(Products.get(0).getName());
         txtCategory.setText(Products.get(0).getCategory());
@@ -224,8 +215,8 @@ public class EditProductGUI extends DialogFormDetail_1 {
         panelSize = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
         panelSize.setBackground(new Color(217, 217, 217));
         panelSize.setPreferredSize(new Dimension(350, 30));
-
         String defaultSize = "";
+        Set<String> addedLabels = new HashSet<>();
         for (Product product : Products) {
             String size = product.getSize();
             JLabel label = new JLabel(size);
@@ -237,7 +228,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
             label.setOpaque(true);
             label.setBackground(Color.WHITE);
             label.setForeground(Color.BLACK);
-
+            addedLabels.add(label.getText());
             if (defaultSize.isEmpty()) {
                 defaultSize = size;
             }
@@ -270,10 +261,15 @@ public class EditProductGUI extends DialogFormDetail_1 {
             panelSize.repaint();
         }
         cbSize = createComboBox();
-        Set<String> addedLabels = new HashSet<>();
-        String[] sizeOptions = {"0", "S", "M", "L"};
-        for (String size : sizeOptions)
-            cbSize.addItem(size);
+        Set<String> sizes = productList.stream().map(Product::getSize).collect(Collectors.toSet());
+        Set<String> availableSizes = new HashSet<>(Arrays.asList("S", "M", "L", "0"));
+
+        for (String size : availableSizes) {
+            if (!sizes.contains(size)) {
+                cbSize.addItem(size);
+            }
+        }
+
         cbSize.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -284,20 +280,17 @@ public class EditProductGUI extends DialogFormDetail_1 {
                 }
                 if ("0".equals(selectedSize)) {
                     panelSize.removeAll();
+                    for (String s : addedLabels) {
+                        cbSize.addItem(s);
+                    }
+
                     addedLabels.clear();
+                    removeSizeProduct("0");
                     addedLabels.add("0");
                     if (!addProductBySize("0")) {
                         return;
                     }
-                    JLabel label = new JLabel("0");
-                    label.setPreferredSize(new Dimension(30, 30));
-                    label.setHorizontalAlignment(SwingConstants.CENTER);
-                    label.setFocusable(true);
-                    label.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                    label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                    label.setOpaque(true);
-                    label.setBackground(new Color(59, 130, 198));
-                    label.setForeground(Color.WHITE);
+                    JLabel label = createSize("0");
                     selectedLabel = label;
                     label.addMouseListener(new MouseAdapter() {
                         @Override
@@ -314,23 +307,17 @@ public class EditProductGUI extends DialogFormDetail_1 {
                         }
                     });
                     panelSize.add(label);
+                    cbSize.removeItem(selectedSize);
                 } else {
                     if (addedLabels.contains("0")) {
                         panelSize.removeAll();
                         addedLabels.remove("0");
+                        removeSizeProduct("0");
                     }
                     if (!addProductBySize(selectedSize)) {
                         return;
                     }
-                    JLabel label = new JLabel(selectedSize);
-                    label.setPreferredSize(new Dimension(30, 30));
-                    label.setHorizontalAlignment(SwingConstants.CENTER);
-                    label.setFocusable(true);
-                    label.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                    label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                    label.setOpaque(true);
-                    label.setBackground(new Color(59, 130, 198));
-                    label.setForeground(Color.WHITE);
+                    JLabel label = createSize(selectedSize);
                     selectedLabel = label;
                     addedLabels.add(selectedSize);
                     label.addMouseListener(new MouseAdapter() {
@@ -348,6 +335,21 @@ public class EditProductGUI extends DialogFormDetail_1 {
                         }
                     });
                     panelSize.add(label);
+                    cbSize.removeItem(selectedSize);
+
+                    boolean containsZero = false;
+                    for (int i = 0; i < cbSize.getItemCount(); i++) {
+                        Object item = cbSize.getItemAt(i);
+                        if (item != null && item.equals("0")) {
+                            containsZero = true;
+                            break;
+                        }
+                    }
+
+                    if (!containsZero) {
+                        cbSize.addItem("0");
+                    }
+
                 }
                 panelSize.revalidate();
                 panelSize.repaint();
@@ -376,7 +378,8 @@ public class EditProductGUI extends DialogFormDetail_1 {
                     panelSize.revalidate();
                     panelSize.repaint();
                     resetTxt();
-                    removeSizeProduct();
+                    removeSizeProduct(labelText);
+                    cbSize.addItem(labelText);
                     selectedLabel = null;
                 } else {
                     JOptionPane.showMessageDialog(null, "Chọn size muốn xóa");
@@ -425,19 +428,21 @@ public class EditProductGUI extends DialogFormDetail_1 {
         containerAtributeProduct.add(lblPrice);
         containerAtributeProduct.add(txtPrice, "wrap");
 
+        containerAtributeProduct.add(lblCapitalPrice);
+        containerAtributeProduct.add(txtCapitalPrice, "wrap");
 
-        lblListMaterial = new JLabel("Danh sách nguyên liệu");
+        JLabel lblListMaterial = new JLabel("Danh sách nguyên liệu");
         lblListMaterial.setFont(new Font("Public Sans", Font.BOLD, 16));
 
         center.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
         center.add(lblListMaterial);
 
-        containerInforMaterial = new RoundedPanel();
+        RoundedPanel containerInforMaterial = new RoundedPanel();
         containerInforMaterial.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
         containerInforMaterial.setBackground(new Color(217, 217, 217));
 
 
-        btnAddMaterial = new JButton();
+        JButton btnAddMaterial = new JButton();
         ImageIcon icon = new FlatSVGIcon("icon/add.svg");
         Image image = icon.getImage();
         Image newImg = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
@@ -495,14 +500,8 @@ public class EditProductGUI extends DialogFormDetail_1 {
 
         btnThem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int selectedRow = dataTable.getSelectedRow();
-                if (selectedRow == -1) {
-                    addMaterialTemp();
-                } else {
-                    updateDataTable(selectedRow);
-                }
+                addMaterialTemp();
             }
-
         });
 
         containerInforMaterial.add(lblNameMaterial);
@@ -515,7 +514,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
 
 
         buttonCancel = new JButton("Huỷ");
-        buttonAdd = new JButton("Thêm");
+        JButton buttonAdd = new JButton("Cập nhật");
         buttonCancel.setPreferredSize(new Dimension(100, 30));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -542,12 +541,29 @@ public class EditProductGUI extends DialogFormDetail_1 {
         buttonAdd.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                addAllProducts();
-                addAllRecipe();
+                if (removeRecipe() && addNewRecipe() && updateRecipe()) {
+                    JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm không thành công", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         containerButton.add(buttonAdd);
 
+    }
+
+    private JLabel createSize(String size) {
+        JLabel label = new JLabel(size);
+        label.setPreferredSize(new Dimension(30, 30));
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setFocusable(true);
+        label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        label.setOpaque(true);
+        label.setBackground(new Color(59, 130, 198));
+        label.setForeground(Color.WHITE);
+        return label;
     }
 
     private Pair<Boolean, String> validateMaterial(String name, String quantity) {
@@ -560,7 +576,6 @@ public class EditProductGUI extends DialogFormDetail_1 {
         if (!result.getKey()) {
             return new Pair<>(false, result.getValue());
         }
-
         return new Pair<>(true, "hợp lệ");
     }
 
@@ -621,13 +636,12 @@ public class EditProductGUI extends DialogFormDetail_1 {
     }
 
     private boolean addProductBySize(String size) {
-
         String name, category;
         if (productList.isEmpty()) {
-            productID = productBLL.getAutoID(productBLL.searchProducts());
+            newProductID = productBLL.getAutoID(productBLL.searchProducts());
             name = txtNameProduct.getText();
         } else {
-            productID = productList.get(0).getId();
+            newProductID = productList.get(0).getId();
             name = productList.get(0).getName();
         }
         Pair<Boolean, String> result;
@@ -644,13 +658,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        Product product = new Product(productID, name, size, category, 0, 0, imageProduct, false);
-        result = productBLL.validateProductAll(product);
-        if (!result.getKey()) {
-            JOptionPane.showMessageDialog(null, result.getValue(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
+        Product product = new Product(newProductID, name, size, category, 0, 0, imageProduct, false);
         productList.add(product);
         return true;
     }
@@ -663,10 +671,8 @@ public class EditProductGUI extends DialogFormDetail_1 {
 
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-
-//            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String imageFile = "SP" + productID + ".svg";
-            String imageName = "SP" + productID;
+            String imageFile = "SP" + product_id + ".svg";
+            String imageName = "SP" + product_id;
             java.nio.file.Path destinationPath = Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "image", "Product", imageFile);
             java.nio.file.Path destinationPathTarget = Paths.get(System.getProperty("user.dir"), "target", "classes", "image", "Product", imageFile);
             try {
@@ -691,8 +697,6 @@ public class EditProductGUI extends DialogFormDetail_1 {
 
     private void addMaterialTemp() {
         String name = txtSearch.getText();
-//        Material material = materialBLL.findMaterialsBy(Map.of("name",name )).get(0);
-//        materialID = material.getId();
         String quantity = txtQuantity.getText();
         String unit = txtUnit.getText();
         String size = selectedLabel.getText();
@@ -707,10 +711,11 @@ public class EditProductGUI extends DialogFormDetail_1 {
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        Recipe recipe = new Recipe(productID, materialID, Double.parseDouble(quantity), size, unit);
+        Recipe recipe = new Recipe(product_id, materialID, Double.parseDouble(quantity), size, unit);
         if (!checkRecipeExist(recipe)) {
-            materialList.add(recipe);
-            addDataToTable(materialID, name, quantity, unit);
+            recipeList.add(recipe);
+            newRecipeList.add(recipe);
+            addDataToTable(materialID, quantity);
         } else {
             JOptionPane.showMessageDialog(null, "Nguyên liệu đã có trong công thức",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -719,7 +724,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
     }
 
     private boolean checkRecipeExist(Recipe recipe) {
-        for (Recipe r : materialList) {
+        for (Recipe r : recipeList) {
             if (r.getProduct_id() == recipe.getProduct_id()
                     && r.getMaterial_id() == recipe.getMaterial_id()
                     && r.getSize().equals(recipe.getSize())) {
@@ -729,31 +734,26 @@ public class EditProductGUI extends DialogFormDetail_1 {
         return false;
     }
 
-    private void addDataToTable(int materialID, String name, String quantity, String unit) {
+    private void addDataToTable(int materialID, String quantity) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
-        Object[] rowData = {materialID, name, quantity, unit, iconDetail, iconRemove};
+        Material material = materialBLL.findMaterialsBy(Map.of("id", materialID)).get(0);
+        String materialName = material.getName();
+        String unit = material.getUnit();
+        String materialPrice = String.valueOf(material.getUnit_price());
+        double materialPriceD = material.getUnit_price();
+        double totalAmount = materialPriceD * Double.parseDouble(quantity);
+        Object[] rowData = {materialID, materialName, unit, materialPrice, Double.parseDouble(quantity), totalAmount, iconRemove};
         model.addRow(rowData);
 
         txtSearch.setText("");
         txtQuantity.setText("");
         txtUnit.setText("");
-    }
-
-    private void updateDataTable(int selectedRow) {
-        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
-
-        String quantity = txtQuantity.getText();
-        Pair<Boolean, String> result = materialBLL.validateQuantity(quantity);
-        if (result.getKey()) {
-            model.setValueAt(quantity, selectedRow, 2);
-//            listMaterial.setSelectedItem("");
-            txtQuantity.setText("");
-            txtUnit.setText("");
-//            listMaterial.setEnabled(true);
-            dataTable.clearSelection();
-        } else
-            JOptionPane.showMessageDialog(null, result.getValue(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        if (txtCapitalPrice.getText().isEmpty()) {
+            txtCapitalPrice.setText(materialPrice);
+        } else {
+            double capitalPrice = Double.parseDouble(txtCapitalPrice.getText());
+            txtCapitalPrice.setText(String.valueOf(capitalPrice + totalAmount));
+        }
     }
 
     private void selectFunction() {
@@ -761,53 +761,54 @@ public class EditProductGUI extends DialogFormDetail_1 {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
 
-        if (indexColumn == 4) {
-//            listMaterial.setSelectedItem(dataTable.getValueAt(indexRow, 1).toString());
-            txtQuantity.setText(dataTable.getValueAt(indexRow, 2).toString());
-            txtUnit.setText(dataTable.getValueAt(indexRow, 3).toString());
-//            listMaterial.setEnabled(false);
-        }
-
-        if (indexColumn == 5) {
+        if (indexColumn == 6) {
             String[] options = new String[]{"Huỷ", "Xác nhận"};
             int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nguyên liệu?",
                     "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+            System.out.println("Trước khi xóa: " + recipeList.size());
             if (choice == 1) {
-                Iterator<Recipe> iterator = materialList.iterator();
+                Iterator<Recipe> iterator = recipeList.iterator();
                 String labelText = selectedLabel.getText();
+                System.out.println(labelText);
                 int id = (int) model.getValueAt(indexRow, 0);
                 while (iterator.hasNext()) {
                     Recipe recipe = iterator.next();
-                    if (recipe.getProduct_id() == productID && recipe.getMaterial_id() == id && recipe.getSize().equals(labelText)) {
+                    if (recipe.getProduct_id() == product_id &&
+                            recipe.getMaterial_id() == id &&
+                            recipe.getSize().equals(labelText)) {
+                        deletedRecipeList.add(recipe);
                         iterator.remove();
                     }
                 }
+                double totalAmount = (double) model.getValueAt(indexRow, 5);
+                double capitalPrice = Double.parseDouble(txtCapitalPrice.getText());
+                txtCapitalPrice.setText(String.valueOf(capitalPrice - totalAmount));
                 model.removeRow(indexRow);
+
             }
         }
     }
 
-    private void removeSizeProduct() {
-        Iterator<Product> iterator = productList.iterator();
-        String labelText = selectedLabel.getText();
-        while (iterator.hasNext()) {
-            Product product = iterator.next();
-            if (product.getSize().equals(labelText)) {
-                iterator.remove();
+    private void removeSizeProduct(String size) {
+        if ("0".equals(size)) {
+            for (Product product : productList) {
                 removeRecipeByProduct(product);
             }
+            productList.clear();
+        } else {
+            Iterator<Product> iterator = productList.iterator();
+            while (iterator.hasNext()) {
+                Product product = iterator.next();
+                if (product.getSize().equals(size)) {
+                    iterator.remove();
+                    removeRecipeByProduct(product);
+                }
+            }
         }
-
     }
 
     private void removeRecipeByProduct(Product product) {
-        Iterator<Recipe> iterator = materialList.iterator();
-        while ((iterator.hasNext())) {
-            Recipe recipe = iterator.next();
-            if (recipe.getProduct_id() == product.getId() && recipe.getSize().equals(product.getSize())) {
-                iterator.remove();
-            }
-        }
+        recipeList.removeIf(recipe -> recipe.getProduct_id() == product.getId() && recipe.getSize().equals(product.getSize()));
     }
 
     private void resetTxt() {
@@ -833,20 +834,30 @@ public class EditProductGUI extends DialogFormDetail_1 {
     private void loadRecipeBySize(String size) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
-        List<List<Object>> searchResults = recipeBLL.searchRecipesByProduct(product_id, size);
-        for (List<Object> row : searchResults) {
-            model.addRow(row.toArray());
+        double capitalPrice = 0.0;
+        for (Recipe recipe : recipeList) {
+            if (recipe.getSize().equals(size)) {
+                Material material = materialBLL.findMaterialsBy(Map.of("id", recipe.getMaterial_id())).get(0);
+                String materialName = material.getName();
+                String materialPrice = String.valueOf(material.getUnit_price());
+                double materialPriceD = material.getUnit_price();
+                double totalAmount = materialPriceD * recipe.getQuantity();
+                Object[] rowData = {recipe.getMaterial_id(), materialName, recipe.getUnit(), materialPrice, recipe.getQuantity(), totalAmount, iconRemove};
+                model.addRow(rowData);
+                capitalPrice += totalAmount;
+            }
         }
-
         txtSearch.setText("");
         txtQuantity.setText("");
         txtUnit.setText("");
+        txtCapitalPrice.setText(Double.toString(capitalPrice));
+
     }
 
-    private void addAllProducts() {
+    private void updateAllProducts() {
         boolean allProductsAdded = true;
         for (Product product : productList) {
-            Pair<Boolean, String> result = productBLL.addProduct(product);
+            Pair<Boolean, String> result = productBLL.updateProduct(product);
             if (!result.getKey()) {
                 allProductsAdded = false;
                 JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -859,12 +870,75 @@ public class EditProductGUI extends DialogFormDetail_1 {
         }
     }
 
-    private void addAllRecipe() {
-        for (Recipe recipe : materialList) {
-            Pair<Boolean, String> result = recipeBLL.addRecipe(recipe);
+    private boolean updateRecipe() {
+        for (Recipe recipe : recipeList) {
+            Pair<Boolean, String> result = recipeBLL.updateRecipe(recipe);
             if (!result.getKey()) {
                 JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                break;
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean removeRecipe() {
+        if (!deletedRecipeList.isEmpty()) {
+            for (Recipe recipe : deletedRecipeList) {
+                Pair<Boolean, String> result = recipeBLL.deleteRecipe(recipe);
+                if (!result.getKey()) {
+                    System.out.println(result.getValue());
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean addNewRecipe() {
+        if (!newRecipeList.isEmpty()) {
+            for (Recipe recipe : newRecipeList) {
+                System.out.println(recipe.toString());
+                Pair<Boolean, String> result = recipeBLL.addRecipe(recipe);
+                if (!result.getKey()) {
+                    System.out.println(result.getValue());
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void updateQuantity() {
+        int indexRow = dataTable.getSelectedRow();
+        int indexColumn = dataTable.getSelectedColumn();
+
+        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+        String quantity = model.getValueAt(indexRow, indexColumn).toString();
+        String capitalPrice = model.getValueAt(indexRow, indexColumn - 1).toString();
+        if (quantity != null && capitalPrice != null) {
+            try {
+                double quantityDouble = Double.parseDouble(quantity);
+                double capitalPriceDouble = Double.parseDouble(capitalPrice);
+                Double newValue = quantityDouble * capitalPriceDouble;
+                Double CapitalPrice = Double.parseDouble(txtCapitalPrice.getText());
+                Double oldValue = Double.parseDouble(model.getValueAt(indexRow, indexColumn + 1).toString());
+                txtCapitalPrice.setText(CapitalPrice - oldValue + newValue + "");
+                model.setValueAt(newValue, indexRow, indexColumn + 1);
+
+                int material_id = Integer.parseInt(model.getValueAt(indexRow, 0).toString());
+                String size = selectedLabel.getText();
+                for (Recipe recipe : recipeList) {
+                    if (recipe.getMaterial_id() == material_id && recipe.getSize().equals(size)) {
+                        recipe.setQuantity(quantityDouble);
+                    }
+                }
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Số lượng không phải là số hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                SwingUtilities.invokeLater(() -> {
+                    dataTable.editCellAt(indexRow, indexColumn);
+                    dataTable.getEditorComponent().requestFocusInWindow();
+                });
             }
         }
     }
@@ -909,8 +983,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
 
         }
         menu.setVisible(false);
-
-    }//GEN-LAST:event_txtSearchKeyPressed
+    }
 
     private JLabel createLabelMaterial(String text) {
         JLabel label = new JLabel(text);
