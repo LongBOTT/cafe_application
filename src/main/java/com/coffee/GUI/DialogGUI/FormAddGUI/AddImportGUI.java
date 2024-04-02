@@ -15,14 +15,17 @@ import com.coffee.GUI.components.swing.EventClick;
 import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.GUI.components.swing.PanelSearch;
 import com.coffee.main.Cafe_Application;
+import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
+import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -54,6 +57,7 @@ public class AddImportGUI extends DialogFormDetail {
     private int materialID;
     private int import_id;
     private int shipment_id;
+    private BigDecimal total = BigDecimal.valueOf(0);
 
     public AddImportGUI() {
         super();
@@ -137,12 +141,6 @@ public class AddImportGUI extends DialogFormDetail {
             contenttop.add(textField, "wrap");
         }
 
-        JButton btnAddMaterial = new JButton();
-        ImageIcon icon = new FlatSVGIcon("icon/add.svg");
-        Image image = icon.getImage();
-        Image newImg = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
-        icon = new ImageIcon(newImg);
-
         super.remove(contentmid);
         super.remove(contentbot);
         super.remove(containerButton);
@@ -151,6 +149,11 @@ public class AddImportGUI extends DialogFormDetail {
         jPanel.setPreferredSize(new Dimension(1200, 100));
         jPanel.setBackground(new Color(217, 217, 217));
 
+        JButton btnAddMaterial = new JButton();
+        ImageIcon icon = new FlatSVGIcon("icon/add.svg");
+        Image image = icon.getImage();
+        Image newImg = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+        icon = new ImageIcon(newImg);
         btnAddMaterial.setIcon(icon);
         btnAddMaterial.setPreferredSize(new Dimension(30, 30));
         btnAddMaterial.setBackground(new Color(0, 182, 62));
@@ -168,6 +171,26 @@ public class AddImportGUI extends DialogFormDetail {
         int i = 0;
 
         for (String string : new String[]{"Tên Nguyên Liệu", "Nhà Cung Cấp", "SL Nhập", "MFG", "EXP"}) {
+            if (string.equals("Nhà Cung Cấp")) {
+                JButton btnAddSupplier = new JButton();
+                icon = new ImageIcon(newImg);
+                btnAddSupplier.setIcon(icon);
+                btnAddSupplier.setPreferredSize(new Dimension(30, 30));
+                btnAddSupplier.setBackground(new Color(0, 182, 62));
+                btnAddSupplier.setFont(new Font("Public Sans", Font.BOLD, 16));
+                btnAddSupplier.setForeground(Color.WHITE);
+                btnAddSupplier.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                btnAddSupplier.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        new AddSupplierGUI();
+                        jComboBoxSupplier.removeAllItems();
+                        for (Supplier supplier : new SupplierBLL().searchSuppliers("deleted = 0"))
+                            jComboBoxSupplier.addItem(supplier.getName());
+                    }
+                });
+                jPanel.add(btnAddSupplier);
+            }
             JLabel jLabelTitle = new JLabel(string);
             jLabelTitle.setFont((new Font("Public Sans", Font.BOLD, 12)));
             jPanel.add(jLabelTitle);
@@ -229,8 +252,8 @@ public class AddImportGUI extends DialogFormDetail {
             }
         }
 
-        JButton btnThem = new JButton("Thêm lô hàng");
-        btnThem.setPreferredSize(new Dimension(150, 30));
+        JButton btnThem = new JButton("Thêm lô");
+        btnThem.setPreferredSize(new Dimension(100, 30));
         btnThem.setBackground(new Color(0, 182, 62));
         btnThem.setFont(new Font("Public Sans", Font.BOLD, 12));
         btnThem.setForeground(Color.WHITE);
@@ -250,25 +273,23 @@ public class AddImportGUI extends DialogFormDetail {
         super.add(contentmid, "wrap");
         contentbot.setPreferredSize(new Dimension(1200, 100));
         super.add(contentbot, "wrap");
+        containerButton.setPreferredSize(new Dimension(1200, 100));
         super.add(containerButton, "wrap");
 
 
-        columnNames = new String[]{"Mã Lô", "Nguyên Liệu", "Tên NCC", "SL Nhập", "SL Tồn", "MFG", "EXP",};
+        columnNames = new String[]{"Nguyên Liệu", "Tên NCC", "SL Nhập", "SL Tồn", "MFG", "EXP",};
         columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
         columnNames[columnNames.length - 1] = "Xóa";
         dataTable = new DataTable(new Object[0][0], columnNames,
-                e -> selectFunction(), e -> {
-        },
-                false, false, true, 7, true, 3);
+                e -> selectFunction(), e -> changedQuantity(),
+                false, false, true, 6, true, 2);
 
-        dataTable.getColumnModel().getColumn(0).setMaxWidth(100);
+        dataTable.getColumnModel().getColumn(0).setMaxWidth(500);
         dataTable.getColumnModel().getColumn(1).setMaxWidth(500);
-        dataTable.getColumnModel().getColumn(2).setMaxWidth(500);
+        dataTable.getColumnModel().getColumn(2).setMaxWidth(100);
         dataTable.getColumnModel().getColumn(3).setMaxWidth(100);
-        dataTable.getColumnModel().getColumn(4).setMaxWidth(100);
+        dataTable.getColumnModel().getColumn(4).setMaxWidth(250);
         dataTable.getColumnModel().getColumn(5).setMaxWidth(250);
-        dataTable.getColumnModel().getColumn(6).setMaxWidth(250);
-        dataTable.setRowHeight(60);
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         contentmid.add(scrollPane, BorderLayout.CENTER);
@@ -280,7 +301,6 @@ public class AddImportGUI extends DialogFormDetail {
         contentbot.add(label);
 
         jLabelTotal = new JLabel();
-//        String total = Double.toString(import_note.getTotal());
         jLabelTotal.setText("0.0");
         jLabelTotal.setPreferredSize(new Dimension(1000, 30));
         jLabelTotal.setFont((new Font("Public Sans", Font.PLAIN, 14)));
@@ -293,12 +313,72 @@ public class AddImportGUI extends DialogFormDetail {
         buttonAdd.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                addImport_Note();
             }
         });
         containerButton.add(buttonAdd);
     }
 
+    private void addImport_Note() {
+        Pair<Boolean, String> result;
+
+        if (shipmentList.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng thêm đơn hàng!",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        for (Shipment shipment : shipmentList) {
+            if (shipment.getQuantity() == 0) {
+                JOptionPane.showMessageDialog(null, "Số lượng nhập phải lớn hơn 0!",
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+
+        import_note.setTotal(total);
+        result = import_NoteBLL.addImport(import_note);
+
+        if (result.getKey()) {
+            for (Shipment shipment : shipmentList) {
+                shipment_id += 1;
+                shipment.setId(shipment_id);
+                shipmentBLL.addShipment(shipment);
+            }
+            JOptionPane.showMessageDialog(null, result.getValue(),
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(null, result.getValue(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void changedQuantity() {
+        int indexRow = dataTable.getSelectedRow();
+        int indexColumn = dataTable.getSelectedColumn();
+
+        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+        String quantity = model.getValueAt(indexRow, indexColumn).toString();
+        if (VNString.checkUnsignedNumber(quantity)) {
+            model.setValueAt(quantity, indexRow, indexColumn + 1);
+            shipmentList.get(indexRow).setQuantity(Double.parseDouble(quantity));
+            shipmentList.get(indexRow).setRemain(Double.parseDouble(quantity));
+        } else {
+            JOptionPane.showMessageDialog(null, "Số lượng không hợp lệ!",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+
+        }
+        refresh();
+    }
+
     private void selectFunction() {
+        int indexRow = dataTable.getSelectedRow();
+        int indexColumn = dataTable.getSelectedColumn();
+        if (indexColumn == 6) {
+            shipmentList.remove(indexRow);
+            refresh();
+        }
     }
 
     private void addShipment() {
@@ -308,7 +388,6 @@ public class AddImportGUI extends DialogFormDetail {
         double quantity;
         java.util.Date mfg, exp;
 
-        shipment_id += 1;
         supplier_id = jComboBoxSupplier.getSelectedIndex() + 1;
         quantity = Double.parseDouble(jTextFieldQuantity.getText());
         mfg = java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[0].getDate()));
@@ -341,16 +420,18 @@ public class AddImportGUI extends DialogFormDetail {
         model.setRowCount(0);
 
         if (objects.length == 0) {
+            jLabelTotal.setText("0.0");
             return;
         }
 
         Object[][] data = new Object[objects.length][objects[0].length];
-
+        total = BigDecimal.valueOf(0);
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
 
             int material_id = Integer.parseInt(data[i][1].toString());
-            data[i][1] = "<html>" + new MaterialBLL().findMaterialsBy(Map.of("id", material_id)).get(0).getName() + "</html>";
+            Material material = new MaterialBLL().findMaterialsBy(Map.of("id", material_id)).get(0);
+            data[i][1] = "<html>" + material.getName() + "</html>";
 
             int supplier_id = Integer.parseInt(data[i][2].toString());
             data[i][2] = "<html>" + new SupplierBLL().findSuppliersBy(Map.of("id", supplier_id)).get(0).getName() + "</html>";
@@ -358,15 +439,18 @@ public class AddImportGUI extends DialogFormDetail {
             JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
             data[i] = Arrays.copyOf(data[i], data[i].length + 1);
             data[i][data[i].length - 1] = iconRemove;
+
+            total = total.add(BigDecimal.valueOf(material.getUnit_price() * Double.parseDouble(data[i][4].toString())));
         }
 
         for (Object[] object : data) {
             Object[] objects1 = object;
-            System.arraycopy(objects1, 0, object, 0, 3);
-            System.arraycopy(objects1, 4, object, 3, 4);
-            object = Arrays.copyOfRange(object, 0, 7);
+            System.arraycopy(objects1, 0, object, 0, 2);
+            System.arraycopy(objects1, 4, object, 3, 5);
+            object = Arrays.copyOfRange(object, 1, 8);
             model.addRow(object);
         }
+        jLabelTotal.setText(total.toString());
     }
 
     private void txtSearchMouseClicked(java.awt.event.MouseEvent evt) {

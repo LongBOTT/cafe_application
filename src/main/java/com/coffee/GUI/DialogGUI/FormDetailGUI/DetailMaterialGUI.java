@@ -1,6 +1,7 @@
 package com.coffee.GUI.DialogGUI.FormDetailGUI;
 
 import com.coffee.BLL.*;
+import com.coffee.DTO.Import_Note;
 import com.coffee.DTO.Material;
 import com.coffee.DTO.Shipment;
 import com.coffee.DTO.Supplier;
@@ -55,13 +56,13 @@ public class DetailMaterialGUI extends DialogFormDetail {
         super.remove(contentbot);
         super.remove(containerButton);
 
-        titleName.setText("Thông tin Nguyên Liệu");
+        titleName.setText("Thông tin Ngày Nhập");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
         titleName.setHorizontalAlignment(JLabel.CENTER);
         titleName.setVerticalAlignment(JLabel.CENTER);
         title.add(titleName, BorderLayout.CENTER);
 
-        for (String string : new String[]{"Mã Nguyên Liệu", "Tên Nguyên Liệu", "Tồn Kho", "Tồn Kho Tối Thiểu", "Tồn Kho Tối Đa", "Đơn Vị", "Giá Vốn"}) {
+        for (String string : new String[]{"Mã Ngày Nhập", "Tên Ngày Nhập", "Tồn Kho", "Tồn Kho Tối Thiểu", "Tồn Kho Tối Đa", "Đơn Vị", "Giá Vốn"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
@@ -73,10 +74,10 @@ public class DetailMaterialGUI extends DialogFormDetail {
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
 
-            if (string.trim().equals("Mã Nguyên Liệu")) {
+            if (string.trim().equals("Mã Ngày Nhập")) {
                 textField.setText(String.valueOf(material.getId()));
             }
-            if (string.trim().equals("Tên Nguyên Liệu")) {
+            if (string.trim().equals("Tên Ngày Nhập")) {
                 textField.setText(material.getName());
             }
             if (string.trim().equals("Tồn Kho")) {
@@ -104,6 +105,8 @@ public class DetailMaterialGUI extends DialogFormDetail {
         label.setFont((new Font("Public Sans", Font.PLAIN, 15)));
         contenttop.add(label);
 
+        jComboBoxRemain.setBackground(new Color(29, 78, 216));
+        jComboBoxRemain.setForeground(Color.white);
         jComboBoxRemain.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -122,6 +125,8 @@ public class DetailMaterialGUI extends DialogFormDetail {
         for (Supplier supplier : new SupplierBLL().searchSuppliers("deleted = 0"))
             jComboBoxSupplier.addItem(supplier.getName());
         jComboBoxSupplier.setPreferredSize(new Dimension(200, 30));
+        jComboBoxSupplier.setBackground(new Color(29, 78, 216));
+        jComboBoxSupplier.setForeground(Color.white);
         jComboBoxSupplier.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -130,7 +135,7 @@ public class DetailMaterialGUI extends DialogFormDetail {
         });
         contenttop.add(jComboBoxSupplier);
 
-        columnNames = new String[]{"Mã Lô", "Nguyên Liệu", "Tên NCC", "SL Nhập", "SL Tồn", "MFG", "EXP",};
+        columnNames = new String[]{"Mã Lô", "Ngày Nhập", "Tên NCC", "SL Nhập", "SL Tồn", "MFG", "EXP",};
         dataTable = new DataTable(new Object[0][0], columnNames);
         dataTable.getColumnModel().getColumn(0).setMaxWidth(100);
         dataTable.getColumnModel().getColumn(1).setMaxWidth(500);
@@ -177,8 +182,9 @@ public class DetailMaterialGUI extends DialogFormDetail {
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
 
-            int material_id = Integer.parseInt(data[i][1].toString());
-            data[i][1] = "<html>" + new MaterialBLL().findMaterialsBy(Map.of("id", material_id)).get(0).getName() + "</html>";
+            int import_id = Integer.parseInt(data[i][3].toString());
+            Import_Note importNote = new Import_NoteBLL().findImportBy(Map.of("id", import_id)).get(0);
+            data[i][1] = importNote.getReceived_date();
 
             int supplier_id = Integer.parseInt(data[i][2].toString());
             data[i][2] = "<html>" + new SupplierBLL().findSuppliersBy(Map.of("id", supplier_id)).get(0).getName() + "</html>";

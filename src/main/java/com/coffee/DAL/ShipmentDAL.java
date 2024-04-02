@@ -17,7 +17,6 @@ public class ShipmentDAL extends Manager {
                         "import_id",
                         "quantity",
                         "remain",
-                        "unit_price",
                         "mfg",
                         "exp"));
     }

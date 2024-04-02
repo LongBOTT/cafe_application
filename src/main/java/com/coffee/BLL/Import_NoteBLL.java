@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Import_NoteBLL extends Manager<Import_Note>{
+public class Import_NoteBLL extends Manager<Import_Note> {
     private Import_NoteDAL importNoteDAL;
 
     public Import_NoteBLL() {
@@ -72,8 +72,8 @@ public class Import_NoteBLL extends Manager<Import_Note>{
     }
 
     public static void main(String[] args) {
-        Import_NoteBLL importNoteBLL = new Import_NoteBLL();
-        Import_Note importNote = new Import_Note(importNoteBLL.getAutoID(importNoteBLL.searchImport()), 1, 0, Date.valueOf("2024-02-07"));
-        importNoteBLL.addImport(importNote);
+//        Import_NoteBLL importNoteBLL = new Import_NoteBLL();
+//        Import_Note importNote = new Import_Note(importNoteBLL.getAutoID(importNoteBLL.searchImport()), 1, 0, Date.valueOf("2024-02-07"));
+//        importNoteBLL.addImport(importNote);
     }
 }

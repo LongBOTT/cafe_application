@@ -1,17 +1,18 @@
 package com.coffee.DTO;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class Import_Note {
     private int id;
     private int staff_id;
-    private double total;
+    private BigDecimal total;
     private Date received_date;
 
     public Import_Note() {
     }
 
-    public Import_Note(int id, int staff_id, double total, Date received_date) {
+    public Import_Note(int id, int staff_id, BigDecimal total, Date received_date) {
         this.id = id;
         this.staff_id = staff_id;
         this.total = total;
@@ -34,11 +35,11 @@ public class Import_Note {
         this.staff_id = staff_id;
     }
 
-    public double getTotal() {
+    public BigDecimal getTotal() {
         return total;
     }
 
-    public void setTotal(double total) {
+    public void setTotal(BigDecimal total) {
         this.total = total;
     }
 

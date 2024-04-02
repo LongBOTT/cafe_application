@@ -3,12 +3,13 @@ package com.coffee.DAL;
 import com.coffee.DTO.Export_Note;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Export_NoteDAL extends Manager{
+public class Export_NoteDAL extends Manager {
     public Export_NoteDAL() {
         super("export_note",
                 List.of("id",
@@ -23,7 +24,7 @@ public class Export_NoteDAL extends Manager{
                 return new Export_Note(
                         Integer.parseInt(row.get(0)),
                         Integer.parseInt(row.get(1)),
-                        Double.parseDouble(row.get(2)),
+                        BigDecimal.valueOf(Double.parseDouble(row.get(2))),
                         Date.valueOf(row.get(3))
                 );
             } catch (Exception e) {

@@ -3,9 +3,9 @@ package com.coffee.GUI.components;
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
+import javax.swing.table.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -257,20 +257,6 @@ public class DataTable extends JTable {
                     int row = e.getFirstRow();
                     int col = e.getColumn();
                     if (col == quantity && row != -1) {
-//                        Object valueAtColumn4 = getModel().getValueAt(row, quantity);
-//                        Object valueAtColumn3 = getModel().getValueAt(row, quantity - 1);
-//                        if (valueAtColumn4 != null && valueAtColumn3 != null) {
-//                            try {
-//                                Double newValue = Double.parseDouble(valueAtColumn4.toString()) * Double.parseDouble(valueAtColumn3.toString());
-//                                getModel().setValueAt(newValue, row, quantity + 1);
-//                            } catch (NumberFormatException ex) {
-//                                JOptionPane.showMessageDialog(null, "Số lượng không phải là số hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-//                                SwingUtilities.invokeLater(() -> {
-//                                    editCellAt(row, col);
-//                                    getEditorComponent().requestFocusInWindow();
-//                                });
-//                            }
-//                        }
                         if (actionListenerChange != null) {
                             actionListenerChange.actionPerformed(null);
                         }
@@ -329,6 +315,91 @@ public class DataTable extends JTable {
         jTableHeader.setBackground(new Color(217, 217, 217));
     }
 
+    public DataTable(Object[][] data, Object[] columnNames, ActionListener actionListener, ActionListener actionListenerChange,
+                     int quantity, int checkbox, int status) {
+        super(new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == quantity || column == status;
+            }
 
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if (columnIndex == checkbox) {
+                    return Boolean.class;
+                }
+                return String.class;
+            }
+        });
+
+        JComboBox<String> comboBox = new JComboBox<>();
+        comboBox.addItem("--Lý do--");
+        comboBox.addItem("Bán");
+        comboBox.addItem("Huỷ");
+        comboBox.setSelectedIndex(0);
+        comboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+//                getModel().setValueAt(comboBox.getSelectedItem(), getSelectedRow(), getSelectedColumn());
+            }
+        });
+
+        DefaultTableCellRenderer renderer =
+                new DefaultTableCellRenderer();
+        getColumnModel().getColumn(status).setCellRenderer(renderer);
+        getColumnModel().getColumn(status).setCellEditor(new DefaultCellEditor(comboBox));
+
+
+        getTableHeader().setFont(new Font("Public Sans", Font.BOLD | Font.ITALIC, 15));
+        getTableHeader().setReorderingAllowed(false);
+        getTableHeader().setResizingAllowed(false);
+
+        setFont(new Font("Public Sans", Font.PLAIN, 15));
+        setAutoCreateRowSorter(false);
+        setRowHeight(40);
+        setSelectionBackground(new Color(220, 221, 225, 221));
+        setSelectionForeground(Color.BLACK);
+        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        getModel().addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if (e.getType() == TableModelEvent.UPDATE) {
+                    int row = e.getFirstRow();
+                    int col = e.getColumn();
+                    if ((col == quantity && row != -1) || (col == status && row != -1)) {
+                        if (actionListenerChange != null) {
+                            actionListenerChange.actionPerformed(null);
+                        }
+                    }
+                }
+            }
+        });
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int row = rowAtPoint(e.getPoint());
+                int col = columnAtPoint(e.getPoint());
+
+                if (col == checkbox && row != -1) {
+                    if (actionListener != null) {
+                        actionListener.actionPerformed(null);
+                    }
+                }
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (getSelectedRow() == -1) {
+                    lastSelectedRow = -1;
+                }
+            }
+        });
+
+
+        JTableHeader jTableHeader = getTableHeader();
+        jTableHeader.setBackground(new Color(217, 217, 217));
+    }
 }
 

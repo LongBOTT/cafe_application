@@ -3,13 +3,15 @@ package com.coffee.BLL;
 import com.coffee.DAL.Export_DetailDAL;
 import com.coffee.DTO.Discount_Detail;
 import com.coffee.DTO.Export_Detail;
+import com.coffee.DTO.Material;
+import com.coffee.DTO.Shipment;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Export_DetailBLL extends Manager<Export_Detail>{
+public class Export_DetailBLL extends Manager<Export_Detail> {
     private Export_DetailDAL exportDetailDAL;
 
     public Export_DetailBLL() {
@@ -32,13 +34,23 @@ public class Export_DetailBLL extends Manager<Export_Detail>{
         Pair<Boolean, String> result;
 
         result = exists(exportDetail);
-        if(result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if (result.getKey()) {
+            return new Pair<>(false, result.getValue());
         }
 
         if (exportDetailDAL.addExport_Detail(exportDetail) == 0)
             return new Pair<>(false, "Xuất nguyên liệu không thành công.");
 
+        Shipment shipment = new ShipmentBLL().findShipmentsBy(Map.of("id", exportDetail.getShipment_id())).get(0);
+        shipment.setRemain(shipment.getRemain() - exportDetail.getQuantity());
+        new ShipmentBLL().updateShipment(shipment);
+
+        if (exportDetail.getReason().equals("Bán")) {
+            Material oldMaterial = new MaterialBLL().findMaterialsBy(Map.of("id", shipment.getMaterial_id())).get(0);
+            Material newMaterial = oldMaterial;
+            newMaterial.setRemain(newMaterial.getRemain() + exportDetail.getQuantity());
+            new MaterialBLL().updateMaterial(newMaterial, oldMaterial);
+        }
         return new Pair<>(true, "Xuất nguyên liệu thành công.");
     }
 
@@ -70,7 +82,7 @@ public class Export_DetailBLL extends Manager<Export_Detail>{
                 "shipment_id", export.getShipment_id()
         ));
 
-        if(!exports.isEmpty()){
+        if (!exports.isEmpty()) {
             return new Pair<>(true, "Nguyên liệu đã được xuất.");
         }
         return new Pair<>(false, "");

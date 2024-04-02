@@ -1,10 +1,12 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.Export_NoteBLL;
+import com.coffee.BLL.MaterialBLL;
 import com.coffee.BLL.StaffBLL;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Export_Note;
 import com.coffee.DTO.Staff;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddExportGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailExportGUI;
 
 import com.coffee.GUI.components.DataTable;
@@ -168,7 +170,7 @@ public class ExportGUI extends Layout2 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-
+                    new AddExportGUI();
                     refresh();
                 }
             });

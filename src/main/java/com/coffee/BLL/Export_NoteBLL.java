@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Export_NoteBLL extends  Manager<Export_Note>{
+public class Export_NoteBLL extends Manager<Export_Note> {
     private Export_NoteDAL exportDAL;
 
     public Export_NoteBLL() {
@@ -33,7 +33,8 @@ public class Export_NoteBLL extends  Manager<Export_Note>{
         if (exportDAL.addExport_Note(export) == 0)
             return new Pair<>(false, "Thêm phiếu xuất không thành công.");
 
-        return new Pair<>(true, "Thêm phiếu xuất thành công.");
+        return new Pair<>(true, "Thêm phiếu xuất thành công.\n" +
+                "Vui lòng làm mới lại giao diện kho hàng để cập nhập số lượng mới nhất.");
     }
 
     public List<Export_Note> searchExport_Note(String... conditions) {
@@ -70,8 +71,8 @@ public class Export_NoteBLL extends  Manager<Export_Note>{
     }
 
     public static void main(String[] args) {
-        Export_NoteBLL exportNoteBLL = new Export_NoteBLL();
-        Export_Note exportNote = new Export_Note(exportNoteBLL.getAutoID(exportNoteBLL.searchExport_Note()), 1, 0, Date.valueOf("2024-02-07"));
-        exportNoteBLL.addExport_Note(exportNote);
+//        Export_NoteBLL exportNoteBLL = new Export_NoteBLL();
+//        Export_Note exportNote = new Export_Note(exportNoteBLL.getAutoID(exportNoteBLL.searchExport_Note()), 1, 0, Date.valueOf("2024-02-07"));
+//        exportNoteBLL.addExport_Note(exportNote);
     }
 }

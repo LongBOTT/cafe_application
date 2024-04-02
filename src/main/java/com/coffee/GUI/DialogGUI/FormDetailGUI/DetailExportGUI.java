@@ -98,7 +98,7 @@ public class DetailExportGUI extends DialogFormDetail {
         contentbot.add(label);
 
         JLabel textField = new JLabel();
-        String total = Double.toString(export.getTotal());
+        String total = "" + export.getTotal();
         textField.setText(total);
         textField.setPreferredSize(new Dimension(1000, 30));
         textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));

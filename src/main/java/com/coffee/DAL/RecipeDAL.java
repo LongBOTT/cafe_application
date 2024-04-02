@@ -54,6 +54,8 @@ public class RecipeDAL extends Manager {
             updateValues.add(recipe.getProduct_id());
             updateValues.add(recipe.getMaterial_id());
             updateValues.add(recipe.getQuantity());
+            updateValues.add(recipe.getSize());
+            updateValues.add(recipe.getUnit());
             return update(updateValues, "product_id = " + recipe.getProduct_id(),
                     "material_id = " + recipe.getMaterial_id(), "size = '" + recipe.getSize() + "'");
         } catch (SQLException | IOException e) {
