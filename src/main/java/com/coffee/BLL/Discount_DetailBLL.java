@@ -117,9 +117,9 @@ public class Discount_DetailBLL extends Manager<Discount_Detail> {
     public static void main(String[] args) {
         Discount_DetailBLL discountDetailBLL = new Discount_DetailBLL();
 
-        Discount_Detail discountDetail = new Discount_Detail(1, 1, 10);
+//        Discount_Detail discountDetail = new Discount_Detail(1, 1, 10);
 //        discountDetailBLL.addDiscount_Detail(discountDetail);
-        discountDetail.setPercent(20);
-        discountDetailBLL.updateDiscount_Detail(discountDetail);
+//        discountDetail.setPercent(20);
+//        discountDetailBLL.updateDiscount_Detail(discountDetail);
     }
 }

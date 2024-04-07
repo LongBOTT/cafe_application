@@ -12,8 +12,10 @@ public class DiscountDAL extends Manager{
     public DiscountDAL() {
         super("discount",
                 List.of("id",
+                        "name",
                         "start_date",
                         "end_date",
+                        "type",
                         "status"
                 ));
     }
@@ -23,9 +25,11 @@ public class DiscountDAL extends Manager{
             try {
                 return new Discount(
                         Integer.parseInt(row.get(0)), // id
-                        Date.valueOf(row.get(1)), // start_date
-                        Date.valueOf(row.get(2)), // end_date
-                        Boolean.parseBoolean(row.get(3)) // status
+                        String.valueOf(row.get(1)), // name
+                        Date.valueOf(row.get(2)), // start_date
+                        Date.valueOf(row.get(3)), // end_date
+                        Boolean.parseBoolean(row.get(4)), // type
+                        Boolean.parseBoolean(row.get(5)) // status
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in DiscountDAL.convertToDiscounts(): " + e.getMessage());
@@ -37,8 +41,10 @@ public class DiscountDAL extends Manager{
     public int addDiscount(Discount discount) {
         try {
             return create(discount.getId(),
+                    discount.getName(),
                     discount.getStart_date(),
                     discount.getEnd_date(),
+                    discount.isType(),
                     discount.isStatus()
             );
         } catch (SQLException | IOException e) {
@@ -51,8 +57,10 @@ public class DiscountDAL extends Manager{
         try {
             List<Object> updateValues = new ArrayList<>();
             updateValues.add(discount.getId());
+            updateValues.add(discount.getName());
             updateValues.add(discount.getStart_date());
             updateValues.add(discount.getEnd_date());
+            updateValues.add(discount.isType());
             updateValues.add(discount.isStatus());
             return update(updateValues, "id = " + discount.getId());
         } catch (SQLException | IOException e) {

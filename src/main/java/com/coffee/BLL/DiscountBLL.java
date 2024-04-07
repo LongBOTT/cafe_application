@@ -95,8 +95,10 @@ public class DiscountBLL extends Manager<Discount>{
     public Object getValueByKey(Discount discount, String key) {
         return switch (key) {
             case "id" -> discount.getId();
+            case "name" -> discount.getName();
             case "start_date" -> discount.getStart_date();
             case "end_date" -> discount.getEnd_date();
+            case "type" -> discount.isType();
             case "status" -> discount.isStatus();
             default -> null;
         };

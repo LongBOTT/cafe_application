@@ -1,8 +1,11 @@
 package com.coffee.GUI.DialogGUI.FormAddGUI;
 
+import com.coffee.BLL.DiscountBLL;
 import com.coffee.BLL.MaterialBLL;
 import com.coffee.BLL.ProductBLL;
 import com.coffee.DTO.Product;
+import com.coffee.DTO.Supplier;
+import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedPanel;
@@ -10,9 +13,12 @@ import com.coffee.GUI.components.swing.DataSearch;
 import com.coffee.GUI.components.swing.EventClick;
 import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.GUI.components.swing.PanelSearch;
+import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JTextFieldDateEditor;
+import javafx.util.Pair;
+import jdk.jfr.Category;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -24,7 +30,7 @@ import java.util.List;
 
 
 public class AddDiscountGUInew extends DialogFormDetail_1 {
-
+    private DiscountBLL discountBLL = new DiscountBLL();
     private JDateChooser[] jDateChooser = new JDateChooser[0];
     private final MaterialBLL materialBLL = new MaterialBLL();
     private ProductBLL productBLL = new ProductBLL();
@@ -45,7 +51,12 @@ public class AddDiscountGUInew extends DialogFormDetail_1 {
     private JLabel lblBuy;
     private JComboBox<String> cbDiscountType;
     private int materialID;
-    JScrollPane scrollPane;
+    private JScrollPane scrollPane;
+    private JTextField txtDiscountCode ;
+    private JTextField txtProgramName ;
+    private JRadioButton radio1;
+    private JRadioButton radio2;
+    private  ButtonGroup btgroup;
 
     public AddDiscountGUInew() {
         super();
@@ -61,7 +72,7 @@ public class AddDiscountGUInew extends DialogFormDetail_1 {
             @Override
             public void itemClick(DataSearch data) {
                 menu.setVisible(false);
-                txtSearch.setText(data.getText()+" ("+ data.getText1()+")");
+                txtSearch.setText(data.getText() + " (" + data.getText1() + ")");
                 System.out.println("Click Item : " + data.getText());
             }
 
@@ -95,15 +106,14 @@ public class AddDiscountGUInew extends DialogFormDetail_1 {
         JLabel lblArrive = createLabel("Đến");
         JLabel lblStatus = createLabel("Trạng thái");
 
-        JTextField txtDiscountCode = new MyTextFieldUnderLine();
-        JTextField txtProgramName = new MyTextFieldUnderLine();
+         txtDiscountCode = new MyTextFieldUnderLine();
+         txtProgramName = new MyTextFieldUnderLine();
 
-        JRadioButton radio1 = new JRadioButton("Kích hoạt");
-        JRadioButton radio2 = new JRadioButton("Chưa áp dụng");
-
-        ButtonGroup btgroup = new ButtonGroup();
-        btgroup.add(radio1);
-        btgroup.add(radio2);
+         radio1 = new JRadioButton("Kích hoạt");
+         radio2 = new JRadioButton("Chưa áp dụng");
+         btgroup = new ButtonGroup();
+         btgroup.add(radio1);
+         btgroup.add(radio2);
 
         JPanel panelTimeApplication = new JPanel();
         panelTimeApplication.setPreferredSize(new Dimension(500, 40));
@@ -118,24 +128,14 @@ public class AddDiscountGUInew extends DialogFormDetail_1 {
         panelStatus.add(radio1);
         panelStatus.add(radio2);
 
-        jTextFieldDate = new JTextField[2];
+
         jDateChooser = new JDateChooser[2];
-        dateTextField = new JTextField[2];
 
         for (int i = 0; i < 2; i++) {
-            jTextFieldDate[i] =new MyTextFieldUnderLine();
-            jTextFieldDate[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
-            jTextFieldDate[i].setPreferredSize(new Dimension(130, 35));
-            jTextFieldDate[i].setAutoscrolls(true);
-
             jDateChooser[i] = new JDateChooser();
             jDateChooser[i].setDateFormatString("dd/MM/yyyy");
             jDateChooser[i].setPreferredSize(new Dimension(130, 30));
             jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
-
-            dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
-            dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
-            dateTextField[i].setBackground(new Color(245, 246, 250));
 
             if (i == 0) {
                 panelTimeApplication.add(lblWordEffect);
@@ -157,7 +157,7 @@ public class AddDiscountGUInew extends DialogFormDetail_1 {
         JLabel lblDiscountType = createLabel("Giảm giá theo");
         lblDiscountType.setPreferredSize(new Dimension(100, 30));
 
-        String[] items = {"Sản phẩm","Đơn hàng"};
+        String[] items = {"Sản phẩm", "Đơn hàng"};
         cbDiscountType = new JComboBox<>(items);
         cbDiscountType.setBackground(new Color(29, 78, 216));
         cbDiscountType.setForeground(Color.white);
@@ -213,12 +213,12 @@ public class AddDiscountGUInew extends DialogFormDetail_1 {
 
         containerProductType.setLayout(new MigLayout("", "[]", ""));
 
-        containerProductType.setBackground(new Color(255,255,255));
+        containerProductType.setBackground(new Color(255, 255, 255));
         scrollPane = new JScrollPane(containerProductType);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         add(scrollPane, BorderLayout.CENTER);
         scrollPane.setBorder(null);
-        scrollPane.setBackground(new Color(255,255,255));
+        scrollPane.setBackground(new Color(255, 255, 255));
         scrollPane.setWheelScrollingEnabled(true);
         scrollPane.getVerticalScrollBar().setUnitIncrement(13);
 //
@@ -261,43 +261,43 @@ public class AddDiscountGUInew extends DialogFormDetail_1 {
         });
         containerButton.add(buttonAdd);
     }
+private void addDiscount(){
+        Pair<Boolean, String> result;
+        int id;
+        String name;
+        Date startDate, endDate;
+        boolean type;
+        String status;
 
-    private JLabel createLabel(String title) {
-        JLabel label = new JLabel();
-        label.setPreferredSize(new Dimension(80, 30));
-        label.setText(title);
-        label.setFont((new Font("Public Sans", Font.BOLD, 14)));
-        return label;
-    }
+        id = discountBLL.getAutoID(discountBLL.searchDiscounts()); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        name = txtProgramName.getText();
 
-//    private JTextField createTextField() {
-//        JTextField textField = new JTextField();
-//        textField.setPreferredSize(new Dimension(300, 30));
-//        textField.setFont(new Font("Public Sans", Font.PLAIN, 14));
-//        textField.setBackground(new Color(255, 255, 255));
-//        textField.setOpaque(false);
-//
-//        Border bottomBorderBlack = BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(163, 162, 149));
-//        Border bottomBorderGreen = BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(75, 172, 77));
-//
-//        textField.setBorder(bottomBorderBlack);
-//
-//        textField.addFocusListener(new FocusAdapter() {
-//            @Override
-//            public void focusGained(FocusEvent e) {
-//                textField.setBorder(bottomBorderGreen); // Khi focus vào, thay đổi màu border thành xanh lá cây
-//            }
-//
-//            @Override
-//            public void focusLost(FocusEvent e) {
-//                textField.setBorder(bottomBorderBlack); // Khi mất focus, thay đổi màu border về màu đen
-//            }
-//        });
-//
-//        return textField;
-//    }
+        startDate = jDateChooser[0].getDate();
+        endDate= jDateChooser[1].getDate();
 
+        String typeText = Objects.requireNonNull(cbDiscountType.getSelectedItem()).toString();
 
+       if(typeText.equals("Sản phẩm")){
+
+       }
+
+//        address = jTextFieldSupplier.get(2).getText();
+//        email = jTextFieldSupplier.get(3).getText();
+
+//        Supplier supplier = new Supplier(id, name, phone, address, email, false); // false là tồn tại, true là đã xoá
+//
+//        result = supplierBLL.addSupplier(supplier);
+//
+//        if (result.getKey()) {
+//            JOptionPane.showMessageDialog(null, result.getValue(),
+//                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+//            dispose();
+//        } else {
+//            JOptionPane.showMessageDialog(null, result.getValue(),
+//                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+//        }
+
+}
     private void SelectDiscountType() {
         containerForm.removeAll();
         bottom.removeAll();
@@ -332,40 +332,67 @@ public class AddDiscountGUInew extends DialogFormDetail_1 {
         JLabel lblBuy = createLabel("Khi mua");
 
         RoundedPanel contaierSearch = new RoundedPanel();
-        contaierSearch.setLayout(new MigLayout("","[][]"));
-        JButton category = new JButton();
+        contaierSearch.setLayout(new MigLayout("", "[][]"));
+        JButton category = createButton();
         category.setIcon(new FlatSVGIcon("icon/icons8-category-20.svg"));
-       category.setBorderPainted(false);
-       category.setFocusPainted(false);
-       category.setContentAreaFilled(false);
-       category.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
 
-        JTextField txtSearch = new MyTextFieldUnderLine();
-        txtSearch.setPreferredSize(new Dimension(500, 30));
-        txtSearch.addMouseListener(new java.awt.event.MouseAdapter() {
+
+        String[] categories = productBLL.getCategories().toArray(new String[0]);
+
+        JComboBox<String> comboBox = new JComboBox<>(new String[]{"-- Chọn thể loại --","Tất cả"});
+        comboBox.setVisible(false);
+        comboBox.setBorder(null);
+        comboBox.setBackground(new Color(242, 242, 242));
+
+        for (String c : categories) {
+            comboBox.addItem(c);
+        }
+        category.addActionListener(new ActionListener() {
+            boolean isComboBoxVisible = false;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                isComboBoxVisible = !isComboBoxVisible;
+
+                if (isComboBoxVisible) {
+                    Point location = category.getLocationOnScreen();
+                    comboBox.setLocation(location.x, location.y +category.getHeight());
+                    comboBox.setVisible(true);
+                    comboBox.requestFocus();
+                } else {
+                    comboBox.setVisible(false);
+                }
+            }
+        });
+
+
+         JTextField txtS = new MyTextFieldUnderLine();
+
+        txtS.setPreferredSize(new Dimension(500, 30));
+        txtS.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtSearch = txtS;
                 txtSearchMouseClicked(evt);
             }
         });
-        txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtS.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtSearch = txtS;
                 txtSearchKeyPressed(evt);
             }
 
             public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearch = txtS;
                 txtSearchKeyReleased(evt);
             }
         });
-        contaierSearch.add(txtSearch);
+        contaierSearch.add(txtS);
         contaierSearch.add(category);
+        contaierSearch.add(comboBox);
 
-        JButton btnRemove = new JButton();
+        JButton btnRemove = createButton();
         btnRemove.setIcon(new FlatSVGIcon("icon/icons8-remove-26.svg"));
-        btnRemove.setBorderPainted(false);
-        btnRemove.setFocusPainted(false);
-        btnRemove.setContentAreaFilled(false);
-        btnRemove.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         btnRemove.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -376,21 +403,20 @@ public class AddDiscountGUInew extends DialogFormDetail_1 {
         });
 
         RoundedPanel newContainer1 = new RoundedPanel();
-        newContainer1.setLayout(new MigLayout("", "10[]30[]320[]"));
+        newContainer1.setLayout(new MigLayout("", "10[]30[]240[]"));
         Border bottomBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(225, 225, 225)); // Viền dưới
         newContainer1.setBorder(bottomBorder);
         newContainer1.add(lblBuy);
         newContainer1.add(contaierSearch);
         newContainer1.add(btnRemove);
         newContainer.add(newContainer1, BorderLayout.NORTH);
+
         createPanelSubContentProduct(newContainer);
-        JButton btnAddRow = new JButton(" + Thêm dòng");
+        JButton btnAddRow = createButton();
+        btnAddRow.setText(" + Thêm dòng");
         btnAddRow.setForeground(new Color(99, 165, 210));
         btnAddRow.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-        btnAddRow.setBorderPainted(false);
-        btnAddRow.setFocusPainted(false);
-        btnAddRow.setContentAreaFilled(false);
-        btnAddRow.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         btnAddRow.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -399,7 +425,7 @@ public class AddDiscountGUInew extends DialogFormDetail_1 {
         });
 
         RoundedPanel containerbtnAddRow = new RoundedPanel();
-        containerbtnAddRow.setLayout(new FlowLayout(FlowLayout.LEFT,80,0));
+        containerbtnAddRow.setLayout(new FlowLayout(FlowLayout.LEFT, 80, 0));
         containerbtnAddRow.add(btnAddRow);
         newContainer.add(containerbtnAddRow, BorderLayout.SOUTH);
 
@@ -410,63 +436,35 @@ public class AddDiscountGUInew extends DialogFormDetail_1 {
 
     private void createPanelSubContentProduct(RoundedPanel newContainer) {
         RoundedPanel newPanel = new RoundedPanel();
-        newPanel.setLayout(new MigLayout("", "100[]20[]20[]20[]20[]20[]320[]10"));
+        newPanel.setLayout(new MigLayout("", "100[]20[]20[]20[]20[]390[]10"));
         Border bottomBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(225, 225, 225));
         newPanel.setBorder(bottomBorder);
 
         JLabel quantity = createLabel("Số lượng từ");
         JTextField txtQuantity = new MyTextFieldUnderLine();
         JLabel discount = createLabel("Giảm giá");
-        JTextField txtValue =new MyTextFieldUnderLine();
+        JTextField txtValue = new MyTextFieldUnderLine();
 
-        JButton VND = new JButton("VND");
-        VND.setPreferredSize(new Dimension(30, 40));
-        VND.setBackground(new Color(133, 137, 138));
-        VND.setForeground(Color.WHITE);
-        VND.setFont(new Font("Times New Roman", Font.BOLD, 14));
-        VND.setBorderPainted(false);
-        VND.setFocusPainted(false);
-        VND.setMargin(new Insets(0, 0, 0, 0));
-        VND.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        JButton percent = new JButton(" % ");
+        JButton percent = createButton();
+        percent.setContentAreaFilled(true);
+        percent.setText(" % ");
         percent.setBackground(new Color(52, 147, 54));
         percent.setForeground(Color.WHITE);
         percent.setFont(new Font("Times New Roman", Font.BOLD, 14));
         percent.setPreferredSize(new Dimension(30, 40));
-        percent.setBorderPainted(false);
-        percent.setFocusPainted(false);
         percent.setMargin(new Insets(0, 5, 0, 5));
-        percent.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        VND.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                VND.setBackground(new Color(52, 147, 54));
-                percent.setBackground(new Color(133, 137, 138));
-            }
-        });
 
-        percent.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                percent.setBackground(new Color(52, 147, 54));
-                VND.setBackground(new Color(133, 137, 138));
-            }
-        });
         newPanel.add(quantity);
         newPanel.add(txtQuantity);
         newPanel.add(discount);
         newPanel.add(txtValue);
-        newPanel.add(VND);
         newPanel.add(percent);
 
-        JButton btnRemoveRow = new JButton();
+        JButton btnRemoveRow = createButton();
         btnRemoveRow.setIcon(new FlatSVGIcon("icon/icons8-minus-26.svg"));
-        btnRemoveRow.setBorderPainted(false);
-        btnRemoveRow.setFocusPainted(false);
-        btnRemoveRow.setContentAreaFilled(false);
-        btnRemoveRow.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         btnRemoveRow.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -482,7 +480,8 @@ public class AddDiscountGUInew extends DialogFormDetail_1 {
         newContainer.revalidate();
         newContainer.repaint();
     }
-   private String[] convertTxtSearchToArray(String txtSearchValue) {
+
+    private String[] convertTxtSearchToArray(String txtSearchValue) {
         List<String> resultList = new ArrayList<>();
         String[] values = txtSearchValue.split("\\(");
 
@@ -520,13 +519,13 @@ public class AddDiscountGUInew extends DialogFormDetail_1 {
 
     private java.util.List<DataSearch> search(String text) {
         java.util.List<DataSearch> list = new ArrayList<>();
-        List<Product>products = productBLL.findProducts("name", text);
+        List<Product> products = productBLL.findProducts("name", text);
 
         for (Product p : products) {
             if (list.size() == 7) {
                 break;
             }
-            list.add(new DataSearch(p.getName(),p.getSize(),p.getPrice().toString()));
+            list.add(new DataSearch(p.getName(), p.getSize(), p.getPrice().toString()));
         }
         return list;
     }
@@ -542,6 +541,20 @@ public class AddDiscountGUInew extends DialogFormDetail_1 {
 
         }
         menu.setVisible(false);
-
+    }
+    private JLabel createLabel(String title) {
+        JLabel label = new JLabel();
+        label.setPreferredSize(new Dimension(80, 30));
+        label.setText(title);
+        label.setFont((new Font("Public Sans", Font.BOLD, 14)));
+        return label;
+    }
+    private JButton createButton(){
+        JButton button = new JButton();
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        button.setContentAreaFilled(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return button;
     }
 }

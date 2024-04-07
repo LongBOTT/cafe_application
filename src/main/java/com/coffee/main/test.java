@@ -1,44 +1,44 @@
 package com.coffee.main;
 
+import com.formdev.flatlaf.extras.FlatSVGIcon;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 public class test {
     public static void main(String[] args) {
-        // Dữ liệu mẫu cho bảng
-        Object[][] data = {
-                {"Product 1", ""},
-                {"Product 2", ""},
-                {"Product 3", ""}
-        };
+        JFrame frame = new JFrame("JComboBox with Icon");
 
-        // Tiêu đề cột
-        String[] columns = {"Product", "Size"};
 
-        // Tạo model cho bảng
-        DefaultTableModel model = new DefaultTableModel(data, columns) {
+        JComboBox<String> comboBox = new JComboBox<>(new String[]{"Option 1", "Option 2", "Option 3"});
+
+        JButton button = new JButton(new FlatSVGIcon("icon/icons8-category-20.svg"));
+        button.addActionListener(new ActionListener() {
             @Override
-            public boolean isCellEditable(int row, int column) {
-                // Chỉ cho phép chỉnh sửa ô ở cột "Size"
-                return column == 1;
+            public void actionPerformed(ActionEvent e) {
+                if (comboBox.isVisible()) {
+                    comboBox.setVisible(false);
+                } else {
+                    Point location = button.getLocationOnScreen();
+                    comboBox.setLocation(location.x, location.y + button.getHeight());
+                    comboBox.setVisible(true);
+                    comboBox.requestFocus();
+                }
             }
-        };
+        });
 
-        // Tạo bảng
-        JTable table = new JTable(model);
+        frame.add(button, BorderLayout.WEST);
+        frame.add(comboBox, BorderLayout.CENTER);
 
-        // Tạo combobox chứa các giá trị "L", "M", "S"
-        JComboBox<String> sizeComboBox = new JComboBox<>(new String[]{"L", "M", "S"});
-
-        // Thiết lập cell editor cho cột "Size" là combobox
-        table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(sizeComboBox));
-
-        // Hiển thị bảng
-        JFrame frame = new JFrame();
-        frame.add(new JScrollPane(table));
+        frame.setSize(300, 150);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
         frame.setVisible(true);
     }
 }
+
 
