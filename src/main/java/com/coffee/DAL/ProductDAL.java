@@ -98,7 +98,7 @@ public class ProductDAL extends Manager {
     public List<String> getCategories() {
         List<String> categories = new ArrayList<>();
         try {
-            List<List<String>> result = executeQuery("SELECT DISTINCT `category` FROM `product` ");
+            List<List<String>> result = executeQuery("SELECT DISTINCT `category` FROM `product` WHERE `deleted` = 0");
             for (List<String> category : result) {
                 categories.add(category.get(0));
             }

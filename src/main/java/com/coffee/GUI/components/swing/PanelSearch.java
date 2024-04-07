@@ -13,10 +13,12 @@ import java.util.Objects;
 
 import net.miginfocom.swing.MigLayout;
 
+import javax.swing.*;
+
 /**
  * @author RAVEN
  */
-public class PanelSearch extends javax.swing.JPanel {
+public class PanelSearch extends JPanel {
 
     private EventClick event;
     private int selectedIndex = -1;
@@ -28,7 +30,7 @@ public class PanelSearch extends javax.swing.JPanel {
     public PanelSearch() {
         initComponents();
         setAutoscrolls(true);
-        setLayout(new MigLayout("fillx", "0[]0", "0[]0"));
+        setLayout(new MigLayout("", "0[]0", "0[]0"));
     }
 
     public void setData(List<DataSearch> data) {
@@ -42,12 +44,6 @@ public class PanelSearch extends javax.swing.JPanel {
                 public void actionPerformed(ActionEvent ae) {
                     //  when click
                     event.itemClick(d);
-                }
-            }, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent ae) {
-                    //  when remove
-                    event.itemRemove(item, d);
 
                 }
             });
@@ -56,7 +52,24 @@ public class PanelSearch extends javax.swing.JPanel {
         repaint();
         revalidate();
     }
+    public void setData1(List<DataSearch> data) {
+        selectedIndex = -1; //  -1 is not selected
+        this.removeAll();
+        for (DataSearch d : data) {
+            Search_Item item = new Search_Item(d,"");
+            item.addEvent(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ae) {
+                    //  when click
+                    event.itemClick(d);
 
+                }
+            });
+            this.add(item, "wrap");
+        }
+        repaint();
+        revalidate();
+    }
     public int getItemSize() {
         return getComponentCount();
     }

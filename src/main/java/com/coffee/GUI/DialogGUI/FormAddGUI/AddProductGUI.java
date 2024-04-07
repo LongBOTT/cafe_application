@@ -7,12 +7,10 @@ import com.coffee.DTO.Material;
 import com.coffee.DTO.Product;
 import com.coffee.DTO.Recipe;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
-import com.coffee.GUI.ProductGUI;
 import com.coffee.GUI.components.swing.DataSearch;
 import com.coffee.GUI.components.swing.EventClick;
 import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.GUI.components.swing.PanelSearch;
-import com.coffee.GUI.components.CustomPanelRenderer;
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
@@ -22,6 +20,8 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
@@ -32,13 +32,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
-import com.coffee.BLL.MaterialBLL;
-import com.coffee.DTO.Material;
-
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,28 +42,16 @@ import java.util.List;
 
 
 public class AddProductGUI extends DialogFormDetail_1 {
-    private MaterialBLL materialBLL = new MaterialBLL();
-    private ProductBLL productBLL = new ProductBLL();
-    private RecipeBLL recipeBLL = new RecipeBLL();
-    //    private List<Material> listMaterials = new ArrayList<>();
-    private List<Recipe> materialList = new ArrayList<>();
-    ;
-    private List<Product> productList = new ArrayList<>();
-    private JLabel titleName;
-    private RoundedPanel containerAtributeProduct;
-    private RoundedPanel containerImage;
+    private final MaterialBLL materialBLL = new MaterialBLL();
+    private final ProductBLL productBLL = new ProductBLL();
+    private final RecipeBLL recipeBLL = new RecipeBLL();
+    private final List<Recipe> materialList = new ArrayList<>();
+
+    private final List<Product> productList = new ArrayList<>();
     private JLabel lblImage;
-    private JButton btnImage;
-    private JLabel lblListMaterial;
     private DataTable dataTable;
     private JButton buttonCancel;
-    private JButton buttonAdd;
 
-    private RoundedPanel containerInforMaterial;
-    private RoundedScrollPane scrollPane;
-    private RoundedPanel containerDataTable;
-    private List<String> AtributeProduct = new ArrayList<>();
-    private String[] columnNames;
     private JTextField txtNameProduct;
     private JComboBox<String> cbSize;
     private JPanel panelSize;
@@ -77,16 +60,14 @@ public class AddProductGUI extends DialogFormDetail_1 {
     private JTextField txtCategory;
     private JTextField txtQuantity;
     private JTextField txtUnit;
-    private JButton btnAddMaterial;
-    private JPopupMenu menu;
-    private PanelSearch search;
+    private final JPopupMenu menu;
+    private final PanelSearch search;
     private MyTextField txtSearch;
     private JLabel selectedLabel;
     private int productID;
     private int materialID;
     private String imageProduct;
-    private JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/edit.svg"));
-    private JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
+    private final JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
 
     public AddProductGUI() {
         super();
@@ -123,19 +104,19 @@ public class AddProductGUI extends DialogFormDetail_1 {
     }
 
     public void init() {
-        titleName = new JLabel("Thêm sản phẩm");
-        title.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
-        titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
-        title.add(titleName);
+//        JLabel titleName = new JLabel("Thêm sản phẩm");
+//        title.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
+//        titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
+//        title.add(titleName);
 
         top.setLayout(new FlowLayout());
 
-        containerAtributeProduct = new RoundedPanel();
+        RoundedPanel containerAtributeProduct = new RoundedPanel();
         containerAtributeProduct.setLayout(new MigLayout("", "[]40[][][]100", "10[]10[]10[]10"));
         containerAtributeProduct.setBackground(new Color(217, 217, 217));
         containerAtributeProduct.setPreferredSize(new Dimension(600, 200));
 
-        containerImage = new RoundedPanel();
+        RoundedPanel containerImage = new RoundedPanel();
         containerImage.setLayout(new MigLayout("", "[]", "[][]"));
         containerImage.setBackground(new Color(217, 217, 217));
         containerImage.setPreferredSize(new Dimension(200, 200));
@@ -148,7 +129,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         PanelImage.add(lblImage);
 
 
-        btnImage = new JButton("Thêm ảnh");
+        JButton btnImage = new JButton("Thêm ảnh");
         btnImage.setPreferredSize(new Dimension(100, 30));
         btnImage.addMouseListener(new MouseAdapter() {
             @Override
@@ -191,27 +172,53 @@ public class AddProductGUI extends DialogFormDetail_1 {
         String[] sizeOptions = {"0", "S", "M", "L"};
         for (String size : sizeOptions)
             cbSize.addItem(size);
-        cbSize.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedSize = (String) cbSize.getSelectedItem();
-                if (selectedLabel != null) {
-                    selectedLabel.setBackground(Color.WHITE);
-                    selectedLabel.setForeground(Color.BLACK);
+        cbSize.addActionListener(e -> {
+            String selectedSize = (String) cbSize.getSelectedItem();
+            if (selectedLabel != null) {
+                selectedLabel.setBackground(Color.WHITE);
+                selectedLabel.setForeground(Color.BLACK);
+            }
+            if ("0".equals(selectedSize)) {
+                panelSize.removeAll();
+                for(String s : addedLabels){
+                    cbSize.addItem(s);
                 }
-                if ("0".equals(selectedSize)) {
-                    panelSize.removeAll();
-                    for(String s : addedLabels){
-                        cbSize.addItem(s);
+                removeSizeProduct("0");
+                addedLabels.clear();
+                addedLabels.add("0");
+                if (!addProductBySize("0")) {
+                    return;
+                }
+                JLabel label =  createSize("0");
+                selectedLabel =label;
+                label.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (selectedLabel != null) {
+                            selectedLabel.setBackground(Color.WHITE);
+                            selectedLabel.setForeground(Color.BLACK);
+                        }
+                        label.setBackground(new Color(59, 130, 198));
+                        label.setForeground(Color.WHITE);
+                        selectedLabel = label;
+                        loadPriceBySize("0");
+                        loadRecipeBySize("0");
                     }
+                });
+                panelSize.add(label);
+                cbSize.removeItem(selectedSize);
+            } else {
+                if (addedLabels.contains("0")) {
+                    panelSize.removeAll();
+                    addedLabels.remove("0");
                     removeSizeProduct("0");
-                    addedLabels.clear();
-                    addedLabels.add("0");
-                    if (!addProductBySize("0")) {
+                }
+                    if (!addProductBySize(selectedSize)) {
                         return;
                     }
-                    JLabel label =  createSize("0");
-                    selectedLabel =label;
+                    JLabel label = createSize(selectedSize);
+                    selectedLabel = label;
+                    addedLabels.add(selectedSize);
                     label.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mouseClicked(MouseEvent e) {
@@ -222,60 +229,31 @@ public class AddProductGUI extends DialogFormDetail_1 {
                             label.setBackground(new Color(59, 130, 198));
                             label.setForeground(Color.WHITE);
                             selectedLabel = label;
-                            loadPriceBySize("0");
-                            loadRecipeBySize("0");
+                            loadPriceBySize(selectedSize);
+                            loadRecipeBySize(selectedSize);
                         }
                     });
                     panelSize.add(label);
                     cbSize.removeItem(selectedSize);
-                } else {
-                    if (addedLabels.contains("0")) {
-                        panelSize.removeAll();
-                        addedLabels.remove("0");
-                        removeSizeProduct("0");
-                    }
-                        if (!addProductBySize(selectedSize)) {
-                            return;
-                        }
-                        JLabel label = createSize(selectedSize);
-                        selectedLabel = label;
-                        addedLabels.add(selectedSize);
-                        label.addMouseListener(new MouseAdapter() {
-                            @Override
-                            public void mouseClicked(MouseEvent e) {
-                                if (selectedLabel != null) {
-                                    selectedLabel.setBackground(Color.WHITE);
-                                    selectedLabel.setForeground(Color.BLACK);
-                                }
-                                label.setBackground(new Color(59, 130, 198));
-                                label.setForeground(Color.WHITE);
-                                selectedLabel = label;
-                                loadPriceBySize(selectedSize);
-                                loadRecipeBySize(selectedSize);
-                            }
-                        });
-                        panelSize.add(label);
-                        cbSize.removeItem(selectedSize);
 
-                    boolean containsZero = false;
-                    for (int i = 0; i < cbSize.getItemCount(); i++) {
-                        Object item = cbSize.getItemAt(i);
-                        if (item != null && item.equals("0")) {
-                            containsZero = true;
-                            break;
-                        }
+                boolean containsZero = false;
+                for (int i = 0; i < cbSize.getItemCount(); i++) {
+                    Object item = cbSize.getItemAt(i);
+                    if (item != null && item.equals("0")) {
+                        containsZero = true;
+                        break;
                     }
-
-                    if (!containsZero) {
-                        cbSize.addItem("0");
-                    }
-
-                    }
-                    panelSize.revalidate();
-                    panelSize.repaint();
-                    resetTxt();
                 }
-        });
+
+                if (!containsZero) {
+                    cbSize.addItem("0");
+                }
+
+                }
+                panelSize.revalidate();
+                panelSize.repaint();
+                resetTxt();
+            });
 
 
         JButton deleteSize = new JButton();
@@ -288,23 +266,20 @@ public class AddProductGUI extends DialogFormDetail_1 {
         Image newImgRemove = imageRemove.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
         iconRemove = new ImageIcon(newImgRemove);
         deleteSize.setIcon(iconRemove);
-        deleteSize.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (selectedLabel != null) {
-                    panelSize.remove(selectedLabel);
-                    String labelText = selectedLabel.getText();
-                    addedLabels.remove(labelText);
-                    panelSize.revalidate();
-                    panelSize.repaint();
-                    resetTxt();
-                    removeSizeProduct(labelText);
-                    selectedLabel = null;
-                    cbSize.addItem(labelText);
+        deleteSize.addActionListener(e -> {
+            if (selectedLabel != null) {
+                panelSize.remove(selectedLabel);
+                String labelText = selectedLabel.getText();
+                addedLabels.remove(labelText);
+                panelSize.revalidate();
+                panelSize.repaint();
+                resetTxt();
+                removeSizeProduct(labelText);
+                selectedLabel = null;
+                cbSize.addItem(labelText);
 
-                } else {
-                    JOptionPane.showMessageDialog(null, "Chọn size muốn xóa");
-                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Chọn size muốn xóa");
             }
         });
 
@@ -312,28 +287,75 @@ public class AddProductGUI extends DialogFormDetail_1 {
         txtCapitalPrice = createTextField();
         txtCapitalPrice.setFocusable(false);
 
-        txtNameProduct.addFocusListener(new FocusAdapter() {
+        txtNameProduct.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
+            public void insertUpdate(DocumentEvent e) {
                 if (!productList.isEmpty())
-                    updateProductByName();
+                    SwingUtilities.invokeLater(() ->   updateProductByName());
+            }
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                if (!productList.isEmpty() )
+                    SwingUtilities.invokeLater(() ->   updateProductByName());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                if (!productList.isEmpty() ) {
+                    SwingUtilities.invokeLater(() ->   updateProductByName());
+                }
             }
         });
 
-        txtCategory.addFocusListener(new FocusAdapter() {
+        txtCategory.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
+            public void insertUpdate(DocumentEvent e) {
                 if (!productList.isEmpty())
-                    updateProductByCategory();
+                    SwingUtilities.invokeLater(() -> updateProductByCategory());
+            }
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                if (!productList.isEmpty() )
+                    SwingUtilities.invokeLater(() -> updateProductByCategory());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                if (!productList.isEmpty() ) {
+                    SwingUtilities.invokeLater(() -> updateProductByCategory());
+                }
             }
         });
-        txtPrice.addFocusListener(new FocusAdapter() {
+        txtPrice.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
-                updatePriceProductBySize();
+            public void insertUpdate(DocumentEvent e) {
+                if (!productList.isEmpty()) {
+                    SwingUtilities.invokeLater(() -> {
+                        Pair<String, Boolean> result = updatePriceProductBySize();
+                        if (!result.getValue()) {
+                            JOptionPane.showMessageDialog(null, result.getKey(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                if (!productList.isEmpty()) {
+                    SwingUtilities.invokeLater(() -> updatePriceProductBySize());
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                if (!productList.isEmpty()) {
+                    SwingUtilities.invokeLater(() -> {
+                        Pair<String, Boolean> result = updatePriceProductBySize();
+                        if (!result.getValue()) {
+                            JOptionPane.showMessageDialog(null, result.getKey(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        }
+                    });
+                }
             }
         });
 
@@ -355,18 +377,18 @@ public class AddProductGUI extends DialogFormDetail_1 {
         containerAtributeProduct.add(txtCapitalPrice, "wrap");
 
 
-        lblListMaterial = new JLabel("Danh sách nguyên liệu");
+        JLabel lblListMaterial = new JLabel("Danh sách nguyên liệu");
         lblListMaterial.setFont(new Font("Public Sans", Font.BOLD, 16));
 
         center.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
         center.add(lblListMaterial);
 
-        containerInforMaterial = new RoundedPanel();
-        containerInforMaterial.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
+        RoundedPanel containerInforMaterial = new RoundedPanel();
+        containerInforMaterial.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 15));
         containerInforMaterial.setBackground(new Color(217, 217, 217));
 
 
-        btnAddMaterial = new JButton();
+        JButton btnAddMaterial = new JButton();
         ImageIcon icon = new FlatSVGIcon("icon/add.svg");
         Image image = icon.getImage();
         Image newImg = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
@@ -390,7 +412,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
 
         txtSearch = new MyTextField();
-        txtSearch.setPreferredSize(new Dimension(230, 30));
+        txtSearch.setPreferredSize(new Dimension(310, 30));
 
         txtSearch.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -409,11 +431,11 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
         JLabel lblQuantity = createLabelMaterial("Số lượng");
         txtQuantity = createTextFieldMaterial();
-        txtQuantity.setPreferredSize(new Dimension(60, 30));
+        txtQuantity.setPreferredSize(new Dimension(70, 30));
 
         JLabel lblUnit = createLabelMaterial("Đơn vị");
         txtUnit = createTextFieldMaterial();
-        txtUnit.setPreferredSize(new Dimension(60, 30));
+        txtUnit.setPreferredSize(new Dimension(70, 30));
         txtUnit.setEnabled(false);
 
         JButton btnThem = new JButton("Thêm");
@@ -423,11 +445,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         btnThem.setForeground(Color.WHITE);
         btnThem.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        btnThem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                    addMaterialTemp();
-            }
-        });
+        btnThem.addActionListener(e -> addMaterialTemp());
 
         containerInforMaterial.add(lblNameMaterial);
         containerInforMaterial.add(txtSearch);
@@ -437,7 +455,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         containerInforMaterial.add(txtUnit);
         containerInforMaterial.add(btnThem);
 
-        columnNames = new String[]{"ID", "Tên nguyên liệu", "Đơn vị", "Giá vốn", "SL", "T.Tiền"};
+        String[] columnNames = new String[]{"ID", "Tên nguyên liệu", "Đơn vị", "Giá vốn", "SL", "T.Tiền"};
         columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
         columnNames[columnNames.length - 1] = "Xóa";
         dataTable = new DataTable(new Object[0][0], columnNames,
@@ -450,8 +468,8 @@ public class AddProductGUI extends DialogFormDetail_1 {
         }
 
 
-        scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        containerDataTable = new RoundedPanel();
+        RoundedScrollPane scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        RoundedPanel containerDataTable = new RoundedPanel();
         containerDataTable.setLayout(new BorderLayout());
         containerDataTable.setBackground(new Color(217, 217, 217));
         EmptyBorder emptyBorderTop = new EmptyBorder(20, 0, 0, 0);
@@ -461,20 +479,21 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
         JTableHeader jTableHeader = dataTable.getTableHeader();
         jTableHeader.setBackground(new Color(232, 206, 180));
-
         buttonCancel = new JButton("Huỷ");
-        buttonAdd = new JButton("Thêm");
-        buttonCancel.setPreferredSize(new Dimension(100, 30));
+        buttonCancel.setBackground(new Color(213, 50, 77));
+        buttonCancel.setForeground(new Color(255,255,255));
+        buttonCancel.setPreferredSize(new Dimension(100, 35));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         buttonCancel.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
-                buttonCancel.setBackground(new Color(0xD54218));
+//                buttonCancel.setBackground(new Color(0xD54218));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                buttonCancel.setBackground(Color.white);
+//                buttonCancel.setBackground(Color.white);
             }
 
             @Override
@@ -482,9 +501,12 @@ public class AddProductGUI extends DialogFormDetail_1 {
                 cancel();
             }
         });
-        containerButton.add(buttonCancel);
 
-        buttonAdd.setPreferredSize(new Dimension(100, 30));
+
+        JButton buttonAdd = new JButton("Thêm");
+        buttonAdd.setBackground(new Color(65, 149, 67));
+        buttonAdd.setForeground(new Color(255,255,255));
+        buttonAdd.setPreferredSize(new Dimension(100, 35));
         buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonAdd.addMouseListener(new MouseAdapter() {
@@ -495,7 +517,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
             }
         });
         containerButton.add(buttonAdd);
-
+        containerButton.add(buttonCancel);
     }
 
     private Pair<Boolean, String> validateMaterial(String name, String quantity) {
@@ -512,30 +534,29 @@ public class AddProductGUI extends DialogFormDetail_1 {
         return new Pair<>(true, "hợp lệ");
     }
 
-    private void updatePriceProductBySize() {
+    private Pair<String, Boolean> updatePriceProductBySize() {
         if (selectedLabel == null) {
-            JOptionPane.showMessageDialog(null, "Chưa chọn size",
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
-            return;
+            return new Pair<>("Chưa chọn size", false);
         }
         String size = selectedLabel.getText();
         Pair<Boolean, String> result;
         String price = txtPrice.getText();
         result = productBLL.validatePrice(price);
+
         if (!result.getKey()) {
-            JOptionPane.showMessageDialog(null, result.getValue(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
             txtPrice.requestFocus();
-            return;
+            return new Pair<>(result.getValue(), false);
         }
+
         if (!productList.isEmpty()) {
             for (Product product : productList) {
                 if (product.getSize().equals(size)) {
                     product.setPrice(Double.parseDouble(price));
-                    return;
+                    return new Pair<>("", true);
                 }
             }
         }
+        return new Pair<>("", true);
     }
 
     private void updateProductByName() {
@@ -655,7 +676,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         Recipe recipe = new Recipe(productID, materialID, Double.parseDouble(quantity), size, unit);
         if (!checkRecipeExist(recipe)) {
             materialList.add(recipe);
-            addDataToTable(materialID, name, quantity, unit);
+            addDataToTable(materialID,quantity, unit);
         } else {
             JOptionPane.showMessageDialog(null, "Nguyên liệu đã có trong công thức",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -674,7 +695,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         return false;
     }
 
-    private void addDataToTable(int materialID, String name, String quantity, String unit) {
+    private void addDataToTable(int materialID,  String quantity, String unit) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
 
         Material material = materialBLL.findMaterialsBy(Map.of("id",materialID)).get(0);
@@ -898,7 +919,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         return list;
     }
 
-    private void txtSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
+    private void txtSearchKeyPressed(java.awt.event.KeyEvent evt) {
         if (evt.getKeyCode() == KeyEvent.VK_UP) {
             search.keyUp();
         } else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
@@ -910,7 +931,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         }
         menu.setVisible(false);
 
-    }//GEN-LAST:event_txtSearchKeyPressed
+    }
 
 }
 

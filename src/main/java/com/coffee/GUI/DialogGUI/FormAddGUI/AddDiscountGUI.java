@@ -141,29 +141,7 @@ public class AddDiscountGUI extends DialogFormDetail_2 {
     }
 
     private void addDiscount() {
-//        Pair<Boolean, String> result;
-//        int id;
-//        String name, phone, address, email;
-//
-//        id = supplierBLL.getAutoID(supplierBLL.searchSuppliers("deleted = 0")); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-//        name = jTextFieldSupplier.get(0).getText();
-//        phone = jTextFieldSupplier.get(1).getText();
-//        address = jTextFieldSupplier.get(2).getText();
-//        email = jTextFieldSupplier.get(3).getText();
-//
-//        Supplier supplier = new Supplier(id, name, phone, address, email, false); // false là tồn tại, true là đã xoá
-//
-//        result = supplierBLL.addSupplier(supplier);
-//
-//        if (result.getKey()) {
-//            JOptionPane.showMessageDialog(null, result.getValue(),
-//                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-//            dispose();
-//        } else {
-//            JOptionPane.showMessageDialog(null, result.getValue(),
-//                    "Lỗi", JOptionPane.ERROR_MESSAGE);
-//        }
-//    }
+
     }
 
 }

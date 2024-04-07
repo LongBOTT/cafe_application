@@ -120,22 +120,7 @@ public class ProductGUI extends Layout3 {
         jButtonSearch.setCursor(new Cursor(Cursor.HAND_CURSOR));
         jButtonSearch.addActionListener(e -> searchProducts());
         SearchPanel.add(jButtonSearch);
-//        jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
-//            @Override
-//            public void insertUpdate(DocumentEvent e) {
-//                searchProducts();
-//            }
-//
-//            @Override
-//            public void removeUpdate(DocumentEvent e) {
-//                searchProducts();
-//            }
-//
-//            @Override
-//            public void changedUpdate(DocumentEvent e) {
-//                searchProducts();
-//            }
-//        });
+
         loadDataTable(productBLL.getData(productBLL.searchProducts("deleted = 0")));
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
@@ -155,11 +140,7 @@ public class ProductGUI extends Layout3 {
         refreshPanel.add(refreshLabel);
 
         if (functions.stream().anyMatch(f -> f.getName().equals("add"))) {
-            RoundedPanel roundedPanel = new RoundedPanel();
-            roundedPanel.setLayout(new GridBagLayout());
-            roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
-            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            RoundedPanel roundedPanel = getRoundedPanel();
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -175,11 +156,7 @@ public class ProductGUI extends Layout3 {
             roundedPanel.add(panel);
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("excel"))) {
-            RoundedPanel roundedPanel = new RoundedPanel();
-            roundedPanel.setLayout(new GridBagLayout());
-            roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
-            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            RoundedPanel roundedPanel = getRoundedPanel();
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Xuất Excel");
@@ -188,11 +165,7 @@ public class ProductGUI extends Layout3 {
             roundedPanel.add(panel);
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("pdf"))) {
-            RoundedPanel roundedPanel = new RoundedPanel();
-            roundedPanel.setLayout(new GridBagLayout());
-            roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
-            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            RoundedPanel roundedPanel = getRoundedPanel();
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Xuất PDF");
@@ -205,9 +178,20 @@ public class ProductGUI extends Layout3 {
 
     }
 
+    private RoundedPanel getRoundedPanel() {
+        RoundedPanel roundedPanel = new RoundedPanel();
+        roundedPanel.setLayout(new GridBagLayout());
+        roundedPanel.setPreferredSize(new Dimension(130, 40));
+        roundedPanel.setBackground(new Color(217, 217, 217));
+        roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return roundedPanel;
+    }
+
     public void refresh() {
         jTextFieldSearch.setText("");
+        loadCategory();
         loadDataTable(productBLL.getData(productBLL.searchProducts("deleted = 0")));
+
     }
 
     public void loadDataTable(Object[][] objects) {
@@ -376,24 +360,26 @@ public class ProductGUI extends Layout3 {
         }
 
         if (indexColumn == indexColumnRemove) {
-            deleteProduct(productBLL.searchProducts("deleted = 0").get(indexRow));
+            deleteProduct(productBLL.findProductsBy(Map.of("name", selectedValue.toString())));
             refresh();
         }
     }
 
-    private void deleteProduct(Product product) {
+    private void deleteProduct(List<Product> products) {
         String[] options = new String[]{"Huỷ", "Xác nhận"};
         int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá sản phẩm?",
                 "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
         if (choice == 1) {
-            Pair<Boolean, String> result = productBLL.deleteProduct(product);
-            if (result.getKey()) {
-                JOptionPane.showMessageDialog(null, result.getValue(),
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                refresh();
-            } else {
-                JOptionPane.showMessageDialog(null, result.getValue(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            for(Product product: products){
+                Pair<Boolean, String> result = productBLL.deleteProduct(product);
+                if (result.getKey()) {
+                    JOptionPane.showMessageDialog(null, result.getValue(),
+                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    refresh();
+                } else {
+                    JOptionPane.showMessageDialog(null, result.getValue(),
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }

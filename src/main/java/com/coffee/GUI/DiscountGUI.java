@@ -3,6 +3,7 @@ package com.coffee.GUI;
 import com.coffee.BLL.DiscountBLL;
 import com.coffee.DTO.Function;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddDiscountGUI;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddDiscountGUInew;
 import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
@@ -104,24 +105,6 @@ public class DiscountGUI extends Layout2 {
         jTextFieldSearch.setPreferredSize(new Dimension(220, 30));
         containerSearch.add(jTextFieldSearch);
 
-//        jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
-//            @Override
-//            public void insertUpdate(DocumentEvent e) {
-//                searchDiscount();
-//            }
-//
-//            @Override
-//            public void removeUpdate(DocumentEvent e) {
-//                searchDiscount();
-//            }
-//
-//            @Override
-//            public void changedUpdate(DocumentEvent e) {
-//                searchDiscount();
-//            }
-//        });
-
-
         containerSearch.add(jTextFieldSearch);
 
         jButtonSearch.setBackground(new Color(29, 78, 216));
@@ -200,21 +183,22 @@ public class DiscountGUI extends Layout2 {
         refreshLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
         refreshPanel.add(refreshLabel);
+        refreshPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                new AddDiscountGUI();
 
+            }
+        });
         if (functions.stream().anyMatch(f -> f.getName().equals("add"))) {
-            RoundedPanel roundedPanel = new RoundedPanel();
-            roundedPanel.setLayout(new GridBagLayout());
-            roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
-            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            RoundedPanel roundedPanel = getRoundedPanel();
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    new AddDiscountGUI();
+                    new AddDiscountGUInew();
                     refresh();
                 }
             });
-
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Thêm mới");
@@ -223,11 +207,7 @@ public class DiscountGUI extends Layout2 {
             roundedPanel.add(panel);
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("excel"))) {
-            RoundedPanel roundedPanel = new RoundedPanel();
-            roundedPanel.setLayout(new GridBagLayout());
-            roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
-            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            RoundedPanel roundedPanel = getRoundedPanel();
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Xuất Excel");
@@ -237,10 +217,6 @@ public class DiscountGUI extends Layout2 {
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("pdf"))) {
             RoundedPanel roundedPanel = new RoundedPanel();
-            roundedPanel.setLayout(new GridBagLayout());
-            roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
-            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Xuất PDF");
@@ -248,6 +224,16 @@ public class DiscountGUI extends Layout2 {
             panel.setIcon(new FlatSVGIcon("icon/pdf.svg"));
             roundedPanel.add(panel);
         }
+    }
+
+    private RoundedPanel getRoundedPanel() {
+        RoundedPanel roundedPanel = new RoundedPanel();
+        roundedPanel.setLayout(new GridBagLayout());
+        roundedPanel.setPreferredSize(new Dimension(130, 40));
+        roundedPanel.setBackground(new Color(217, 217, 217));
+        roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        return roundedPanel;
     }
 
     public void refresh() {
