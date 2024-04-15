@@ -1,18 +1,23 @@
 package com.coffee.GUI.DialogGUI.FormDetailGUI;
 
 import com.coffee.BLL.*;
+import com.coffee.DTO.Export_Note;
 import com.coffee.DTO.Receipt;
 import com.coffee.GUI.DialogGUI.DialogFormDetail;
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.coffee.main.Cafe_Application;
+import com.coffee.main.PDF;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
 
@@ -126,6 +131,14 @@ public class DetailReceiptGUI extends DialogFormDetail {
         JLabel panel = new JLabel("In hoá đơn");
         panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
         panel.setIcon(new FlatSVGIcon("icon/print.svg"));
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                String exportFolderPath = "Export\\PDF";
+                PDF.exportReceiptDetialsPDF(receipt,
+                        exportFolderPath );
+            }
+        });
         roundedPanel.add(panel);
     }
 

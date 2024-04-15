@@ -7,16 +7,27 @@ import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.coffee.main.Cafe_Application;
+import com.coffee.main.PDF;
+import com.coffee.utils.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
 import net.miginfocom.swing.MigLayout;
+
+import com.itextpdf.text.pdf.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+
 
 public class DetailImportGUI extends DialogFormDetail {
     private JLabel titleName;
@@ -118,8 +129,21 @@ public class DetailImportGUI extends DialogFormDetail {
         JLabel panel = new JLabel("In phiếu nhập");
         panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
         panel.setIcon(new FlatSVGIcon("icon/print.svg"));
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+                String exportFolderPath = "Export\\PDF";
+                PDF.importBillDetailsPDF(import_note,exportFolderPath );
+
+            }
+        });
+
+
         roundedPanel.add(panel);
     }
+
+
 
     public void loadDataTable(Object[][] objects) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
@@ -140,8 +164,8 @@ public class DetailImportGUI extends DialogFormDetail {
             int supplier_id = Integer.parseInt(data[i][2].toString());
             data[i][2] = "<html>" + new SupplierBLL().findSuppliersBy(Map.of("id", supplier_id)).get(0).getName() + "</html>";
 
-
         }
+
 
         for (Object[] object : data) {
             Object[] objects1 = object;
@@ -151,4 +175,6 @@ public class DetailImportGUI extends DialogFormDetail {
             model.addRow(object);
         }
     }
+
+
 }

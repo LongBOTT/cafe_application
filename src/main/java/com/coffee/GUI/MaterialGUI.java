@@ -1,12 +1,15 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.MaterialBLL;
+import com.coffee.BLL.ReceiptBLL;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Material;
+import com.coffee.DTO.Receipt;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddMaterialGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailMaterialGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditMaterialGUI;
 import com.coffee.GUI.components.*;
+import com.coffee.main.PDF;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -262,6 +265,14 @@ public class MaterialGUI extends Layout2 {
             JLabel panel = new JLabel("Xuất PDF");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
             panel.setIcon(new FlatSVGIcon("icon/pdf.svg"));
+            panel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    String exportFolderPath = "Export\\PDF";
+                    PDF.exportMaterialPDF(materialBLL.getData(materialBLL.searchMaterials("deleted = 0")),  exportFolderPath);
+
+                }
+            });
             roundedPanel.add(panel);
         }
 
