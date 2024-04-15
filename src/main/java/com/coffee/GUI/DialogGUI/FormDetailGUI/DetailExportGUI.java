@@ -8,12 +8,15 @@ import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.coffee.main.Cafe_Application;
+import com.coffee.main.PDF;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -115,6 +118,14 @@ public class DetailExportGUI extends DialogFormDetail {
         JLabel panel = new JLabel("In phiếu xuất");
         panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
         panel.setIcon(new FlatSVGIcon("icon/print.svg"));
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                String exportFolderPath = "Export\\PDF";
+                PDF.exportBillDetailsPDF(export,exportFolderPath );
+
+            }
+        });
         roundedPanel.add(panel);
     }
 

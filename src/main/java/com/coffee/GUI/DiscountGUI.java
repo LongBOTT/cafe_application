@@ -14,6 +14,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -177,6 +179,8 @@ public class DiscountGUI extends Layout2 {
             dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
             dateTextField[i].setBackground(new Color(245, 246, 250));
 
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            dateTextField[i].setText(LocalDate.now().format(formatter));
             if (i == 0) {
                 JLabel jLabel = new JLabel("Từ Ngày");
                 jLabel.setFont(new Font("Lexend", Font.BOLD, 14));

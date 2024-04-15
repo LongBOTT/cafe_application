@@ -1,10 +1,10 @@
 package com.coffee.GUI;
 
+import com.coffee.BLL.Export_NoteBLL;
 import com.coffee.BLL.Import_NoteBLL;
+import com.coffee.BLL.ReceiptBLL;
 import com.coffee.BLL.StaffBLL;
-import com.coffee.DTO.Function;
-import com.coffee.DTO.Import_Note;
-import com.coffee.DTO.Staff;
+import com.coffee.DTO.*;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddImportGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailImportGUI;
 
@@ -12,6 +12,7 @@ import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.Layout2;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
+import com.coffee.main.PDF;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
@@ -23,6 +24,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -91,6 +94,9 @@ public class ImportGUI extends Layout2 {
             dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
             dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
             dateTextField[i].setBackground(new Color(245, 246, 250));
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            dateTextField[i].setText(LocalDate.now().format(formatter));
 
             if (i == 0) {
                 JLabel jLabel = new JLabel("Từ Ngày");
@@ -204,6 +210,20 @@ public class ImportGUI extends Layout2 {
             JLabel panel = new JLabel("Xuất PDF");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
             panel.setIcon(new FlatSVGIcon("icon/pdf.svg"));
+            panel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    List<Import_Note> importNotes = new Import_NoteBLL().searchImport();
+                    java.util.Date dateFrom = (java.util.Date) jDateChooser[0].getDate();
+                    java.util.Date dateTo = (java.util.Date) jDateChooser[1].getDate();
+                    java.sql.Date sqlDateFrom = new java.sql.Date(dateFrom.getTime());
+                    java.sql.Date sqlDateTo = new java.sql.Date(dateTo.getTime());
+                    String exportFolderPath = "Export\\PDF";
+
+                    PDF.exportImportNotePDF(importNoteBLL.getData(importNoteBLL.searchImport()), sqlDateFrom, sqlDateTo, exportFolderPath);
+
+                }
+            });
             roundedPanel.add(panel);
         }
     }

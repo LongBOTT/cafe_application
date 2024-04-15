@@ -23,6 +23,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.*;
 
@@ -101,6 +103,9 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
             dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
             dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
             dateTextField[i].setBackground(new Color(245, 246, 250));
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            dateTextField[i].setText(LocalDate.now().format(formatter));
             
             if (i == 0) {
                 JLabel jLabel = new JLabel("Từ Ngày");
