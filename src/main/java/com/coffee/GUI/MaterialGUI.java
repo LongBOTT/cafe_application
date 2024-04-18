@@ -50,6 +50,7 @@ public class MaterialGUI extends Layout2 {
     private int indexColumnEdit = -1;
     private int indexColumnRemove = -1;
     private String[] columnNames;
+    private Object[][] data = new Object[0][0];
 
     public MaterialGUI(List<Function> functions) {
         super();
@@ -330,7 +331,7 @@ public class MaterialGUI extends Layout2 {
             return;
         }
 
-        Object[][] data = new Object[objects.length][5];
+        data = new Object[objects.length][5];
 
         for (int i = 0; i < objects.length; i++) {
             data[i][0] = objects[i][0];
@@ -366,15 +367,15 @@ public class MaterialGUI extends Layout2 {
         int indexColumn = dataTable.getSelectedColumn();
 
         if (indexColumn == indexColumnDetail)
-            new DetailMaterialGUI(materialBLL.searchMaterials("deleted = 0").get(indexRow));
+            new DetailMaterialGUI(materialBLL.searchMaterials("id = " + data[indexRow][0]).get(0));
 
         if (edit && indexColumn == indexColumnEdit) {
-            new EditMaterialGUI(materialBLL.searchMaterials("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            new EditMaterialGUI(materialBLL.searchMaterials("id = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
             refresh();
         }
 
         if (indexColumn == indexColumnRemove) {
-            deleteMaterial(materialBLL.searchMaterials("deleted = 0").get(indexRow));
+            deleteMaterial(materialBLL.searchMaterials("id = " + data[indexRow][0]).get(0));
             refresh();
         }
     }

@@ -5,6 +5,8 @@ import com.coffee.DTO.Account;
 import com.coffee.DTO.Staff;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddLeave_Of_Absence_FormGUI;
 import com.coffee.GUI.components.InfoPanel;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
+import com.coffee.GUI.components.swing.MyTextField;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 
@@ -87,7 +89,7 @@ public class InfoGUI extends InfoPanel {
             label.setFont(new Font("Lexend", Font.BOLD, 16));
             InfoStaffPanel.add(label);
 
-            JTextField textField = new JTextField();
+            JTextField textField = new MyTextFieldUnderLine();
             if (string.equals("Tên Nhân Viên")) {
                 JLabel jLabel = new JLabel(staff.getName());
                 jLabel.setFont(new Font("Lexend", Font.PLAIN, 14));

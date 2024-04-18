@@ -12,6 +12,7 @@ import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.Layout1;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
+import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
 
@@ -38,16 +39,12 @@ public class PayrollDetailGUI extends Layout1 {
     private int indexColumnDetail = -1;
     //    private int indexColumnEdit = -1;
     private String[] columnNames;
-    private HomeGUI homeGUI;
-    private List<Function> functions;
 
     private Object[][] data = new Object[0][0];
 
-    public PayrollDetailGUI(Payroll payroll, List<Function> functions, HomeGUI homeGUI) {
+    public PayrollDetailGUI(Payroll payroll) {
         super();
         this.payroll = payroll;
-        this.functions = functions;
-        this.homeGUI = homeGUI;
         init();
     }
 
@@ -121,7 +118,7 @@ public class PayrollDetailGUI extends Layout1 {
         returnPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                homeGUI.openModule(new PayrollGUI(functions, homeGUI)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
+                Cafe_Application.homeGUI.openModule(Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModulePayrollGUI]); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
             }
         });
         FunctionPanel.add(returnPanel);

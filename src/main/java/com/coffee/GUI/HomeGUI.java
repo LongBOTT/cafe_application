@@ -45,12 +45,13 @@ public class HomeGUI extends JFrame {
     private JLabel iconInfo;
     private JLabel iconLogout;
     private JLabel[] moduleNames;
-    private JPanel[] allPanelModules;
+    public JPanel[] allPanelModules;
     private Color color;
     private Color colorOver;
     private int currentPanel = 0;
     private boolean pressover;
     private boolean over = false;
+    public int indexModulePayrollGUI = -1;
 
     public HomeGUI() {
         initComponents();
@@ -69,7 +70,6 @@ public class HomeGUI extends JFrame {
     public void getUser() {
         staff = staffBLL.findStaffsBy(Map.of("id", account.getStaff_id())).get(0);
 
-        Role_DetailBLL roleDetailBLL = new Role_DetailBLL();
         List<Role_Detail> role_detailList = new Role_DetailBLL().searchRole_detailsByStaff(staff.getId());
         Role_Detail roleDetail = role_detailList.get(0);
         role = roleBLL.findRolesBy(Map.of("id", roleDetail.getRole_id())).get(0);
@@ -224,6 +224,8 @@ public class HomeGUI extends JFrame {
             List<Function> functions = function2D.get(i);
             allPanelModules[i] = getPanelModule(module.getId(), functions);
             int index = i;
+            if (module.getId() == 19)
+                indexModulePayrollGUI = index;
             modules[i].addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
@@ -317,14 +319,14 @@ public class HomeGUI extends JFrame {
             case 9 -> new ImportGUI(functions);
             case 10 -> new ProductGUI(functions);
             case 11 -> new SupplierGUI(functions);
-            case 12 -> new StaffGUI(functions, this);
+            case 12 -> new StaffGUI(functions);
             case 13 -> new Leave_Of_Absence_FormGUI(functions);
             case 14 -> new AccountGUI(functions);
             case 15 -> new DecentralizationGUI(functions);
             case 16 -> new InfoGUI(account, staff);
             case 17 -> new MyWorkScheduleGUI(staff);
             case 18 -> new CreateWorkScheduleGUI();
-            case 19 -> new PayrollGUI(functions, this);
+            case 19 -> new PayrollGUI(functions);
             default -> new RoundedPanel();
         };
     }

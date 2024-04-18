@@ -32,6 +32,7 @@ public class DecentralizationGUI extends Layout1 {
     private RoundedScrollPane scrollPane;
     private DataTable dataTable;
     private JButton jButtonSearch;
+    private Object[][] data = new Object[0][0];
 
     public DecentralizationGUI(List<Function> functions) {
         super();
@@ -149,7 +150,7 @@ public class DecentralizationGUI extends Layout1 {
             return;
         }
 
-        Object[][] data = new Object[objects.length][objects[0].length];
+        data = new Object[objects.length][objects[0].length];
 
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
@@ -168,9 +169,9 @@ public class DecentralizationGUI extends Layout1 {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
         if (indexColumn == 1)
-            deleteRole(roleBLL.searchRoles("id != 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            deleteRole(roleBLL.searchRoles("id = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
         else
-            showDetailRole(roleBLL.searchRoles("id != 0").get(indexRow));
+            showDetailRole(roleBLL.searchRoles("id = " + data[indexRow][0]).get(0));
     }
 
     private void deleteRole(Role role) {

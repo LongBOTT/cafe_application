@@ -44,7 +44,6 @@ public class ProductGUI extends Layout3 {
 
     private String[] columnNames;
 
-
     public ProductGUI(List<Function> functions) {
         super();
         this.functions = functions;
@@ -343,7 +342,7 @@ public class ProductGUI extends Layout3 {
             JLabel jLabel = new JLabel(category);
             jLabel.setHorizontalAlignment(SwingConstants.CENTER);
             jLabel.setVerticalAlignment(SwingConstants.CENTER);
-            jLabel.setFont((new Font("FlatLaf.style", Font.PLAIN, 13)));
+            jLabel.setFont((new Font("Inter", Font.BOLD, 13)));
             roundedPanel.add(jLabel);
 
             roundedPanel.setPreferredSize(new Dimension(Math.max(jLabel.getPreferredSize().width + 10, 100), 31));

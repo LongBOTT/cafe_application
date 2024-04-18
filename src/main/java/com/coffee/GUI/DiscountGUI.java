@@ -64,6 +64,7 @@ public class DiscountGUI extends Layout2 {
 
     private JTextField[] jTextFieldDate = new JTextFieldDateEditor[0];
     private boolean processDateChangeEvent = true;
+    private Object[][] data = new Object[0][0];
 
     public DiscountGUI(List<Function> functions) {
         super();
@@ -176,12 +177,6 @@ public class DiscountGUI extends Layout2 {
             jDateChooser[i].setPreferredSize(new Dimension(150, 30));
             jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
 
-            dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
-            dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
-            dateTextField[i].setBackground(new Color(245, 246, 250));
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            dateTextField[i].setText(LocalDate.now().format(formatter));
             if (i == 0) {
                 JLabel jLabel = new JLabel("Từ Ngày");
                 jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
@@ -354,7 +349,7 @@ public class DiscountGUI extends Layout2 {
             return;
         }
 
-        Object[][] data = new Object[objects.length][objects[0].length];
+        data = new Object[objects.length][objects[0].length];
 
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
@@ -398,10 +393,10 @@ public class DiscountGUI extends Layout2 {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         Object selectedValue = model.getValueAt(indexRow, 0);
         if (indexColumn == indexColumnDetail) {
-            new DetailDiscountGUI(discountBLL.searchDiscounts("id = " + selectedValue.toString()).get(0));
+            new DetailDiscountGUI(discountBLL.searchDiscounts("id = " + data[indexRow][0]).get(0));
         }
         if (indexColumn == indexColumnEdit) {
-            new EditDiscountGUI(discountBLL.searchDiscounts("id = " + selectedValue.toString()).get(0));
+            new EditDiscountGUI(discountBLL.searchDiscounts("id = " + data[indexRow][0]).get(0));
             refresh();
         }
     }

@@ -4,6 +4,8 @@ import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Supplier;
 
 import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
+import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -57,7 +59,7 @@ public class AddSupplierGUI extends DialogForm {
             attributeSupplier.add(label);
             content.add(label);
 
-            JTextField textField = new JTextField();
+            JTextField textField = new MyTextFieldUnderLine();
             textField.setPreferredSize(new Dimension(1000, 30));
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));

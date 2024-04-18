@@ -36,7 +36,7 @@ public class LoginGUI extends JFrame {
 
     public LoginGUI() {
         initComponents();
-//        login();
+        login();
     }
 
     private void initComponents() {

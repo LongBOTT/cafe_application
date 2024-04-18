@@ -7,6 +7,8 @@ import com.coffee.DTO.Work_Schedule;
 import com.coffee.GUI.CreateWorkScheduleGUI;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.components.AutocompleteJComboBox;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
+import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
 import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
@@ -75,7 +77,7 @@ public class EditWorkScheduleGUI extends DialogForm {
             attributeWork_Schedule.add(label);
             content.add(label);
 
-            JTextField textField = new JTextField();
+            JTextField textField = new MyTextFieldUnderLine();
 
             if (string.equals("Nhân viên")) {
                 textField.setText(staffBLL.findStaffsBy(Map.of("id", workSchedule.getStaff_id())).get(0).getName());

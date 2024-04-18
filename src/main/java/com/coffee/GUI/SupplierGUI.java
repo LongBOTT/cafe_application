@@ -43,6 +43,7 @@ public class SupplierGUI extends Layout1 {
     private boolean edit = false;
     private boolean remove = false;
     private String[] columnNames;
+    private Object[][] data = new Object[0][0];
 
     public SupplierGUI(List<Function> functions) {
         super();
@@ -268,7 +269,7 @@ public class SupplierGUI extends Layout1 {
             return;
         }
 
-        Object[][] data = new Object[objects.length][objects[0].length];
+        data = new Object[objects.length][objects[0].length];
 
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
@@ -300,15 +301,15 @@ public class SupplierGUI extends Layout1 {
         int indexColumn = dataTable.getSelectedColumn();
 
         if (detail && indexColumn == indexColumnDetail)
-            new DetailSupplierGUI(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            new DetailSupplierGUI(supplierBLL.searchSuppliers("id = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
         if (edit && indexColumn == indexColumnEdit) {
-            new EditSupplierGUI(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            new EditSupplierGUI(supplierBLL.searchSuppliers("id = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
             refresh();
         }
 
         if (remove && indexColumn == indexColumnRemove)
-            deleteSupplier(supplierBLL.searchSuppliers("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            deleteSupplier(supplierBLL.searchSuppliers("id = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
     }
 

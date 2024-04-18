@@ -47,6 +47,7 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
     private String[] columnNames;
     private StaffBLL staffBLL = new StaffBLL();
     private Date date;
+    private Object[][] data = new Object[0][0];
 
     public Leave_Of_Absence_FormGUI(List<Function> functions) {
         super();
@@ -68,7 +69,7 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
         dateTextField = new JTextField[2];
         jTextFieldDate = new JTextField[2];
 
-        columnNames = new String[]{"Chức vụ", "Họ tên", "Ngày tạo đơn", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"};
+        columnNames = new String[]{"Mã Đơn", "Họ tên", "Ngày tạo đơn", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"};
 
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
@@ -227,17 +228,12 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
             return;
         }
 
-        Object[][] data = new Object[objects.length][objects[0].length];
+        data = new Object[objects.length][objects[0].length];
 
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
 
             int staffId = Integer.parseInt(data[i][1].toString());
-
-            List<Role_Detail> role_detailList = new Role_DetailBLL().searchRole_details("staff_id = " + staffId);
-            Role_Detail roleDetail = role_detailList.get(role_detailList.size() - 1);
-            Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
-            data[i][0] = role.getName();
 
             data[i][1] = staffBLL.findStaffsBy(Map.of("id", staffId)).get(0).getName();
 
@@ -264,10 +260,10 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
         int indexColumn = dataTable.getSelectedColumn();
 
         if (detail && indexColumn == indexColumnDetail)
-            new DetailLeave_Of_Absence_FormGUI(leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms().get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            new DetailLeave_Of_Absence_FormGUI(leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms("id = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
         if (edit && indexColumn == indexColumnEdit) {
-            new EditLeave_Of_Absence_FormGUI(leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms().get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
+            new EditLeave_Of_Absence_FormGUI(leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms("id = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
             refresh();
         }
 

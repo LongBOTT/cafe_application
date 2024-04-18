@@ -7,7 +7,9 @@ import com.coffee.DTO.Staff;
 import com.coffee.GUI.AccountGUI;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.components.AutocompleteJComboBox;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.StringSearchable;
+import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -85,7 +87,7 @@ public class AddAccountGUI extends DialogForm {
                 combo.setBackground(new Color(245, 246, 250));
                 content.add(combo, "wrap");
             } else {
-                JTextField textField = new JTextField();
+                JTextField textField = new MyTextFieldUnderLine();
                 textField.setPreferredSize(new Dimension(1000, 30));
                 textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
                 textField.setBackground(new Color(245, 246, 250));

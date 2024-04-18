@@ -10,6 +10,8 @@ import com.coffee.GUI.CreateWorkScheduleGUI;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.BLL.StaffBLL;
 import com.coffee.GUI.HomeGUI;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
+import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
@@ -35,13 +37,11 @@ public class EditStaffGUI extends DialogForm {
     public static boolean changeRole = false;
     private JDateChooser jDateChooser = new JDateChooser();
     private Staff staff;
-    private HomeGUI homeGUI;
 
-    public EditStaffGUI(Staff staff, HomeGUI homeGUI) {
+    public EditStaffGUI(Staff staff) {
         super();
         super.setTitle("Cập Nhật Thông Tin Nhân Viên");
         this.staff = staff;
-        this.homeGUI = homeGUI;
         super.setSize(new Dimension(600, 700));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init(staff);
@@ -72,7 +72,7 @@ public class EditStaffGUI extends DialogForm {
             label.setFont((new Font("Public Sans", Font.PLAIN, 15)));
             attributeStaff.add(label);
             content.add(label);
-            JTextField textField = new JTextField();
+            JTextField textField = new MyTextFieldUnderLine();
             textField.setPreferredSize(new Dimension(280, 35));
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
@@ -85,8 +85,6 @@ public class EditStaffGUI extends DialogForm {
                 jDateChooser.setDate(birthDate);
                 jDateChooser.setPreferredSize(new Dimension(180, 35));
                 jDateChooser.setMinSelectableDate(java.sql.Date.valueOf("1000-01-01"));
-                textField = (JTextField) jDateChooser.getDateEditor().getUiComponent();
-                textField.setText(dateFormat.format(birthDate));
                 jDateChooser.setEnabled(false);
                 content.add(jDateChooser, "wrap");
 
@@ -148,7 +146,7 @@ public class EditStaffGUI extends DialogForm {
                             if (changeRole && staff.getId() == HomeGUI.staff.getId()) {
                                 JOptionPane.showMessageDialog(null, "Vui lòng đăng nhập lại.",
                                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                                homeGUI.dispose();
+                                Cafe_Application.homeGUI.dispose();
                                 System.gc();
                                 Cafe_Application.loginGUI.setVisible(true);
                                 return;

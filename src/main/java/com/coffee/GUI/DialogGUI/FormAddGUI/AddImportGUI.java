@@ -146,7 +146,7 @@ public class AddImportGUI extends DialogFormDetail {
 
         JPanel jPanel = new JPanel(new FlowLayout());
         jPanel.setPreferredSize(new Dimension(1200, 100));
-        jPanel.setBackground(new Color(217, 217, 217));
+        jPanel.setBackground(new Color(245, 246, 250));
 
         JButton btnAddMaterial = new JButton();
         ImageIcon icon = new FlatSVGIcon("icon/add.svg");
@@ -245,7 +245,7 @@ public class AddImportGUI extends DialogFormDetail {
 
                 dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
                 dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
-                dateTextField[i].setBackground(new Color(245, 246, 250));
+                dateTextField[i].setBackground(new Color(255, 255, 255));
                 jPanel.add(jDateChooser[i]);
                 i++;
             }
@@ -253,9 +253,9 @@ public class AddImportGUI extends DialogFormDetail {
 
         JButton btnThem = new JButton("Thêm lô");
         btnThem.setPreferredSize(new Dimension(100, 30));
-        btnThem.setBackground(new Color(0, 182, 62));
+        buttonAdd.setBackground(new Color(1, 120, 220));
+        buttonAdd.setForeground(Color.white);
         btnThem.setFont(new Font("Public Sans", Font.BOLD, 12));
-        btnThem.setForeground(Color.WHITE);
         btnThem.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         btnThem.addActionListener(new ActionListener() {
@@ -307,6 +307,8 @@ public class AddImportGUI extends DialogFormDetail {
         contentbot.add(jLabelTotal, "wrap");
 
         buttonAdd.setPreferredSize(new Dimension(200, 30));
+        buttonAdd.setBackground(new Color(1, 120, 220));
+        buttonAdd.setForeground(Color.white);
         buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonAdd.addMouseListener(new MouseAdapter() {

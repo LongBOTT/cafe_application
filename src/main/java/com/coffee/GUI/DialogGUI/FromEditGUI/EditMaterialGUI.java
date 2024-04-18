@@ -5,6 +5,8 @@ import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Material;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddSupplierGUI;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
+import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
@@ -81,7 +83,7 @@ public class EditMaterialGUI extends DialogForm {
                 content.add(listUnit, "wrap");
                 continue;
             }
-            JTextField textField = new JTextField();
+            JTextField textField = new MyTextFieldUnderLine();
             if (string.equals("Tồn Kho Tối Thiểu") || string.equals("Tồn Kho Tối Đa") || string.equals("Giá Vốn")) {
                 textField.addKeyListener(new KeyAdapter() {
                     public void keyTyped(KeyEvent e) {

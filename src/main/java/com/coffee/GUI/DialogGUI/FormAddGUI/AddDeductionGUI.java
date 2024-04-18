@@ -3,6 +3,8 @@ package com.coffee.GUI.DialogGUI.FormAddGUI;
 import com.coffee.BLL.DeductionBLL;
 import com.coffee.DTO.Deduction;
 import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
+import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -60,7 +62,7 @@ public class AddDeductionGUI extends DialogForm {
             attributeDeduction.add(label);
             content.add(label);
 
-            JTextField textField = new JTextField();
+            JTextField textField = new MyTextFieldUnderLine();
             if (string.equals("Số tiền giảm trừ")) {
                 textField.addKeyListener(new KeyAdapter() {
                     @Override

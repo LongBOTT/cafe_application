@@ -220,7 +220,8 @@ public class SaleGUI extends SalePanel {
 
         jButtonPay.setPreferredSize(new Dimension(40, 40));
         jButtonPay.setFont(new Font("Palatino", Font.BOLD, 15));
-        jButtonPay.setBackground(new Color(0xB58DDEAF, true));
+        jButtonPay.setBackground(new Color(1, 120, 220));
+        jButtonPay.setForeground(Color.white);
         jButtonPay.setCursor(new Cursor(Cursor.HAND_CURSOR));
         jButtonPay.addMouseListener(new MouseAdapter() {
             @Override
@@ -285,7 +286,7 @@ public class SaleGUI extends SalePanel {
             JLabel jLabel = new JLabel(category);
             jLabel.setHorizontalAlignment(SwingConstants.CENTER);
             jLabel.setVerticalAlignment(SwingConstants.CENTER);
-            jLabel.setFont((new Font("Palatino", Font.PLAIN, 13)));
+            jLabel.setFont((new Font("Inter", Font.BOLD, 13)));
             roundedPanel.add(jLabel);
 
             roundedPanel.setPreferredSize(new Dimension(Math.max(jLabel.getPreferredSize().width + 10, 100), 31));
@@ -315,7 +316,7 @@ public class SaleGUI extends SalePanel {
             }
             RoundedPanel panel = new RoundedPanel();
             panel.setLayout(new FlowLayout(FlowLayout.CENTER));
-            panel.setBackground(Color.white);
+            panel.setBackground(new Color(228, 231, 235));
             panel.setPreferredSize(new Dimension(155, 260));
             panel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             productPanelList.add(panel);
@@ -335,13 +336,13 @@ public class SaleGUI extends SalePanel {
             productName.setVerticalAlignment(JLabel.CENTER);
             productName.setHorizontalAlignment(JLabel.CENTER);
             productName.setText(product.getName());
-            productName.setFont((new Font("Palatino", Font.BOLD, 13)));
+            productName.setFont((new Font("Inter", Font.BOLD, 13)));
             panel.add(productName);
 
             JLabel productPrice = new JLabel();
             productPrice.setVerticalAlignment(JLabel.CENTER);
             productPrice.setHorizontalAlignment(JLabel.CENTER);
-            productPrice.setFont((new Font("Palatino", Font.BOLD, 10)));
+            productPrice.setFont((new Font("Inter", Font.BOLD, 10)));
             productPrice.setPreferredSize(new Dimension(150, 30));
 
             double percent = checkPercentDiscount(product.getId());
@@ -358,7 +359,7 @@ public class SaleGUI extends SalePanel {
             productRemain.setPreferredSize(new Dimension(150, 30));
             productRemain.setVerticalAlignment(JLabel.CENTER);
             productRemain.setHorizontalAlignment(JLabel.CENTER);
-            productRemain.setFont((new Font("Palatino", Font.BOLD, 10)));
+            productRemain.setFont((new Font("Inter", Font.BOLD, 10)));
             int remain = checkRemainProduct(product);
             productRemain.setText("Còn Lại: " + remain);
             panel.add(productRemain);
@@ -406,7 +407,7 @@ public class SaleGUI extends SalePanel {
         receiptDetailList.add(receiptDetail);
 
         JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        jPanel.setBackground(new Color(245, 246, 250));
+        jPanel.setBackground(new Color(228, 231, 235));
         jPanel.setPreferredSize(new Dimension(450, 50));
         Bill_detailPanel.add(jPanel);
 
@@ -419,7 +420,7 @@ public class SaleGUI extends SalePanel {
 
         int index = receiptDetailList.size() - 1;
 
-        nameReceiptDetail.get(index).setFont(new Font("Palatino", Font.PLAIN, 12));
+        nameReceiptDetail.get(index).setFont(new Font("Inter", Font.BOLD, 13));
         nameReceiptDetail.get(index).setText("<html>" + receiptDetailList.get(index).get(0) + "</html>");
         nameReceiptDetail.get(index).setPreferredSize(new Dimension(200, 40));
         nameReceiptDetail.get(index).addMouseListener(new MouseAdapter() {
@@ -450,7 +451,7 @@ public class SaleGUI extends SalePanel {
                 sizeReceiptDetail.get(index).addItem(product1.getSize());
             }
             sizeReceiptDetail.get(index).setPreferredSize(new Dimension(40, 40));
-            sizeReceiptDetail.get(index).setFont(new Font("Palatino", Font.PLAIN, 8));
+            sizeReceiptDetail.get(index).setFont(new Font("Inter", Font.PLAIN, 8));
             sizeReceiptDetail.get(index).setSelectedItem(receiptDetailList.get(index).get(1));
             sizeReceiptDetail.get(index).addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -469,12 +470,12 @@ public class SaleGUI extends SalePanel {
         } else {
             sizeReceiptDetail.get(index).addItem("0");
             JLabel panel = new JLabel();
-            panel.setFont(new Font("Palatino", Font.PLAIN, 8));
+            panel.setFont(new Font("Inter", Font.PLAIN, 8));
             panel.setPreferredSize(new Dimension(40, 40));
             jPanel.add(panel);
         }
 
-        quantityReceiptDetail.get(index).setFont(new Font("Palatino", Font.PLAIN, 10));
+        quantityReceiptDetail.get(index).setFont(new Font("Inter", Font.PLAIN, 10));
         quantityReceiptDetail.get(index).setPreferredSize(new Dimension(40, 40));
         quantityReceiptDetail.get(index).setText(receiptDetailList.get(index).get(2).toString());
 
@@ -500,11 +501,11 @@ public class SaleGUI extends SalePanel {
         jPanel.add(quantityReceiptDetail.get(index));
 
         priceReceiptDetail.get(index).setText(receiptDetailList.get(index).get(3).toString());
-        priceReceiptDetail.get(index).setFont(new Font("Palatino", Font.PLAIN, 12));
+        priceReceiptDetail.get(index).setFont(new Font("Inter", Font.PLAIN, 12));
         priceReceiptDetail.get(index).setPreferredSize(new Dimension(90, 40));
         jPanel.add(priceReceiptDetail.get(index));
 
-        deleteReceiptDetail.get(index).setFont(new Font("Palatino", Font.PLAIN, 12));
+        deleteReceiptDetail.get(index).setFont(new Font("Inter", Font.PLAIN, 12));
         deleteReceiptDetail.get(index).setPreferredSize(new Dimension(40, 40));
         deleteReceiptDetail.get(index).setCursor(new Cursor(Cursor.HAND_CURSOR));
         deleteReceiptDetail.get(index).setIcon(new FlatSVGIcon("icon/delete.svg"));
@@ -524,10 +525,10 @@ public class SaleGUI extends SalePanel {
 
         JPanel productInCartNote = new JPanel(new FlowLayout(FlowLayout.LEFT));
         productInCartNote.setPreferredSize(new Dimension(450, 150));
-        productInCartNote.setBackground(new Color(245, 246, 250));
+        productInCartNote.setBackground(new Color(228, 231, 235));
 
         JLabel choosingSugar = new JLabel("Chọn mức đường: ");
-        choosingSugar.setFont(new Font("Palatino Sans", Font.PLAIN, 13));
+        choosingSugar.setFont(new Font("Inter", Font.PLAIN, 13));
         choosingSugar.setPreferredSize(new Dimension(150, 50));
         productInCartNote.add(choosingSugar);
 
@@ -558,7 +559,7 @@ public class SaleGUI extends SalePanel {
         productInCartNote.add(radioSugar5);
 
         JLabel choosingIce = new JLabel("Chọn mức đá: ");
-        choosingIce.setFont(new Font("Palatino Sans", Font.PLAIN, 13));
+        choosingIce.setFont(new Font("Inter", Font.PLAIN, 13));
         choosingIce.setPreferredSize(new Dimension(150, 50));
         productInCartNote.add(choosingIce);
 
@@ -626,7 +627,7 @@ public class SaleGUI extends SalePanel {
             jPanel.add(nameReceiptDetail.get(i));
             if (receiptDetailList.get(i).get(1).equals("0")) {
                 JLabel panel = new JLabel();
-                panel.setFont(new Font("Palatino", Font.PLAIN, 8));
+                panel.setFont(new Font("Inter", Font.PLAIN, 8));
                 panel.setPreferredSize(new Dimension(40, 40));
                 jPanel.add(panel);
             } else {
@@ -735,7 +736,7 @@ public class SaleGUI extends SalePanel {
             jPanel.add(nameReceiptDetail.get(i));
             if (receiptDetailList.get(i).get(1).equals("0")) {
                 JLabel panel = new JLabel();
-                panel.setFont(new Font("Palatino", Font.PLAIN, 8));
+                panel.setFont(new Font("Inter", Font.PLAIN, 8));
                 panel.setPreferredSize(new Dimension(40, 40));
                 jPanel.add(panel);
             } else {

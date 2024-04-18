@@ -41,12 +41,11 @@ public class StaffGUI extends Layout1 {
     private boolean edit = false;
     private boolean remove = false;
     private String[] columnNames;
-    private final HomeGUI homeGUI;
+    private Object[][] data = new Object[0][0];
 
-    public StaffGUI(List<Function> functions, HomeGUI homeGUI) {
+    public StaffGUI(List<Function> functions) {
         super();
         this.functions = functions;
-        this.homeGUI = homeGUI;
         if (functions.stream().anyMatch(f -> f.getName().equals("view")))
             detail = true;
         if (functions.stream().anyMatch(f -> f.getName().equals("edit")))
@@ -305,7 +304,7 @@ public class StaffGUI extends Layout1 {
             return;
         }
 
-        Object[][] data = new Object[objects.length][objects[0].length];
+        data = new Object[objects.length][objects[0].length];
 
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
@@ -351,15 +350,15 @@ public class StaffGUI extends Layout1 {
         int indexColumn = dataTable.getSelectedColumn();
 
         if (detail && indexColumn == indexColumnDetail)
-            new DetailStaffGUI(staffBLL.searchStaffs("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            new DetailStaffGUI(staffBLL.searchStaffs("id = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
         if (edit && indexColumn == indexColumnEdit) {
-            new EditStaffGUI(staffBLL.searchStaffs("deleted = 0").get(indexRow), homeGUI);
+            new EditStaffGUI(staffBLL.searchStaffs("id = " + data[indexRow][0]).get(0));
             System.out.println(" đã nhấn ởddaaay ");// Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
             refresh();
         }
         if (remove && indexColumn == indexColumnRemove)
-            deleteStaff(staffBLL.searchStaffs("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            deleteStaff(staffBLL.searchStaffs("id = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
     }
 

@@ -1,6 +1,5 @@
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="2000" height="2000" opacity="1.000000" >
-    <path fill="#FFFFFF" opacity="1.000000" stroke="none"
-	d="
+    <path fill="#e4e7eb" opacity="1.000000" stroke="none"	d="
 M1.000000,751.000000 
 	C1.000000,502.166656 1.009863,253.833328 0.906646,5.500039 
 	C0.905087,1.750825 1.751001,0.906735 5.500013,0.907280 

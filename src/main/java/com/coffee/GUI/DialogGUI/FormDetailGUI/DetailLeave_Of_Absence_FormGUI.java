@@ -3,7 +3,9 @@ package com.coffee.GUI.DialogGUI.FormDetailGUI;
 
 import com.coffee.BLL.StaffBLL;
 import com.coffee.DTO.Leave_Of_Absence_Form;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedPanel;
+import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
@@ -92,7 +94,7 @@ public class DetailLeave_Of_Absence_FormGUI extends JDialog {
             attributeLeaveOfAbsenceForm.add(label);
             center.add(label);
 
-            JTextField textField = new JTextField();
+            JTextField textField = new MyTextFieldUnderLine();
             if (string.equals("Họ tên")) {
                 textField.setText(new StaffBLL().findStaffsBy(Map.of("id", leaveOfAbsenceForm.getStaff_id())).get(0).getName());
                 textField.setPreferredSize(new Dimension(1000, 50));

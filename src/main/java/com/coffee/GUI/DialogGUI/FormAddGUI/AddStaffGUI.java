@@ -4,6 +4,8 @@ import com.coffee.BLL.RoleBLL;
 import com.coffee.BLL.StaffBLL;
 import com.coffee.DTO.Staff;
 import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
+import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
 import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
@@ -80,7 +82,7 @@ public class AddStaffGUI extends DialogForm {
             label.setFont((new Font("Public Sans", Font.PLAIN, 15)));
             attributeStaff.add(label);
             content.add(label);
-            JTextField textField = new JTextField();
+            JTextField textField = new MyTextFieldUnderLine();
             textField.setPreferredSize(new Dimension(280, 35));
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
