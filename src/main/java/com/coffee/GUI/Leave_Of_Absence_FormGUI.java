@@ -106,7 +106,7 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             dateTextField[i].setText(LocalDate.now().format(formatter));
-            
+
             if (i == 0) {
                 JLabel jLabel = new JLabel("Từ Ngày");
                 jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
@@ -149,7 +149,7 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
         });
         containerSearch.add(jTextFieldSearch);
 
-        jButtonSearch.setBackground(new Color(29, 78, 216));
+        jButtonSearch.setBackground(new Color(1, 120, 220));
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(100, 30));
         jButtonSearch.addActionListener(e -> searchLeave_Of_Absence_Forms());
@@ -160,7 +160,7 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
         refreshPanel.setPreferredSize(new Dimension(130, 40));
-        refreshPanel.setBackground(new Color(217, 217, 217));
+        refreshPanel.setBackground(new Color(1, 120, 220));
         refreshPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
@@ -172,6 +172,7 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
 
         JLabel refreshLabel = new JLabel("Làm mới");
         refreshLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        refreshLabel.setForeground(Color.white);
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
         refreshPanel.add(refreshLabel);
     }

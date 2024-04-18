@@ -115,6 +115,8 @@ public class AddMaterialGUI extends DialogForm {
         containerButton.add(buttonCancel);
 
         buttonAdd.setPreferredSize(new Dimension(100, 30));
+        buttonAdd.setBackground(new Color(1, 120, 220));
+        buttonAdd.setForeground(Color.white);
         buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonAdd.addMouseListener(new MouseAdapter() {
@@ -165,7 +167,7 @@ public class AddMaterialGUI extends DialogForm {
         }
         unit_price = Double.parseDouble(jTextFieldMaterial.get(3).getText());
         boolean sell = saleCheckbox.isSelected();
-        Material material = new Material(id, name, 0, min_remain, max_remain, unit, unit_price,sell, false);
+        Material material = new Material(id, name, 0, min_remain, max_remain, unit, unit_price, sell, false);
         result = materialBLL.addMaterial(material);
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),

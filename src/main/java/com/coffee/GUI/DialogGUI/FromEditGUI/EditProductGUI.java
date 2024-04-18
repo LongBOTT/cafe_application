@@ -187,7 +187,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
         RoundedScrollPane scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         RoundedPanel containerDataTable = new RoundedPanel();
         containerDataTable.setLayout(new BorderLayout());
-        containerDataTable.setBackground(new Color(255,255,255));
+        containerDataTable.setBackground(new Color(255, 255, 255));
         EmptyBorder emptyBorderTop = new EmptyBorder(20, 0, 0, 0);
         containerDataTable.setBorder(emptyBorderTop);
         containerDataTable.add(scrollPane, BorderLayout.CENTER);
@@ -412,11 +412,13 @@ public class EditProductGUI extends DialogFormDetail_1 {
                 if (!productList.isEmpty() || !newProductList.isEmpty())
                     updateProductByCategory();
             }
+
             @Override
             public void removeUpdate(DocumentEvent e) {
                 if (!productList.isEmpty() || !newProductList.isEmpty())
                     updateProductByCategory();
             }
+
             @Override
             public void changedUpdate(DocumentEvent e) {
                 if (!productList.isEmpty() || !newProductList.isEmpty())
@@ -553,7 +555,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
 
         JButton buttonCancel = new JButton("Huỷ");
         buttonCancel.setBackground(new Color(213, 50, 77));
-        buttonCancel.setForeground(new Color(255,255,255));
+        buttonCancel.setForeground(new Color(255, 255, 255));
         buttonCancel.setPreferredSize(new Dimension(100, 35));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -578,14 +580,14 @@ public class EditProductGUI extends DialogFormDetail_1 {
 
         JButton buttonUpdate = new JButton("Cập nhật");
         buttonUpdate.setBackground(new Color(65, 149, 67));
-        buttonUpdate.setForeground(new Color(255,255,255));
+        buttonUpdate.setForeground(new Color(255, 255, 255));
         buttonUpdate.setPreferredSize(new Dimension(100, 35));
         buttonUpdate.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonUpdate.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonUpdate.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (removeProduct() && addNewProduct() && updateAllProducts()&&removeRecipe() && addNewRecipe() && updateRecipe()) {
+                if (removeProduct() && addNewProduct() && updateAllProducts() && removeRecipe() && addNewRecipe() && updateRecipe()) {
                     JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                     dispose();
                 } else {
@@ -616,7 +618,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
         if (name.isBlank()) {
             return new Pair<>(false, "Vui lòng chọn nguyên liệu");
         }
-        result = materialBLL.validateQuantity(quantity,"Số lượng");
+        result = materialBLL.validateQuantity(quantity, "Số lượng");
         if (!result.getKey()) {
             return new Pair<>(false, result.getValue());
         }
@@ -716,7 +718,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
     }
 
     private boolean addProductBySize(String size) {
-        String name,category;
+        String name, category;
         name = txtNameProduct.getText();
 
         Pair<Boolean, String> result;
@@ -735,7 +737,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
         }
         Product product = new Product(product_id, name, size, category, 0, 0, imageProduct, false);
         result = productBLL.exists(product);
-        if(result.getKey())
+        if (result.getKey())
             productList.add(product);
         else
             newProductList.add(product);
@@ -844,7 +846,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
         if (indexColumn == 6) {
             String[] options = new String[]{"Huỷ", "Xác nhận"};
             int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nguyên liệu?",
-                    "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                    "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
             if (choice == 1) {
                 Iterator<Recipe> iterator = recipeList.iterator();
                 String labelText = selectedLabel.getText();
@@ -867,30 +869,32 @@ public class EditProductGUI extends DialogFormDetail_1 {
             }
         }
     }
-private void removeAllProductSelectSize0(String size0) {
-    if ("0".equals(size0)) {
-        for (Product product : productList) {
-            removeRecipeByProduct(product);
-            deletedProductList.add(product);
-        }
-        for (Product product : newProductList) {
-            removeRecipeByProduct(product);
-            deletedProductList.add(product);
-        }
-        productList.clear();
-        newProductList.clear();
-    }
-}
-    private void removeSizeProduct(String size) {
-            Iterator<Product> iterator = productList.iterator();
-            while (iterator.hasNext()) {
-                Product product = iterator.next();
-                if (product.getSize().equals(size)) {
-                    deletedProductList.add(product);
-                    iterator.remove();
-                    removeRecipeByProduct(product);
-                }
+
+    private void removeAllProductSelectSize0(String size0) {
+        if ("0".equals(size0)) {
+            for (Product product : productList) {
+                removeRecipeByProduct(product);
+                deletedProductList.add(product);
             }
+            for (Product product : newProductList) {
+                removeRecipeByProduct(product);
+                deletedProductList.add(product);
+            }
+            productList.clear();
+            newProductList.clear();
+        }
+    }
+
+    private void removeSizeProduct(String size) {
+        Iterator<Product> iterator = productList.iterator();
+        while (iterator.hasNext()) {
+            Product product = iterator.next();
+            if (product.getSize().equals(size)) {
+                deletedProductList.add(product);
+                iterator.remove();
+                removeRecipeByProduct(product);
+            }
+        }
     }
 
     private void removeRecipeByProduct(Product product) {
@@ -915,7 +919,7 @@ private void removeAllProductSelectSize0(String size0) {
     }
 
     private void loadPriceBySize(String size) {
-        if(!productList.isEmpty()){
+        if (!productList.isEmpty()) {
             for (Product product : productList) {
                 if (product.getSize().equals(size)) {
                     String price = product.getPrice().toString();
@@ -924,7 +928,7 @@ private void removeAllProductSelectSize0(String size0) {
                 }
             }
         }
-        if(!newProductList.isEmpty()){
+        if (!newProductList.isEmpty()) {
             for (Product product : newProductList) {
                 if (product.getSize().equals(size)) {
                     String price = product.getPrice().toString();
@@ -935,8 +939,9 @@ private void removeAllProductSelectSize0(String size0) {
         }
 
     }
+
     private void loadCapitalPriceBySize(String size) {
-        if(!productList.isEmpty()){
+        if (!productList.isEmpty()) {
             for (Product product : productList) {
                 if (product.getSize().equals(size)) {
                     String capital_price = String.valueOf(product.getCapital_price());
@@ -945,7 +950,7 @@ private void removeAllProductSelectSize0(String size0) {
                 }
             }
         }
-        if(!newProductList.isEmpty()){
+        if (!newProductList.isEmpty()) {
             for (Product product : newProductList) {
                 if (product.getSize().equals(size)) {
                     String capital_price = String.valueOf(product.getCapital_price());
@@ -991,6 +996,7 @@ private void removeAllProductSelectSize0(String size0) {
         }
         return true;
     }
+
     private boolean removeProduct() {
         if (!deletedProductList.isEmpty()) {
             for (Product product : deletedProductList) {
@@ -1003,6 +1009,7 @@ private void removeAllProductSelectSize0(String size0) {
         }
         return true;
     }
+
     private boolean addNewProduct() {
         if (!newProductList.isEmpty()) {
             for (Product product : newProductList) {
@@ -1138,11 +1145,10 @@ private void removeAllProductSelectSize0(String size0) {
 
     private JLabel createLabelMaterial(String text) {
         JLabel label = new JLabel(text);
-        label.setFont((new Font("Public Sans", Font.BOLD ,14)));
+        label.setFont((new Font("Public Sans", Font.BOLD, 14)));
         label.setPreferredSize(null);
         return label;
     }
-
 
 
     private JComboBox<String> createComboBox() {

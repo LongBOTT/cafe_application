@@ -1,4 +1,5 @@
 package com.coffee.GUI.DialogGUI.FromEditGUI;
+
 import com.coffee.BLL.DiscountBLL;
 import com.coffee.BLL.Discount_DetailBLL;
 import com.coffee.BLL.ProductBLL;
@@ -55,6 +56,7 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
     private Discount discount;
     private int discount_id;
     private List<Discount_Detail> default_discount_detail_list;
+
     public EditDiscountGUI(Discount discount) {
         super();
         super.setTitle("Cập nhật chương trình giảm giá");
@@ -77,6 +79,7 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
                 txtSearch.setText(data.getText() + " (" + data.getText1() + ")");
                 System.out.println("Click Item : " + data.getText());
             }
+
             @Override
             public void itemRemove(Component com, DataSearch data) {
                 search.remove(com);
@@ -91,7 +94,7 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
     }
 
     public void init(Discount discount) {
-        list_discount_detail = discount_detailBLL.searchDiscount_Details("discount_id = "+ discount_id);
+        list_discount_detail = discount_detailBLL.searchDiscount_Details("discount_id = " + discount_id);
 
         default_discount_detail_list = list_discount_detail;
 
@@ -124,7 +127,7 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         radio2.setActionCommand("Chưa áp dụng");
 
         boolean status = discount.isStatus();
-        if(!status)
+        if (!status)
             radio1.setSelected(true);
         else
             radio2.setSelected(true);
@@ -135,11 +138,11 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
 
         JPanel panelTimeApplication = new JPanel();
         panelTimeApplication.setPreferredSize(new Dimension(500, 40));
-        panelTimeApplication.setLayout(new MigLayout("", "[][]30[][]","15[]"));
+        panelTimeApplication.setLayout(new MigLayout("", "[][]30[][]", "15[]"));
         panelTimeApplication.setBackground(new Color(255, 255, 255));
 
         JPanel panelStatus = new JPanel();
-        panelStatus.setLayout(new MigLayout("", "[]50[]50[]","15[]"));
+        panelStatus.setLayout(new MigLayout("", "[]50[]50[]", "15[]"));
         panelStatus.setBackground(new Color(255, 255, 255));
         panelStatus.setPreferredSize(new Dimension(500, 40));
         panelStatus.add(lblStatus);
@@ -177,7 +180,7 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
 
         String[] items = {"Sản phẩm", "Đơn hàng"};
         cbDiscountType = new JComboBox<>(items);
-        cbDiscountType.setBackground(new Color(29, 78, 216));
+        cbDiscountType.setBackground(new Color(1, 120, 220));
         cbDiscountType.setForeground(Color.white);
         cbDiscountType.setPreferredSize(new Dimension(100, 30));
         cbDiscountType.addActionListener(e -> {
@@ -231,7 +234,7 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         containerBillTypeContent.setLayout(new MigLayout("", ""));
 
         containerBillTypeContent.setBackground(new Color(242, 242, 242));
-        containerBillTypeContent.setPreferredSize(new Dimension(920,350));
+        containerBillTypeContent.setPreferredSize(new Dimension(920, 350));
         scrollPaneBill = new JScrollPane(containerBillTypeContent);
         scrollPaneBill.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPaneBill.setBorder(null);
@@ -251,13 +254,12 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         scrollPane.getVerticalScrollBar().setUnitIncrement(13);
 
         boolean type = discount.isType();
-        if (!type){
+        if (!type) {
             cbDiscountType.setSelectedItem("Sản phẩm");
             loadDiscountProcutPanels();
             bottom.add(scrollPane, BorderLayout.CENTER);
             createPanel_Bill(containerBillTypeContent);
-        }
-        else{
+        } else {
             cbDiscountType.setSelectedItem("Đơn hàng");
             loadDiscountBillPanels();
             bottom.add(containerBillType, BorderLayout.NORTH);
@@ -299,15 +301,15 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
                 String selectedValue = (String) cbDiscountType.getSelectedItem();
                 assert selectedValue != null;
                 if (selectedValue.equals("Đơn hàng")) {
-                    if(checkDiscount())
-                        if(UpdateDiscount()){
-                            JOptionPane.showMessageDialog(null,"Cập nhật thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    if (checkDiscount())
+                        if (UpdateDiscount()) {
+                            JOptionPane.showMessageDialog(null, "Cập nhật thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                             dispose();
                         }
                 } else {
-                    if(checkDiscount())
-                        if(UpdateDiscount()){
-                            JOptionPane.showMessageDialog(null,"Cập nhật thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    if (checkDiscount())
+                        if (UpdateDiscount()) {
+                            JOptionPane.showMessageDialog(null, "Cập nhật thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                             dispose();
                         }
                 }
@@ -315,40 +317,43 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         });
         containerButton.add(buttonAdd);
     }
+
     private void loadDiscountBillPanels() {
         containerBillTypeContent.removeAll();
         for (Discount_Detail discount_detail : list_discount_detail) {
             RoundedPanel panel = createPanel_Bill(containerBillTypeContent);
             JTextField txtTotalBill = (JTextField) panel.getComponent(1);
-            txtTotalBill.setText(discount_detail.getDiscountBill()+"");
+            txtTotalBill.setText(discount_detail.getDiscountBill() + "");
             JTextField txtReduction = (JTextField) panel.getComponent(3);
-            txtReduction.setText(discount_detail.getPercent()+"");
+            txtReduction.setText(discount_detail.getPercent() + "");
         }
     }
-    private boolean checkDiscount(){
+
+    private boolean checkDiscount() {
         Pair<Boolean, String> result;
         String name;
         Date startDate, endDate;
 
         name = txtProgramName.getText();
         result = discountBLL.validateName(name);
-        if(!result.getKey()){
+        if (!result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
-        startDate = jDateChooser[0].getDate()!= null ? java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[0].getDate())) : null;
-        endDate = jDateChooser[1].getDate()!= null ? java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[1].getDate())) : null;
+        startDate = jDateChooser[0].getDate() != null ? java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[0].getDate())) : null;
+        endDate = jDateChooser[1].getDate() != null ? java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[1].getDate())) : null;
 
-        result = discountBLL.validateDate( startDate,endDate);
-        if(!result.getKey()){
+        result = discountBLL.validateDate(startDate, endDate);
+        if (!result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
     }
+
     private RoundedPanel createPanel_Bill(RoundedPanel contaierDiscountBill) {
         RoundedPanel Panel_Bill = new RoundedPanel();
         Panel_Bill.setName("Panel_Bill");
@@ -402,6 +407,7 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         contaierDiscountBill.repaint();
         return Panel_Bill;
     }
+
     private boolean UpdateDiscount() {
         Pair<Boolean, String> result;
         String name;
@@ -411,8 +417,8 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
 
         name = txtProgramName.getText();
 
-        startDate = jDateChooser[0].getDate()!= null ? java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[0].getDate())) : null;
-        endDate = jDateChooser[1].getDate()!= null ? java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[1].getDate())) : null;
+        startDate = jDateChooser[0].getDate() != null ? java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[0].getDate())) : null;
+        endDate = jDateChooser[1].getDate() != null ? java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[1].getDate())) : null;
 
         Object selectedItem = cbDiscountType.getSelectedItem();
         if (selectedItem != null) {
@@ -426,11 +432,12 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
             status = !selectedValue.equals("Kích hoạt");
         }
 
-        Discount discount = new Discount(discount_id,name,startDate,endDate,type,status);
+        Discount discount = new Discount(discount_id, name, startDate, endDate, type, status);
         result = discountBLL.updateDiscount(discount);
         return result.getKey();
     }
-//    private boolean updateDiscount_Detail(){
+
+    //    private boolean updateDiscount_Detail(){
 //        for(Discount_Detail d: list_discount_detail) {
 //            Pair<Boolean, String> result;
 //            result = discount_detailBLL.addDiscount_Detail(d);
@@ -461,6 +468,7 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         bottom.revalidate();
         bottom.repaint();
     }
+
     private void loadDiscountProcutPanels() {
         containerProductType.removeAll();
         Set<String> uniqueProducts = new HashSet<>();
@@ -481,13 +489,13 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
             String product_id = parts[0];
             int product_id_int = Integer.parseInt(product_id);
             String size = parts[1];
-            String name = productBLL.searchProducts("id = " + product_id ).get(0).getName();
+            String name = productBLL.searchProducts("id = " + product_id).get(0).getName();
 
-            txtProductName.setText(name+" ("+ size +")");
+            txtProductName.setText(name + " (" + size + ")");
             contaierDiscountProduct.add(contaierNameProduct, BorderLayout.NORTH);
 
-            List<Discount_Detail> listCondition = getProductCondition(product_id_int,size);
-            for (Discount_Detail d: listCondition) {
+            List<Discount_Detail> listCondition = getProductCondition(product_id_int, size);
+            for (Discount_Detail d : listCondition) {
                 RoundedPanel Panel_Discount_Detail_Product = createPanel_Discount_Detail_Product(contaierDiscountProduct);
                 JTextField txtQuantity = (JTextField) Panel_Discount_Detail_Product.getComponent(1);
                 JTextField txtValue = (JTextField) Panel_Discount_Detail_Product.getComponent(3);
@@ -504,8 +512,9 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         containerProductType.revalidate();
         containerProductType.repaint();
     }
+
     public List<Discount_Detail> getProductCondition(int product_id, String size) {
-        List <Discount_Detail> list = new ArrayList<>();
+        List<Discount_Detail> list = new ArrayList<>();
         for (Discount_Detail d : list_discount_detail) {
             if (d.getProduct_id() == product_id && d.getSize().equals(size)) {
                 list.add(d);
@@ -513,6 +522,7 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         }
         return list;
     }
+
     private void createPanelDiscountProduct() {
         RoundedPanel contaierDiscountProduct = new RoundedPanel();
         contaierDiscountProduct.setLayout(new MigLayout("", "[]"));
@@ -531,7 +541,8 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         containerProductType.repaint();
 
     }
-    private  RoundedPanel createPanelProductName(RoundedPanel contaierDiscountProduct){
+
+    private RoundedPanel createPanelProductName(RoundedPanel contaierDiscountProduct) {
         RoundedPanel contaierNameProduct = new RoundedPanel();
         contaierNameProduct.setLayout(new MigLayout("", "10[]30[]240[]"));
         Border bottomBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(225, 225, 225)); // Viền dưới
@@ -564,11 +575,11 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         JButton category = createButton();
         category.setIcon(new FlatSVGIcon("icon/icons8-category-20.svg"));
 
-        JComboBox<String> comboBox = createCategoryByButton( category);
+        JComboBox<String> comboBox = createCategoryByButton(category);
         comboBox.addActionListener(e -> {
             String value = comboBox.getSelectedItem().toString();
             txtSearch = txtS;
-            txtSearch.setText("Thể loại: "+ value);
+            txtSearch.setText("Thể loại: " + value);
         });
 
         contaierSearch.add(txtS);
@@ -592,6 +603,7 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
 
         return contaierNameProduct;
     }
+
     private RoundedPanel createPanel_Discount_Detail_Product(RoundedPanel contaierDiscountProduct) {
         RoundedPanel Panel_Discount_Detail_Product = new RoundedPanel();
         Panel_Discount_Detail_Product.setName("Panel_Discount_Detail_Product");
@@ -655,7 +667,8 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         contaierDiscountProduct.repaint();
         return Panel_Discount_Detail_Product;
     }
-    private  RoundedPanel createContaierBtnAddRow(RoundedPanel contaierDiscountProduct){
+
+    private RoundedPanel createContaierBtnAddRow(RoundedPanel contaierDiscountProduct) {
         RoundedPanel containerbtnAddRow = new RoundedPanel();
         JButton btnAddRow = createButton();
         btnAddRow.setText(" + Thêm dòng");
@@ -674,6 +687,7 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         containerbtnAddRow.add(btnAddRow);
         return containerbtnAddRow;
     }
+
     private boolean retrieveDiscountInfoFromPanels() {
         Set<String> productNames = new HashSet<>();
         boolean hasError = false;
@@ -732,7 +746,7 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         return true;
     }
 
-    private JComboBox<String> createCategoryByButton(JButton category){
+    private JComboBox<String> createCategoryByButton(JButton category) {
         String[] categories = productBLL.getCategories().toArray(new String[0]);
 
         JComboBox<String> comboBox = new JComboBox<>(new String[]{"-- Chọn thể loại --", "Tất cả"});
@@ -745,6 +759,7 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         }
         category.addActionListener(new ActionListener() {
             boolean isComboBoxVisible = false;
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 isComboBoxVisible = !isComboBoxVisible;

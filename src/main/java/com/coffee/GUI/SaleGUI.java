@@ -128,7 +128,7 @@ public class SaleGUI extends SalePanel {
         });
         containerSearch.add(jTextFieldSearch);
 
-        jButtonSearch.setBackground(new Color(29, 78, 216));
+        jButtonSearch.setBackground(new Color(1, 120, 220));
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(100, 30));
         jButtonSearch.addActionListener(e -> searchProducts());
@@ -211,7 +211,7 @@ public class SaleGUI extends SalePanel {
                 }
                 String[] options = new String[]{"Huỷ", "Xác nhận"};
                 int choice = JOptionPane.showOptionDialog(null, "Bạn muốn huỷ hoá đơn?",
-                        "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                        "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
                 if (choice == 1)
                     cancelBill();
             }
@@ -227,7 +227,7 @@ public class SaleGUI extends SalePanel {
             public void mousePressed(MouseEvent e) {
                 String[] options = new String[]{"Huỷ", "Xác nhận"};
                 int choice = JOptionPane.showOptionDialog(null, "Xác nhận lập hoá đơn?",
-                        "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                        "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
 //                if (choice == 1)
 //                    payBill();
             }

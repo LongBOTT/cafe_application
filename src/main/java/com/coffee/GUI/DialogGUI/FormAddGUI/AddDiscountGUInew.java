@@ -165,7 +165,7 @@ public class AddDiscountGUInew extends DialogFormDetail_1 {
 
         String[] items = {"Sản phẩm", "Đơn hàng"};
         cbDiscountType = new JComboBox<>(items);
-        cbDiscountType.setBackground(new Color(29, 78, 216));
+        cbDiscountType.setBackground(new Color(1, 120, 220));
         cbDiscountType.setForeground(Color.white);
         cbDiscountType.setPreferredSize(new Dimension(100, 30));
         cbDiscountType.addActionListener(e -> {

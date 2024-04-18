@@ -142,6 +142,8 @@ public class EditPayroll_DetailGUI extends DialogForm {
         containerButton.add(buttonCancel);
 
         buttonEdit.setPreferredSize(new Dimension(100, 30));
+        buttonEdit.setBackground(new Color(1, 120, 220));
+        buttonEdit.setForeground(Color.white);
         buttonEdit.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonEdit.addMouseListener(new MouseAdapter() {

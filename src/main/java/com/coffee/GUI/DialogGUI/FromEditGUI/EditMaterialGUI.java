@@ -32,6 +32,7 @@ public class EditMaterialGUI extends DialogForm {
     private SupplierBLL supplierBLL = new SupplierBLL();
     private Material material;
     private JCheckBox saleCheckbox;
+
     public EditMaterialGUI(Material material) {
         super();
         super.setTitle("Sửa Nguyên Liệu");
@@ -96,7 +97,7 @@ public class EditMaterialGUI extends DialogForm {
             jTextFieldMaterial.add(textField);
             content.add(textField, "wrap");
         }
-         saleCheckbox = new JCheckBox("Bán trực tiếp");
+        saleCheckbox = new JCheckBox("Bán trực tiếp");
         content.add(saleCheckbox);
 
         jTextFieldMaterial.get(0).setText(material.getName());
@@ -126,6 +127,8 @@ public class EditMaterialGUI extends DialogForm {
         containerButton.add(buttonCancel);
 
         buttonAdd.setPreferredSize(new Dimension(100, 30));
+        buttonAdd.setBackground(new Color(1, 120, 220));
+        buttonAdd.setForeground(Color.white);
         buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonAdd.addMouseListener(new MouseAdapter() {
@@ -177,7 +180,7 @@ public class EditMaterialGUI extends DialogForm {
         unit_price = Double.parseDouble(jTextFieldMaterial.get(3).getText());
         boolean sell = saleCheckbox.isSelected();
 
-        Material newMaterial = new Material(id, name, material.getRemain(), min_remain, max_remain, unit, unit_price,sell, false);
+        Material newMaterial = new Material(id, name, material.getRemain(), min_remain, max_remain, unit, unit_price, sell, false);
         result = materialBLL.updateMaterial(newMaterial, material);
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),

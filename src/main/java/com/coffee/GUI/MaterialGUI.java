@@ -185,7 +185,7 @@ public class MaterialGUI extends Layout2 {
 
         containerSearch.add(jTextFieldSearch);
 
-        jButtonSearch.setBackground(new Color(29, 78, 216));
+        jButtonSearch.setBackground(new Color(1, 120, 220));
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(100, 30));
         jButtonSearch.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -212,7 +212,7 @@ public class MaterialGUI extends Layout2 {
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
         refreshPanel.setPreferredSize(new Dimension(130, 40));
-        refreshPanel.setBackground(new Color(217, 217, 217));
+        refreshPanel.setBackground(new Color(1, 120, 220));
         refreshPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
@@ -223,6 +223,7 @@ public class MaterialGUI extends Layout2 {
         FunctionPanel.add(refreshPanel);
         JLabel refreshLabel = new JLabel("Làm mới");
         refreshLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        refreshLabel.setForeground(Color.white);
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
         refreshPanel.add(refreshLabel);
 
@@ -230,7 +231,7 @@ public class MaterialGUI extends Layout2 {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new GridBagLayout());
             roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
+            roundedPanel.setBackground(new Color(1, 120, 220));
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
@@ -243,6 +244,7 @@ public class MaterialGUI extends Layout2 {
 
             JLabel panel = new JLabel("Thêm mới");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+            panel.setForeground(Color.white);
             panel.setIcon(new FlatSVGIcon("icon/add.svg"));
             roundedPanel.add(panel);
         }
@@ -250,13 +252,14 @@ public class MaterialGUI extends Layout2 {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new GridBagLayout());
             roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
+            roundedPanel.setBackground(new Color(1, 120, 220));
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Nhập Excel");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-            panel.setIcon(new FlatSVGIcon("icon/excel.svg"));
+            panel.setForeground(Color.white);
+            panel.setIcon(new FlatSVGIcon("icon/import.svg"));
             roundedPanel.add(panel);
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
@@ -285,13 +288,14 @@ public class MaterialGUI extends Layout2 {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new GridBagLayout());
             roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
+            roundedPanel.setBackground(new Color(1, 120, 220));
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Xuất PDF");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-            panel.setIcon(new FlatSVGIcon("icon/pdf.svg"));
+            panel.setForeground(Color.white);
+            panel.setIcon(new FlatSVGIcon("icon/export.svg"));
             panel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -381,7 +385,7 @@ public class MaterialGUI extends Layout2 {
             return;
         }
         String[] options = new String[]{"Huỷ", "Xác nhận"};
-        int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nguyên liệu?", "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+        int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nguyên liệu?", "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
         if (choice == 1) {
             Pair<Boolean, String> result = materialBLL.deleteMaterial(material);
             if (result.getKey()) {

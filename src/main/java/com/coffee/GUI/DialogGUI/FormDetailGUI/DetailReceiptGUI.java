@@ -124,19 +124,20 @@ public class DetailReceiptGUI extends DialogFormDetail {
         RoundedPanel roundedPanel = new RoundedPanel();
         roundedPanel.setLayout(new GridBagLayout());
         roundedPanel.setPreferredSize(new Dimension(150, 40));
-        roundedPanel.setBackground(new Color(255, 255, 255));
+        roundedPanel.setBackground(new Color(1, 120, 220));
         roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         containerButton.add(roundedPanel);
 
         JLabel panel = new JLabel("In hoá đơn");
         panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        panel.setForeground(Color.white);
         panel.setIcon(new FlatSVGIcon("icon/print.svg"));
         panel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 String exportFolderPath = "Export\\PDF";
                 PDF.exportReceiptDetialsPDF(receipt,
-                        exportFolderPath );
+                        exportFolderPath);
             }
         });
         roundedPanel.add(panel);

@@ -120,7 +120,7 @@ public class ProductGUI extends Layout3 {
 
         containerSearch.add(jTextFieldSearch);
 
-        jButtonSearch.setBackground(new Color(29, 78, 216));
+        jButtonSearch.setBackground(new Color(1, 120, 220));
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(100, 30));
         jButtonSearch.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -131,7 +131,7 @@ public class ProductGUI extends Layout3 {
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
         refreshPanel.setPreferredSize(new Dimension(130, 40));
-        refreshPanel.setBackground(new Color(217, 217, 217));
+        refreshPanel.setBackground(new Color(1, 120, 220));
         refreshPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
@@ -146,8 +146,7 @@ public class ProductGUI extends Layout3 {
                     }
                     if (!result.getKey()) {
                         JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    }
-                    else {
+                    } else {
                         JOptionPane.showMessageDialog(null, "Thêm sản phẩm thành công",
                                 "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                         refresh();
@@ -159,6 +158,7 @@ public class ProductGUI extends Layout3 {
         FunctionPanel.add(refreshPanel);
         JLabel refreshLabel = new JLabel("Làm mới");
         refreshLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        refreshLabel.setForeground(Color.white);
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
         refreshPanel.add(refreshLabel);
 
@@ -175,6 +175,7 @@ public class ProductGUI extends Layout3 {
 
             JLabel panel = new JLabel("Thêm mới");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+            panel.setForeground(Color.white);
             panel.setIcon(new FlatSVGIcon("icon/add.svg"));
             roundedPanel.add(panel);
         }
@@ -182,9 +183,10 @@ public class ProductGUI extends Layout3 {
             RoundedPanel roundedPanel = getRoundedPanel();
             FunctionPanel.add(roundedPanel);
 
-            JLabel panel = new JLabel("Xuất Excel");
+            JLabel panel = new JLabel("Nhập Excel");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-            panel.setIcon(new FlatSVGIcon("icon/excel.svg"));
+            panel.setForeground(Color.white);
+            panel.setIcon(new FlatSVGIcon("icon/import.svg"));
             roundedPanel.add(panel);
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("pdf"))) {
@@ -193,7 +195,8 @@ public class ProductGUI extends Layout3 {
 
             JLabel panel = new JLabel("Xuất PDF");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-            panel.setIcon(new FlatSVGIcon("icon/pdf.svg"));
+            panel.setForeground(Color.white);
+            panel.setIcon(new FlatSVGIcon("icon/export.svg"));
             roundedPanel.add(panel);
         }
 
@@ -205,7 +208,7 @@ public class ProductGUI extends Layout3 {
         RoundedPanel roundedPanel = new RoundedPanel();
         roundedPanel.setLayout(new GridBagLayout());
         roundedPanel.setPreferredSize(new Dimension(130, 40));
-        roundedPanel.setBackground(new Color(217, 217, 217));
+        roundedPanel.setBackground(new Color(1, 120, 220));
         roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return roundedPanel;
     }
@@ -391,9 +394,9 @@ public class ProductGUI extends Layout3 {
     private void deleteProduct(List<Product> products) {
         String[] options = new String[]{"Huỷ", "Xác nhận"};
         int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá sản phẩm?",
-                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
         if (choice == 1) {
-            for(Product product: products){
+            for (Product product : products) {
                 Pair<Boolean, String> result = productBLL.deleteProduct(product);
                 if (result.getKey()) {
                     JOptionPane.showMessageDialog(null, result.getValue(),

@@ -275,6 +275,8 @@ public class EditWorkScheduleGUI extends DialogForm {
         containerButton.add(buttonCancel);
 
         buttonEdit.setPreferredSize(new Dimension(100, 30));
+        buttonEdit.setBackground(new Color(1, 120, 220));
+        buttonEdit.setForeground(Color.white);
         buttonEdit.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonEdit.addMouseListener(new MouseAdapter() {
@@ -372,7 +374,7 @@ public class EditWorkScheduleGUI extends DialogForm {
     private void deleteWorkSchedule() {
         String[] options = new String[]{"Huỷ", "Xác nhận"};
         int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá lịch làm việc?",
-                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
         if (choice == 1) {
             Pair<Boolean, String> result = workScheduleBLL.deleteWork_schedule(workSchedule);
             if (result.getKey()) {

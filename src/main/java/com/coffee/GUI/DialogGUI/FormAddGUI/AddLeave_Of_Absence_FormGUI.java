@@ -206,7 +206,7 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
     private void cancel() {
         String[] options = new String[]{"Huỷ", "Thoát"};
         int choice = JOptionPane.showOptionDialog(null, "Bạn có muốn thoát?",
-                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
         if (choice == 1)
             dispose();
     }

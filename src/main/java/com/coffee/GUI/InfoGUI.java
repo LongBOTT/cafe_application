@@ -144,6 +144,8 @@ public class InfoGUI extends InfoPanel {
         InfoStaffPanel.add(buttonCancel);
 
         buttonEdit.setPreferredSize(new Dimension(150, 30));
+        buttonEdit.setBackground(new Color(1, 120, 220));
+        buttonEdit.setForeground(Color.white);
         buttonEdit.setFont(new Font("Lexend", Font.BOLD, 15));
         buttonEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonEdit.addMouseListener(new MouseAdapter() {
@@ -155,6 +157,8 @@ public class InfoGUI extends InfoPanel {
         InfoStaffPanel.add(buttonEdit, "span, wrap");
 
         buttonOffDay.setPreferredSize(new Dimension(150, 30));
+        buttonOffDay.setBackground(new Color(1, 120, 220));
+        buttonOffDay.setForeground(Color.white);
         buttonOffDay.setFont(new Font("Lexend", Font.BOLD, 15));
         buttonOffDay.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonOffDay.addMouseListener(new MouseAdapter() {

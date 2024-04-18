@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
 public class DialogFormDetail_1 extends JDialog {
     public RoundedPanel title;
     public RoundedPanel content;
@@ -16,7 +17,6 @@ public class DialogFormDetail_1 extends JDialog {
     protected RoundedPanel top;
     protected RoundedPanel center;
     protected RoundedPanel bottom;
-
 
 
     public DialogFormDetail_1() {
@@ -60,7 +60,7 @@ public class DialogFormDetail_1 extends JDialog {
 
         containerButton.setLayout(new FlowLayout());
 //        containerButton.setBackground(new Color(217, 217, 217));
-        containerButton.setBackground(new Color(  255, 255, 255));
+        containerButton.setBackground(new Color(255, 255, 255));
 
         containerButton.setPreferredSize(new Dimension(1000, 70));
         add(containerButton);
@@ -74,7 +74,7 @@ public class DialogFormDetail_1 extends JDialog {
         content.add(top, "wrap");
 
         center.setLayout(new BorderLayout());
-        center.setBackground(new Color(255,255,255));
+        center.setBackground(new Color(255, 255, 255));
 
         center.setPreferredSize(new Dimension(1000, 70));
         content.add(center, "wrap");
@@ -93,7 +93,7 @@ public class DialogFormDetail_1 extends JDialog {
     public void cancel() {
         String[] options = new String[]{"Huỷ", "Thoát"};
         int choice = JOptionPane.showOptionDialog(null, "Bạn có muốn thoát?",
-                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
         if (choice == 1)
             dispose();
     }

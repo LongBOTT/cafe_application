@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 
-
 public class DetailImportGUI extends DialogFormDetail {
     private JLabel titleName;
     private List<JLabel> attributeImport_Note;
@@ -122,19 +121,20 @@ public class DetailImportGUI extends DialogFormDetail {
         RoundedPanel roundedPanel = new RoundedPanel();
         roundedPanel.setLayout(new GridBagLayout());
         roundedPanel.setPreferredSize(new Dimension(150, 40));
-        roundedPanel.setBackground(new Color(255, 255, 255));
+        roundedPanel.setBackground(new Color(1, 120, 220));
         roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         containerButton.add(roundedPanel);
 
         JLabel panel = new JLabel("In phiếu nhập");
         panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        panel.setForeground(Color.white);
         panel.setIcon(new FlatSVGIcon("icon/print.svg"));
         panel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
 
                 String exportFolderPath = "Export\\PDF";
-                PDF.importBillDetailsPDF(import_note,exportFolderPath );
+                PDF.importBillDetailsPDF(import_note, exportFolderPath);
 
             }
         });
@@ -142,7 +142,6 @@ public class DetailImportGUI extends DialogFormDetail {
 
         roundedPanel.add(panel);
     }
-
 
 
     public void loadDataTable(Object[][] objects) {

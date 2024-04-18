@@ -83,7 +83,7 @@ public class DecentralizationGUI extends Layout1 {
         });
         containerSearch.add(jTextFieldSearch);
 
-        jButtonSearch.setBackground(new Color(29, 78, 216));
+        jButtonSearch.setBackground(new Color(1, 120, 220));
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(100, 30));
         jButtonSearch.addActionListener(e -> searchRoles());
@@ -94,7 +94,7 @@ public class DecentralizationGUI extends Layout1 {
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
         refreshPanel.setPreferredSize(new Dimension(130, 40));
-        refreshPanel.setBackground(new Color(217, 217, 217));
+        refreshPanel.setBackground(new Color(1, 120, 220));
         refreshPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
@@ -106,6 +106,7 @@ public class DecentralizationGUI extends Layout1 {
 
         JLabel refreshLabel = new JLabel("Làm mới");
         refreshLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        refreshLabel.setForeground(Color.white);
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
         refreshPanel.add(refreshLabel);
 
@@ -113,7 +114,7 @@ public class DecentralizationGUI extends Layout1 {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new GridBagLayout());
             roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
+            roundedPanel.setBackground(new Color(1, 120, 220));
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
@@ -126,6 +127,7 @@ public class DecentralizationGUI extends Layout1 {
 
             JLabel panel = new JLabel("Thêm mới");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+            panel.setForeground(Color.white);
             panel.setIcon(new FlatSVGIcon("icon/add.svg"));
             roundedPanel.add(panel);
         }
@@ -179,7 +181,7 @@ public class DecentralizationGUI extends Layout1 {
         }
         String[] options = new String[]{"Huỷ", "Xác nhận"};
         int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá chức vụ?",
-                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
         if (choice == 1) {
             Pair<Boolean, String> result = roleBLL.deleteRole(role);
             if (result.getKey()) {
