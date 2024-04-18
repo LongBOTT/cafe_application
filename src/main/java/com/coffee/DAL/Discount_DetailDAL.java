@@ -12,7 +12,10 @@ public class Discount_DetailDAL extends Manager{
         super("discount_detail",
                 List.of("discount_id",
                         "product_id",
-                        "percent"
+                        "size",
+                        "quantity",
+                        "percent",
+                        "discountBill"
                 ));
     }
 
@@ -22,7 +25,10 @@ public class Discount_DetailDAL extends Manager{
                 return new Discount_Detail(
                         Integer.parseInt(row.get(0)), // discount_id
                         Integer.parseInt(row.get(1)), // product_id
-                        Double.parseDouble(row.get(2)) // percent
+                        String.valueOf(row.get(2)), // size
+                        Integer.parseInt(row.get(3)), // quantity
+                        Double.parseDouble(row.get(4)), // percent
+                        Double.parseDouble(row.get(5)) // discountBill
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in Discount_DetailDAL.convertToDiscountDetails(): " + e.getMessage());
@@ -35,7 +41,10 @@ public class Discount_DetailDAL extends Manager{
         try {
             return create(discount_detail.getDiscount_id(),
                     discount_detail.getProduct_id(),
-                    discount_detail.getPercent()
+                    discount_detail.getSize(),
+                    discount_detail.getQuantity(),
+                    discount_detail.getPercent(),
+                    discount_detail.getDiscountBill()
             );
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in Discount_DetailDAL.addDiscountDetail(): " + e.getMessage());
@@ -48,10 +57,15 @@ public class Discount_DetailDAL extends Manager{
             List<Object> updateValues = new ArrayList<>();
             updateValues.add(discount_detail.getDiscount_id());
             updateValues.add(discount_detail.getProduct_id());
+            updateValues.add(discount_detail.getSize());
+            updateValues.add(discount_detail.getQuantity());
             updateValues.add(discount_detail.getPercent());
+            updateValues.add(discount_detail.getDiscountBill());
             return update(updateValues,
                     "discount_id = " + discount_detail.getDiscount_id(),
-                    "product_id = " +discount_detail.getProduct_id());
+                    "product_id = " +discount_detail.getProduct_id(),
+                    "size = " + discount_detail.getSize(),
+                    "quantity = " + discount_detail.getQuantity());
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in Discount_DetailDAL.updateDiscountDetail(): " + e.getMessage());
         }

@@ -7,9 +7,9 @@ import com.coffee.DTO.Material;
 import com.coffee.DTO.Product;
 import com.coffee.DTO.Recipe;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.swing.DataSearch;
 import com.coffee.GUI.components.swing.EventClick;
-import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.GUI.components.swing.PanelSearch;
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.RoundedPanel;
@@ -38,8 +38,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
+import static java.awt.Cursor.*;
 
 public class AddProductGUI extends DialogFormDetail_1 {
     private final MaterialBLL materialBLL = new MaterialBLL();
@@ -50,7 +49,6 @@ public class AddProductGUI extends DialogFormDetail_1 {
     private final List<Product> productList = new ArrayList<>();
     private JLabel lblImage;
     private DataTable dataTable;
-    private JButton buttonCancel;
 
     private JTextField txtNameProduct;
     private JComboBox<String> cbSize;
@@ -62,7 +60,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
     private JTextField txtUnit;
     private final JPopupMenu menu;
     private final PanelSearch search;
-    private MyTextField txtSearch;
+    private JTextField txtSearch;
     private JLabel selectedLabel;
     private int productID;
     private int materialID;
@@ -104,21 +102,19 @@ public class AddProductGUI extends DialogFormDetail_1 {
     }
 
     public void init() {
-//        JLabel titleName = new JLabel("Thêm sản phẩm");
-//        title.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
-//        titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
-//        title.add(titleName);
 
         top.setLayout(new FlowLayout());
 
         RoundedPanel containerAtributeProduct = new RoundedPanel();
         containerAtributeProduct.setLayout(new MigLayout("", "[]40[][][]100", "10[]10[]10[]10"));
-        containerAtributeProduct.setBackground(new Color(217, 217, 217));
+//        containerAtributeProduct.setBackground(new Color(217, 217, 217));
+        containerAtributeProduct.setBackground(new Color(255, 255, 255));
         containerAtributeProduct.setPreferredSize(new Dimension(600, 200));
 
         RoundedPanel containerImage = new RoundedPanel();
         containerImage.setLayout(new MigLayout("", "[]", "[][]"));
-        containerImage.setBackground(new Color(217, 217, 217));
+//        containerImage.setBackground(new Color(217, 217, 217));
+        containerImage.setBackground(new Color(255, 255, 255));
         containerImage.setPreferredSize(new Dimension(200, 200));
 
         JPanel PanelImage = new JPanel();
@@ -131,12 +127,13 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
         JButton btnImage = new JButton("Thêm ảnh");
         btnImage.setPreferredSize(new Dimension(100, 30));
+        btnImage.setCursor(new Cursor(HAND_CURSOR));
         btnImage.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (!productList.isEmpty()) {
                     imageProduct = uploadImage();
-                    PanelImage.setBackground(new Color(217, 217, 217));
+//                    PanelImage.setBackground(new Color(217, 217, 217));
                     for (Product product : productList) {
                         product.setImage(imageProduct);
                     }
@@ -159,12 +156,13 @@ public class AddProductGUI extends DialogFormDetail_1 {
         JLabel lblPrice = createLabel("Giá bán");
         JLabel lblCapitalPrice = createLabel("Giá Vốn");
 
-        txtNameProduct = createTextField();
-        txtCategory = createTextField();
+        txtNameProduct = new MyTextFieldUnderLine();
+        txtCategory = new MyTextFieldUnderLine();
 
         panelSize = new JPanel();
         panelSize = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
-        panelSize.setBackground(new Color(217, 217, 217));
+//        panelSize.setBackground(new Color(217, 217, 217));
+        panelSize.setBackground(new Color(255, 255, 255));
         panelSize.setPreferredSize(new Dimension(350, 30));
 
         cbSize = createComboBox();
@@ -258,9 +256,9 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
         JButton deleteSize = new JButton();
         deleteSize.setPreferredSize(new Dimension(30, 30));
-        deleteSize.setBackground(new Color(217, 217, 217));
+        deleteSize.setBackground(new Color(255, 255, 255));
         deleteSize.setBorder(null);
-        deleteSize.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        deleteSize.setCursor(new Cursor(HAND_CURSOR));
         ImageIcon iconRemove = new FlatSVGIcon("icon/remove.svg");
         Image imageRemove = iconRemove.getImage();
         Image newImgRemove = imageRemove.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
@@ -283,8 +281,8 @@ public class AddProductGUI extends DialogFormDetail_1 {
             }
         });
 
-        txtPrice = createTextField();
-        txtCapitalPrice = createTextField();
+        txtPrice = new MyTextFieldUnderLine();
+        txtCapitalPrice = new MyTextFieldUnderLine();
         txtCapitalPrice.setFocusable(false);
 
         txtNameProduct.getDocument().addDocumentListener(new DocumentListener() {
@@ -378,14 +376,15 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
 
         JLabel lblListMaterial = new JLabel("Danh sách nguyên liệu");
-        lblListMaterial.setFont(new Font("Public Sans", Font.BOLD, 16));
+        lblListMaterial.setFont(new Font("Public Sans", Font.BOLD, 18));
 
         center.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
         center.add(lblListMaterial);
 
         RoundedPanel containerInforMaterial = new RoundedPanel();
         containerInforMaterial.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 15));
-        containerInforMaterial.setBackground(new Color(217, 217, 217));
+//        containerInforMaterial.setBackground(new Color(217, 217, 217));
+        containerInforMaterial.setBackground(new Color(255, 255, 255));
 
 
         JButton btnAddMaterial = new JButton();
@@ -398,7 +397,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         btnAddMaterial.setBackground(new Color(0, 182, 62));
         btnAddMaterial.setFont(new Font("Public Sans", Font.BOLD, 16));
         btnAddMaterial.setForeground(Color.WHITE);
-        btnAddMaterial.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnAddMaterial.setCursor(new Cursor(HAND_CURSOR));
         btnAddMaterial.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -411,7 +410,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         JLabel lblNameMaterial = createLabelMaterial("Tên nguyên liệu");
 
 
-        txtSearch = new MyTextField();
+        txtSearch = new MyTextFieldUnderLine();
         txtSearch.setPreferredSize(new Dimension(310, 30));
 
         txtSearch.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -430,11 +429,11 @@ public class AddProductGUI extends DialogFormDetail_1 {
         });
 
         JLabel lblQuantity = createLabelMaterial("Số lượng");
-        txtQuantity = createTextFieldMaterial();
+        txtQuantity = new MyTextFieldUnderLine();
         txtQuantity.setPreferredSize(new Dimension(70, 30));
 
         JLabel lblUnit = createLabelMaterial("Đơn vị");
-        txtUnit = createTextFieldMaterial();
+        txtUnit = new MyTextFieldUnderLine();
         txtUnit.setPreferredSize(new Dimension(70, 30));
         txtUnit.setEnabled(false);
 
@@ -443,7 +442,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         btnThem.setBackground(new Color(0, 182, 62));
         btnThem.setFont(new Font("Public Sans", Font.BOLD, 16));
         btnThem.setForeground(Color.WHITE);
-        btnThem.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnThem.setCursor(new Cursor(HAND_CURSOR));
 
         btnThem.addActionListener(e -> addMaterialTemp());
 
@@ -471,20 +470,22 @@ public class AddProductGUI extends DialogFormDetail_1 {
         RoundedScrollPane scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         RoundedPanel containerDataTable = new RoundedPanel();
         containerDataTable.setLayout(new BorderLayout());
-        containerDataTable.setBackground(new Color(217, 217, 217));
+//        containerDataTable.setBackground(new Color(217, 217, 217));
+        containerDataTable.setBackground(new Color(255, 255, 255));
+
         EmptyBorder emptyBorderTop = new EmptyBorder(20, 0, 0, 0);
         containerDataTable.setBorder(emptyBorderTop);
         containerDataTable.add(scrollPane, BorderLayout.CENTER);
         bottom.add(containerDataTable, BorderLayout.CENTER);
 
         JTableHeader jTableHeader = dataTable.getTableHeader();
-        jTableHeader.setBackground(new Color(232, 206, 180));
-        buttonCancel = new JButton("Huỷ");
+        jTableHeader.setBackground(new Color(120, 123, 125));
+        JButton buttonCancel = new JButton("Huỷ");
         buttonCancel.setBackground(new Color(213, 50, 77));
         buttonCancel.setForeground(new Color(255,255,255));
         buttonCancel.setPreferredSize(new Dimension(100, 35));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
-        buttonCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        buttonCancel.setCursor(new Cursor(HAND_CURSOR));
 
         buttonCancel.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
@@ -508,7 +509,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         buttonAdd.setForeground(new Color(255,255,255));
         buttonAdd.setPreferredSize(new Dimension(100, 35));
         buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
-        buttonAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        buttonAdd.setCursor(new Cursor(HAND_CURSOR));
         buttonAdd.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -526,7 +527,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         if (name.isBlank()) {
             return new Pair<>(false, "Vui lòng chọn nguyên liệu");
         }
-        result = materialBLL.validateQuantity(quantity);
+        result = materialBLL.validateQuantity(quantity,"Số lượng");
         if (!result.getKey()) {
             return new Pair<>(false, result.getValue());
         }
@@ -813,17 +814,12 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
     private JLabel createLabelMaterial(String text) {
         JLabel label = new JLabel(text);
-        label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+        label.setFont((new Font("Public Sans", Font.BOLD, 14)));
         label.setPreferredSize(null);
         return label;
     }
 
-    private JTextField createTextFieldMaterial() {
-        JTextField textField = new JTextField();
-        textField.setFont(new Font("Public Sans", Font.PLAIN, 14));
-        textField.setBackground(new Color(245, 246, 250));
-        return textField;
-    }
+
 
     private JComboBox<String> createComboBox() {
         JComboBox<String> comboBox = new JComboBox<>();
@@ -836,23 +832,17 @@ public class AddProductGUI extends DialogFormDetail_1 {
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
         label.setPreferredSize(new Dimension(170, 30));
-        label.setFont(new Font("Public Sans", Font.PLAIN, 16));
+        label.setFont(new Font("Public Sans", Font.BOLD, 16));
         return label;
     }
 
-    private JTextField createTextField() {
-        JTextField textField = new JTextField();
-        textField.setPreferredSize(new Dimension(350, 30));
-        textField.setFont(new Font("Public Sans", Font.PLAIN, 14));
-        textField.setBackground(new Color(245, 246, 250));
-        return textField;
-    }
+
     private JLabel createSize(String size){
         JLabel label = new JLabel(size);
         label.setPreferredSize(new Dimension(30, 30));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setFocusable(true);
-        label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        label.setCursor(new Cursor(HAND_CURSOR));
         label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         label.setOpaque(true);
         label.setBackground(new Color(59, 130, 198));

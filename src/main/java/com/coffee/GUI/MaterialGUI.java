@@ -10,6 +10,7 @@ import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailMaterialGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditMaterialGUI;
 import com.coffee.GUI.components.*;
 import com.coffee.main.PDF;
+import com.coffee.ImportExcel.AddMaterialFromExcel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -23,10 +24,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+
+import static com.coffee.utils.Resource.chooseExcelFile;
 
 public class MaterialGUI extends Layout2 {
     private final MaterialBLL materialBLL = new MaterialBLL();
@@ -249,10 +254,32 @@ public class MaterialGUI extends Layout2 {
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             FunctionPanel.add(roundedPanel);
 
-            JLabel panel = new JLabel("Xuất Excel");
+            JLabel panel = new JLabel("Nhập Excel");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
             panel.setIcon(new FlatSVGIcon("icon/excel.svg"));
             roundedPanel.add(panel);
+            roundedPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    File file = chooseExcelFile(null);
+                    if (file != null) {
+                        Pair<Boolean, String> result;
+                        try {
+                            result = new AddMaterialFromExcel().addMaterialFromExcel(file);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        if (!result.getKey()) {
+                            JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(null, result.getValue(),
+                                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            refresh();
+                        }
+                    }
+                    refresh();
+                }
+            });
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("pdf"))) {
             RoundedPanel roundedPanel = new RoundedPanel();
@@ -269,7 +296,7 @@ public class MaterialGUI extends Layout2 {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     String exportFolderPath = "Export\\PDF";
-                    PDF.exportMaterialPDF(materialBLL.getData(materialBLL.searchMaterials("deleted = 0")),  exportFolderPath);
+                    PDF.exportMaterialPDF(materialBLL.getData(materialBLL.searchMaterials("deleted = 0")), exportFolderPath);
 
                 }
             });

@@ -19,7 +19,6 @@ public class ProductDAL extends Manager {
                         "image",
                         "deleted"));
     }
-
     public List<Product> convertToProducts(List<List<String>> data) {
         return convert(data, row -> {
             try {

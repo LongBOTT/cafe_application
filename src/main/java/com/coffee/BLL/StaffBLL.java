@@ -12,7 +12,7 @@ import java.util.*;
 public class StaffBLL extends Manager<Staff> {
     private StaffDAL staffDAL;
 
-    private Staff staff ;
+    private Staff staff;
 
     public StaffBLL() {
         staffDAL = new StaffDAL();
@@ -45,33 +45,33 @@ public class StaffBLL extends Manager<Staff> {
 
     public Pair<Boolean, String> updateStaff(Staff oldStaff, Staff newStaff) {
         List<String> errorMessages = new ArrayList<>();
-        if(!Objects.equals(oldStaff.getStaffNo(),newStaff.getStaffNo())) {
+        if (!Objects.equals(oldStaff.getStaffNo(), newStaff.getStaffNo())) {
             Pair<Boolean, String> result = validateStaffNo(newStaff.getStaffNo());
             if (!result.getKey())
                 errorMessages.add(result.getValue());
         }
-        if(!Objects.equals(oldStaff.getName(),newStaff.getName())){
+        if (!Objects.equals(oldStaff.getName(), newStaff.getName())) {
             Pair<Boolean, String> result = validateName(newStaff.getName());
             if (!result.getKey())
                 errorMessages.add(result.getValue());
         }
-        if(!Objects.equals(oldStaff.getPhone(),newStaff.getPhone())){
+        if (!Objects.equals(oldStaff.getPhone(), newStaff.getPhone())) {
             Pair<Boolean, String> result = validatePhone(newStaff.getPhone());
             if (!result.getKey())
                 errorMessages.add(result.getValue());
         }
-        if(!Objects.equals(oldStaff.getEmail(),newStaff.getEmail())){
+        if (!Objects.equals(oldStaff.getEmail(), newStaff.getEmail())) {
             Pair<Boolean, String> result = validateEmail(newStaff.getEmail());
             if (!result.getKey())
                 errorMessages.add(result.getValue());
         }
-        if(!Objects.equals(oldStaff.getAddress(),newStaff.getAddress())){
+        if (!Objects.equals(oldStaff.getAddress(), newStaff.getAddress())) {
             Pair<Boolean, String> result = validateAddress(newStaff.getAddress());
             if (!result.getKey())
                 errorMessages.add(result.getValue());
         }
 
-        if(!Objects.equals(oldStaff.getBirthdate(),newStaff.getBirthdate())){
+        if (!Objects.equals(oldStaff.getBirthdate(), newStaff.getBirthdate())) {
             Pair<Boolean, String> result = validateDate(newStaff.getBirthdate());
             if (!result.getKey())
                 errorMessages.add(result.getValue());
@@ -86,8 +86,6 @@ public class StaffBLL extends Manager<Staff> {
 
         return new Pair<>(true, "Cập nhật nhân viên thành công.");
     }
-
-
 
 
     public Pair<Boolean, String> deleteStaff(Staff staff) {
@@ -122,33 +120,39 @@ public class StaffBLL extends Manager<Staff> {
 
     public Pair<Boolean, String> validateStaffAll(Staff staff) {
         Pair<Boolean, String> result;
-
+        List<String> errorMessages = new ArrayList<>();
         result = validateStaffNo(staff.getStaffNo());
         if (!result.getKey())
-            return new Pair<>(false, result.getValue());
+            errorMessages.add(result.getValue());
 
         result = validateName(staff.getName());
         if (!result.getKey())
-            return new Pair<>(false, result.getValue());
+            errorMessages.add(result.getValue());
 
         result = validatePhone(staff.getPhone());
         if (!result.getKey())
-            return new Pair<>(false, result.getValue());
+            errorMessages.add(result.getValue());
 
         result = validateEmail(staff.getEmail());
         if (!result.getKey())
-            return new Pair<>(false, result.getValue());
+            errorMessages.add(result.getValue());
 
         result = validateDate(staff.getBirthdate());
         if (!result.getKey())
-            return new Pair<>(false, result.getValue());
+            errorMessages.add(result.getValue());
 
         result = validateAddress(staff.getAddress());
         if (!result.getKey())
-            return new Pair<>(false, result.getValue());
+            errorMessages.add(result.getValue());
         result = exists(staff);
+
         if (result.getKey())
-            return new Pair<>(false, result.getValue());
+            errorMessages.add(result.getValue());
+
+        if (!errorMessages.isEmpty()) {
+            String errorMessage = String.join("\n", errorMessages);
+            return new Pair<>(false, errorMessage);
+        }
 
         return new Pair<>(true, "");
     }
@@ -182,10 +186,6 @@ public class StaffBLL extends Manager<Staff> {
         if (!VNString.checkNo(no))
             return new Pair<>(false, "Số căn cước công dân của nhân viên phải bao gồm 12 số.");
 
-        List<Staff> staffs = staffDAL.searchStaffs("no = '" + no + "'", "deleted = 0");
-        if (!staffs.isEmpty()) {
-            return new Pair<>(false, "Số căn cước công dân của nhân viên đã tồn tại.");
-        }
 
         return new Pair<>(true, no);
     }
@@ -208,7 +208,7 @@ public class StaffBLL extends Manager<Staff> {
             return new Pair<>(false, "Số điện thoại nhân viên phải bắt đầu với \"0x\" hoặc \"+84x\" hoặc \"84x\" với \"x\" thuộc \\{\\\\3, 5, 7, 8, 9\\}\\\\.");
 
 
-        List<Staff> staffs = staffDAL.searchStaffs("phone = '" +phone + "'", "deleted = 0");
+        List<Staff> staffs = staffDAL.searchStaffs("phone = '" + phone + "'", "deleted = 0");
         if (!staffs.isEmpty()) {
             return new Pair<>(false, "Số điện thoại nhân viên đã tồn tại.");
         }
@@ -236,10 +236,11 @@ public class StaffBLL extends Manager<Staff> {
             return new Pair<>(false, "Email nhân viên không được để trống.");
         return new Pair<>(true, address);
     }
-    private static Pair<Boolean, String> validateDate(java.util.Date birthDate){
+
+    private static Pair<Boolean, String> validateDate(java.util.Date birthDate) {
         if (birthDate == null)
             return new Pair<>(false, "Ngày sinh không được để trống.");
-        if(!VNString.checkFormatDate(String.valueOf(birthDate)))
+        if (!VNString.checkFormatDate(String.valueOf(birthDate)))
             return new Pair<>(false, "Ngày sinh không đúng định dạng");
 
         // nếu ngày sinh nhỏ hơn 18 tuổi tính cả ngày tháng năm

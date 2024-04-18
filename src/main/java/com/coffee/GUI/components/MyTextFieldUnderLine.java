@@ -15,6 +15,8 @@ public class MyTextFieldUnderLine extends JTextField{
         setPreferredSize(new Dimension(300, 30));
         setFont(new Font("Public Sans", Font.PLAIN, 14));
         setBackground(new Color(255, 255, 255));
+        setHorizontalAlignment(SwingConstants.CENTER);
+
        setOpaque(false);
 
         Border bottomBorderBlack = BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(163, 162, 149));

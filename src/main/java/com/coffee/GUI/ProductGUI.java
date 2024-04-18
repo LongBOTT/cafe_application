@@ -7,6 +7,8 @@ import com.coffee.GUI.DialogGUI.FormAddGUI.AddProductGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailProductGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditProductGUI;
 import com.coffee.GUI.components.*;
+import com.coffee.ImportExcel.AddDiscountFromExcel;
+import com.coffee.ImportExcel.AddProductFromExcel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 
@@ -15,8 +17,12 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
+
+import static com.coffee.utils.Resource.chooseExcelFile;
 
 public class ProductGUI extends Layout3 {
     private final ProductBLL productBLL = new ProductBLL();
@@ -130,6 +136,23 @@ public class ProductGUI extends Layout3 {
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                File file = chooseExcelFile(null);
+                if (file != null) {
+                    Pair<Boolean, String> result = null;
+                    try {
+                        result = new AddProductFromExcel().AddProductFromExcell(file);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    if (!result.getKey()) {
+                        JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "Thêm sản phẩm thành công",
+                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        refresh();
+                    }
+                }
                 refresh();
             }
         });

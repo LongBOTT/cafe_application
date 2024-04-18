@@ -31,18 +31,6 @@ public class Discount_DetailBLL extends Manager<Discount_Detail> {
     }
 
     public Pair<Boolean, String> addDiscount_Detail(Discount_Detail discount_detail) {
-        Pair<Boolean, String> result;
-
-        result = validatePercent(String.valueOf(discount_detail.getPercent()));
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
-
-        result = exists(discount_detail);
-        if(result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
-
         if (discount_detailDAL.addDiscountDetail(discount_detail) == 0)
             return new Pair<>(false, "Thêm sản phẩm giảm giá không thành công.");
 
@@ -50,12 +38,7 @@ public class Discount_DetailBLL extends Manager<Discount_Detail> {
     }
 
     public Pair<Boolean, String> updateDiscount_Detail(Discount_Detail discount_detail) {
-        Pair<Boolean, String> result;
 
-        result = validatePercent(String.valueOf(discount_detail.getPercent()));
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
         if (discount_detailDAL.updateDiscountDetail(discount_detail) == 0)
             return new Pair<>(false, "Cập nhật sản phẩm giảm giá không thành công.");
 
@@ -84,17 +67,17 @@ public class Discount_DetailBLL extends Manager<Discount_Detail> {
         return discount_details;
     }
 
-    public Pair<Boolean, String> exists(Discount_Detail discount_detail) {
-        List<Discount_Detail> discount_details = findDiscount_DetailsBy(Map.of(
-                "discount_id", discount_detail.getDiscount_id(),
-                "product_id", discount_detail.getProduct_id()
-        ));
-
-        if(!discount_details.isEmpty()){
-            return new Pair<>(true, "Sản phẩm đã được giảm giá.");
-        }
-        return new Pair<>(false, "");
-    }
+//    public Pair<Boolean, String> exists(Discount_Detail discount_detail) {
+//        List<Discount_Detail> discount_details = findDiscount_DetailsBy(Map.of(
+//                "discount_id", discount_detail.getDiscount_id(),
+//                "product_id", discount_detail.getProduct_id()
+//        ));
+//
+//        if(!discount_details.isEmpty()){
+//            return new Pair<>(true, "Sản phẩm đã được giảm giá.");
+//        }
+//        return new Pair<>(false, "");
+//    }
 
     private static Pair<Boolean, String> validatePercent(String percent){
         if (percent.isBlank())
@@ -117,9 +100,9 @@ public class Discount_DetailBLL extends Manager<Discount_Detail> {
     public static void main(String[] args) {
         Discount_DetailBLL discountDetailBLL = new Discount_DetailBLL();
 
-        Discount_Detail discountDetail = new Discount_Detail(1, 1, 10);
+//        Discount_Detail discountDetail = new Discount_Detail(1, 1, 10);
 //        discountDetailBLL.addDiscount_Detail(discountDetail);
-        discountDetail.setPercent(20);
-        discountDetailBLL.updateDiscount_Detail(discountDetail);
+//        discountDetail.setPercent(20);
+//        discountDetailBLL.updateDiscount_Detail(discountDetail);
     }
 }

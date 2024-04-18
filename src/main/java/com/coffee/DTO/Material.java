@@ -48,7 +48,7 @@ public class Material {
         this.remain = remain;
     }
 
-    public double getMinRemain() {
+    public Double getMinRemain() {
         return minRemain;
     }
 
@@ -56,7 +56,7 @@ public class Material {
         this.minRemain = minRemain;
     }
 
-    public double getMaxRemain() {
+    public Double getMaxRemain() {
         return maxRemain;
     }
 
@@ -72,7 +72,7 @@ public class Material {
         this.unit = unit;
     }
 
-    public double getUnit_price() {
+    public Double getUnit_price() {
         return unit_price;
     }
 

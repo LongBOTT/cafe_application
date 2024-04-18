@@ -1,24 +1,42 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.DiscountBLL;
+import com.coffee.DTO.Discount;
+import com.coffee.DTO.Discount_Detail;
 import com.coffee.DTO.Function;
-import com.coffee.GUI.DialogGUI.FormAddGUI.AddDiscountGUI;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddDiscountGUInew;
+import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailDiscountGUI;
+import com.coffee.GUI.DialogGUI.FromEditGUI.EditDiscountGUI;
 import com.coffee.GUI.components.*;
+import com.coffee.ImportExcel.AddDiscountFromExcel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JTextFieldDateEditor;
+import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
+
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeListenerProxy;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+
+import static com.coffee.utils.Resource.chooseExcelFile;
 
 
 public class DiscountGUI extends Layout2 {
@@ -40,14 +58,12 @@ public class DiscountGUI extends Layout2 {
     private boolean remove = false;
     private String[] columnNames;
 
-    private JLabel[] jLabels = new JLabel[0];
-
     private JDateChooser[] jDateChooser = new JDateChooser[0];
 
     private JTextField[] dateTextField = new JTextField[0];
 
     private JTextField[] jTextFieldDate = new JTextFieldDateEditor[0];
-
+    private boolean processDateChangeEvent = true;
 
     public DiscountGUI(List<Function> functions) {
         super();
@@ -63,12 +79,14 @@ public class DiscountGUI extends Layout2 {
 
     private void init(List<Function> functions) {
         containerSearch = new RoundedPanel();
+        SearchPanel.setLayout(new MigLayout("", "[]10[]40[]20[]"));
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
-        jComboBoxSearch = new JComboBox<>(new String[]{"Bộ Lọc", "Ngừng áp dụng", "Đang áp dụng"});
-
-        columnNames = new String[]{"Mã Giảm Giá", "Ngày Bắt Đầu", "Ngày Kết Thúc", "Trạng Thái"};
+        jComboBoxSearch = new JComboBox<>(new String[]{"Tất cả", "Kích hoạt", "Chưa áp dụng"});
+        JLabel lbFilter = new JLabel("Trạng thái");
+        lbFilter.setFont((new Font("Public Sans", Font.BOLD, 14)));
+        columnNames = new String[]{"Mã Giảm Giá", "Tên chương trình", "Ngày Bắt Đầu", "Ngày Kết Thúc", "Hình thức", "Trạng Thái"};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
@@ -88,7 +106,7 @@ public class DiscountGUI extends Layout2 {
         }
 
         dataTable = new DataTable(new Object[0][0], columnNames, e -> selectFunction(),
-                detail, edit, remove, 4); // table hiển thị các thuộc tính "Mã NCC", "Tên NCC", "SĐT", "Email" nên điền 4
+                detail, edit, remove, 6);
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
@@ -103,20 +121,17 @@ public class DiscountGUI extends Layout2 {
 
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
-        jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập nội dung tìm kiếm");
+        jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Tìm kiếm theo tên chương trình");
         jTextFieldSearch.setPreferredSize(new Dimension(220, 30));
-        containerSearch.add(jTextFieldSearch);
-
         containerSearch.add(jTextFieldSearch);
 
         jButtonSearch.setBackground(new Color(29, 78, 216));
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(100, 40));
-//      jButtonSearch.addActionListener(e -> searchDiscount());
         jButtonSearch.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                searchDiscount();
+                searchDiscountByName();
             }
         });
         SearchPanel.add(jButtonSearch);
@@ -124,7 +139,10 @@ public class DiscountGUI extends Layout2 {
         jComboBoxSearch.setBackground(new Color(29, 78, 216));
         jComboBoxSearch.setForeground(Color.white);
         jComboBoxSearch.setPreferredSize(new Dimension(150, 40));
-        jComboBoxSearch.addActionListener(e -> selectSearchFilter());
+        jComboBoxSearch.addActionListener(e -> {
+            SelectDiscountStatus();
+        });
+        SearchPanel.add(lbFilter);
         SearchPanel.add(jComboBoxSearch);
 
         loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));
@@ -137,15 +155,15 @@ public class DiscountGUI extends Layout2 {
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                selectSearchFilter();
                 refresh();
             }
         });
         FunctionPanel.add(refreshPanel);
 
         jTextFieldDate = new JTextField[2];
-        jDateChooser = new JDateChooser[2];
         dateTextField = new JTextField[2];
+        jDateChooser = new JDateChooser[2];
+
 
         for (int i = 0; i < 2; i++) {
             jTextFieldDate[i] = new JTextField();
@@ -181,7 +199,23 @@ public class DiscountGUI extends Layout2 {
             JLabel jLabel1 = new JLabel("      ");
             FilterDatePanel.add(jLabel1);
         }
+        jDateChooser[0].addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if ("date".equals(evt.getPropertyName())) {
+                    searchDiscountByStartDate_EndDate();
+                }
+            }
+        });
 
+        jDateChooser[1].addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if ("date".equals(evt.getPropertyName())) {
+                    searchDiscountByStartDate_EndDate();
+                }
+            }
+        });
 
         JLabel refreshLabel = new JLabel("Làm mới");
         refreshLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));
@@ -190,8 +224,22 @@ public class DiscountGUI extends Layout2 {
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                new AddDiscountGUI();
-
+                File file = chooseExcelFile(null);
+                if (file != null) {
+                    Pair<Boolean, String> result = null;
+                    try {
+                        result = new AddDiscountFromExcel().addDiscountsFromExcel(file);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    if (!result.getKey()) {
+                        JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Thêm chương trình giảm giá thành công",
+                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        refresh();
+                    }
+                }
             }
         });
         if (functions.stream().anyMatch(f -> f.getName().equals("add"))) {
@@ -244,50 +292,54 @@ public class DiscountGUI extends Layout2 {
         jTextFieldSearch.setText("");
         jComboBoxSearch.setSelectedIndex(0);
 
+        processDateChangeEvent = false;
+        jDateChooser[0].setDate(null);
+        jDateChooser[1].setDate(null);
+        processDateChangeEvent = true;
+
+
         loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));
     }
 
-    private void searchDiscount() {
-        if (jTextFieldSearch.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Nhập Thông Tin Cần Tìm Kiếm");
+    private void searchDiscountByName() {
+        String value = jTextFieldSearch.getText();
+        if (value.isEmpty()) {
             loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));
         } else {
-            selectSearchFilter();
+            loadDataTable(discountBLL.getData(discountBLL.findDiscounts("name", value)));
         }
-
     }
 
-    private void selectSearchFilter() {
-        if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Trạng Thái")) {
-            loadDataTable(discountBLL.getData(discountBLL.findDiscounts("id", jTextFieldSearch.getText())));
-        } else if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Đang áp dụng")) {
-            searchDiscountByStatus();
+    private void searchDiscountByStartDate_EndDate() {
+        if (!processDateChangeEvent) {
+            return;
+        }
+        Date startDate = jDateChooser[0].getDate();
+        Date endDate = jDateChooser[1].getDate();
+
+        if (startDate != null && endDate != null && startDate.before(endDate)) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String startDateStr = dateFormat.format(startDate);
+            String endDateStr = dateFormat.format(endDate);
+
+            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("start_date >= '" + startDateStr + "' AND end_date <= '" + endDateStr + "'")));
+        } else if (startDate != null && endDate != null && startDate.after(endDate)) {
+            JOptionPane.showMessageDialog(this, "Ngày bắt đầu phải nhỏ hơn ngày kết thúc", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } else if (startDate != null && endDate == null) {
+            // Người dùng chọn ngày bắt đầu trước khi chọn ngày kết thúc, không làm gì cả
         } else {
-            searchDiscountByDisStatus();
-        }
-
-    }
-
-    private void searchDiscountByDisStatus() {
-        if (jTextFieldSearch.getText().isEmpty()) {
-            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("status = 1")));
-
-        } else {
-            if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Ngừng áp dụng")) {
-                loadDataTable(discountBLL.getData(discountBLL.findDiscounts("id", jTextFieldSearch.getText())));
-            }
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn cả ngày bắt đầu và ngày kết thúc", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void searchDiscountByStatus() {
-        if (jTextFieldSearch.getText().isEmpty()) {
+    private void SelectDiscountStatus() {
+        String selectedItem = Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString();
+        if (selectedItem.equals("Kích hoạt")) {
             loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("status = 0")));
-
-        } else {
-            if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Đang áp dụng")) {
-                loadDataTable(discountBLL.getData(discountBLL.findDiscounts("id", jTextFieldSearch.getText())));
-            }
-        }
+        } else if (selectedItem.equals("Chưa áp dụng")) {
+            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("status = 1")));
+        } else
+            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));
     }
 
     public void loadDataTable(Object[][] objects) {
@@ -303,6 +355,9 @@ public class DiscountGUI extends Layout2 {
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
 
+            data[i][2] = convertDateString(objects[i][2].toString());
+            data[i][3] = convertDateString(objects[i][3].toString());
+
             if (detail) {
                 JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
                 data[i] = Arrays.copyOf(data[i], data[i].length + 1);
@@ -313,35 +368,38 @@ public class DiscountGUI extends Layout2 {
                 data[i] = Arrays.copyOf(data[i], data[i].length + 1);
                 data[i][data[i].length - 1] = iconEdit;
             }
-            if (remove) {
-                JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
-                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
-                data[i][data[i].length - 1] = iconRemove;
-            }
         }
 
         for (Object[] object : data) {
             model.addRow(object);
         }
+    }
 
+    private String convertDateString(String dateString) {
+        try {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Date date = inputFormat.parse(dateString);
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 
     private void selectFunction() {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
-
-        if (detail && indexColumn == indexColumnDetail)
-            //   new DetailDiscountGUI(discountBLL.searchDiscounts("deleted = 0").get(indexRow));
-            // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-
-            if (detail && indexColumn == indexColumnEdit) {
-                //   new EditDiscountGUI(discountBLL.searchDiscounts("deleted = 0").get(indexRow));
-                // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-                refresh();
-            }
-
+        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+        Object selectedValue = model.getValueAt(indexRow, 0);
+        if (indexColumn == indexColumnDetail) {
+            new DetailDiscountGUI(discountBLL.searchDiscounts("id = " + selectedValue.toString()).get(0));
+        }
+        if (indexColumn == indexColumnEdit) {
+            new EditDiscountGUI(discountBLL.searchDiscounts("id = " + selectedValue.toString()).get(0));
+            refresh();
+        }
     }
-
 
 }
