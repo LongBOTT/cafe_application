@@ -4,14 +4,14 @@ public class Discount_Detail {
     private int discount_id;
     private int product_id;
     private String size;
-    private int quantity;
+    private double quantity;
     private double percent;
     private double discountBill;
 
     public Discount_Detail() {
     }
 
-    public Discount_Detail(int discount_id, int product_id, String size, int quantity, double percent, double discountBill) {
+    public Discount_Detail(int discount_id, int product_id, String size, double quantity, double percent, double discountBill) {
         this.discount_id = discount_id;
         this.product_id = product_id;
         this.size = size;
@@ -52,11 +52,11 @@ public class Discount_Detail {
         this.size = size;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(double quantity) {
         this.quantity = quantity;
     }
 

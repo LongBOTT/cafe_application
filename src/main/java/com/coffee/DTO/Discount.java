@@ -73,8 +73,8 @@ public class Discount {
 
     @Override
     public String toString() {
-        String status1 = status? "Ngừng áp dụng" : "Đang áp dụng";
-        String type1 = type?  "giảm theo hóa đơn" : "Giảm theo sản phẩm";
+        String status1 = status? "Chưa áp dụng" : "Kích hoạt";
+        String type1 = type?  "Giảm theo hóa đơn" : "Giảm theo sản phẩm";
         return id + " | " +
                 name + " | " +
                 start_date + " | " +

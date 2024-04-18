@@ -1,6 +1,7 @@
 package com.coffee.utils;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -127,6 +128,16 @@ public class Resource {
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
+        }
+    }
+    public static File chooseExcelFile(Component parent) {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        int result = fileChooser.showOpenDialog(parent);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            return fileChooser.getSelectedFile();
+        } else {
+            return null;
         }
     }
 }

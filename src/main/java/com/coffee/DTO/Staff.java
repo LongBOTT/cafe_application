@@ -6,7 +6,7 @@ public class Staff {
     private int id;
     private String staffNo;
     private String name;
-    private boolean gender;
+    private Boolean gender;
     private Date birthdate;
     private String phone;
     private String address;
@@ -54,12 +54,16 @@ public class Staff {
         this.name = name;
     }
 
-    public boolean isGender() {
+    public Boolean isGender() {
         return gender;
     }
 
-    public void setGender(boolean gender) {
+    public void setGender(Boolean gender) {
         this.gender = gender;
+    }
+
+    public String getRole() {
+        return role;
     }
 
     public Date getBirthdate() {

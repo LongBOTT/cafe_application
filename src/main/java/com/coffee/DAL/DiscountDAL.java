@@ -25,7 +25,7 @@ public class DiscountDAL extends Manager{
             try {
                 return new Discount(
                         Integer.parseInt(row.get(0)), // id
-                        String.valueOf(row.get(1)), // name
+                        row.get(1), // name
                         Date.valueOf(row.get(2)), // start_date
                         Date.valueOf(row.get(3)), // end_date
                         Boolean.parseBoolean(row.get(4)), // type

@@ -45,7 +45,6 @@ public class ImportGUI extends Layout2 {
     private int indexColumnDetail = -1;
     private RoundedScrollPane scrollPane;
     private String[] columnNames;
-    private Date date;
 
     public ImportGUI(List<Function> functions) {
         super();
@@ -56,7 +55,7 @@ public class ImportGUI extends Layout2 {
     }
 
     private void init(List<Function> functions) {
-        date = new Date();
+        Date date = new Date();
         containerSearch = new RoundedPanel();
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();

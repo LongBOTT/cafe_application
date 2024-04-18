@@ -5,7 +5,9 @@ import com.coffee.BLL.RoleBLL;
 import com.coffee.DTO.*;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddWorkScheduleGUI;
 import com.coffee.GUI.components.*;
+import com.coffee.ImportExcel.AddWorkScheduleFromExcel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import javafx.util.Pair;
 
 
 import javax.swing.*;
@@ -13,10 +15,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
+
+import static com.coffee.utils.Resource.chooseExcelFile;
 
 public class CreateWorkScheduleGUI extends Layout1 {
     private static JLabel jLabelDateWork;
@@ -64,7 +70,6 @@ public class CreateWorkScheduleGUI extends Layout1 {
             }
         });
         SearchPanel.add(iconPrev);
-
         jPanelDate.setLayout(new BorderLayout());
         jPanelDate.setBackground(Color.white);
         jPanelDate.setPreferredSize(new Dimension(350, 40));
@@ -127,10 +132,32 @@ public class CreateWorkScheduleGUI extends Layout1 {
         roundedPanelExcel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         FunctionPanel.add(roundedPanelExcel);
 
-        JLabel panelExcel = new JLabel("Xuất Excel");
+        JLabel panelExcel = new JLabel("Nhập Excel");
         panelExcel.setFont(new Font("Public Sans", Font.PLAIN, 13));
         panelExcel.setIcon(new FlatSVGIcon("icon/excel.svg"));
         roundedPanelExcel.add(panelExcel);
+        roundedPanelExcel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                File file = chooseExcelFile(null);
+                if (file != null) {
+                    Pair<Boolean, String> result;
+                    try {
+                        result = new AddWorkScheduleFromExcel().addWorkScheduleFromExcel(file);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    if (!result.getKey()) {
+                        JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "Thêm lịch làm việc thành công",
+                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        refresh();
+                    }
+                }
+            }
+        });
 
         RoundedPanel roundedPanelPDF = new RoundedPanel();
         roundedPanelPDF.setLayout(new GridBagLayout());

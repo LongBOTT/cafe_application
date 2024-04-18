@@ -21,7 +21,7 @@ public class DialogFormDetail_1 extends JDialog {
 
     public DialogFormDetail_1() {
         super((Frame) null, "", true);
-        getContentPane().setBackground(new Color(217, 217, 217));
+        getContentPane().setBackground(new Color(255, 255, 255));
         setLayout(new MigLayout("", "[]", "[][]"));
         setIconImage(new FlatSVGIcon("image/coffee_logo.svg").getImage());
         setSize(new Dimension(1000, 700));
@@ -52,8 +52,8 @@ public class DialogFormDetail_1 extends JDialog {
 //        add(title, "wrap, span, center");
 
         content.setLayout(new MigLayout("", "[][]", "[][]"));
-        content.setBackground(new Color(217, 217, 217));
-//        content.setBackground(new Color(255, 255, 255));
+//        content.setBackground(new Color(217, 217, 217));
+        content.setBackground(new Color(255, 255, 255));
         content.setPreferredSize(new Dimension(1000, 630));
 
         add(content, "wrap");
@@ -74,14 +74,16 @@ public class DialogFormDetail_1 extends JDialog {
         content.add(top, "wrap");
 
         center.setLayout(new BorderLayout());
-        center.setBackground(new Color(232, 206, 180));
+        center.setBackground(new Color(255,255,255));
 
         center.setPreferredSize(new Dimension(1000, 70));
         content.add(center, "wrap");
 
         bottom.setLayout(new BorderLayout());
 //        bottom.setBackground(new Color(217, 217, 217));
-        bottom.setBackground(new Color( 211, 227, 253));
+//        bottom.setBackground(new Color( 211, 227, 253));
+        bottom.setBackground(new Color(255, 255, 255));
+
 
         bottom.setPreferredSize(new Dimension(1000, 330));
         content.add(bottom, "wrap");

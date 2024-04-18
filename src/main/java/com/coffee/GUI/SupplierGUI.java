@@ -7,6 +7,7 @@ import com.coffee.GUI.DialogGUI.FormAddGUI.AddSupplierGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailSupplierGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.*;
+import com.coffee.ImportExcel.AddSupplierFromExcel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -18,8 +19,12 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
+
+import static com.coffee.utils.Resource.chooseExcelFile;
 
 public class SupplierGUI extends Layout1 {
     private RoundedPanel containerSearch;
@@ -133,6 +138,23 @@ public class SupplierGUI extends Layout1 {
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                File file = chooseExcelFile(null);
+                if (file != null) {
+                    Pair<Boolean, String> result = null;
+                    try {
+                        result = new AddSupplierFromExcel().addSupplierFromExcel(file);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    if (!result.getKey()) {
+                        JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "Thêm nhà cung cấp thành công",
+                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        refresh();
+                    }
+                }
                 refresh();
             }
         }); // button refesh
