@@ -3,20 +3,15 @@ package com.coffee.GUI.DialogGUI.FormAddGUI;
 import com.coffee.BLL.MaterialBLL;
 import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Material;
-import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.DialogForm;
-import com.coffee.GUI.SupplierGUI;
 import com.coffee.main.Cafe_Application;
-import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,7 +24,7 @@ public class AddMaterialGUI extends DialogForm {
     private JComboBox<String> listUnit;
 
     private MaterialBLL materialBLL = new MaterialBLL();
-    private SupplierBLL supplierBLL = new SupplierBLL();
+    private JCheckBox saleCheckbox;
 
     public AddMaterialGUI() {
         super();
@@ -96,7 +91,8 @@ public class AddMaterialGUI extends DialogForm {
             content.add(textField, "wrap");
 
         }
-
+        saleCheckbox = new JCheckBox("Bán trực tiếp");
+        content.add(saleCheckbox);
 
         buttonCancel.setPreferredSize(new Dimension(100, 30));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
@@ -168,8 +164,8 @@ public class AddMaterialGUI extends DialogForm {
             return;
         }
         unit_price = Double.parseDouble(jTextFieldMaterial.get(3).getText());
-
-        Material material = new Material(id, name, 0, min_remain, max_remain, unit, unit_price, false);
+        boolean sell = saleCheckbox.isSelected();
+        Material material = new Material(id, name, 0, min_remain, max_remain, unit, unit_price,sell, false);
         result = materialBLL.addMaterial(material);
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),

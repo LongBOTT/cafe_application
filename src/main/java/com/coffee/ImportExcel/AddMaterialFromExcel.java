@@ -3,6 +3,7 @@ package com.coffee.ImportExcel;
 import com.coffee.BLL.MaterialBLL;
 import com.coffee.DTO.Material;
 import javafx.util.Pair;
+import org.apache.logging.log4j.core.appender.ScriptAppenderSelector;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -14,100 +15,6 @@ import java.util.*;
 public class AddMaterialFromExcel {
     MaterialBLL materialBLL = new MaterialBLL();
 
-    //    public Pair<Boolean, String> addMaterialFromExcel(File file) throws IOException {
-//        List<Material> materials = new ArrayList<>();
-//        StringBuilder errorALL = new StringBuilder();
-//        int material_id = getAutoID(searchMaterials());
-//        try (FileInputStream fis = new FileInputStream(file);
-//             Workbook workbook = new XSSFWorkbook(fis)) {
-//            Sheet sheet = workbook.getSheetAt(0);
-//            Iterator<Row> iterator = sheet.iterator();
-//
-//            if (iterator.hasNext()) {
-//                iterator.next(); // Bỏ qua dòng tiêu đề
-//            }
-//
-//            while (iterator.hasNext()) {
-//                Row currentRow = iterator.next();
-//                if (currentRow.getPhysicalNumberOfCells() > 0) {
-//                    int rowNum = currentRow.getRowNum() + 1; // Số dòng bắt đầu từ 1
-//                    Map<String, Object> rowData = new HashMap<>();
-//                    StringBuilder errorRow = new StringBuilder();
-//
-//                    for (Cell cell : currentRow) {
-//                        int columnIndex = cell.getColumnIndex() + 1;
-//
-//                        switch (columnIndex) {
-//                            case 1: // Name
-//                                if (cell.getCellType() == CellType.STRING) {
-//                                    rowData.put("name", cell.getStringCellValue());
-//                                }
-//                                break;
-//                            case 2: // Tồn tối thiểu
-//                                if (cell.getCellType() == CellType.NUMERIC) {
-//                                    double min_remain = cell.getNumericCellValue();
-//                                    rowData.put("min_remain", min_remain);
-//                                }
-//                                break;
-//                            case 3: //Tồn tối đa
-//                                if (cell.getCellType() == CellType.NUMERIC) {
-//                                    double max_remain = cell.getNumericCellValue();
-//                                    rowData.put("max_remain", max_remain);
-//                                }
-//                                break;
-//
-//                            case 4: // Đơn vị
-//                                if (cell.getCellType() == CellType.STRING) {
-//                                    String unit = cell.getStringCellValue();
-//                                    rowData.put("unit", unit);
-//                                }
-//                                break;
-//                            case 5: //Giá vốn
-//                                if (cell.getCellType() == CellType.NUMERIC) {
-//                                    double unit_price =  cell.getNumericCellValue();
-//                                    rowData.put("unit_price", unit_price);
-//                                }
-//                                break;
-//                            default:
-//                                break;
-//                        }
-//                    }
-//
-//                    String name = (String) rowData.get("name");
-//                    double min_remain = rowData.get("min_remain") != null ? (double) rowData.get("min_remain") : -1;
-//                    double max_remain = rowData.get("max_remain") != null ? (double) rowData.get("max_remain") : -1;
-//                    String unit = (String) rowData.get("unit");
-//                    double unit_price = rowData.get("unit_price") != null ? (Double) rowData.get("unit_price") : -1;
-//                    Material material = new Material(material_id, name, 0, min_remain, max_remain, unit, unit_price, false);
-//
-//                    Pair<Boolean, String> result =validateAll(material);
-//                    if (!result.getKey()) {
-//                        errorRow.append(result.getValue());
-//                    } else {
-//                        materials.add(material);
-//                        material_id += 1;
-//                    }
-//
-//                    if (!errorRow.isEmpty()) {
-//                        errorALL.append("- Dòng ").append(rowNum).append(": ").append("\n").append(errorRow).append("\n");
-//                    }
-//                }
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return new Pair<>(false, "Lỗi khi đọc file Excel.");
-//        }
-//        if (errorALL.isEmpty()) {
-//            for (Material material : materials) {
-//                Pair<Boolean, String> result = addMaterial(material);
-//                if (!result.getKey())
-//                    return new Pair<>(false, result.getValue());
-//            }
-//            return new Pair<>(true, "Thêm nguyên liệu thành công");
-//        }
-//
-//        return new Pair<>(false, errorALL.toString());
-//    }
     public Pair<Boolean, String> addMaterialFromExcel(File file) throws IOException {
         List<Material> materials;
         StringBuilder errorAll = new StringBuilder();
@@ -131,7 +38,7 @@ public class AddMaterialFromExcel {
         } catch (IOException e) {
             return new Pair<>(false, "Lỗi khi đọc file Excel.");
         }
-        return new Pair<>(true, "");
+        return new Pair<>(true, "Thêm nguyên liệu thành công");
 
     }
 
@@ -203,6 +110,19 @@ public class AddMaterialFromExcel {
                        material.setUnit_price(unit_price);
                     }
                     break;
+                case 6:// hình thức bán
+                    if (cell.getCellType() == CellType.NUMERIC) {
+                        System.out.println("Kiểu số ++===================");
+                        int sell = (int) cell.getNumericCellValue();
+                        System.out.println(sell+" ===========================");
+                        if(sell == 0)
+                            material.setSell(false);
+                        else if(sell == 1)
+                            material.setSell(true);
+                        else
+                            material.setSell(null);
+                    }
+                    break;
                 default:
                     break;
             }
@@ -229,6 +149,9 @@ public class AddMaterialFromExcel {
         }
         if (material.getUnit_price() == null) {
             errorRow.append("Giá vốn bắt buộc phải là kiểu số và không được để trống\n");
+        }
+        if (material.isSell() == null) {
+            errorRow.append("Hình thức bán phải là giá trị 0 hoặc 1\n");
         }
         if (errorRow.isEmpty()) {
             Pair<Boolean, String> result = materialBLL.validateAll(material);

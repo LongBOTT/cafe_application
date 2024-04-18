@@ -92,7 +92,6 @@ public class EditProductGUI extends DialogFormDetail_1 {
                 Material material = materialBLL.findMaterialsBy(Map.of("name", data.getText())).get(0);
                 materialID = material.getId();
                 txtUnit.setText(material.getUnit());
-                System.out.println("Click Item : " + data.getText());
             }
 
             @Override

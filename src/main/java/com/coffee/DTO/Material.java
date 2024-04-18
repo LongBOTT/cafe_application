@@ -7,13 +7,14 @@ public class Material {
     private double minRemain;
     private double maxRemain;
     private String unit;
+    private Boolean sell;
     private double unit_price;
     private boolean deleted;
 
     public Material() {
     }
 
-    public Material(int id, String name, double remain, double minRemain, double maxRemain, String unit, double unit_price, boolean deleted) {
+    public Material(int id, String name, double remain, double minRemain, double maxRemain, String unit, double unit_price, Boolean sell, boolean deleted) {
         this.id = id;
         this.name = name;
         this.remain = remain;
@@ -21,6 +22,7 @@ public class Material {
         this.maxRemain = maxRemain;
         this.unit = unit;
         this.unit_price = unit_price;
+        this.sell = sell;
         this.deleted = deleted;
     }
 
@@ -78,6 +80,14 @@ public class Material {
 
     public void setUnit_price(double unit_price) {
         this.unit_price = unit_price;
+    }
+
+    public Boolean isSell() {
+        return sell;
+    }
+
+    public void setSell(Boolean sell) {
+        this.sell = sell;
     }
 
     public boolean isDeleted() {

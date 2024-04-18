@@ -17,6 +17,7 @@ public class MaterialDAL extends Manager {
                         "max_remain",
                         "unit",
                         "unit_price",
+                        "sell",
                         "deleted"));
     }
 
@@ -31,7 +32,8 @@ public class MaterialDAL extends Manager {
                         Double.parseDouble(row.get(4)), // remain
                         row.get(5), // unit
                         Double.parseDouble(row.get(6)), // unit_price
-                        Boolean.parseBoolean(row.get(7)) // deleted
+                        Boolean.parseBoolean(row.get(7)),// sell
+                        Boolean.parseBoolean(row.get(8)) // deleted
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in MaterialDAL.convertToMaterials(): " + e.getMessage());
@@ -49,6 +51,7 @@ public class MaterialDAL extends Manager {
                     material.getMaxRemain(),
                     material.getUnit(),
                     material.getUnit_price(),
+                    material.isSell(),
                     false
             );
         } catch (SQLException | IOException e) {
@@ -67,6 +70,7 @@ public class MaterialDAL extends Manager {
             updateValues.add(material.getMaxRemain());
             updateValues.add(material.getUnit());
             updateValues.add(material.getUnit_price());
+            updateValues.add(material.isSell());
             updateValues.add(material.isDeleted());
             return update(updateValues, "id = " + material.getId());
         } catch (SQLException | IOException e) {
