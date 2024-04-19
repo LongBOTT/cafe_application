@@ -4,6 +4,7 @@ import com.coffee.BLL.ProductBLL;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Product;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddProductGUI;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddProductGUI1;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailProductGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditProductGUI;
 import com.coffee.GUI.components.*;
@@ -167,8 +168,23 @@ public class ProductGUI extends Layout3 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    new AddProductGUI();
-                    refresh();
+                    int option = JOptionPane.showOptionDialog(null,
+                            "Chọn loại sản phẩm bạn muốn thêm:",
+                            "Xác nhận",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            new String[]{"Thêm sản phẩm", "Thêm sản phẩm chế biến"},
+                            "Thêm sản phẩm");
+
+                    if (option == JOptionPane.YES_OPTION) {
+                        new AddProductGUI();
+                        refresh();
+                    } else if (option == JOptionPane.NO_OPTION) {
+                        new AddProductGUI1();
+                        refresh();
+                    }
+
                 }
             });
             FunctionPanel.add(roundedPanel);
