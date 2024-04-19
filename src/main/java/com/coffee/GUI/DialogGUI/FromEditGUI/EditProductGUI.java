@@ -632,7 +632,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
         String size = selectedLabel.getText();
         Pair<Boolean, String> result;
         String price = txtPrice.getText();
-        result = productBLL.validatePrice(price);
+        result = productBLL.validatePrice(price,"Giá bán");
 
         if (!result.getKey()) {
             txtPrice.requestFocus();
