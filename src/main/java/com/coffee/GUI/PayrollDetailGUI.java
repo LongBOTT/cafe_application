@@ -12,6 +12,7 @@ import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.Layout1;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
+import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
 
@@ -38,16 +39,12 @@ public class PayrollDetailGUI extends Layout1 {
     private int indexColumnDetail = -1;
     //    private int indexColumnEdit = -1;
     private String[] columnNames;
-    private HomeGUI homeGUI;
-    private List<Function> functions;
 
     private Object[][] data = new Object[0][0];
 
-    public PayrollDetailGUI(Payroll payroll, List<Function> functions, HomeGUI homeGUI) {
+    public PayrollDetailGUI(Payroll payroll) {
         super();
         this.payroll = payroll;
-        this.functions = functions;
-        this.homeGUI = homeGUI;
         init();
     }
 
@@ -104,7 +101,7 @@ public class PayrollDetailGUI extends Layout1 {
 
         containerSearch.add(jTextFieldSearch);
 
-        jButtonSearch.setBackground(new Color(29, 78, 216));
+        jButtonSearch.setBackground(new Color(1, 120, 220));
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(110, 30));
         jButtonSearch.addActionListener(e -> searchPayroll_Details());
@@ -116,17 +113,18 @@ public class PayrollDetailGUI extends Layout1 {
         RoundedPanel returnPanel = new RoundedPanel();
         returnPanel.setLayout(new GridBagLayout());
         returnPanel.setPreferredSize(new Dimension(130, 40));
-        returnPanel.setBackground(new Color(217, 217, 217));
+        returnPanel.setBackground(new Color(1, 120, 220));
         returnPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         returnPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                homeGUI.openModule(new PayrollGUI(functions, homeGUI)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
+                Cafe_Application.homeGUI.openModule(Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModulePayrollGUI]); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
             }
         });
         FunctionPanel.add(returnPanel);
 
         JLabel returnLabel = new JLabel("Quay lại");
+        returnLabel.setForeground(Color.white);
         returnLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));
         returnLabel.setIcon(new FlatSVGIcon("icon/return.svg"));
         returnPanel.add(returnLabel);
@@ -134,26 +132,28 @@ public class PayrollDetailGUI extends Layout1 {
         RoundedPanel roundedPanelExcel = new RoundedPanel();
         roundedPanelExcel.setLayout(new GridBagLayout());
         roundedPanelExcel.setPreferredSize(new Dimension(130, 40));
-        roundedPanelExcel.setBackground(new Color(217, 217, 217));
+        roundedPanelExcel.setBackground(new Color(1, 120, 220));
         roundedPanelExcel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         FunctionPanel.add(roundedPanelExcel);
 
         JLabel panelExcel = new JLabel("Xuất Excel");
+        panelExcel.setForeground(Color.white);
         panelExcel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-        panelExcel.setIcon(new FlatSVGIcon("icon/excel.svg"));
+        panelExcel.setIcon(new FlatSVGIcon("icon/import.svg"));
         roundedPanelExcel.add(panelExcel);
 
 
         RoundedPanel roundedPanelPDF = new RoundedPanel();
         roundedPanelPDF.setLayout(new GridBagLayout());
         roundedPanelPDF.setPreferredSize(new Dimension(130, 40));
-        roundedPanelPDF.setBackground(new Color(217, 217, 217));
+        roundedPanelPDF.setBackground(new Color(1, 120, 220));
         roundedPanelPDF.setCursor(new Cursor(Cursor.HAND_CURSOR));
         FunctionPanel.add(roundedPanelPDF);
 
         JLabel panelPDF = new JLabel("Xuất PDF");
+        panelPDF.setForeground(Color.white);
         panelPDF.setFont(new Font("Public Sans", Font.PLAIN, 13));
-        panelPDF.setIcon(new FlatSVGIcon("icon/pdf.svg"));
+        panelPDF.setIcon(new FlatSVGIcon("icon/export.svg"));
         roundedPanelPDF.add(panelPDF);
 
     }

@@ -3,6 +3,8 @@ package com.coffee.GUI.DialogGUI.FromEditGUI;
 import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
+import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -57,7 +59,7 @@ public class EditSupplierGUI extends DialogForm {
             attributeSupplier.add(label);
             content.add(label);
 
-            JTextField textField = new JTextField();
+            JTextField textField = new MyTextFieldUnderLine();
 
             if (string.equals("Tên nhà cung cấp")) {
                 textField.setText(supplier.getName());
@@ -100,6 +102,8 @@ public class EditSupplierGUI extends DialogForm {
         containerButton.add(buttonCancel);
 
         buttonEdit.setPreferredSize(new Dimension(100, 30));
+        buttonEdit.setBackground(new Color(1, 120, 220));
+        buttonEdit.setForeground(Color.white);
         buttonEdit.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonEdit.addMouseListener(new MouseAdapter() {

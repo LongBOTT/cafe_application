@@ -92,7 +92,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
         refreshPanel.setPreferredSize(new Dimension(130, 40));
-        refreshPanel.setBackground(new Color(217, 217, 217));
+        refreshPanel.setBackground(new Color(1, 120, 220));
         refreshPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
@@ -104,13 +104,14 @@ public class CreateWorkScheduleGUI extends Layout1 {
 
         JLabel refreshLabel = new JLabel("Làm mới");
         refreshLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        refreshLabel.setForeground(Color.white);
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
         refreshPanel.add(refreshLabel);
 
         RoundedPanel roundedPanelAdd = new RoundedPanel();
         roundedPanelAdd.setLayout(new GridBagLayout());
         roundedPanelAdd.setPreferredSize(new Dimension(130, 40));
-        roundedPanelAdd.setBackground(new Color(217, 217, 217));
+        roundedPanelAdd.setBackground(new Color(1, 120, 220));
         roundedPanelAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         roundedPanelAdd.addMouseListener(new MouseAdapter() {
             @Override
@@ -121,6 +122,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
         });
         FunctionPanel.add(roundedPanelAdd);
         JLabel panelAdd = new JLabel("Thêm mới");
+        panelAdd.setForeground(Color.white);
         panelAdd.setFont(new Font("Public Sans", Font.PLAIN, 13));
         panelAdd.setIcon(new FlatSVGIcon("icon/add.svg"));
         roundedPanelAdd.add(panelAdd);
@@ -128,13 +130,14 @@ public class CreateWorkScheduleGUI extends Layout1 {
         RoundedPanel roundedPanelExcel = new RoundedPanel();
         roundedPanelExcel.setLayout(new GridBagLayout());
         roundedPanelExcel.setPreferredSize(new Dimension(130, 40));
-        roundedPanelExcel.setBackground(new Color(217, 217, 217));
+        roundedPanelExcel.setBackground(new Color(1, 120, 220));
         roundedPanelExcel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         FunctionPanel.add(roundedPanelExcel);
 
         JLabel panelExcel = new JLabel("Nhập Excel");
+        panelExcel.setForeground(Color.white);
         panelExcel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-        panelExcel.setIcon(new FlatSVGIcon("icon/excel.svg"));
+        panelExcel.setIcon(new FlatSVGIcon("icon/import.svg"));
         roundedPanelExcel.add(panelExcel);
         roundedPanelExcel.addMouseListener(new MouseAdapter() {
             @Override
@@ -149,8 +152,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
                     }
                     if (!result.getKey()) {
                         JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    }
-                    else {
+                    } else {
                         JOptionPane.showMessageDialog(null, "Thêm lịch làm việc thành công",
                                 "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                         refresh();
@@ -162,13 +164,14 @@ public class CreateWorkScheduleGUI extends Layout1 {
         RoundedPanel roundedPanelPDF = new RoundedPanel();
         roundedPanelPDF.setLayout(new GridBagLayout());
         roundedPanelPDF.setPreferredSize(new Dimension(130, 40));
-        roundedPanelPDF.setBackground(new Color(217, 217, 217));
+        roundedPanelPDF.setBackground(new Color(1, 120, 220));
         roundedPanelPDF.setCursor(new Cursor(Cursor.HAND_CURSOR));
         FunctionPanel.add(roundedPanelPDF);
 
         JLabel panelPDF = new JLabel("Xuất PDF");
+        panelPDF.setForeground(Color.white);
         panelPDF.setFont(new Font("Public Sans", Font.PLAIN, 13));
-        panelPDF.setIcon(new FlatSVGIcon("icon/pdf.svg"));
+        panelPDF.setIcon(new FlatSVGIcon("icon/export.svg"));
         roundedPanelPDF.add(panelPDF);
 
         bottom.setBackground(Color.white);

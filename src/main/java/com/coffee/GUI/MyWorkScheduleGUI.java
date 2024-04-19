@@ -34,8 +34,8 @@ public class MyWorkScheduleGUI extends RoundedPanel {
     }
 
     private void initComponents() {
-        setBackground(new Color(217, 217, 217));
-        setLayout(new FlowLayout(FlowLayout.CENTER));
+        setBackground(new Color(255, 255, 255));
+        setLayout(new MigLayout("", "0[]0"));
         setPreferredSize(new Dimension(1165, 733));
 
         jLabelDate = new JLabel();
@@ -44,7 +44,7 @@ public class MyWorkScheduleGUI extends RoundedPanel {
         myWorkSchedulePanel = new MyWorkSchedulePanel(staff);
         weekDates = new ArrayList<>();
         RoundedPanel TitlePanel = new RoundedPanel();
-        RoundedPanel SearchPanel = new RoundedPanel();
+        JPanel SearchPanel = new JPanel();
         RoundedPanel ContentPanel = new RoundedPanel();
         JPanel jPanelDate = new JPanel();
         JLabel jLabelTitle = new JLabel("    Thông Tin Ca Làm Việc");
@@ -52,16 +52,16 @@ public class MyWorkScheduleGUI extends RoundedPanel {
 
         TitlePanel.setLayout(new BorderLayout());
         TitlePanel.setPreferredSize(new Dimension(1160, 50));
-        TitlePanel.setBackground(new Color(232, 206, 180));
-        add(TitlePanel);
+        TitlePanel.setBackground(new Color(255, 255, 255));
+        add(TitlePanel, "wrap");
 
         jLabelTitle.setFont(new Font("Lexend", Font.BOLD, 18));
         TitlePanel.add(jLabelTitle, BorderLayout.WEST);
 
         SearchPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        SearchPanel.setPreferredSize(new Dimension(1160, 50));
-        SearchPanel.setBackground(new Color(217, 217, 217));
-        add(SearchPanel);
+        SearchPanel.setPreferredSize(new Dimension(1170, 50));
+        SearchPanel.setBackground(new Color(191, 198, 208));
+        add(SearchPanel, "wrap");
 
         iconPrev.setCursor(new Cursor(Cursor.HAND_CURSOR));
         iconPrev.addMouseListener(new MouseAdapter() {
@@ -93,8 +93,8 @@ public class MyWorkScheduleGUI extends RoundedPanel {
 
         ContentPanel.setLayout(new BorderLayout());
         ContentPanel.setPreferredSize(new Dimension(1160, 300));
-        ContentPanel.setBackground(new Color(217, 217, 217));
-        add(ContentPanel);
+        ContentPanel.setBackground(new Color(255, 255, 255));
+        add(ContentPanel, "wrap");
 
         ContentPanel.add(myWorkSchedulePanel);
     }

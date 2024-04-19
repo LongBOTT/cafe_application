@@ -7,6 +7,8 @@ import com.coffee.DTO.Work_Schedule;
 import com.coffee.GUI.CreateWorkScheduleGUI;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.components.AutocompleteJComboBox;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
+import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
 import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
@@ -75,7 +77,7 @@ public class EditWorkScheduleGUI extends DialogForm {
             attributeWork_Schedule.add(label);
             content.add(label);
 
-            JTextField textField = new JTextField();
+            JTextField textField = new MyTextFieldUnderLine();
 
             if (string.equals("Nhân viên")) {
                 textField.setText(staffBLL.findStaffsBy(Map.of("id", workSchedule.getStaff_id())).get(0).getName());
@@ -275,6 +277,8 @@ public class EditWorkScheduleGUI extends DialogForm {
         containerButton.add(buttonCancel);
 
         buttonEdit.setPreferredSize(new Dimension(100, 30));
+        buttonEdit.setBackground(new Color(1, 120, 220));
+        buttonEdit.setForeground(Color.white);
         buttonEdit.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonEdit.addMouseListener(new MouseAdapter() {
@@ -372,7 +376,7 @@ public class EditWorkScheduleGUI extends DialogForm {
     private void deleteWorkSchedule() {
         String[] options = new String[]{"Huỷ", "Xác nhận"};
         int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá lịch làm việc?",
-                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
         if (choice == 1) {
             Pair<Boolean, String> result = workScheduleBLL.deleteWork_schedule(workSchedule);
             if (result.getKey()) {

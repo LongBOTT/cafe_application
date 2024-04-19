@@ -3,11 +3,16 @@ package com.coffee.GUI.DialogGUI.FormDetailGUI;
 import com.coffee.BLL.*;
 import com.coffee.DTO.*;
 import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.main.Cafe_Application;
+import com.coffee.main.PDF;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -42,7 +47,7 @@ public class DetailPayroll_DetailGUI extends DialogForm {
         titleName.setHorizontalAlignment(JLabel.CENTER);
         titleName.setVerticalAlignment(JLabel.CENTER);
         title.add(titleName, BorderLayout.CENTER);
-        title.setBackground(new Color(217, 217, 217));
+        title.setBackground(new Color(242, 245, 250));
 
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -250,5 +255,23 @@ public class DetailPayroll_DetailGUI extends DialogForm {
             content.add(textField, "wrap");
 
         }
+        RoundedPanel roundedPanel = new RoundedPanel();
+        roundedPanel.setLayout(new GridBagLayout());
+        roundedPanel.setPreferredSize(new Dimension(150, 40));
+        roundedPanel.setBackground(new Color(1, 120, 220));
+        roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        containerButton.add(roundedPanel);
+
+        JLabel panel = new JLabel("In bảng lương");
+        panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        panel.setForeground(Color.white);
+        panel.setIcon(new FlatSVGIcon("icon/print.svg"));
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+        });
+        roundedPanel.add(panel);
     }
 }

@@ -3,6 +3,8 @@ package com.coffee.GUI.DialogGUI.FromEditGUI;
 import com.coffee.BLL.BonusBLL;
 import com.coffee.DTO.Bonus;
 import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
+import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -62,7 +64,7 @@ public class EditBonusGUI extends DialogForm {
             attributeBonus.add(label);
             content.add(label);
 
-            JTextField textField = new JTextField();
+            JTextField textField = new MyTextFieldUnderLine();
 
             if (string.equals("Tên phụ cấp")) {
                 textField.setText(bonus.getName());
@@ -120,6 +122,8 @@ public class EditBonusGUI extends DialogForm {
         containerButton.add(buttonCancel);
 
         buttonEdit.setPreferredSize(new Dimension(100, 30));
+        buttonEdit.setBackground(new Color(1, 120, 220));
+        buttonEdit.setForeground(Color.white);
         buttonEdit.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonEdit.addMouseListener(new MouseAdapter() {

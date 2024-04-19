@@ -7,6 +7,7 @@ import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.Layout1;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
+import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JMonthChooser;
 import com.toedter.calendar.JYearChooser;
@@ -34,12 +35,11 @@ public class PayrollGUI extends Layout1 {
     private int indexColumnDetail = -1;
     private boolean detail = false;
     private String[] columnNames;
-    private HomeGUI homeGUI;
+    private Object[][] data = new Object[0][0];
 
-    public PayrollGUI(List<Function> functions, HomeGUI homeGUI) {
+    public PayrollGUI(List<Function> functions) {
         super();
         this.functions = functions;
-        this.homeGUI = homeGUI;
         if (functions.stream().anyMatch(f -> f.getName().equals("view"))) detail = true;
         init(functions);
     }
@@ -62,6 +62,7 @@ public class PayrollGUI extends Layout1 {
         bottom.add(scrollPane, BorderLayout.CENTER);
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
+        containerSearch.setBackground(new Color(191, 198, 208));
         containerSearch.setPreferredSize(new Dimension(500, 40));
         SearchPanel.add(containerSearch);
 
@@ -98,7 +99,7 @@ public class PayrollGUI extends Layout1 {
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
         refreshPanel.setPreferredSize(new Dimension(130, 40));
-        refreshPanel.setBackground(new Color(217, 217, 217));
+        refreshPanel.setBackground(new Color(1, 120, 220));
         refreshPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
@@ -110,6 +111,7 @@ public class PayrollGUI extends Layout1 {
 
         JLabel refreshLabel = new JLabel("Làm mới");
         refreshLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        refreshLabel.setForeground(Color.white);
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
         refreshPanel.add(refreshLabel);
 
@@ -117,7 +119,7 @@ public class PayrollGUI extends Layout1 {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new GridBagLayout());
             roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
+            roundedPanel.setBackground(new Color(1, 120, 220));
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
@@ -131,6 +133,7 @@ public class PayrollGUI extends Layout1 {
 
             JLabel panel = new JLabel("Thêm mới");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+            panel.setForeground(Color.white);
             panel.setIcon(new FlatSVGIcon("icon/add.svg"));
             roundedPanel.add(panel);
         }
@@ -138,26 +141,28 @@ public class PayrollGUI extends Layout1 {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new GridBagLayout());
             roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
+            roundedPanel.setBackground(new Color(1, 120, 220));
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             FunctionPanel.add(roundedPanel);
 
-            JLabel panel = new JLabel("Xuất Excel");
+            JLabel panel = new JLabel("Nhập Excel");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-            panel.setIcon(new FlatSVGIcon("icon/excel.svg"));
+            panel.setForeground(Color.white);
+            panel.setIcon(new FlatSVGIcon("icon/import.svg"));
             roundedPanel.add(panel);
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("pdf"))) {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new GridBagLayout());
             roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
+            roundedPanel.setBackground(new Color(1, 120, 220));
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Xuất PDF");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-            panel.setIcon(new FlatSVGIcon("icon/pdf.svg"));
+            panel.setForeground(Color.white);
+            panel.setIcon(new FlatSVGIcon("icon/export.svg"));
             roundedPanel.add(panel);
         }
     }
@@ -184,7 +189,7 @@ public class PayrollGUI extends Layout1 {
             return;
         }
 
-        Object[][] data = new Object[objects.length][objects[0].length];
+        data = new Object[objects.length][objects[0].length];
 
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
@@ -206,6 +211,6 @@ public class PayrollGUI extends Layout1 {
         int indexColumn = dataTable.getSelectedColumn();
 
         if (detail && indexColumn == indexColumnDetail)
-            homeGUI.openModule(new PayrollDetailGUI(payrollBLL.searchPayrolls().get(indexRow), functions, homeGUI)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
+            Cafe_Application.homeGUI.openModule(new PayrollDetailGUI(payrollBLL.searchPayrolls("id = " + data[indexRow][0]).get(0))); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
     }
 }

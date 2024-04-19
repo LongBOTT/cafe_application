@@ -105,7 +105,7 @@ public class DetailMaterialGUI extends DialogFormDetail {
         label.setFont((new Font("Public Sans", Font.PLAIN, 15)));
         contenttop.add(label);
 
-        jComboBoxRemain.setBackground(new Color(29, 78, 216));
+        jComboBoxRemain.setBackground(new Color(1, 120, 220));
         jComboBoxRemain.setForeground(Color.white);
         jComboBoxRemain.addActionListener(new ActionListener() {
             @Override
@@ -125,7 +125,7 @@ public class DetailMaterialGUI extends DialogFormDetail {
         for (Supplier supplier : new SupplierBLL().searchSuppliers("deleted = 0"))
             jComboBoxSupplier.addItem(supplier.getName());
         jComboBoxSupplier.setPreferredSize(new Dimension(200, 30));
-        jComboBoxSupplier.setBackground(new Color(29, 78, 216));
+        jComboBoxSupplier.setBackground(new Color(1, 120, 220));
         jComboBoxSupplier.setForeground(Color.white);
         jComboBoxSupplier.addActionListener(new ActionListener() {
             @Override

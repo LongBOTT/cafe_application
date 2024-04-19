@@ -59,7 +59,7 @@ public class ChangeRoleGUI extends JDialog {
 
     public ChangeRoleGUI(Staff staff) {
         super((Frame) null, "", true);
-        getContentPane().setBackground(new Color(217, 217, 217));
+        getContentPane().setBackground(new Color(242, 245, 250));
         setTitle("Thiết lập lương");
         setLayout(new FlowLayout(FlowLayout.CENTER));
         setIconImage(new FlatSVGIcon("image/coffee_logo.svg").getImage());
@@ -108,17 +108,17 @@ public class ChangeRoleGUI extends JDialog {
         RoundedPanel containerButton = new RoundedPanel();
 
         title.setLayout(new BorderLayout());
-        title.setBackground(new Color(232, 206, 180));
+        title.setBackground(new Color(242, 245, 250));
         title.setPreferredSize(new Dimension(700, 40));
         add(title);
 
         content.setLayout(new FlowLayout());
-        content.setBackground(new Color(217, 217, 217));
+        content.setBackground(new Color(242, 245, 250));
         content.setPreferredSize(new Dimension(700, 350));
         add(content);
 
         containerButton.setLayout(new FlowLayout());
-        containerButton.setBackground(new Color(217, 217, 217));
+        containerButton.setBackground(new Color(242, 245, 250));
         containerButton.setPreferredSize(new Dimension(700, 70));
         add(containerButton);
 
@@ -129,14 +129,14 @@ public class ChangeRoleGUI extends JDialog {
         title.add(titleName, BorderLayout.CENTER);
 
 
-        role_detail_panel.setBackground(new Color(217, 217, 217));
+        role_detail_panel.setBackground(new Color(242, 245, 250));
         role_detail_panel.setLayout(new MigLayout("",
                 "50[]20[][]50",
                 "15[]15[]15"));
         role_detail_panel.setPreferredSize(new Dimension(685, 200));
         content.add(role_detail_panel);
 
-        role_detail_bonus_panel.setBackground(new Color(217, 217, 217));
+        role_detail_bonus_panel.setBackground(new Color(242, 245, 250));
         role_detail_bonus_panel.setPreferredSize(new Dimension(685, 40));
         role_detail_bonus_panel.setLayout(new MigLayout("",
                 "50[]445[]50",
@@ -173,6 +173,7 @@ public class ChangeRoleGUI extends JDialog {
         role_detail_bonus_panel.add(switchButtonBonus, "wrap");
 
         scrollPaneBonus.setPreferredSize(new Dimension(685, 150));
+        scrollPaneBonus.setBackground(Color.white);
         role_detail_bonus_panel.add(scrollPaneBonus, "span, wrap");
 
         buttonAddBonus = new JButton("+ Thêm phụ cấp");
@@ -189,7 +190,7 @@ public class ChangeRoleGUI extends JDialog {
         });
         role_detail_bonus_panel.add(buttonAddBonus, "span, wrap");
 
-        role_detail_deduction_panel.setBackground(new Color(217, 217, 217));
+        role_detail_deduction_panel.setBackground(new Color(242, 245, 250));
         role_detail_deduction_panel.setPreferredSize(new Dimension(685, 40));
         role_detail_deduction_panel.setLayout(new MigLayout("",
                 "50[]440[]50",
@@ -226,6 +227,7 @@ public class ChangeRoleGUI extends JDialog {
         role_detail_deduction_panel.add(switchButtonDeduction, "wrap");
 
         scrollPaneDeduction.setPreferredSize(new Dimension(685, 150));
+        scrollPaneDeduction.setBackground(Color.white);
         role_detail_deduction_panel.add(scrollPaneDeduction, "span, wrap");
 
         buttonAddDeduction = new JButton("+ Thêm giảm trừ");
@@ -352,6 +354,8 @@ public class ChangeRoleGUI extends JDialog {
         containerButton.add(buttonCancel);
 
         buttonSet.setPreferredSize(new Dimension(100, 30));
+        buttonSet.setBackground(new Color(1, 120, 220));
+        buttonSet.setForeground(Color.white);
         buttonSet.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonSet.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonSet.addMouseListener(new MouseAdapter() {
@@ -487,7 +491,7 @@ public class ChangeRoleGUI extends JDialog {
         titleType.setFont((new Font("Public Sans", Font.BOLD, 13)));
 
         if (flag) {
-            jPanelBonus.setBackground(new Color(245, 246, 250));
+            jPanelBonus.setBackground(new Color(255, 255, 255));
             jPanelBonus.setLayout(new MigLayout("", "10[]10[]10[]70[]0[]0"));
             jPanelBonus.removeAll();
 
@@ -559,7 +563,7 @@ public class ChangeRoleGUI extends JDialog {
                 jPanelBonus.add(jLabelIconRemove, "wrap");
             }
         } else {
-            jPanelDeduction.setBackground(new Color(245, 246, 250));
+            jPanelDeduction.setBackground(new Color(255, 255, 255));
             jPanelDeduction.setLayout(new MigLayout("", "10[]10[]10[]100[]0[]0"));
             jPanelDeduction.removeAll();
 
@@ -698,7 +702,7 @@ public class ChangeRoleGUI extends JDialog {
     public void cancel() {
         String[] options = new String[]{"Huỷ", "Thoát"};
         int choice = JOptionPane.showOptionDialog(null, "Bạn có muốn thoát?",
-                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
         if (choice == 1)
             dispose();
     }

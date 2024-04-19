@@ -157,17 +157,17 @@ public class AddExportGUI extends DialogFormDetail {
 
         JPanel jPanel = new JPanel(new FlowLayout());
         jPanel.setPreferredSize(new Dimension(1400, 100));
-        jPanel.setBackground(new Color(217, 217, 217));
+        jPanel.setBackground(new Color(245, 246, 250));
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
-        containerSearch.setBackground(new Color(245, 246, 250));
+        containerSearch.setBackground(new Color(255, 255, 255));
         containerSearch.setPreferredSize(new Dimension(280, 40));
         jPanel.add(containerSearch);
 
         iconSearch.setIcon(new FlatSVGIcon("icon/search.svg"));
         containerSearch.add(iconSearch);
 
-        jTextFieldSearch.setBackground(new Color(245, 246, 250));
+        jTextFieldSearch.setBackground(new Color(255, 255, 255));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập nội dung tìm kiếm");
         jTextFieldSearch.setPreferredSize(new Dimension(300, 30));
@@ -189,13 +189,13 @@ public class AddExportGUI extends DialogFormDetail {
         });
         containerSearch.add(jTextFieldSearch);
 
-        jButtonSearch.setBackground(new Color(29, 78, 216));
+        jButtonSearch.setBackground(new Color(1, 120, 220));
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(100, 30));
         jButtonSearch.addActionListener(e -> searchShipments());
         jPanel.add(jButtonSearch);
 
-        jComboBoxSearch.setBackground(new Color(29, 78, 216));
+        jComboBoxSearch.setBackground(new Color(1, 120, 220));
         jComboBoxSearch.setForeground(Color.white);
         jComboBoxSearch.setPreferredSize(new Dimension(120, 30));
         jComboBoxSearch.addActionListener(e -> searchShipments());
@@ -209,7 +209,7 @@ public class AddExportGUI extends DialogFormDetail {
         for (Import_Note importNote : new Import_NoteBLL().searchImport())
             jComboBoxSearchImport.addItem(String.valueOf(importNote.getId()));
 
-        jComboBoxSearchImport.setBackground(new Color(29, 78, 216));
+        jComboBoxSearchImport.setBackground(new Color(1, 120, 220));
         jComboBoxSearchImport.setForeground(Color.white);
         jComboBoxSearchImport.setPreferredSize(new Dimension(120, 30));
         jComboBoxSearchImport.addActionListener(e -> searchShipments());
@@ -219,7 +219,7 @@ public class AddExportGUI extends DialogFormDetail {
         jLabel1.setFont((new Font("Public Sans", Font.BOLD, 12)));
         jPanel.add(jLabel1);
 
-        jComboBoxSearchStatus.setBackground(new Color(29, 78, 216));
+        jComboBoxSearchStatus.setBackground(new Color(1, 120, 220));
         jComboBoxSearchStatus.setForeground(Color.white);
         jComboBoxSearchStatus.setPreferredSize(new Dimension(120, 30));
         jComboBoxSearchStatus.addActionListener(e -> searchShipments());
@@ -269,6 +269,8 @@ public class AddExportGUI extends DialogFormDetail {
         contentbot.add(jLabelTotal, "wrap");
 
         buttonAdd.setPreferredSize(new Dimension(200, 30));
+        buttonAdd.setBackground(new Color(1, 120, 220));
+        buttonAdd.setForeground(Color.white);
         buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonAdd.addMouseListener(new MouseAdapter() {

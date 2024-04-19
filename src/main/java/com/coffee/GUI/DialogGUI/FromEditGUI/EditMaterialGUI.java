@@ -5,6 +5,8 @@ import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Material;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddSupplierGUI;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
+import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
@@ -32,6 +34,7 @@ public class EditMaterialGUI extends DialogForm {
     private SupplierBLL supplierBLL = new SupplierBLL();
     private Material material;
     private JCheckBox saleCheckbox;
+
     public EditMaterialGUI(Material material) {
         super();
         super.setTitle("Sửa Nguyên Liệu");
@@ -80,7 +83,7 @@ public class EditMaterialGUI extends DialogForm {
                 content.add(listUnit, "wrap");
                 continue;
             }
-            JTextField textField = new JTextField();
+            JTextField textField = new MyTextFieldUnderLine();
             if (string.equals("Tồn Kho Tối Thiểu") || string.equals("Tồn Kho Tối Đa") || string.equals("Giá Vốn")) {
                 textField.addKeyListener(new KeyAdapter() {
                     public void keyTyped(KeyEvent e) {
@@ -96,7 +99,7 @@ public class EditMaterialGUI extends DialogForm {
             jTextFieldMaterial.add(textField);
             content.add(textField, "wrap");
         }
-         saleCheckbox = new JCheckBox("Bán trực tiếp");
+        saleCheckbox = new JCheckBox("Bán trực tiếp");
         content.add(saleCheckbox);
 
         jTextFieldMaterial.get(0).setText(material.getName());
@@ -126,6 +129,8 @@ public class EditMaterialGUI extends DialogForm {
         containerButton.add(buttonCancel);
 
         buttonAdd.setPreferredSize(new Dimension(100, 30));
+        buttonAdd.setBackground(new Color(1, 120, 220));
+        buttonAdd.setForeground(Color.white);
         buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonAdd.addMouseListener(new MouseAdapter() {
@@ -177,7 +182,7 @@ public class EditMaterialGUI extends DialogForm {
         unit_price = Double.parseDouble(jTextFieldMaterial.get(3).getText());
         boolean sell = saleCheckbox.isSelected();
 
-        Material newMaterial = new Material(id, name, material.getRemain(), min_remain, max_remain, unit, unit_price,sell, false);
+        Material newMaterial = new Material(id, name, material.getRemain(), min_remain, max_remain, unit, unit_price, sell, false);
         result = materialBLL.updateMaterial(newMaterial, material);
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),

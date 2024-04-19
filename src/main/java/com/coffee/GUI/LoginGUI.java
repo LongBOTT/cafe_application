@@ -2,6 +2,7 @@ package com.coffee.GUI;
 
 import com.coffee.BLL.AccountBLL;
 import com.coffee.DTO.Account;
+import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.main.Cafe_Application;
 import com.coffee.utils.Password;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -40,8 +41,8 @@ public class LoginGUI extends JFrame {
 
     private void initComponents() {
         setIconImage(new FlatSVGIcon("image/coffee_logo.svg").getImage());
-
-        setSize(700, 500);
+        setTitle("Hệ Thống Quản Lý Cửa Hàng Coffee");
+        setSize(780, 500);
         setResizable(false);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -57,106 +58,117 @@ public class LoginGUI extends JFrame {
         setContentPane(contentPane);
 
         formLogin = new JPanel(new FlowLayout());
-        formLogin.setBackground(new Color(217, 217, 217));
+        formLogin.setBackground(new Color(255, 255, 255));
         formLogin.setPreferredSize(new Dimension(400, 500));
-        contentPane.add(formLogin, BorderLayout.WEST);
+        contentPane.add(formLogin, BorderLayout.EAST);
 
         jPanelLogo = new JPanel(new BorderLayout());
         jPanelLogo.setBackground(new Color(232, 206, 180));
-        jPanelLogo.setPreferredSize(new Dimension(300, 500));
-        contentPane.add(jPanelLogo, BorderLayout.EAST);
+        jPanelLogo.setPreferredSize(new Dimension(380, 500));
+        contentPane.add(jPanelLogo, BorderLayout.WEST);
 
-        labelLogo = new JLabel();
+        labelLogo = new JLabel(new FlatSVGIcon("image/coffee_logo.svg"));
         labelLogo.setHorizontalAlignment(SwingConstants.CENTER);
-
-        labelLogo.setIcon(new FlatSVGIcon("image/coffee_logo.svg"));
-        jPanelLogo.add(labelLogo);
+        jPanelLogo.add(labelLogo, BorderLayout.CENTER);
 
         jPanelTitle = new JPanel();
-        jPanelTitle.setBackground(new Color(217, 217, 217));
+        jPanelTitle.setBackground(new Color(255, 255, 255));
         formLogin.add(jPanelTitle, BorderLayout.NORTH);
 
         jPanelTitleLogin = new JPanel(new GridBagLayout());
-        jPanelTitleLogin.setBackground(new Color(217, 217, 217));
+        jPanelTitleLogin.setBackground(new Color(255, 255, 255));
         jPanelTitleLogin.setPreferredSize(new Dimension(300, 100));
         jPanelTitle.add(jPanelTitleLogin);
 
-        labelLogin = new JLabel("Đăng Nhập", SwingConstants.CENTER);
-        labelLogin.setFont(new Font("FlatLaf.style", Font.BOLD, 30));
-        labelLogin.setBorder(BorderFactory.createMatteBorder(0, 4, 0, 0, new Color(0x000000)));
+        labelLogin = new JLabel("Login", SwingConstants.CENTER);
+        labelLogin.setFont(new Font("Jost", Font.BOLD, 30));
         jPanelTitleLogin.add(labelLogin);
 
         formInput = new JPanel(new MigLayout("", "[]", "[]0[]"));
-        formInput.setBackground(new Color(217, 217, 217));
-        formInput.setPreferredSize(new Dimension(250, 400));
+        formInput.setBackground(new Color(255, 255, 255));
+        formInput.setPreferredSize(new Dimension(350, 400));
         formLogin.add(formInput, BorderLayout.CENTER);
 
-        labelUsername = new JLabel("Tài khoản:", JLabel.LEFT);
-        labelUsername.setForeground(new Color(0x000000));
+        labelUsername = new JLabel("Username", JLabel.LEFT);
+        labelUsername.setForeground(new Color(166, 175, 182));
         labelUsername.setPreferredSize(new Dimension(100, 50));
-        labelUsername.setFont(new Font("FlatLaf.style", Font.PLAIN, 15));
+        labelUsername.setFont(new Font("Inter", Font.BOLD, 13));
         formInput.add(labelUsername, "span, wrap");
+
+
+        RoundedPanel panelUsername = new RoundedPanel();
+        panelUsername.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 5));
+        panelUsername.setPreferredSize(new Dimension(350, 50));
+        panelUsername.setBackground(new Color(221, 229, 250));
+        formInput.add(panelUsername, "span, wrap");
+
+        JLabel iconUser = new JLabel(new FlatSVGIcon("icon/user.svg"));
+        panelUsername.add(iconUser);
+
         // sửa
         jTextFieldUserName = new JTextField();
         jTextFieldUserName.setText("longbott");
-        jTextFieldUserName.setBackground(Color.white);
-        jTextFieldUserName.setPreferredSize(new Dimension(250, 40));
-        jTextFieldUserName.setFont(new Font("FlatLaf.style", Font.PLAIN, 15));
-        jTextFieldUserName.putClientProperty("JTextField.placeholderText", "Nhập tài khoản");
+        jTextFieldUserName.setBackground(new Color(221, 229, 250));
+        jTextFieldUserName.setBorder(BorderFactory.createEmptyBorder());
+        jTextFieldUserName.setPreferredSize(new Dimension(270, 40));
+        jTextFieldUserName.setFont(new Font("Inter", Font.BOLD, 15));
+        jTextFieldUserName.putClientProperty("JTextField.placeholderText", "Enter username");
         jTextFieldUserName.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent keyEvent) {
                 if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER)
                     login();
             }
         });
-        formInput.add(jTextFieldUserName, "span, center, wrap");
+        panelUsername.add(jTextFieldUserName);
 
-        labelPassword = new JLabel("Mật khẩu:", JLabel.LEFT);
-        labelPassword.setForeground(new Color(0x000000));
+        labelPassword = new JLabel("Password", JLabel.LEFT);
+        labelPassword.setForeground(new Color(166, 175, 182));
         labelPassword.setPreferredSize(new Dimension(100, 50));
-        labelPassword.setFont(new Font("FlatLaf.style", Font.PLAIN, 15));
+        labelPassword.setFont(new Font("FlatLaf.style", Font.BOLD, 13));
         formInput.add(labelPassword, "span, wrap");
+
+        RoundedPanel panelPasswd = new RoundedPanel();
+        panelPasswd.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 5));
+        panelPasswd.setPreferredSize(new Dimension(350, 50));
+        panelPasswd.setBackground(new Color(221, 229, 250));
+        formInput.add(panelPasswd, "span, wrap");
+
+        JLabel iconLock = new JLabel(new FlatSVGIcon("icon/lock.svg"));
+        panelPasswd.add(iconLock);
 
         jTextFieldPassword = new JPasswordField();
         jTextFieldPassword.setText("Long123.");
-        jTextFieldPassword.setBackground(Color.white);
-        jTextFieldPassword.setPreferredSize(new Dimension(250, 40));
-        jTextFieldPassword.setFont(new Font("FlatLaf.style", Font.PLAIN, 15));
-        jTextFieldPassword.putClientProperty("JTextField.placeholderText", "Nhập mật khẩu");
+        jTextFieldPassword.setBackground(new Color(221, 229, 250));
+        jTextFieldPassword.setBorder(BorderFactory.createEmptyBorder());
+        jTextFieldPassword.setPreferredSize(new Dimension(270, 40));
+        jTextFieldPassword.setFont(new Font("Inter", Font.BOLD, 15));
+        jTextFieldPassword.putClientProperty("JTextField.placeholderText", "Enter password");
         jTextFieldPassword.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent keyEvent) {
                 if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER)
                     login();
             }
         });
-        formInput.add(jTextFieldPassword, "span, center, wrap");
+        panelPasswd.add(jTextFieldPassword);
 
-        labelForgetPasswd = new JLabel("Quên mật khẩu?");
-        labelForgetPasswd.setFont(new Font("FlatLaf.style", Font.PLAIN, 12));
+        labelForgetPasswd = new JLabel("Forgot password?");
+        labelForgetPasswd.setForeground(new Color(37, 181, 251));
+        labelForgetPasswd.setFont(new Font("Inter", Font.BOLD, 13));
         labelForgetPasswd.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        labelForgetPasswd.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         labelForgetPasswd.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                labelForgetPasswd.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(232, 206, 180)));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                labelForgetPasswd.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-            }
-
             public void mousePressed(MouseEvent e) {
                 forgotPassword();
             }
         });
         formInput.add(labelForgetPasswd, "span, right, wrap");
 
-        jButtonLogin = new JButton("Đăng nhập");
-        jButtonLogin.setBackground(new Color(232, 206, 180));
-        ;
-        jButtonLogin.setForeground(Color.BLACK);
-        jButtonLogin.setFont(new Font("FlatLaf.style", Font.BOLD, 15));
-        jButtonLogin.setPreferredSize(new Dimension(80, 50));
+        jButtonLogin = new JButton("Login");
+        jButtonLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        jButtonLogin.setBackground(new Color(1, 120, 220));
+        jButtonLogin.setForeground(Color.WHITE);
+        jButtonLogin.setFont(new Font("Inter", Font.BOLD, 18));
+        jButtonLogin.setPreferredSize(new Dimension(100, 40));
         jButtonLogin.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -170,7 +182,8 @@ public class LoginGUI extends JFrame {
                     login();
             }
         });
-        formInput.add(jButtonLogin, "span, wrap");
+        formInput.add(jButtonLogin, "span, wrap, center");
+
 
     }
 
@@ -188,12 +201,13 @@ public class LoginGUI extends JFrame {
             i++;
             progressBar.setValue(i);
             try {
-                sleep(30);
+                sleep(10);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
         }
         JOptionPane.showMessageDialog(this, "Đăng nhập thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        setEnabled(true);
         dispose();
         System.gc();
         Cafe_Application.homeGUI.setVisible(true);
@@ -228,11 +242,12 @@ public class LoginGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Mật khẩu không chính xác!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        setEnabled(false);
         Account account = accountList.get(0);
         try {
             Thread thread = new Thread(() -> Cafe_Application.homeGUI.setAccount(account));
             thread.start();
-//            thread.join();
+            thread.join();
             Thread threadProgress = new Thread(this::progress);
             threadProgress.start();
         } catch (Exception ignored) {
@@ -247,7 +262,7 @@ public class LoginGUI extends JFrame {
     private void cancel() {
         String[] options = new String[]{"Huỷ", "Thoát ứng dụng"};
         int choice = JOptionPane.showOptionDialog(null, "Bạn có muốn thoát ứng dụng?",
-                "Lỗi", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                "Lỗi", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[1]);
         if (choice == 1)
             Cafe_Application.exit(1);
     }

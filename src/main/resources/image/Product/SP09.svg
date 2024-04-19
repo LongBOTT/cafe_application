@@ -1,7 +1,6 @@
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
      width="1000" height="1000">
-    <path fill="#FFFFFF" opacity="1.000000" stroke="none"
-          d="
+    <path fill="#e4e7eb" opacity="1.000000" stroke="none"          d="
 M693.000000,1001.000000
 	C463.500000,1001.000000 234.500000,1000.989319 5.500042,1001.093445
 	C1.750799,1001.095154 0.905755,1000.249084 0.906896,996.500000
