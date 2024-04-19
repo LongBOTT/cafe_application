@@ -201,6 +201,8 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         containerForm.add(lblFormValue);
 
         btnAddConditions = new JButton("Thêm điều kiện");
+        btnAddConditions.setBackground(new Color(1, 120, 220));
+        btnAddConditions.setForeground(new Color(255, 255, 255));
         btnAddConditions.setIcon(new FlatSVGIcon("icon/Add1.svg"));
         btnAddConditions.setPreferredSize(new Dimension(100, 40));
         btnAddConditions.setFont(new Font("Public Sans", Font.PLAIN, 15));
@@ -267,8 +269,8 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
             createPanelDiscountProduct();
         }
         JButton buttonCancel = new JButton("Huỷ");
-        buttonCancel.setBackground(new Color(213, 50, 77));
-        buttonCancel.setForeground(new Color(255, 255, 255));
+//        buttonCancel.setBackground(new Color(213, 50, 77));
+//        buttonCancel.setForeground(new Color(255, 255, 255));
         buttonCancel.setPreferredSize(new Dimension(100, 35));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -289,7 +291,7 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         });
         containerButton.add(buttonCancel);
         JButton buttonAdd = new JButton("Cập nhật");
-        buttonAdd.setBackground(new Color(65, 149, 67));
+        buttonAdd.setBackground(new Color(1, 120, 220));
         buttonAdd.setForeground(new Color(255, 255, 255));
         buttonAdd.setPreferredSize(new Dimension(100, 35));
         buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));

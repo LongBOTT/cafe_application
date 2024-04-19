@@ -249,6 +249,7 @@ public class AddExportGUI extends DialogFormDetail {
         dataTable.getColumnModel().getColumn(7).setMaxWidth(100);
         dataTable.getColumnModel().getColumn(8).setMaxWidth(50);
         dataTable.getColumnModel().getColumn(9).setMaxWidth(100);
+        dataTable.setRowHeight(25);
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1400, 680));
         contentmid.add(scrollPane, BorderLayout.CENTER);

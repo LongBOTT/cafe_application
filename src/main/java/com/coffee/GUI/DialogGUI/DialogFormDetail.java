@@ -56,12 +56,12 @@ public class DialogFormDetail extends JDialog {
 
         contentmid.setLayout(new MigLayout());
         contentmid.setBackground(new Color(255, 255, 255));
-        contentmid.setPreferredSize(new Dimension(1000, 350));
+        contentmid.setPreferredSize(new Dimension(1000, 450));
         add(contentmid, "wrap");
 
         contentbot.setLayout(new MigLayout("", "20[]20[]20", "20[]20[]20"));
         contentbot.setBackground(new Color(242, 245, 250));
-        contentbot.setPreferredSize(new Dimension(1000, 200));
+        contentbot.setPreferredSize(new Dimension(1000, 100));
         add(contentbot, "wrap");
 
         containerButton.setLayout(new FlowLayout());

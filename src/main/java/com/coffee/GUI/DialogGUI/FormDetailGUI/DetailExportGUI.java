@@ -33,7 +33,7 @@ public class DetailExportGUI extends DialogFormDetail {
 
     public DetailExportGUI(Export_Note export) {
         super();
-        super.setTitle("Thông tin phiếu xuất");
+        super.setTitle("Thông Tin Phiếu Xuất");
         super.setSize(new Dimension(700, 700));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init(export);
@@ -50,7 +50,7 @@ public class DetailExportGUI extends DialogFormDetail {
                 "50[]20[]50",
                 "10[]10[]10"));
 
-        titleName.setText("Thông tin Phiếu Xuất");
+        titleName.setText("Thông Tin Phiếu Xuất");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
         titleName.setHorizontalAlignment(JLabel.CENTER);
         titleName.setVerticalAlignment(JLabel.CENTER);
@@ -88,6 +88,7 @@ public class DetailExportGUI extends DialogFormDetail {
         dataTable.getColumnModel().getColumn(1).setMaxWidth(500);
         dataTable.getColumnModel().getColumn(2).setMaxWidth(50);
         dataTable.getColumnModel().getColumn(3).setMaxWidth(200);
+        dataTable.setRowHeight(25);
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         contentmid.add(scrollPane, BorderLayout.CENTER);

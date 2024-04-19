@@ -8,6 +8,7 @@ import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.DialogFormDetail;
 import com.coffee.GUI.HomeGUI;
 import com.coffee.GUI.components.DataTable;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.coffee.GUI.components.swing.DataSearch;
 import com.coffee.GUI.components.swing.EventClick;
@@ -45,7 +46,7 @@ public class AddImportGUI extends DialogFormDetail {
     private RoundedScrollPane scrollPane;
     private Import_Note import_note = new Import_Note();
     private List<Shipment> shipmentList = new ArrayList<>();
-    private JTextField jTextFieldQuantity = new JTextField();
+    private JTextField jTextFieldQuantity = new MyTextFieldUnderLine();
     private JComboBox<String> jComboBoxSupplier = new JComboBox<>();
     private MyTextField txtSearch;
     private PanelSearch search;
@@ -144,8 +145,8 @@ public class AddImportGUI extends DialogFormDetail {
         super.remove(contentbot);
         super.remove(containerButton);
 
-        JPanel jPanel = new JPanel(new FlowLayout());
-        jPanel.setPreferredSize(new Dimension(1200, 100));
+        JPanel jPanel = new JPanel(new MigLayout("", "[][][]20[][]20[][]20[]", ""));
+        jPanel.setPreferredSize(new Dimension(1200, 150));
         jPanel.setBackground(new Color(245, 246, 250));
 
         JButton btnAddMaterial = new JButton();
@@ -169,7 +170,7 @@ public class AddImportGUI extends DialogFormDetail {
 
         int i = 0;
 
-        for (String string : new String[]{"Tên Nguyên Liệu", "Nhà Cung Cấp", "SL Nhập", "MFG", "EXP"}) {
+        for (String string : new String[]{"Tên Nguyên Liệu", "Ngày Sản Xuất", "Nhà Cung Cấp", "Ngày Hết Hạn", "SL Nhập"}) {
             if (string.equals("Nhà Cung Cấp")) {
                 JButton btnAddSupplier = new JButton();
                 icon = new ImageIcon(newImg);
@@ -196,7 +197,7 @@ public class AddImportGUI extends DialogFormDetail {
 
             if (string.equals("Tên Nguyên Liệu")) {
                 txtSearch = new MyTextField();
-                txtSearch.setPreferredSize(new Dimension(100, 30));
+                txtSearch.setPreferredSize(new Dimension(200, 30));
 
                 txtSearch.addMouseListener(new java.awt.event.MouseAdapter() {
                     public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -219,6 +220,8 @@ public class AddImportGUI extends DialogFormDetail {
                 for (Supplier supplier : new SupplierBLL().searchSuppliers("deleted = 0"))
                     jComboBoxSupplier.addItem(supplier.getName());
                 jComboBoxSupplier.setPreferredSize(new Dimension(150, 30));
+                jComboBoxSupplier.setBackground(new Color(1, 120, 220));
+                jComboBoxSupplier.setForeground(Color.white);
                 jPanel.add(jComboBoxSupplier);
                 continue;
             }
@@ -233,28 +236,32 @@ public class AddImportGUI extends DialogFormDetail {
                 });
                 jPanel.add(jTextFieldQuantity);
             } else {
+
                 jTextFieldDate[i] = new JTextField();
                 jTextFieldDate[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
-                jTextFieldDate[i].setPreferredSize(new Dimension(130, 30));
+                jTextFieldDate[i].setPreferredSize(new Dimension(200, 30));
                 jTextFieldDate[i].setAutoscrolls(true);
 
                 jDateChooser[i] = new JDateChooser();
                 jDateChooser[i].setDateFormatString("dd/MM/yyyy");
-                jDateChooser[i].setPreferredSize(new Dimension(130, 30));
+                jDateChooser[i].setPreferredSize(new Dimension(200, 30));
                 jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
 
                 dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
                 dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
                 dateTextField[i].setBackground(new Color(255, 255, 255));
-                jPanel.add(jDateChooser[i]);
+                if (string.equals("Ngày Sản Xuất"))
+                    jPanel.add(jDateChooser[i], "wrap");
+                else
+                    jPanel.add(jDateChooser[i]);
                 i++;
             }
         }
 
         JButton btnThem = new JButton("Thêm lô");
         btnThem.setPreferredSize(new Dimension(100, 30));
-        buttonAdd.setBackground(new Color(1, 120, 220));
-        buttonAdd.setForeground(Color.white);
+        btnThem.setBackground(new Color(1, 120, 220));
+        btnThem.setForeground(Color.white);
         btnThem.setFont(new Font("Public Sans", Font.BOLD, 12));
         btnThem.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
@@ -289,6 +296,7 @@ public class AddImportGUI extends DialogFormDetail {
         dataTable.getColumnModel().getColumn(3).setMaxWidth(100);
         dataTable.getColumnModel().getColumn(4).setMaxWidth(250);
         dataTable.getColumnModel().getColumn(5).setMaxWidth(250);
+        dataTable.setRowHeight(25);
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         contentmid.add(scrollPane, BorderLayout.CENTER);
@@ -300,7 +308,7 @@ public class AddImportGUI extends DialogFormDetail {
         contentbot.add(label);
 
         jLabelTotal = new JLabel();
-        jLabelTotal.setText("0.0");
+        jLabelTotal.setText(VNString.currency(0));
         jLabelTotal.setPreferredSize(new Dimension(1000, 30));
         jLabelTotal.setFont((new Font("Public Sans", Font.PLAIN, 14)));
         jLabelTotal.setBackground(new Color(245, 246, 250));
@@ -421,7 +429,7 @@ public class AddImportGUI extends DialogFormDetail {
         model.setRowCount(0);
 
         if (objects.length == 0) {
-            jLabelTotal.setText("0.0");
+            jLabelTotal.setText(VNString.currency(0));
             return;
         }
 
@@ -451,7 +459,7 @@ public class AddImportGUI extends DialogFormDetail {
             object = Arrays.copyOfRange(object, 1, 8);
             model.addRow(object);
         }
-        jLabelTotal.setText(total.toString());
+        jLabelTotal.setText(VNString.currency(Double.parseDouble(total.toString())));
     }
 
     private void txtSearchMouseClicked(java.awt.event.MouseEvent evt) {

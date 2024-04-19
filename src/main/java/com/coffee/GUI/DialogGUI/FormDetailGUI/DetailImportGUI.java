@@ -39,7 +39,7 @@ public class DetailImportGUI extends DialogFormDetail {
 
     public DetailImportGUI(Import_Note import_note) {
         super();
-        super.setTitle("Thông tin phiếu nhập");
+        super.setTitle("Thông Tin Phiếu Nhập");
         super.setSize(new Dimension(1100, 700));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init(import_note);
@@ -56,7 +56,7 @@ public class DetailImportGUI extends DialogFormDetail {
                 "50[]20[]50",
                 "10[]10[]10"));
 
-        titleName.setText("Thông tin Phiếu Nhập");
+        titleName.setText("Thông Tin Phiếu Nhập");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
         titleName.setHorizontalAlignment(JLabel.CENTER);
         titleName.setVerticalAlignment(JLabel.CENTER);
@@ -97,7 +97,7 @@ public class DetailImportGUI extends DialogFormDetail {
         dataTable.getColumnModel().getColumn(4).setMaxWidth(100);
         dataTable.getColumnModel().getColumn(5).setMaxWidth(250);
         dataTable.getColumnModel().getColumn(6).setMaxWidth(250);
-        dataTable.setRowHeight(60);
+        dataTable.setRowHeight(25);
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         contentmid.add(scrollPane, BorderLayout.CENTER);

@@ -128,6 +128,8 @@ public class AddProductGUI extends DialogFormDetail_1 {
         JButton btnImage = new JButton("Thêm ảnh");
         btnImage.setPreferredSize(new Dimension(100, 30));
         btnImage.setCursor(new Cursor(HAND_CURSOR));
+        btnImage.setBackground(new Color(1, 120, 220));
+        btnImage.setForeground(Color.white);
         btnImage.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -441,7 +443,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
         JButton btnThem = new JButton("Thêm");
         btnThem.setPreferredSize(new Dimension(80, 30));
-        btnThem.setBackground(new Color(0, 182, 62));
+        btnThem.setBackground(new Color(1, 120, 220));
         btnThem.setFont(new Font("Public Sans", Font.BOLD, 16));
         btnThem.setForeground(Color.WHITE);
         btnThem.setCursor(new Cursor(HAND_CURSOR));
@@ -483,8 +485,8 @@ public class AddProductGUI extends DialogFormDetail_1 {
         JTableHeader jTableHeader = dataTable.getTableHeader();
         jTableHeader.setBackground(new Color(120, 123, 125));
         JButton buttonCancel = new JButton("Huỷ");
-        buttonCancel.setBackground(new Color(213, 50, 77));
-        buttonCancel.setForeground(new Color(255, 255, 255));
+//        buttonCancel.setBackground(new Color(213, 50, 77));
+//        buttonCancel.setForeground(new Color(255, 255, 255));
         buttonCancel.setPreferredSize(new Dimension(100, 35));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonCancel.setCursor(new Cursor(HAND_CURSOR));
@@ -507,7 +509,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
 
         JButton buttonAdd = new JButton("Thêm");
-        buttonAdd.setBackground(new Color(65, 149, 67));
+        buttonAdd.setBackground(new Color(1, 120, 220));
         buttonAdd.setForeground(new Color(255, 255, 255));
         buttonAdd.setPreferredSize(new Dimension(100, 35));
         buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
