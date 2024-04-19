@@ -5,8 +5,10 @@ import com.coffee.DTO.Import_Note;
 import com.coffee.DTO.Material;
 import com.coffee.DTO.Shipment;
 import com.coffee.DTO.Supplier;
+import com.coffee.GUI.CreateWorkScheduleGUI;
 import com.coffee.GUI.DialogGUI.DialogFormDetail;
 import com.coffee.GUI.HomeGUI;
+import com.coffee.GUI.MaterialGUI;
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedScrollPane;
@@ -54,14 +56,14 @@ public class AddImportGUI extends DialogFormDetail {
     private JTextField[] jTextFieldDate;
     private JTextField[] dateTextField;
     private JDateChooser[] jDateChooser;
-    private int materialID;
+    private int materialID = -1;
     private int import_id;
     private int shipment_id;
     private BigDecimal total = BigDecimal.valueOf(0);
 
     public AddImportGUI() {
         super();
-        super.setTitle("Tạo phiếu nhập");
+        super.setTitle("Tạo Phiếu Nhập");
         super.setSize(new Dimension(1200, 700));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         import_id = import_NoteBLL.getAutoID(import_NoteBLL.searchImport());
@@ -95,7 +97,7 @@ public class AddImportGUI extends DialogFormDetail {
 
     private void init() {
         titleName = new JLabel();
-        buttonAdd = new JButton("Tạo phiếu nhập");
+        buttonAdd = new JButton("Tạo Phiếu Nhập");
         attributeImport_Note = new ArrayList<>();
         contenttop.setLayout(new MigLayout("",
                 "50[]20[]20[]20[]20[]20[]20[]20[]20",
@@ -337,14 +339,6 @@ public class AddImportGUI extends DialogFormDetail {
             return;
         }
 
-        for (Shipment shipment : shipmentList) {
-            if (shipment.getQuantity() == 0) {
-                JOptionPane.showMessageDialog(null, "Số lượng nhập phải lớn hơn 0!",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-        }
-
         import_note.setTotal(total);
         result = import_NoteBLL.addImport(import_note);
 
@@ -352,11 +346,15 @@ public class AddImportGUI extends DialogFormDetail {
             for (Shipment shipment : shipmentList) {
                 shipment_id += 1;
                 shipment.setId(shipment_id);
-                shipmentBLL.addShipment(shipment);
+                shipmentBLL.addShipment(shipment); // cập nhập tồn kho của nguyên liệu trong lớp shipmentBLL.addShipment
             }
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             dispose();
+            if (Cafe_Application.homeGUI.indexModuleMaterialGUI != -1) {
+                MaterialGUI materialGUI = (MaterialGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModuleMaterialGUI];
+                materialGUI.refresh();
+            }
         } else {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -391,25 +389,54 @@ public class AddImportGUI extends DialogFormDetail {
     }
 
     private void addShipment() {
-        // kiem tra du lieu nhap trong hay sai kieu du lieu
-
         int supplier_id;
         double quantity;
         java.util.Date mfg, exp;
 
-        supplier_id = jComboBoxSupplier.getSelectedIndex() + 1;
-        quantity = Double.parseDouble(jTextFieldQuantity.getText());
+        if (materialID == -1) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn nguyên liệu nhập!",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (jDateChooser[0].getDate() == null) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn nhập ngày sản xuất!",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (jDateChooser[1].getDate() == null) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn nhập ngày hết hạn!",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         mfg = java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[0].getDate()));
         exp = java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[1].getDate()));
-
-        Shipment shipment = new Shipment(shipment_id, materialID, supplier_id, import_id, quantity, quantity, mfg, exp);
+        if (mfg.after(exp)) {
+            JOptionPane.showMessageDialog(null, "Ngày sản xuất và ngày hết hạn không hợp lệ!",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        supplier_id = jComboBoxSupplier.getSelectedIndex() + 1;
         for (Shipment shipment1 : shipmentList) {
             if (shipment1.getMaterial_id() == materialID && shipment1.getSupplier_id() == supplier_id) {
-                JOptionPane.showMessageDialog(null, "Lô hàng đã được thêm!",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
+                if (shipment1.getMfg() == mfg && shipment1.getExp() == exp) {
+                    JOptionPane.showMessageDialog(null, "Lô hàng trùng ngày sản xuất và ngày hết hạn!",
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
             }
         }
+        if (jTextFieldQuantity.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng nhập số lượng nhập!",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        quantity = Double.parseDouble(jTextFieldQuantity.getText());
+        if (quantity == 0) {
+            JOptionPane.showMessageDialog(null, "Số lượng nhập phải lớn hơn 0!",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Shipment shipment = new Shipment(shipment_id, materialID, supplier_id, import_id, quantity, quantity, mfg, exp);
         shipmentList.add(shipment);
     }
 
@@ -424,7 +451,7 @@ public class AddImportGUI extends DialogFormDetail {
 
     }
 
-    public void loadDataTable(Object[][] objects) {
+    private void loadDataTable(Object[][] objects) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
 
@@ -470,6 +497,7 @@ public class AddImportGUI extends DialogFormDetail {
     }
 
     private List<DataSearch> search(String text) {
+        materialID = -1;
         List<DataSearch> list = new ArrayList<>();
         List<Material> materials = new MaterialBLL().findMaterials("name", text);
         for (Material m : materials) {

@@ -4,6 +4,7 @@ import com.coffee.BLL.*;
 import com.coffee.DTO.*;
 import com.coffee.GUI.DialogGUI.DialogFormDetail;
 import com.coffee.GUI.HomeGUI;
+import com.coffee.GUI.MaterialGUI;
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
@@ -51,48 +52,16 @@ public class AddExportGUI extends DialogFormDetail {
     private Export_Note export_note = new Export_Note();
     private List<Integer> shipmentList = new ArrayList<>();
     private List<Export_Detail> exportDetailList = new ArrayList<>();
-    private JTextField jTextFieldQuantity = new JTextField();
-    private JComboBox<String> jComboBoxSupplier = new JComboBox<>();
-    private MyTextField txtSearch;
-    private PanelSearch search;
-    private JPopupMenu menu;
-    private JTextField[] jTextFieldDate;
-    private JTextField[] dateTextField;
-    private JDateChooser[] jDateChooser;
-    private int materialID;
     private int export_id;
     private BigDecimal total = BigDecimal.valueOf(0);
 
     public AddExportGUI() {
         super();
-        super.setTitle("Tạo phiếu xuất");
+        super.setTitle("Tạo Phiếu Xuất");
         super.setSize(new Dimension(1400, 700));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         export_id = export_NoteBLL.getAutoID(export_NoteBLL.searchExport_Note());
         init();
-        menu = new JPopupMenu();
-        search = new PanelSearch();
-        menu.setBorder(BorderFactory.createLineBorder(new Color(164, 164, 164)));
-        menu.add(search);
-        menu.setFocusable(false);
-        search.addEventClick(new EventClick() {
-            @Override
-            public void itemClick(DataSearch data) {
-                menu.setVisible(false);
-                txtSearch.setText(data.getText());
-                Material material = new MaterialBLL().findMaterialsBy(Map.of("name", data.getText())).get(0);
-                materialID = material.getId();
-            }
-
-            @Override
-            public void itemRemove(Component com, DataSearch data) {
-                search.remove(com);
-                menu.setPopupSize(menu.getWidth(), (search.getItemSize() * 35) + 2);
-                if (search.getItemSize() == 0) {
-                    menu.setVisible(false);
-                }
-            }
-        });
         setVisible(true);
     }
 
@@ -105,7 +74,7 @@ public class AddExportGUI extends DialogFormDetail {
         jComboBoxSearchStatus = new JComboBox<>(new String[]{"Tất cả", "Sắp hết hạn", "Đã hết hạn", "Đã chọn"});
         jComboBoxSearchImport = new JComboBox<>();
         titleName = new JLabel();
-        buttonAdd = new JButton("Tạo phiếu xuất");
+        buttonAdd = new JButton("Tạo Phiếu Xuất");
         attributeExport_Note = new ArrayList<>();
         contenttop.setLayout(new MigLayout("",
                 "50[]20[]20[]20[]20[]20[]20[]20[]20",
@@ -113,9 +82,6 @@ public class AddExportGUI extends DialogFormDetail {
         contentbot.setLayout(new MigLayout("",
                 "50[]20[]50",
                 "10[]10[]10"));
-        jDateChooser = new JDateChooser[2];
-        dateTextField = new JTextField[2];
-        jTextFieldDate = new JTextField[2];
 
         titleName.setText("Tạo Phiếu Xuất");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
@@ -263,7 +229,7 @@ public class AddExportGUI extends DialogFormDetail {
         contentbot.add(label);
 
         jLabelTotal = new JLabel();
-        jLabelTotal.setText("0.0");
+        jLabelTotal.setText(VNString.currency(0));
         jLabelTotal.setPreferredSize(new Dimension(1000, 30));
         jLabelTotal.setFont((new Font("Public Sans", Font.PLAIN, 14)));
         jLabelTotal.setBackground(new Color(245, 246, 250));
@@ -345,12 +311,15 @@ public class AddExportGUI extends DialogFormDetail {
 
         if (result.getKey()) {
             for (Export_Detail exportDetail : exportDetailList) {
-                new Export_DetailBLL().addExport_Detail(exportDetail);
+                new Export_DetailBLL().addExport_Detail(exportDetail); // cập nhập tồn kho của nguyên liệu trong lớp Export_DetailBLL().addExport_Detail
             }
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-
             dispose();
+            if (Cafe_Application.homeGUI.indexModuleMaterialGUI != -1) {
+                MaterialGUI materialGUI = (MaterialGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModuleMaterialGUI];
+                materialGUI.refresh();
+            }
         } else {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -422,7 +391,7 @@ public class AddExportGUI extends DialogFormDetail {
             double unit_price = new MaterialBLL().findMaterialsBy(Map.of("id", material_id)).get(0).getUnit_price();
             total = total.add(BigDecimal.valueOf(unit_price * exportDetail.getQuantity()));
         }
-        jLabelTotal.setText(String.valueOf(total));
+        jLabelTotal.setText(VNString.currency(Double.parseDouble(total.toString())));
     }
 
     public void loadDataTable(Object[][] objects) {
@@ -430,7 +399,7 @@ public class AddExportGUI extends DialogFormDetail {
         model.setRowCount(0);
 
         if (objects.length == 0) {
-            jLabelTotal.setText("0.0");
+            jLabelTotal.setText(VNString.currency(0));
             return;
         }
 
@@ -476,50 +445,5 @@ public class AddExportGUI extends DialogFormDetail {
             object = Arrays.copyOfRange(object, 0, 10);
             model.addRow(object);
         }
-    }
-
-    private void txtSearchMouseClicked(MouseEvent evt) {
-        if (search.getItemSize() > 0 && !txtSearch.getText().isEmpty()) {
-            menu.show(txtSearch, 0, txtSearch.getHeight());
-            search.clearSelected();
-        }
-    }
-
-    private List<DataSearch> search(String text) {
-        List<DataSearch> list = new ArrayList<>();
-        List<Material> materials = new MaterialBLL().findMaterials("name", text);
-        for (Material m : materials) {
-            if (list.size() == 7)
-                break;
-            list.add(new DataSearch(m.getName()));
-        }
-        return list;
-    }
-
-    private void txtSearchKeyReleased(KeyEvent evt) {
-        if (evt.getKeyCode() != KeyEvent.VK_UP && evt.getKeyCode() != KeyEvent.VK_DOWN && evt.getKeyCode() != KeyEvent.VK_ENTER) {
-            String text = txtSearch.getText().trim().toLowerCase();
-            search.setData(search(text));
-            if (search.getItemSize() > 0 && !txtSearch.getText().isEmpty()) {
-                menu.show(txtSearch, 0, txtSearch.getHeight());
-                menu.setPopupSize(menu.getWidth(), (search.getItemSize() * 35) + 2);
-            } else {
-                menu.setVisible(false);
-            }
-        }
-    }
-
-    private void txtSearchKeyPressed(KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_UP) {
-            search.keyUp();
-        } else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
-            search.keyDown();
-        } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            String text = search.getSelectedText();
-            txtSearch.setText(text);
-
-        }
-        menu.setVisible(false);
-
     }
 }

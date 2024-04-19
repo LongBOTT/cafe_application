@@ -152,7 +152,7 @@ public class EditStaffGUI extends DialogForm {
                                 return;
                             }
                             if (changeRole) {
-                                CreateWorkScheduleGUI createWorkScheduleGUI = (CreateWorkScheduleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModulePayrollGUI];
+                                CreateWorkScheduleGUI createWorkScheduleGUI = (CreateWorkScheduleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModuleCreateWorkScheduleGUI];
                                 createWorkScheduleGUI.refresh();
                             }
                             setVisible(true);
