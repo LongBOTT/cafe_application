@@ -365,7 +365,7 @@ public class EditWorkScheduleGUI extends DialogForm {
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            CreateWorkScheduleGUI createWorkScheduleGUI = (CreateWorkScheduleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModulePayrollGUI];
+            CreateWorkScheduleGUI createWorkScheduleGUI = (CreateWorkScheduleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModuleCreateWorkScheduleGUI];
             createWorkScheduleGUI.refresh();
             dispose();
         } else {
@@ -383,7 +383,7 @@ public class EditWorkScheduleGUI extends DialogForm {
             if (result.getKey()) {
                 JOptionPane.showMessageDialog(null, result.getValue(),
                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                CreateWorkScheduleGUI createWorkScheduleGUI = (CreateWorkScheduleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModulePayrollGUI];
+                CreateWorkScheduleGUI createWorkScheduleGUI = (CreateWorkScheduleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModuleCreateWorkScheduleGUI];
                 createWorkScheduleGUI.refresh();
                 dispose();
             } else {

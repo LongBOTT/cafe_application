@@ -31,12 +31,12 @@ public class Export_DetailBLL extends Manager<Export_Detail> {
     }
 
     public Pair<Boolean, String> addExport_Detail(Export_Detail exportDetail) {
-        Pair<Boolean, String> result;
+//        Pair<Boolean, String> result;
 
-        result = exists(exportDetail);
-        if (result.getKey()) {
-            return new Pair<>(false, result.getValue());
-        }
+//        result = exists(exportDetail);
+//        if (result.getKey()) {
+//            return new Pair<>(false, result.getValue());
+//        }
 
         if (exportDetailDAL.addExport_Detail(exportDetail) == 0)
             return new Pair<>(false, "Xuất nguyên liệu không thành công.");
@@ -45,12 +45,14 @@ public class Export_DetailBLL extends Manager<Export_Detail> {
         shipment.setRemain(shipment.getRemain() - exportDetail.getQuantity());
         new ShipmentBLL().updateShipment(shipment);
 
+        Material oldMaterial = new MaterialBLL().findMaterialsBy(Map.of("id", shipment.getMaterial_id())).get(0);
+        Material newMaterial = new MaterialBLL().findMaterialsBy(Map.of("id", shipment.getMaterial_id())).get(0);
+        newMaterial.setRemain_wearhouse(newMaterial.getRemain_wearhouse() - exportDetail.getQuantity());
+
         if (exportDetail.getReason().equals("Bán")) {
-            Material oldMaterial = new MaterialBLL().findMaterialsBy(Map.of("id", shipment.getMaterial_id())).get(0);
-            Material newMaterial = oldMaterial;
             newMaterial.setRemain(newMaterial.getRemain() + exportDetail.getQuantity());
-            new MaterialBLL().updateMaterial(newMaterial, oldMaterial);
         }
+        new MaterialBLL().updateMaterial(newMaterial, oldMaterial);
         return new Pair<>(true, "Xuất nguyên liệu thành công.");
     }
 
