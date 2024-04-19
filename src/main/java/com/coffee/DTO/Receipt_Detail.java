@@ -1,5 +1,7 @@
 package com.coffee.DTO;
 
+import com.coffee.utils.VNString;
+
 public class Receipt_Detail {
     private int receipt_id;
     private int product_id;
@@ -64,6 +66,6 @@ public class Receipt_Detail {
                 product_id + " | " +
                 size + " | " +
                 quantity + " | " +
-                price;
+                VNString.currency(price);
     }
 }

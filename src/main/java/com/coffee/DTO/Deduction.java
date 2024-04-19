@@ -1,5 +1,7 @@
 package com.coffee.DTO;
 
+import com.coffee.utils.VNString;
+
 public class Deduction {
     private int id;
     private String name;
@@ -52,7 +54,7 @@ public class Deduction {
     public String toString() {
         return id + " | " +
                 name + " | " +
-                deduction_amount + " | " +
+                VNString.currency(deduction_amount) + " | " +
                 deduction_type;
     }
 }

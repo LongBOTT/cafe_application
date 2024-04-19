@@ -25,17 +25,17 @@ import java.util.List;
 import static com.coffee.utils.Resource.chooseExcelFile;
 
 public class CreateWorkScheduleGUI extends Layout1 {
-    private static JLabel jLabelDateWork;
+    private JLabel jLabelDateWork;
     private JLabel iconNext;
     private JLabel iconPrev;
     private List<Function> functions;
-    private static WorkSchedulePanel workSchedulePanelManager;
-    private static WorkSchedulePanel workSchedulePanelStaffSale;
-    private static WorkSchedulePanel workSchedulePanelStaffWarehouse;
+    private WorkSchedulePanel workSchedulePanelManager;
+    private WorkSchedulePanel workSchedulePanelStaffSale;
+    private WorkSchedulePanel workSchedulePanelStaffWarehouse;
     private boolean edit = false;
     private boolean remove = false;
-    private static Date today;
-    private static List<Date> weekDates;
+    private Date today;
+    private List<Date> weekDates;
 
     public CreateWorkScheduleGUI() {
         super();
@@ -44,6 +44,8 @@ public class CreateWorkScheduleGUI extends Layout1 {
     }
 
     private void init() {
+        SearchPanel.setPreferredSize(new Dimension(400, 50));
+        FunctionPanel.setPreferredSize(new Dimension(750, 50));
         jLabelDateWork = new JLabel();
         iconNext = new JLabel(new FlatSVGIcon("icon/next.svg"));
         iconPrev = new JLabel(new FlatSVGIcon("icon/previous.svg"));
@@ -72,7 +74,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
         SearchPanel.add(iconPrev);
         jPanelDate.setLayout(new BorderLayout());
         jPanelDate.setBackground(Color.white);
-        jPanelDate.setPreferredSize(new Dimension(350, 40));
+        jPanelDate.setPreferredSize(new Dimension(200, 40));
         SearchPanel.add(jPanelDate);
 
         jLabelDateWork.setFont(new Font("Lexend", Font.BOLD, 15));
@@ -174,6 +176,19 @@ public class CreateWorkScheduleGUI extends Layout1 {
         panelPDF.setIcon(new FlatSVGIcon("icon/export.svg"));
         roundedPanelPDF.add(panelPDF);
 
+        RoundedPanel roundedPaneChamCong = new RoundedPanel();
+        roundedPaneChamCong.setLayout(new GridBagLayout());
+        roundedPaneChamCong.setPreferredSize(new Dimension(150, 40));
+        roundedPaneChamCong.setBackground(new Color(1, 120, 220));
+        roundedPaneChamCong.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        FunctionPanel.add(roundedPaneChamCong);
+
+        JLabel panelChamCong = new JLabel("Chấm Công Excel");
+        panelChamCong.setForeground(Color.white);
+        panelChamCong.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        panelChamCong.setIcon(new FlatSVGIcon("icon/write-svgrepo-com.svg"));
+        roundedPaneChamCong.add(panelChamCong);
+
         bottom.setBackground(Color.white);
         bottom.setLayout(new FlowLayout(FlowLayout.LEFT));
 
@@ -241,7 +256,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
         return weekDates;
     }
 
-    private static void loadDate() {
+    public void loadDate() {
         weekDates = getWeekDatesContaining(today);
         String date = new SimpleDateFormat("dd/MM/yyyy").format(weekDates.get(0)) +
                 " - " +
@@ -249,7 +264,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
         jLabelDateWork.setText(date);
     }
 
-    public static void refresh() {
+    public void refresh() {
         today = java.sql.Date.valueOf(LocalDate.now());
         loadDate();
         workSchedulePanelManager.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));

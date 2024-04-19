@@ -86,13 +86,15 @@ public class DetailReceiptGUI extends DialogFormDetail {
         dataTable.getColumnModel().getColumn(1).setMaxWidth(50);
         dataTable.getColumnModel().getColumn(2).setMaxWidth(50);
         dataTable.getColumnModel().getColumn(3).setMaxWidth(250);
+        dataTable.setRowHeight(25);
+
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         contentmid.add(scrollPane, BorderLayout.CENTER);
 
         loadDataTable(receipt_detailBLL.getData(receipt_detailBLL.findReceipt_DetailsBy(Map.of("receipt_id", receipt.getId()))));
 
-        for (String string : new String[]{"Tổng Tiền", "Tiền Nhận", "Tiền Thối"}) {
+        for (String string : new String[]{"Tổng Tiền", "Tiền Nhận", "Tiền Thừa"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
@@ -110,7 +112,7 @@ public class DetailReceiptGUI extends DialogFormDetail {
                 String total = Double.toString(receipt.getReceived());
                 textField.setText(total);
             }
-            if (string.equals("Tiền Thối")) {
+            if (string.equals("Tiền Thừa")) {
                 String total = Double.toString(receipt.getExcess());
                 textField.setText(total);
             }

@@ -150,6 +150,8 @@ public class EditProductGUI extends DialogFormDetail_1 {
 
         JButton btnImage = new JButton("Thêm ảnh");
         btnImage.setPreferredSize(new Dimension(100, 30));
+        btnImage.setBackground(new Color(1, 120, 220));
+        btnImage.setForeground(Color.white);
         btnImage.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -538,7 +540,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
 
         JButton btnThem = new JButton("Thêm");
         btnThem.setPreferredSize(new Dimension(80, 30));
-        btnThem.setBackground(new Color(0, 182, 62));
+        btnThem.setBackground(new Color(1, 120, 220));
         btnThem.setFont(new Font("Public Sans", Font.BOLD, 16));
         btnThem.setForeground(Color.WHITE);
         btnThem.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -554,8 +556,8 @@ public class EditProductGUI extends DialogFormDetail_1 {
         containerInforMaterial.add(btnThem);
 
         JButton buttonCancel = new JButton("Huỷ");
-        buttonCancel.setBackground(new Color(213, 50, 77));
-        buttonCancel.setForeground(new Color(255, 255, 255));
+//        buttonCancel.setBackground(new Color(213, 50, 77));
+//        buttonCancel.setForeground(new Color(255, 255, 255));
         buttonCancel.setPreferredSize(new Dimension(100, 35));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -579,7 +581,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
         containerButton.add(buttonCancel);
 
         JButton buttonUpdate = new JButton("Cập nhật");
-        buttonUpdate.setBackground(new Color(65, 149, 67));
+        buttonUpdate.setBackground(new Color(1, 120, 220));
         buttonUpdate.setForeground(new Color(255, 255, 255));
         buttonUpdate.setPreferredSize(new Dimension(100, 35));
         buttonUpdate.setFont(new Font("Public Sans", Font.BOLD, 15));

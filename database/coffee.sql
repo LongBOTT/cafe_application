@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 18, 2024 lúc 04:06 PM
--- Phiên bản máy phục vụ: 10.4.24-MariaDB
--- Phiên bản PHP: 8.1.6
+-- Host: 127.0.0.1
+-- Generation Time: Apr 19, 2024 at 04:05 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Cơ sở dữ liệu: `cafe`
+-- Database: `cafe`
 --
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `account`
+-- Table structure for table `account`
 --
 
 CREATE TABLE `account` (
@@ -32,10 +32,10 @@ CREATE TABLE `account` (
   `username` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `staff_id` bigint(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `account`
+-- Dumping data for table `account`
 --
 
 INSERT INTO `account` (`id`, `username`, `password`, `staff_id`) VALUES
@@ -48,7 +48,7 @@ INSERT INTO `account` (`id`, `username`, `password`, `staff_id`) VALUES
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `bonus`
+-- Table structure for table `bonus`
 --
 
 CREATE TABLE `bonus` (
@@ -56,10 +56,10 @@ CREATE TABLE `bonus` (
   `name` varchar(255) DEFAULT NULL,
   `bonus_amount` double DEFAULT NULL,
   `bonus_type` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `bonus`
+-- Dumping data for table `bonus`
 --
 
 INSERT INTO `bonus` (`id`, `name`, `bonus_amount`, `bonus_type`) VALUES
@@ -72,17 +72,17 @@ INSERT INTO `bonus` (`id`, `name`, `bonus_amount`, `bonus_type`) VALUES
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `decentralization`
+-- Table structure for table `decentralization`
 --
 
 CREATE TABLE `decentralization` (
   `role_id` bigint(20) NOT NULL,
   `module_id` bigint(20) NOT NULL,
   `function_id` bigint(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `decentralization`
+-- Dumping data for table `decentralization`
 --
 
 INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
@@ -99,6 +99,8 @@ INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 (0, 6, 1),
 (0, 6, 2),
 (0, 6, 3),
+(0, 6, 5),
+(0, 6, 6),
 (0, 7, 1),
 (0, 7, 5),
 (0, 7, 6),
@@ -154,7 +156,11 @@ INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 (1, 15, 2),
 (1, 15, 3),
 (1, 15, 4),
+(2, 1, 1),
 (2, 2, 1),
+(2, 2, 2),
+(2, 2, 3),
+(2, 2, 4),
 (2, 2, 5),
 (2, 2, 6),
 (2, 3, 1),
@@ -163,28 +169,43 @@ INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 (2, 6, 1),
 (2, 6, 2),
 (2, 6, 3),
+(2, 6, 5),
+(2, 6, 6),
 (2, 7, 1),
 (2, 7, 5),
 (2, 7, 6),
 (2, 8, 1),
+(2, 8, 2),
 (2, 8, 5),
 (2, 8, 6),
 (2, 9, 1),
+(2, 9, 2),
 (2, 9, 5),
 (2, 9, 6),
 (2, 10, 1),
 (2, 10, 2),
 (2, 10, 3),
 (2, 10, 4),
+(2, 10, 5),
+(2, 10, 6),
 (2, 11, 1),
+(2, 11, 2),
+(2, 11, 3),
+(2, 11, 4),
+(2, 11, 5),
+(2, 11, 6),
 (2, 12, 1),
 (2, 12, 2),
 (2, 12, 3),
 (2, 12, 4),
+(2, 12, 5),
+(2, 12, 6),
 (2, 13, 1),
 (2, 13, 2),
 (2, 13, 3),
 (2, 13, 4),
+(2, 16, 1),
+(2, 17, 1),
 (2, 18, 1),
 (2, 18, 2),
 (2, 18, 3),
@@ -227,7 +248,7 @@ INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `deduction`
+-- Table structure for table `deduction`
 --
 
 CREATE TABLE `deduction` (
@@ -235,10 +256,10 @@ CREATE TABLE `deduction` (
   `name` varchar(255) DEFAULT NULL,
   `deduction_amount` double DEFAULT NULL,
   `deduction_type` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `deduction`
+-- Dumping data for table `deduction`
 --
 
 INSERT INTO `deduction` (`id`, `name`, `deduction_amount`, `deduction_type`) VALUES
@@ -251,7 +272,7 @@ INSERT INTO `deduction` (`id`, `name`, `deduction_amount`, `deduction_type`) VAL
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `discount`
+-- Table structure for table `discount`
 --
 
 CREATE TABLE `discount` (
@@ -261,10 +282,10 @@ CREATE TABLE `discount` (
   `end_date` date DEFAULT NULL,
   `type` bit(1) NOT NULL,
   `status` bit(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `discount`
+-- Dumping data for table `discount`
 --
 
 INSERT INTO `discount` (`id`, `name`, `start_date`, `end_date`, `type`, `status`) VALUES
@@ -276,7 +297,7 @@ INSERT INTO `discount` (`id`, `name`, `start_date`, `end_date`, `type`, `status`
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `discount_detail`
+-- Table structure for table `discount_detail`
 --
 
 CREATE TABLE `discount_detail` (
@@ -286,10 +307,10 @@ CREATE TABLE `discount_detail` (
   `quantity` int(11) NOT NULL,
   `percent` double DEFAULT NULL,
   `discountBill` double NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `discount_detail`
+-- Dumping data for table `discount_detail`
 --
 
 INSERT INTO `discount_detail` (`discount_id`, `product_id`, `Size`, `quantity`, `percent`, `discountBill`) VALUES
@@ -305,7 +326,7 @@ INSERT INTO `discount_detail` (`discount_id`, `product_id`, `Size`, `quantity`, 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `export_detail`
+-- Table structure for table `export_detail`
 --
 
 CREATE TABLE `export_detail` (
@@ -313,10 +334,10 @@ CREATE TABLE `export_detail` (
   `shipment_id` bigint(20) NOT NULL,
   `quantity` double DEFAULT NULL,
   `reason` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `export_detail`
+-- Dumping data for table `export_detail`
 --
 
 INSERT INTO `export_detail` (`export_id`, `shipment_id`, `quantity`, `reason`) VALUES
@@ -332,7 +353,7 @@ INSERT INTO `export_detail` (`export_id`, `shipment_id`, `quantity`, `reason`) V
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `export_note`
+-- Table structure for table `export_note`
 --
 
 CREATE TABLE `export_note` (
@@ -340,10 +361,10 @@ CREATE TABLE `export_note` (
   `staff_id` bigint(20) DEFAULT NULL,
   `total` double DEFAULT NULL,
   `invoice_date` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `export_note`
+-- Dumping data for table `export_note`
 --
 
 INSERT INTO `export_note` (`id`, `staff_id`, `total`, `invoice_date`) VALUES
@@ -353,16 +374,16 @@ INSERT INTO `export_note` (`id`, `staff_id`, `total`, `invoice_date`) VALUES
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `function`
+-- Table structure for table `function`
 --
 
 CREATE TABLE `function` (
   `id` bigint(20) NOT NULL,
   `name` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `function`
+-- Dumping data for table `function`
 --
 
 INSERT INTO `function` (`id`, `name`) VALUES
@@ -376,7 +397,7 @@ INSERT INTO `function` (`id`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `import_note`
+-- Table structure for table `import_note`
 --
 
 CREATE TABLE `import_note` (
@@ -384,10 +405,10 @@ CREATE TABLE `import_note` (
   `staff_id` bigint(20) DEFAULT NULL,
   `total` double DEFAULT NULL,
   `received_date` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `import_note`
+-- Dumping data for table `import_note`
 --
 
 INSERT INTO `import_note` (`id`, `staff_id`, `total`, `received_date`) VALUES
@@ -399,12 +420,13 @@ INSERT INTO `import_note` (`id`, `staff_id`, `total`, `received_date`) VALUES
 (6, 4, 20000, '2024-04-11'),
 (7, 4, 400000, '2024-04-14'),
 (8, 4, 20000, '2024-04-14'),
-(9, 4, 400000, '2024-04-14');
+(9, 4, 400000, '2024-04-14'),
+(10, 2, 960000, '2024-04-19');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `leave_of_absence_form`
+-- Table structure for table `leave_of_absence_form`
 --
 
 CREATE TABLE `leave_of_absence_form` (
@@ -415,10 +437,10 @@ CREATE TABLE `leave_of_absence_form` (
   `end_date` date DEFAULT NULL,
   `reason` varchar(255) DEFAULT NULL,
   `status` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `leave_of_absence_form`
+-- Dumping data for table `leave_of_absence_form`
 --
 
 INSERT INTO `leave_of_absence_form` (`id`, `staff_id`, `date`, `start_date`, `end_date`, `reason`, `status`) VALUES
@@ -427,7 +449,7 @@ INSERT INTO `leave_of_absence_form` (`id`, `staff_id`, `date`, `start_date`, `en
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `material`
+-- Table structure for table `material`
 --
 
 CREATE TABLE `material` (
@@ -439,71 +461,72 @@ CREATE TABLE `material` (
   `unit` varchar(255) DEFAULT NULL,
   `unit_price` double DEFAULT NULL,
   `sell` bit(1) DEFAULT NULL,
-  `deleted` bit(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `deleted` bit(1) DEFAULT NULL,
+  `remain_wearhouse` double DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `material`
+-- Dumping data for table `material`
 --
 
-INSERT INTO `material` (`id`, `name`, `remain`, `min_remain`, `max_remain`, `unit`, `unit_price`, `sell`, `deleted`) VALUES
-(3, 'Cà phê bột truyền thống', 60, 50, 100, 'kg', 20000, b'0', b'0'),
-(4, 'Đường túi', 50, 50, 100, 'Túi', 20000, b'0', b'0'),
-(5, 'Bánh cookie', 100, 50, 100, 'Cái', 20000, b'0', b'0'),
-(6, 'Đá viên', 20000, 50, 100, 'g', 20000, b'0', b'0'),
-(7, 'Sữa đặc', 100, 50, 100, 'ml', 20000, b'0', b'0'),
-(8, 'Nước nóng', 100, 50, 100, 'ml', 20000, b'0', b'0'),
-(9, 'Syrup hạnh nhân', 100, 50, 100, 'ml', 20000, b'0', b'0'),
-(10, 'Sữa tươi', 100, 50, 100, 'ml', 20000, b'0', b'0'),
-(11, 'Sữa Béo (NDC)', 100, 50, 100, 'ml', 20000, b'0', b'0'),
-(12, 'Thạch Cà Phê', 500, 50, 100, 'g', 20000, b'0', b'0'),
-(13, 'Milk foam', 200, 50, 100, 'ml', 20000, b'0', b'0'),
-(14, 'Bột chocolate trang trí', 50, 50, 100, 'g', 20000, b'0', b'0'),
-(15, 'Sốt chocolate', 200, 50, 100, 'ml', 20000, b'0', b'0'),
-(16, 'Cà phê đen pha sẵn', 500, 50, 100, 'ml', 20000, b'0', b'0'),
-(18, 'Đường nước ', 100, 50, 100, 'g', 20000, b'0', b'0'),
-(19, 'Trà đào pha sẵn ', 100, 50, 100, 'ml', 20000, b'0', b'0'),
-(20, 'Đào lát', 100, 50, 100, 'g', 20000, b'0', b'0'),
-(21, 'Hạt sen', 200, 50, 100, 'g', 20000, b'0', b'0'),
-(22, 'Củ năng', 500, 50, 100, 'g', 20000, b'0', b'0'),
-(23, 'Syrup vải', 200, 50, 100, 'ml', 20000, b'0', b'0'),
-(24, 'Nước vải ngâm', 500, 50, 100, 'ml', 20000, b'0', b'0'),
-(25, 'Vải trái', 200, 50, 100, 'trái', 20000, b'0', b'0'),
-(26, 'Thạch vải ', 100, 50, 100, 'g', 20000, b'0', b'0'),
-(27, 'Bột freeze mix', 200, 50, 100, 'g', 20000, b'0', b'0'),
-(28, 'Whipping cream ', 50, 50, 100, 'g', 20000, b'0', b'0'),
-(29, 'Bột cà phê espresso', 0, 50, 100, 'lít', 20000, b'0', b'0'),
-(30, 'Bột green tea mix mới ', 100, 50, 100, 'g', 20000, b'0', b'0'),
-(31, 'Thạch trà xanh ', 500, 50, 100, 'g', 20000, b'0', b'0'),
-(32, 'Bột trà xanh trang trí', 200, 50, 100, 'g', 20000, b'0', b'0'),
-(33, 'Hỗn hợp sữa pha sẵn', 500, 50, 100, 'ml', 20000, b'0', b'0'),
-(34, 'Bột chocolate ', 200, 50, 100, 'g', 20000, b'0', b'0'),
-(35, 'Sốt chocolate trang trí', 50, 50, 100, 'ml', 20000, b'0', b'0'),
-(36, 'Cà phê sữa pha sẵn', 500, 50, 100, 'ml', 20000, b'0', b'0'),
-(37, 'Thạch cà phê', 300, 50, 100, 'g', 20000, b'0', b'0'),
-(38, 'Trà oolong pha sẵn ', 200, 50, 100, 'ml', 20000, b'0', b'0'),
-(39, 'Thạch Đào', 200, 50, 100, 'g', 20000, b'0', b'0'),
-(40, 'Syrup Đào', 100, 50, 100, 'ml', 20000, b'0', b'0'),
-(41, 'Syrup sả', 100, 50, 100, 'ml', 20000, b'0', b'0'),
-(42, 'Sốt caramel', 100, 50, 100, 'ml', 20000, b'0', b'0'),
-(43, 'Bánh Chuối', 10, 50, 100, 'cái', 20000, b'0', b'0'),
-(44, 'Bánh Su Kem', 12, 50, 100, 'cái', 20000, b'0', b'0'),
-(45, 'Phô Mai Chanh Dây', 15, 50, 100, 'cái', 20000, b'0', b'0'),
-(46, 'Phô Mai Trà Xanh', 10, 50, 100, 'cái', 20000, b'0', b'0');
+INSERT INTO `material` (`id`, `name`, `remain`, `min_remain`, `max_remain`, `unit`, `unit_price`, `sell`, `deleted`, `remain_wearhouse`) VALUES
+(3, 'Cà phê bột truyền thống', 60, 50, 100, 'kg', 20000, b'0', b'0', 80),
+(4, 'Đường túi', 50, 50, 100, 'Túi', 20000, b'0', b'0', 30),
+(5, 'Bánh cookie', 100, 50, 100, 'Cái', 20000, b'0', b'0', 30),
+(6, 'Đá viên', 100, 50, 100, 'g', 20000, b'0', b'0', 20),
+(7, 'Sữa đặc', 100, 50, 100, 'ml', 20000, b'0', b'0', 31),
+(8, 'Nước nóng', 100, 50, 100, 'ml', 20000, b'0', b'0', 0),
+(9, 'Syrup hạnh nhân', 100, 50, 100, 'ml', 20000, b'0', b'0', 10),
+(10, 'Sữa tươi', 100, 50, 100, 'ml', 20000, b'0', b'0', 0),
+(11, 'Sữa Béo (NDC)', 100, 50, 100, 'ml', 20000, b'0', b'0', 0),
+(12, 'Thạch Cà Phê', 500, 50, 100, 'g', 20000, b'0', b'0', 0),
+(13, 'Milk foam', 200, 50, 100, 'ml', 20000, b'0', b'0', 0),
+(14, 'Bột chocolate trang trí', 50, 50, 100, 'g', 20000, b'0', b'0', 0),
+(15, 'Sốt chocolate', 200, 50, 100, 'ml', 20000, b'0', b'0', 0),
+(16, 'Cà phê đen pha sẵn', 500, 50, 100, 'ml', 20000, b'0', b'0', 0),
+(18, 'Đường nước ', 100, 50, 100, 'g', 20000, b'0', b'0', 0),
+(19, 'Trà đào pha sẵn ', 100, 50, 100, 'ml', 20000, b'0', b'0', 0),
+(20, 'Đào lát', 100, 50, 100, 'g', 20000, b'0', b'0', 0),
+(21, 'Hạt sen', 200, 50, 100, 'g', 20000, b'0', b'0', 0),
+(22, 'Củ năng', 500, 50, 100, 'g', 20000, b'0', b'0', 0),
+(23, 'Syrup vải', 200, 50, 100, 'ml', 20000, b'0', b'0', 0),
+(24, 'Nước vải ngâm', 500, 50, 100, 'ml', 20000, b'0', b'0', 0),
+(25, 'Vải trái', 200, 50, 100, 'trái', 20000, b'0', b'0', 0),
+(26, 'Thạch vải ', 100, 50, 100, 'g', 20000, b'0', b'0', 0),
+(27, 'Bột freeze mix', 200, 50, 100, 'g', 20000, b'0', b'0', 0),
+(28, 'Whipping cream ', 50, 50, 100, 'g', 20000, b'0', b'0', 0),
+(29, 'Bột cà phê espresso', 0, 50, 100, 'lít', 20000, b'0', b'0', 0),
+(30, 'Bột green tea mix mới ', 100, 50, 100, 'g', 20000, b'0', b'0', 0),
+(31, 'Thạch trà xanh ', 500, 50, 100, 'g', 20000, b'0', b'0', 0),
+(32, 'Bột trà xanh trang trí', 200, 50, 100, 'g', 20000, b'0', b'0', 0),
+(33, 'Hỗn hợp sữa pha sẵn', 500, 50, 100, 'ml', 20000, b'0', b'0', 0),
+(34, 'Bột chocolate ', 200, 50, 100, 'g', 20000, b'0', b'0', 0),
+(35, 'Sốt chocolate trang trí', 50, 50, 100, 'ml', 20000, b'0', b'0', 0),
+(36, 'Cà phê sữa pha sẵn', 500, 50, 100, 'ml', 20000, b'0', b'0', 0),
+(37, 'Thạch cà phê', 300, 50, 100, 'g', 20000, b'0', b'0', 0),
+(38, 'Trà oolong pha sẵn ', 200, 50, 100, 'ml', 20000, b'0', b'0', 0),
+(39, 'Thạch Đào', 200, 50, 100, 'g', 20000, b'0', b'0', 0),
+(40, 'Syrup Đào', 100, 50, 100, 'ml', 20000, b'0', b'0', 0),
+(41, 'Syrup sả', 100, 50, 100, 'ml', 20000, b'0', b'0', 0),
+(42, 'Sốt caramel', 100, 50, 100, 'ml', 20000, b'0', b'0', 0),
+(43, 'Bánh Chuối', 10, 50, 100, 'cái', 20000, b'0', b'0', 0),
+(44, 'Bánh Su Kem', 12, 50, 100, 'cái', 20000, b'0', b'0', 0),
+(45, 'Phô Mai Chanh Dây', 15, 50, 100, 'cái', 20000, b'0', b'0', 0),
+(46, 'Phô Mai Trà Xanh', 10, 50, 100, 'cái', 20000, b'0', b'0', 0);
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `module`
+-- Table structure for table `module`
 --
 
 CREATE TABLE `module` (
   `id` bigint(20) NOT NULL,
   `name` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `module`
+-- Dumping data for table `module`
 --
 
 INSERT INTO `module` (`id`, `name`) VALUES
@@ -530,7 +553,7 @@ INSERT INTO `module` (`id`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `payroll`
+-- Table structure for table `payroll`
 --
 
 CREATE TABLE `payroll` (
@@ -542,19 +565,20 @@ CREATE TABLE `payroll` (
   `total_salary` double DEFAULT NULL,
   `paid` double DEFAULT NULL,
   `debt` double DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `payroll`
+-- Dumping data for table `payroll`
 --
 
 INSERT INTO `payroll` (`id`, `name`, `entry_date`, `month`, `year`, `total_salary`, `paid`, `debt`) VALUES
-(2, 'Bảng lương 01/03/2024 - 31/03/2024', '2024-03-28', 3, 2024, 2941750, 715000, 2226750);
+(2, 'Bảng lương 01/03/2024 - 31/03/2024', '2024-03-28', 3, 2024, 2941750, 715000, 2226750),
+(3, 'Bảng lương 01/05/2024 - 31/05/2024', '2024-04-19', 5, 2024, 0, 0, 0);
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `payroll_detail`
+-- Table structure for table `payroll_detail`
 --
 
 CREATE TABLE `payroll_detail` (
@@ -567,10 +591,10 @@ CREATE TABLE `payroll_detail` (
   `status` bit(1) DEFAULT NULL,
   `role_id` bigint(20) DEFAULT NULL,
   `entry_date` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `payroll_detail`
+-- Dumping data for table `payroll_detail`
 --
 
 INSERT INTO `payroll_detail` (`payroll_id`, `staff_id`, `hours_amount`, `bonus_amount`, `deduction_amount`, `salary_amount`, `status`, `role_id`, `entry_date`) VALUES
@@ -582,7 +606,7 @@ INSERT INTO `payroll_detail` (`payroll_id`, `staff_id`, `hours_amount`, `bonus_a
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `product`
+-- Table structure for table `product`
 --
 
 CREATE TABLE `product` (
@@ -594,65 +618,65 @@ CREATE TABLE `product` (
   `price` double DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL,
   `deleted` bit(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `product`
+-- Dumping data for table `product`
 --
 
 INSERT INTO `product` (`id`, `name`, `size`, `category`, `capital_price`, `price`, `image`, `deleted`) VALUES
 (0, 'default', '0', '0', 0, 0, '0', b'1'),
 (1, 'Phin Đen Đá', 'L', 'CÀ PHÊ PHIN', 39, 39000, 'SP01', b'0'),
-(1, 'Phin Đen Đá', 'M', 'CÀ PHÊ PHIN', 35, 35, 'SP01', b'0'),
-(1, 'Phin Đen Đá', 'S', 'CÀ PHÊ PHIN', 29, 29, 'SP01', b'0'),
-(2, 'Phin Sữa Đá', 'L', 'CÀ PHÊ PHIN', 45, 45, 'SP02', b'0'),
-(2, 'Phin Sữa Đá', 'M', 'CÀ PHÊ PHIN', 39, 39, 'SP02', b'0'),
-(2, 'Phin Sữa Đá', 'S', 'CÀ PHÊ PHIN', 29, 29, 'SP02', b'0'),
-(3, 'Bạc Xỉu', 'L', 'CÀ PHÊ PHIN', 45, 45, 'SP03', b'0'),
-(3, 'Bạc Xỉu', 'M', 'CÀ PHÊ PHIN', 39, 39, 'SP03', b'0'),
-(3, 'Bạc Xỉu', 'S', 'CÀ PHÊ PHIN', 29, 29, 'SP03', b'0'),
-(4, 'Trà Sen Vàng', 'L', 'TRÀ', 65, 65, 'SP04', b'0'),
-(4, 'Trà Sen Vàng', 'M', 'TRÀ', 55, 55, 'SP04', b'0'),
-(4, 'Trà Sen Vàng', 'S', 'TRÀ', 45, 45, 'SP04', b'0'),
-(5, 'Trà Thạch Đào', 'L', 'TRÀ', 65, 65, 'SP05', b'0'),
-(5, 'Trà Thạch Đào', 'M', 'TRÀ', 55, 55, 'SP05', b'0'),
-(5, 'Trà Thạch Đào', 'S', 'TRÀ', 45, 45, 'SP05', b'0'),
-(6, 'Trà Thanh Đào', 'L', 'TRÀ', 65, 65, 'SP06', b'0'),
-(6, 'Trà Thanh Đào', 'M', 'TRÀ', 55, 55, 'SP06', b'0'),
-(6, 'Trà Thanh Đào', 'S', 'TRÀ', 45, 45, 'SP06', b'0'),
-(7, 'Trà Thạch Vãi', 'L', 'TRÀ', 65, 65, 'SP07', b'0'),
-(7, 'Trà Thạch Vãi', 'M', 'TRÀ', 55, 55, 'SP07', b'0'),
-(7, 'Trà Thạch Vãi', 'S', 'TRÀ', 45, 45, 'SP07', b'0'),
-(8, 'Bánh Chuối', '0', 'BÁNH', 29, 29, 'SP08', b'0'),
-(9, 'Bánh Su Kem', '0', 'BÁNH', 29, 29, 'SP09', b'0'),
-(10, 'Phô Mai Chanh Dây', '0', 'BÁNH', 29, 29, 'SP10', b'0'),
-(11, 'Phô Mai Trà Xanh', '0', 'BÁNH', 29, 29, 'SP11', b'0'),
-(12, 'PhinDi Hạnh Nhân', 'L', 'PHINDI', 55, 55, 'SP12', b'0'),
-(12, 'PhinDi Hạnh Nhân', 'M', 'PHINDI', 49, 49, 'SP12', b'0'),
-(12, 'PhinDi Hạnh Nhân', 'S', 'PHINDI', 45, 45, 'SP12', b'0'),
-(13, 'PhinDi Kem Sữa', 'L', 'PHINDI', 55, 55, 'SP13', b'0'),
-(13, 'PhinDi Kem Sữa', 'M', 'PHINDI', 49, 49, 'SP13', b'0'),
-(13, 'PhinDi Kem Sữa', 'S', 'PHINDI', 45, 45, 'SP13', b'0'),
-(14, 'PhinDi Choco', 'L', 'PHINDI', 55, 55, 'SP14', b'0'),
-(14, 'PhinDi Choco', 'M', 'PHINDI', 49, 49, 'SP14', b'0'),
-(14, 'PhinDi Choco', 'S', 'PHINDI', 45, 45, 'SP14', b'0'),
-(15, 'Freeze Trà Xanh', 'L', 'FREEZE ', 69, 69, 'SP15', b'0'),
-(15, 'Freeze Trà Xanh', 'M', 'FREEZE', 65, 65, 'SP15', b'0'),
-(15, 'Freeze Trà Xanh', 'S', 'FREEZE', 55, 55, 'SP15', b'0'),
-(16, 'Caramel Phin Freeze', 'L', 'FREEZE', 69, 69, 'SP16', b'0'),
-(16, 'Caramel Phin Freeze', 'M', 'FREEZE', 65, 65, 'SP16', b'0'),
-(16, 'Caramel Phin Freeze', 'S', 'FREEZE', 55, 55, 'SP16', b'0'),
-(17, 'Freeze Sô-Cô-La', 'L', 'FREEZE', 69, 69, 'SP17', b'0'),
-(17, 'Freeze Sô-Cô-La', 'M', 'FREEZE', 65, 65, 'SP17', b'0'),
-(17, 'Freeze Sô-Cô-La', 'S', 'FREEZE', 55, 55, 'SP17', b'0'),
-(18, 'Classic Phin Freeze', 'L', 'FREEZE', 69, 69, 'SP18', b'0'),
-(18, 'Classic Phin Freeze', 'M', 'FREEZE', 65, 65, 'SP18', b'0'),
-(18, 'Classic Phin Freeze', 'S', 'FREEZE', 55, 55, 'SP18', b'0');
+(1, 'Phin Đen Đá', 'M', 'CÀ PHÊ PHIN', 35, 35000, 'SP01', b'0'),
+(1, 'Phin Đen Đá', 'S', 'CÀ PHÊ PHIN', 29, 29000, 'SP01', b'0'),
+(2, 'Phin Sữa Đá', 'L', 'CÀ PHÊ PHIN', 45, 45000, 'SP02', b'0'),
+(2, 'Phin Sữa Đá', 'M', 'CÀ PHÊ PHIN', 39, 39000, 'SP02', b'0'),
+(2, 'Phin Sữa Đá', 'S', 'CÀ PHÊ PHIN', 29, 29000, 'SP02', b'0'),
+(3, 'Bạc Xỉu', 'L', 'CÀ PHÊ PHIN', 45, 45000, 'SP03', b'0'),
+(3, 'Bạc Xỉu', 'M', 'CÀ PHÊ PHIN', 39, 39000, 'SP03', b'0'),
+(3, 'Bạc Xỉu', 'S', 'CÀ PHÊ PHIN', 29, 29000, 'SP03', b'0'),
+(4, 'Trà Sen Vàng', 'L', 'TRÀ', 65, 65000, 'SP04', b'0'),
+(4, 'Trà Sen Vàng', 'M', 'TRÀ', 55, 55000, 'SP04', b'0'),
+(4, 'Trà Sen Vàng', 'S', 'TRÀ', 45, 45000, 'SP04', b'0'),
+(5, 'Trà Thạch Đào', 'L', 'TRÀ', 65, 65000, 'SP05', b'0'),
+(5, 'Trà Thạch Đào', 'M', 'TRÀ', 55, 55000, 'SP05', b'0'),
+(5, 'Trà Thạch Đào', 'S', 'TRÀ', 45, 45000, 'SP05', b'0'),
+(6, 'Trà Thanh Đào', 'L', 'TRÀ', 65, 65000, 'SP06', b'0'),
+(6, 'Trà Thanh Đào', 'M', 'TRÀ', 55, 55000, 'SP06', b'0'),
+(6, 'Trà Thanh Đào', 'S', 'TRÀ', 45, 45000, 'SP06', b'0'),
+(7, 'Trà Thạch Vãi', 'L', 'TRÀ', 65, 65000, 'SP07', b'0'),
+(7, 'Trà Thạch Vãi', 'M', 'TRÀ', 55, 55000, 'SP07', b'0'),
+(7, 'Trà Thạch Vãi', 'S', 'TRÀ', 45, 45000, 'SP07', b'0'),
+(8, 'Bánh Chuối', '0', 'BÁNH', 29, 29000, 'SP08', b'0'),
+(9, 'Bánh Su Kem', '0', 'BÁNH', 29, 29000, 'SP09', b'0'),
+(10, 'Phô Mai Chanh Dây', '0', 'BÁNH', 29, 29000, 'SP10', b'0'),
+(11, 'Phô Mai Trà Xanh', '0', 'BÁNH', 29, 29000, 'SP11', b'0'),
+(12, 'PhinDi Hạnh Nhân', 'L', 'PHINDI', 55, 55000, 'SP12', b'0'),
+(12, 'PhinDi Hạnh Nhân', 'M', 'PHINDI', 49, 49000, 'SP12', b'0'),
+(12, 'PhinDi Hạnh Nhân', 'S', 'PHINDI', 45, 45000, 'SP12', b'0'),
+(13, 'PhinDi Kem Sữa', 'L', 'PHINDI', 55, 55000, 'SP13', b'0'),
+(13, 'PhinDi Kem Sữa', 'M', 'PHINDI', 49, 49000, 'SP13', b'0'),
+(13, 'PhinDi Kem Sữa', 'S', 'PHINDI', 45, 45000, 'SP13', b'0'),
+(14, 'PhinDi Choco', 'L', 'PHINDI', 55, 55000, 'SP14', b'0'),
+(14, 'PhinDi Choco', 'M', 'PHINDI', 49, 49000, 'SP14', b'0'),
+(14, 'PhinDi Choco', 'S', 'PHINDI', 45, 45000, 'SP14', b'0'),
+(15, 'Freeze Trà Xanh', 'L', 'FREEZE ', 69, 69000, 'SP15', b'0'),
+(15, 'Freeze Trà Xanh', 'M', 'FREEZE', 65, 65000, 'SP15', b'0'),
+(15, 'Freeze Trà Xanh', 'S', 'FREEZE', 55, 55000, 'SP15', b'0'),
+(16, 'Caramel Phin Freeze', 'L', 'FREEZE', 69, 69000, 'SP16', b'0'),
+(16, 'Caramel Phin Freeze', 'M', 'FREEZE', 65, 65000, 'SP16', b'0'),
+(16, 'Caramel Phin Freeze', 'S', 'FREEZE', 55, 55000, 'SP16', b'0'),
+(17, 'Freeze Sô-Cô-La', 'L', 'FREEZE', 69, 69000, 'SP17', b'0'),
+(17, 'Freeze Sô-Cô-La', 'M', 'FREEZE', 65, 65000, 'SP17', b'0'),
+(17, 'Freeze Sô-Cô-La', 'S', 'FREEZE', 55, 55000, 'SP17', b'0'),
+(18, 'Classic Phin Freeze', 'L', 'FREEZE', 69, 69000, 'SP18', b'0'),
+(18, 'Classic Phin Freeze', 'M', 'FREEZE', 65, 65000, 'SP18', b'0'),
+(18, 'Classic Phin Freeze', 'S', 'FREEZE', 55, 55000, 'SP18', b'0');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `receipt`
+-- Table structure for table `receipt`
 --
 
 CREATE TABLE `receipt` (
@@ -662,10 +686,10 @@ CREATE TABLE `receipt` (
   `invoice_date` date DEFAULT NULL,
   `received` double DEFAULT NULL,
   `excess` double DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `receipt`
+-- Dumping data for table `receipt`
 --
 
 INSERT INTO `receipt` (`id`, `staff_id`, `total`, `invoice_date`, `received`, `excess`) VALUES
@@ -674,7 +698,7 @@ INSERT INTO `receipt` (`id`, `staff_id`, `total`, `invoice_date`, `received`, `e
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `receipt_detail`
+-- Table structure for table `receipt_detail`
 --
 
 CREATE TABLE `receipt_detail` (
@@ -683,10 +707,10 @@ CREATE TABLE `receipt_detail` (
   `size` varchar(255) NOT NULL,
   `quantity` double DEFAULT NULL,
   `price` double DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `receipt_detail`
+-- Dumping data for table `receipt_detail`
 --
 
 INSERT INTO `receipt_detail` (`receipt_id`, `product_id`, `size`, `quantity`, `price`) VALUES
@@ -703,7 +727,7 @@ INSERT INTO `receipt_detail` (`receipt_id`, `product_id`, `size`, `quantity`, `p
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `recipe`
+-- Table structure for table `recipe`
 --
 
 CREATE TABLE `recipe` (
@@ -712,10 +736,10 @@ CREATE TABLE `recipe` (
   `quantity` double DEFAULT NULL,
   `size` varchar(255) NOT NULL,
   `unit` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `recipe`
+-- Dumping data for table `recipe`
 --
 
 INSERT INTO `recipe` (`product_id`, `material_id`, `quantity`, `size`, `unit`) VALUES
@@ -865,16 +889,16 @@ INSERT INTO `recipe` (`product_id`, `material_id`, `quantity`, `size`, `unit`) V
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `role`
+-- Table structure for table `role`
 --
 
 CREATE TABLE `role` (
   `id` bigint(20) NOT NULL,
   `name` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `role`
+-- Dumping data for table `role`
 --
 
 INSERT INTO `role` (`id`, `name`) VALUES
@@ -887,7 +911,7 @@ INSERT INTO `role` (`id`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `role_detail`
+-- Table structure for table `role_detail`
 --
 
 CREATE TABLE `role_detail` (
@@ -896,10 +920,10 @@ CREATE TABLE `role_detail` (
   `entry_date` datetime NOT NULL,
   `salary` float DEFAULT NULL,
   `type_salary` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `role_detail`
+-- Dumping data for table `role_detail`
 --
 
 INSERT INTO `role_detail` (`role_id`, `staff_id`, `entry_date`, `salary`, `type_salary`) VALUES
@@ -923,7 +947,7 @@ INSERT INTO `role_detail` (`role_id`, `staff_id`, `entry_date`, `salary`, `type_
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `role_detail_bonus`
+-- Table structure for table `role_detail_bonus`
 --
 
 CREATE TABLE `role_detail_bonus` (
@@ -931,10 +955,10 @@ CREATE TABLE `role_detail_bonus` (
   `staff_id` bigint(20) NOT NULL,
   `entry_date` datetime NOT NULL,
   `bonus_id` bigint(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `role_detail_bonus`
+-- Dumping data for table `role_detail_bonus`
 --
 
 INSERT INTO `role_detail_bonus` (`role_id`, `staff_id`, `entry_date`, `bonus_id`) VALUES
@@ -948,7 +972,7 @@ INSERT INTO `role_detail_bonus` (`role_id`, `staff_id`, `entry_date`, `bonus_id`
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `role_detail_deduction`
+-- Table structure for table `role_detail_deduction`
 --
 
 CREATE TABLE `role_detail_deduction` (
@@ -956,10 +980,10 @@ CREATE TABLE `role_detail_deduction` (
   `staff_id` bigint(20) NOT NULL,
   `entry_date` datetime NOT NULL,
   `deduction_id` bigint(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `role_detail_deduction`
+-- Dumping data for table `role_detail_deduction`
 --
 
 INSERT INTO `role_detail_deduction` (`role_id`, `staff_id`, `entry_date`, `deduction_id`) VALUES
@@ -975,7 +999,7 @@ INSERT INTO `role_detail_deduction` (`role_id`, `staff_id`, `entry_date`, `deduc
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `shipment`
+-- Table structure for table `shipment`
 --
 
 CREATE TABLE `shipment` (
@@ -987,10 +1011,10 @@ CREATE TABLE `shipment` (
   `remain` double DEFAULT NULL,
   `mfg` date DEFAULT NULL,
   `exp` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `shipment`
+-- Dumping data for table `shipment`
 --
 
 INSERT INTO `shipment` (`id`, `material_id`, `supplier_id`, `import_id`, `quantity`, `remain`, `mfg`, `exp`) VALUES
@@ -1005,12 +1029,15 @@ INSERT INTO `shipment` (`id`, `material_id`, `supplier_id`, `import_id`, `quanti
 (9, 3, 1, 1, 30, 30, '2024-03-03', '2024-04-15'),
 (10, 6, 1, 5, 3, 0, '2024-03-08', '2024-03-21'),
 (11, 9, 1, 5, 10, 0, '2024-03-14', '2024-03-15'),
-(13, 7, 1, 8, 1, 1, '2024-04-11', '2024-04-28');
+(13, 7, 1, 8, 1, 1, '2024-04-11', '2024-04-28'),
+(14, 3, 2, 10, 22, 22, '2024-04-18', '2024-04-18'),
+(15, 5, 1, 10, 2, 2, '2024-04-17', '2024-04-20'),
+(17, 7, 5, 10, 2, 2, '2024-04-03', '2024-04-17');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `staff`
+-- Table structure for table `staff`
 --
 
 CREATE TABLE `staff` (
@@ -1023,10 +1050,10 @@ CREATE TABLE `staff` (
   `address` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `deleted` bit(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `staff`
+-- Dumping data for table `staff`
 --
 
 INSERT INTO `staff` (`id`, `no`, `name`, `gender`, `birthdate`, `phone`, `address`, `email`, `deleted`) VALUES
@@ -1041,7 +1068,7 @@ INSERT INTO `staff` (`id`, `no`, `name`, `gender`, `birthdate`, `phone`, `addres
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `supplier`
+-- Table structure for table `supplier`
 --
 
 CREATE TABLE `supplier` (
@@ -1051,22 +1078,23 @@ CREATE TABLE `supplier` (
   `address` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `deleted` bit(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `supplier`
+-- Dumping data for table `supplier`
 --
 
 INSERT INTO `supplier` (`id`, `name`, `phone`, `address`, `email`, `deleted`) VALUES
 (1, 'Drai Farm', '0917762211', 'xã Quảng Hiệp, huyện Cư M’gar, tỉnh DakLak', 'DraiFarmcoffee@gmail.com', b'0'),
 (2, 'Sơn Việt Coffee', '0937442338', '148 Lý Thái Tổ, Thôn 6, DamBri, Bảo Lộc, Lâm Đồng', 'sonvietcoffe@gmail.com', b'0'),
 (3, 'Cà phê Triều Nguyên', '0966770770', '120A Lý Thái Tổ, Đamb’ri, Bảo Lộc, Lâm Đồng', 'trieunguyencoffe@gmail.com', b'0'),
-(4, 'Công ty TNHH SX & TM Hucafood ', '0935551919', 'Tổ 9 Hòa Bắc, Khánh Hòa', 'hucafoodcoffee@gmail.com', b'0');
+(4, 'Công ty TNHH SX & TM Hucafood ', '0935551919', 'Tổ 9 Hòa Bắc, Khánh Hòa', 'hucafoodcoffee@gmail.com', b'0'),
+(5, 'd', '0963333947', '514/26 Lê Đức Thọ P17 Gò Vấp HCM', 'colg@gmail.com', b'0');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `work_schedule`
+-- Table structure for table `work_schedule`
 --
 
 CREATE TABLE `work_schedule` (
@@ -1076,10 +1104,10 @@ CREATE TABLE `work_schedule` (
   `check_in` varchar(255) DEFAULT 'null',
   `check_out` varchar(255) DEFAULT 'null',
   `shift` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `work_schedule`
+-- Dumping data for table `work_schedule`
 --
 
 INSERT INTO `work_schedule` (`id`, `staff_id`, `date`, `check_in`, `check_out`, `shift`) VALUES
@@ -1104,28 +1132,28 @@ INSERT INTO `work_schedule` (`id`, `staff_id`, `date`, `check_in`, `check_out`, 
 (20, 7, '2024-03-16', '6:00', '12:00', 1),
 (21, 7, '2024-03-16', '12:00', '18:00', 2),
 (22, 7, '2024-03-16', '18:00', '23:00', 3),
-(23, 3, '2024-04-20', 'null', 'null', 1),
+(23, 3, '2024-04-20', '22:20', '23:00', 1),
 (24, 3, '2024-04-20', 'null', 'null', 2);
 
 --
--- Chỉ mục cho các bảng đã đổ
+-- Indexes for dumped tables
 --
 
 --
--- Chỉ mục cho bảng `account`
+-- Indexes for table `account`
 --
 ALTER TABLE `account`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_account_staff` (`staff_id`);
 
 --
--- Chỉ mục cho bảng `bonus`
+-- Indexes for table `bonus`
 --
 ALTER TABLE `bonus`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `decentralization`
+-- Indexes for table `decentralization`
 --
 ALTER TABLE `decentralization`
   ADD PRIMARY KEY (`role_id`,`module_id`,`function_id`),
@@ -1133,85 +1161,85 @@ ALTER TABLE `decentralization`
   ADD KEY `fk_decentralization_function` (`function_id`);
 
 --
--- Chỉ mục cho bảng `deduction`
+-- Indexes for table `deduction`
 --
 ALTER TABLE `deduction`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `discount`
+-- Indexes for table `discount`
 --
 ALTER TABLE `discount`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `discount_detail`
+-- Indexes for table `discount_detail`
 --
 ALTER TABLE `discount_detail`
   ADD PRIMARY KEY (`discount_id`,`product_id`,`Size`,`quantity`,`discountBill`),
   ADD KEY `fk_discount_detail_product` (`product_id`);
 
 --
--- Chỉ mục cho bảng `export_detail`
+-- Indexes for table `export_detail`
 --
 ALTER TABLE `export_detail`
   ADD PRIMARY KEY (`export_id`,`shipment_id`) USING BTREE,
   ADD KEY `fk_export_detail` (`shipment_id`);
 
 --
--- Chỉ mục cho bảng `export_note`
+-- Indexes for table `export_note`
 --
 ALTER TABLE `export_note`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_export_note_staff` (`staff_id`);
 
 --
--- Chỉ mục cho bảng `function`
+-- Indexes for table `function`
 --
 ALTER TABLE `function`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `import_note`
+-- Indexes for table `import_note`
 --
 ALTER TABLE `import_note`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_import_note_staff` (`staff_id`);
 
 --
--- Chỉ mục cho bảng `leave_of_absence_form`
+-- Indexes for table `leave_of_absence_form`
 --
 ALTER TABLE `leave_of_absence_form`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_leave_staff` (`staff_id`);
 
 --
--- Chỉ mục cho bảng `material`
+-- Indexes for table `material`
 --
 ALTER TABLE `material`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `module`
+-- Indexes for table `module`
 --
 ALTER TABLE `module`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `payroll`
+-- Indexes for table `payroll`
 --
 ALTER TABLE `payroll`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `payroll_detail`
+-- Indexes for table `payroll_detail`
 --
 ALTER TABLE `payroll_detail`
   ADD PRIMARY KEY (`payroll_id`,`staff_id`) USING BTREE,
   ADD KEY `fk_payroll_staff` (`staff_id`);
 
 --
--- Chỉ mục cho bảng `product`
+-- Indexes for table `product`
 --
 ALTER TABLE `product`
   ADD PRIMARY KEY (`id`,`size`) USING BTREE,
@@ -1219,14 +1247,14 @@ ALTER TABLE `product`
   ADD KEY `size` (`size`);
 
 --
--- Chỉ mục cho bảng `receipt`
+-- Indexes for table `receipt`
 --
 ALTER TABLE `receipt`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_receipt_staff` (`staff_id`);
 
 --
--- Chỉ mục cho bảng `receipt_detail`
+-- Indexes for table `receipt_detail`
 --
 ALTER TABLE `receipt_detail`
   ADD PRIMARY KEY (`receipt_id`,`product_id`,`size`) USING BTREE,
@@ -1234,7 +1262,7 @@ ALTER TABLE `receipt_detail`
   ADD KEY `receipt_detail_product_size_fk` (`size`);
 
 --
--- Chỉ mục cho bảng `recipe`
+-- Indexes for table `recipe`
 --
 ALTER TABLE `recipe`
   ADD PRIMARY KEY (`product_id`,`material_id`,`size`) USING BTREE,
@@ -1242,13 +1270,13 @@ ALTER TABLE `recipe`
   ADD KEY `fk_recipe_size` (`size`);
 
 --
--- Chỉ mục cho bảng `role`
+-- Indexes for table `role`
 --
 ALTER TABLE `role`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `role_detail`
+-- Indexes for table `role_detail`
 --
 ALTER TABLE `role_detail`
   ADD PRIMARY KEY (`role_id`,`staff_id`,`entry_date`) USING BTREE,
@@ -1257,7 +1285,7 @@ ALTER TABLE `role_detail`
   ADD KEY `entry_date` (`entry_date`);
 
 --
--- Chỉ mục cho bảng `role_detail_bonus`
+-- Indexes for table `role_detail_bonus`
 --
 ALTER TABLE `role_detail_bonus`
   ADD PRIMARY KEY (`role_id`,`staff_id`,`entry_date`,`bonus_id`),
@@ -1266,7 +1294,7 @@ ALTER TABLE `role_detail_bonus`
   ADD KEY `fk_bonusid` (`bonus_id`);
 
 --
--- Chỉ mục cho bảng `role_detail_deduction`
+-- Indexes for table `role_detail_deduction`
 --
 ALTER TABLE `role_detail_deduction`
   ADD PRIMARY KEY (`role_id`,`staff_id`,`entry_date`,`deduction_id`) USING BTREE,
@@ -1275,7 +1303,7 @@ ALTER TABLE `role_detail_deduction`
   ADD KEY `fk_bonusid` (`deduction_id`);
 
 --
--- Chỉ mục cho bảng `shipment`
+-- Indexes for table `shipment`
 --
 ALTER TABLE `shipment`
   ADD PRIMARY KEY (`id`),
@@ -1284,52 +1312,52 @@ ALTER TABLE `shipment`
   ADD KEY `fk_shipment_supplier` (`supplier_id`);
 
 --
--- Chỉ mục cho bảng `staff`
+-- Indexes for table `staff`
 --
 ALTER TABLE `staff`
   ADD PRIMARY KEY (`id`) USING BTREE;
 
 --
--- Chỉ mục cho bảng `supplier`
+-- Indexes for table `supplier`
 --
 ALTER TABLE `supplier`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `work_schedule`
+-- Indexes for table `work_schedule`
 --
 ALTER TABLE `work_schedule`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_work_schedule_staff` (`staff_id`);
 
 --
--- AUTO_INCREMENT cho các bảng đã đổ
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT cho bảng `function`
+-- AUTO_INCREMENT for table `function`
 --
 ALTER TABLE `function`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT cho bảng `module`
+-- AUTO_INCREMENT for table `module`
 --
 ALTER TABLE `module`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11116;
 
 --
--- Các ràng buộc cho các bảng đã đổ
+-- Constraints for dumped tables
 --
 
 --
--- Các ràng buộc cho bảng `account`
+-- Constraints for table `account`
 --
 ALTER TABLE `account`
   ADD CONSTRAINT `fk_account_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `decentralization`
+-- Constraints for table `decentralization`
 --
 ALTER TABLE `decentralization`
   ADD CONSTRAINT `fk_decentralization_function` FOREIGN KEY (`function_id`) REFERENCES `function` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -1337,52 +1365,52 @@ ALTER TABLE `decentralization`
   ADD CONSTRAINT `fk_decentralization_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `discount_detail`
+-- Constraints for table `discount_detail`
 --
 ALTER TABLE `discount_detail`
   ADD CONSTRAINT `fk_discount_detail_discount` FOREIGN KEY (`discount_id`) REFERENCES `discount` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_discount_detail_product` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `export_detail`
+-- Constraints for table `export_detail`
 --
 ALTER TABLE `export_detail`
   ADD CONSTRAINT `fk_export_detail` FOREIGN KEY (`shipment_id`) REFERENCES `shipment` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_export_detail_export_note` FOREIGN KEY (`export_id`) REFERENCES `export_note` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `export_note`
+-- Constraints for table `export_note`
 --
 ALTER TABLE `export_note`
   ADD CONSTRAINT `fk_export_note_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `import_note`
+-- Constraints for table `import_note`
 --
 ALTER TABLE `import_note`
   ADD CONSTRAINT `fk_import_note_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `leave_of_absence_form`
+-- Constraints for table `leave_of_absence_form`
 --
 ALTER TABLE `leave_of_absence_form`
   ADD CONSTRAINT `fk_leave_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `payroll_detail`
+-- Constraints for table `payroll_detail`
 --
 ALTER TABLE `payroll_detail`
   ADD CONSTRAINT `fk_payroll` FOREIGN KEY (`payroll_id`) REFERENCES `payroll` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_payroll_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `receipt`
+-- Constraints for table `receipt`
 --
 ALTER TABLE `receipt`
   ADD CONSTRAINT `fk_receipt_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `receipt_detail`
+-- Constraints for table `receipt_detail`
 --
 ALTER TABLE `receipt_detail`
   ADD CONSTRAINT `fk_receipt_detail_product` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -1390,7 +1418,7 @@ ALTER TABLE `receipt_detail`
   ADD CONSTRAINT `receipt_detail_product_size_fk` FOREIGN KEY (`size`) REFERENCES `product` (`size`);
 
 --
--- Các ràng buộc cho bảng `recipe`
+-- Constraints for table `recipe`
 --
 ALTER TABLE `recipe`
   ADD CONSTRAINT `fk_recipe_material` FOREIGN KEY (`material_id`) REFERENCES `material` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -1398,14 +1426,14 @@ ALTER TABLE `recipe`
   ADD CONSTRAINT `fk_recipe_size` FOREIGN KEY (`size`) REFERENCES `product` (`size`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `role_detail`
+-- Constraints for table `role_detail`
 --
 ALTER TABLE `role_detail`
   ADD CONSTRAINT `fk_role_detail_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_role_detail_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `role_detail_bonus`
+-- Constraints for table `role_detail_bonus`
 --
 ALTER TABLE `role_detail_bonus`
   ADD CONSTRAINT `fk_bonus_entrydate` FOREIGN KEY (`entry_date`) REFERENCES `role_detail` (`entry_date`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -1414,7 +1442,7 @@ ALTER TABLE `role_detail_bonus`
   ADD CONSTRAINT `fk_bonusid` FOREIGN KEY (`bonus_id`) REFERENCES `bonus` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `role_detail_deduction`
+-- Constraints for table `role_detail_deduction`
 --
 ALTER TABLE `role_detail_deduction`
   ADD CONSTRAINT `role_detail_deduction_ibfk_1` FOREIGN KEY (`entry_date`) REFERENCES `role_detail` (`entry_date`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -1423,7 +1451,7 @@ ALTER TABLE `role_detail_deduction`
   ADD CONSTRAINT `role_detail_deduction_ibfk_4` FOREIGN KEY (`deduction_id`) REFERENCES `deduction` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `shipment`
+-- Constraints for table `shipment`
 --
 ALTER TABLE `shipment`
   ADD CONSTRAINT `fk_shipment_import_note` FOREIGN KEY (`import_id`) REFERENCES `import_note` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -1431,7 +1459,7 @@ ALTER TABLE `shipment`
   ADD CONSTRAINT `fk_shipment_supplier` FOREIGN KEY (`supplier_id`) REFERENCES `supplier` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `work_schedule`
+-- Constraints for table `work_schedule`
 --
 ALTER TABLE `work_schedule`
   ADD CONSTRAINT `fk_work_schedule_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;

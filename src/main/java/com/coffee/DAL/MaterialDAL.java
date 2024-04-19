@@ -18,7 +18,8 @@ public class MaterialDAL extends Manager {
                         "unit",
                         "unit_price",
                         "sell",
-                        "deleted"));
+                        "deleted",
+                        "remain_wearhouse"));
     }
 
     public List<Material> convertToMaterials(List<List<String>> data) {
@@ -33,7 +34,8 @@ public class MaterialDAL extends Manager {
                         row.get(5), // unit
                         Double.parseDouble(row.get(6)), // unit_price
                         Boolean.parseBoolean(row.get(7)),// sell
-                        Boolean.parseBoolean(row.get(8)) // deleted
+                        Boolean.parseBoolean(row.get(8)), // deleted
+                        Double.parseDouble(row.get(9)) // remain_wearhouse
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in MaterialDAL.convertToMaterials(): " + e.getMessage());
@@ -52,7 +54,8 @@ public class MaterialDAL extends Manager {
                     material.getUnit(),
                     material.getUnit_price(),
                     material.isSell(),
-                    false
+                    false,
+                    0
             );
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in MaterialDAL.addMaterial(): " + e.getMessage());
@@ -72,6 +75,7 @@ public class MaterialDAL extends Manager {
             updateValues.add(material.getUnit_price());
             updateValues.add(material.isSell());
             updateValues.add(material.isDeleted());
+            updateValues.add(material.getRemain_wearhouse());
             return update(updateValues, "id = " + material.getId());
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in MaterialDAL.updateMaterial(): " + e.getMessage());

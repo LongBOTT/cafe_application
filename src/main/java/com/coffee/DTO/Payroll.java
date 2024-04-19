@@ -1,5 +1,7 @@
 package com.coffee.DTO;
 
+import com.coffee.utils.VNString;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -96,8 +98,8 @@ public class Payroll {
         return id + " | " +
                 "<html>" + name + "</html> | " +
                 month + "/" + year + " | " +
-                total_salary + " | " +
-                paid + " | " +
-                debt;
+                VNString.currency(Double.parseDouble(total_salary.toString())) + " | " +
+                VNString.currency(Double.parseDouble(paid.toString())) + " | " +
+                VNString.currency(Double.parseDouble(debt.toString()));
     }
 }

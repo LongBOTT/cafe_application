@@ -1,5 +1,7 @@
 package com.coffee.DTO;
 
+import com.coffee.utils.VNString;
+
 import java.util.Date;
 
 public class Receipt {
@@ -74,7 +76,7 @@ public class Receipt {
     public String toString() {
         return id + " | " +
                 staff_id + " | " +
-                total + " | " +
+                VNString.currency(total) + " | " +
                 invoice_date;
     }
 }

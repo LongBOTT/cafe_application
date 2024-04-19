@@ -10,6 +10,7 @@ import com.coffee.GUI.DialogGUI.FromEditGUI.EditProductGUI;
 import com.coffee.GUI.components.*;
 import com.coffee.ImportExcel.AddDiscountFromExcel;
 import com.coffee.ImportExcel.AddProductFromExcel;
+import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 
@@ -262,7 +263,7 @@ public class ProductGUI extends Layout3 {
                 popupMenuSize.addMenuItem(size);
             }
             for (Double price : prices) {
-                popupMenuPrice.addMenuItem(String.valueOf(price));
+                popupMenuPrice.addMenuItem(VNString.currency(price));
             }
             JLabel iconDetail = null;
             JLabel iconEdit = null;
@@ -402,7 +403,6 @@ public class ProductGUI extends Layout3 {
 
         if (indexColumn == indexColumnRemove) {
             deleteProduct(productBLL.findProductsBy(Map.of("name", selectedValue.toString())));
-            refresh();
         }
     }
 

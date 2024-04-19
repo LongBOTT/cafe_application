@@ -1,5 +1,7 @@
 package com.coffee.GUI.components.swing;
 
+import com.coffee.GUI.components.MyTextFieldUnderLine;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -8,7 +10,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JTextField;
 
-public class MyTextField extends JTextField {
+public class MyTextField extends MyTextFieldUnderLine {
 
     public Icon getPrefixIcon() {
         return prefixIcon;

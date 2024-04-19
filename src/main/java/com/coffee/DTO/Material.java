@@ -1,5 +1,7 @@
 package com.coffee.DTO;
 
+import com.coffee.utils.VNString;
+
 public class Material {
     private int id;
     private String name;
@@ -10,11 +12,12 @@ public class Material {
     private Boolean sell;
     private double unit_price;
     private boolean deleted;
+    private double remain_wearhouse;
 
     public Material() {
     }
 
-    public Material(int id, String name, double remain, double minRemain, double maxRemain, String unit, double unit_price, Boolean sell, boolean deleted) {
+    public Material(int id, String name, double remain, double minRemain, double maxRemain, String unit, double unit_price, Boolean sell, boolean deleted, double remain_wearhouse) {
         this.id = id;
         this.name = name;
         this.remain = remain;
@@ -24,6 +27,7 @@ public class Material {
         this.unit_price = unit_price;
         this.sell = sell;
         this.deleted = deleted;
+        this.remain_wearhouse = remain_wearhouse;
     }
 
     public int getId() {
@@ -98,13 +102,22 @@ public class Material {
         this.deleted = deleted;
     }
 
+    public double getRemain_wearhouse() {
+        return remain_wearhouse;
+    }
+
+    public void setRemain_wearhouse(double remain_wearhouse) {
+        this.remain_wearhouse = remain_wearhouse;
+    }
+
     @Override
     public String toString() {
         return id + " | " +
                 name + " | " +
                 remain + " | " +
+                remain_wearhouse + " | " +
                 unit + " | " +
-                unit_price + " | " +
+                VNString.currency(unit_price) + " | " +
                 deleted;
     }
 }

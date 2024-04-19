@@ -182,7 +182,7 @@ public class EditMaterialGUI extends DialogForm {
         unit_price = Double.parseDouble(jTextFieldMaterial.get(3).getText());
         boolean sell = saleCheckbox.isSelected();
 
-        Material newMaterial = new Material(id, name, material.getRemain(), min_remain, max_remain, unit, unit_price, sell, false);
+        Material newMaterial = new Material(id, name, material.getRemain(), min_remain, max_remain, unit, unit_price, sell, false, material.getRemain_wearhouse());
         result = materialBLL.updateMaterial(newMaterial, material);
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),

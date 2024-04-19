@@ -69,6 +69,20 @@ public class Work_ScheduleDAL extends Manager {
         return 0;
     }
 
+    public int updateChamCong(int staff_id, java.util.Date date, int shift, String checkin, String checkout) {
+        try {
+            String query = "UPDATE `" + getTableName() + "` SET check_in = '" + checkin + "', check_out = '" + checkout + "' WHERE staff_id = " + staff_id + " AND date = '" + date + "' AND shift = " + shift + ";";
+            return executeUpdate(query);
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in Work_scheduleDAL.updateChamCong(): " + e.getMessage());
+        }
+        return 0;
+    }
+
+//    public static void main(String[] args) {
+//        new Work_ScheduleDAL().updateChamCong(3, Date.valueOf("2024-04-20"), 1, "22:20", "23:00");
+//    }
+
     public int deleteWork_schedule(String... conditions) {
         try {
             return delete(conditions);

@@ -12,8 +12,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
+
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 public class MaterialBLL extends Manager<Material> {
     private MaterialDAL materialDAL;
     private SupplierBLL supplierBLL = new SupplierBLL();
@@ -53,7 +55,6 @@ public class MaterialBLL extends Manager<Material> {
 
         return new Pair<>(true, "Thêm nguyên liệu thành công.");
     }
-
 
 
     public Pair<Boolean, String> updateMaterial(Material newMaterial, Material oldMaterial) {
@@ -125,6 +126,7 @@ public class MaterialBLL extends Manager<Material> {
         list.removeIf(material -> material.isSell() != sell);
         return list;
     }
+
     public List<Material> findMaterialsBy(Map<String, Object> conditions) {
         List<Material> materials = materialDAL.searchMaterials("deleted = 0");
         for (Map.Entry<String, Object> entry : conditions.entrySet())
@@ -164,11 +166,11 @@ public class MaterialBLL extends Manager<Material> {
         return new Pair<>(false, "");
     }
 
-    public Pair<Boolean, String> validateQuantity(String quantity,String title) {
+    public Pair<Boolean, String> validateQuantity(String quantity, String title) {
         if (quantity == null || quantity.isBlank())
-            return new Pair<>(false, title +" không được để trống");
+            return new Pair<>(false, title + " không được để trống");
         if (!VNString.checkUnsignedNumber(quantity))
-            return new Pair<>(false, title +" phải là số lớn hơn không");
+            return new Pair<>(false, title + " phải là số lớn hơn không");
         return new Pair<>(true, "");
     }
 
@@ -189,11 +191,11 @@ public class MaterialBLL extends Manager<Material> {
         if (!result.getKey()) {
             errorMessages.add(result.getValue());
         }
-        result = validateQuantity(material.getMinRemain() + "","Tồn tối thiểu");
+        result = validateQuantity(material.getMinRemain() + "", "Tồn tối thiểu");
         if (!result.getKey()) {
             errorMessages.add(result.getValue());
         }
-        result = validateQuantity(material.getMaxRemain() + "","Tồn tối đa");
+        result = validateQuantity(material.getMaxRemain() + "", "Tồn tối đa");
         if (!result.getKey()) {
             errorMessages.add(result.getValue());
         }
@@ -201,7 +203,7 @@ public class MaterialBLL extends Manager<Material> {
         if (!result.getKey()) {
             errorMessages.add(result.getValue());
         }
-        result = validateQuantity(material.getUnit_price()+"","Giá vốn");
+        result = validateQuantity(material.getUnit_price() + "", "Giá vốn");
         if (!result.getKey()) {
             errorMessages.add(result.getValue());
         }
@@ -226,6 +228,7 @@ public class MaterialBLL extends Manager<Material> {
             case "id" -> material.getId();
             case "name" -> material.getName();
             case "remain" -> material.getRemain();
+            case "remain_wearhouse" -> material.getRemain_wearhouse();
             case "unit" -> material.getUnit();
             default -> null;
         };
