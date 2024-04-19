@@ -2,7 +2,6 @@ package com.coffee.DTO;
 
 import com.coffee.utils.VNString;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Payroll_Detail {
@@ -11,15 +10,15 @@ public class Payroll_Detail {
     private int role_id;
     private LocalDateTime entry_date;
     private double hours_amount;
-    private BigDecimal bonus_amount;
-    private BigDecimal deduction_amount;
-    private BigDecimal salary_amount;
+    private double bonus_amount;
+    private double deduction_amount;
+    private double salary_amount;
     private boolean status;
 
     public Payroll_Detail() {
     }
 
-    public Payroll_Detail(int payroll_id, int staff_id, double hours_amount, BigDecimal bonus_amount, BigDecimal deduction_amount, BigDecimal salary_amount, boolean status, int role_id, LocalDateTime entry_date) {
+    public Payroll_Detail(int payroll_id, int staff_id, double hours_amount, double bonus_amount, double deduction_amount, double salary_amount, boolean status, int role_id, LocalDateTime entry_date) {
         this.payroll_id = payroll_id;
         this.staff_id = staff_id;
         this.role_id = role_id;
@@ -72,27 +71,27 @@ public class Payroll_Detail {
         this.hours_amount = hours_amount;
     }
 
-    public BigDecimal getBonus_amount() {
+    public double getBonus_amount() {
         return bonus_amount;
     }
 
-    public void setBonus_amount(BigDecimal bonus_amount) {
+    public void setBonus_amount(double bonus_amount) {
         this.bonus_amount = bonus_amount;
     }
 
-    public BigDecimal getDeduction_amount() {
+    public double getDeduction_amount() {
         return deduction_amount;
     }
 
-    public void setDeduction_amount(BigDecimal deduction_amount) {
+    public void setDeduction_amount(double deduction_amount) {
         this.deduction_amount = deduction_amount;
     }
 
-    public BigDecimal getSalary_amount() {
+    public double getSalary_amount() {
         return salary_amount;
     }
 
-    public void setSalary_amount(BigDecimal salary_amount) {
+    public void setSalary_amount(double salary_amount) {
         this.salary_amount = salary_amount;
     }
 
@@ -110,7 +109,7 @@ public class Payroll_Detail {
         return payroll_id + " | " +
                 staff_id + " | " +
                 "staff_name" + " | " +
-                VNString.currency(Double.parseDouble(salary_amount.toString())) + " | " +
+                VNString.currency(salary_amount) + " | " +
                 status;
     }
 }

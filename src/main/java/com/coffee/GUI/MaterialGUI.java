@@ -9,8 +9,10 @@ import com.coffee.GUI.DialogGUI.FormAddGUI.AddMaterialGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailMaterialGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditMaterialGUI;
 import com.coffee.GUI.components.*;
-import com.coffee.main.PDF;
+
 import com.coffee.ImportExcel.AddMaterialFromExcel;
+import com.coffee.utils.PDF;
+import com.coffee.utils.Resource;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -268,9 +270,10 @@ public class MaterialGUI extends Layout2 {
             panel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    String exportFolderPath = "Export\\PDF";
+                    String exportFolderPath = Resource.getResourcePath("ExportPDF", false);
                     PDF.exportMaterialPDF(materialBLL.getData(materialBLL.searchMaterials("deleted = 0")), exportFolderPath);
-
+                    JOptionPane.showMessageDialog(null, "Xuất PDF danh sách nguyên liệu thành công.",
+                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 }
             });
             roundedPanel.add(panel);

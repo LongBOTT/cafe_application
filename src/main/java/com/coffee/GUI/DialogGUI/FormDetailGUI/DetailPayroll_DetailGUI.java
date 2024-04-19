@@ -5,7 +5,7 @@ import com.coffee.DTO.*;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.main.Cafe_Application;
-import com.coffee.main.PDF;
+import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
 
@@ -243,7 +243,7 @@ public class DetailPayroll_DetailGUI extends DialogForm {
             }
             if (string.equals("Thực lãnh")) {
                 content.add(label, "span, wrap");
-                textField.setText(String.valueOf(payrollDetail.getSalary_amount()));
+                textField.setText(VNString.currency(Double.parseDouble(String.valueOf(payrollDetail.getSalary_amount()))));
             }
             if (string.equals("Trạng thái")) {
                 if (payrollDetail.isStatus())

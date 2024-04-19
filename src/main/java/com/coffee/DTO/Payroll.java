@@ -2,7 +2,6 @@ package com.coffee.DTO;
 
 import com.coffee.utils.VNString;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 public class Payroll {
@@ -11,14 +10,14 @@ public class Payroll {
     private Date entry_date;
     private int month;
     private int year;
-    private BigDecimal total_salary;
-    private BigDecimal paid;
-    private BigDecimal debt;
+    private double total_salary;
+    private double paid;
+    private double debt;
 
     public Payroll() {
     }
 
-    public Payroll(int id, String name, Date entry_date, int month, int year, BigDecimal total_salary, BigDecimal paid, BigDecimal debt) {
+    public Payroll(int id, String name, Date entry_date, int month, int year, double total_salary, double paid, double debt) {
         this.id = id;
         this.name = name;
         this.entry_date = entry_date;
@@ -69,27 +68,27 @@ public class Payroll {
         this.year = year;
     }
 
-    public BigDecimal getTotal_salary() {
+    public double getTotal_salary() {
         return total_salary;
     }
 
-    public void setTotal_salary(BigDecimal total_salary) {
+    public void setTotal_salary(double total_salary) {
         this.total_salary = total_salary;
     }
 
-    public BigDecimal getPaid() {
+    public double getPaid() {
         return paid;
     }
 
-    public void setPaid(BigDecimal paid) {
+    public void setPaid(double paid) {
         this.paid = paid;
     }
 
-    public BigDecimal getDebt() {
+    public double getDebt() {
         return debt;
     }
 
-    public void setDebt(BigDecimal debt) {
+    public void setDebt(double debt) {
         this.debt = debt;
     }
 
@@ -98,8 +97,8 @@ public class Payroll {
         return id + " | " +
                 "<html>" + name + "</html> | " +
                 month + "/" + year + " | " +
-                VNString.currency(Double.parseDouble(total_salary.toString())) + " | " +
-                VNString.currency(Double.parseDouble(paid.toString())) + " | " +
-                VNString.currency(Double.parseDouble(debt.toString()));
+                VNString.currency(total_salary) + " | " +
+                VNString.currency(paid) + " | " +
+                VNString.currency(debt);
     }
 }

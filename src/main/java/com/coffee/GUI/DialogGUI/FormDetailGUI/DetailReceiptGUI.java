@@ -8,7 +8,8 @@ import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.coffee.main.Cafe_Application;
-import com.coffee.main.PDF;
+import com.coffee.utils.PDF;
+import com.coffee.utils.Resource;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
 
@@ -137,9 +138,10 @@ public class DetailReceiptGUI extends DialogFormDetail {
         panel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                String exportFolderPath = "Export\\PDF";
-                PDF.exportReceiptDetialsPDF(receipt,
-                        exportFolderPath);
+                String exportFolderPath = Resource.getResourcePath("ExportPDF", false);
+                PDF.exportReceiptDetialsPDF(receipt, exportFolderPath);
+                JOptionPane.showMessageDialog(null, "In hoá đơn thành công.",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             }
         });
         roundedPanel.add(panel);

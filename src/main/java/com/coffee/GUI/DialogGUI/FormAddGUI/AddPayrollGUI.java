@@ -32,8 +32,8 @@ public class AddPayrollGUI extends DialogForm {
 
     public AddPayrollGUI() {
         super();
-        super.setTitle("Thêm bảng lương");
-        super.setSize(new Dimension(600, 250));
+        super.setTitle("Thêm Bảng Lương");
+        super.setSize(new Dimension(600, 200));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init();
         setVisible(true);
@@ -45,33 +45,32 @@ public class AddPayrollGUI extends DialogForm {
         buttonCancel = new JButton("Huỷ");
         buttonAdd = new JButton("Thêm");
         content.setLayout(new MigLayout("",
-                "50[]20[]50",
-                "20[]20[]20"));
+                "50[]20[]20[]"));
 
-        titleName.setText("Thêm bảng lương");
+        titleName.setText("Thêm Bảng Lương");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
         titleName.setHorizontalAlignment(JLabel.CENTER);
         titleName.setVerticalAlignment(JLabel.CENTER);
         title.add(titleName, BorderLayout.CENTER);
 
-        content.setBackground(new Color(255, 255, 255));
+        content.setBackground(new Color(242, 245, 250));
 
         JLabel label = new JLabel();
         label.setPreferredSize(new Dimension(170, 30));
-        label.setText("Kỳ làm việc");
+        label.setText("Chọn kỳ làm việc");
         label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
         attributePayroll.add(label);
         content.add(label);
 
         jMonthChooser = new JMonthChooser();
         jMonthChooser.setPreferredSize(new Dimension(1000, 30));
-        jMonthChooser.setBackground(new Color(245, 246, 250));
+//        jMonthChooser.setBackground(new Color(245, 246, 250));
         jMonthChooser.setMonth(LocalDate.now().getMonth().getValue() - 1);
         content.add(jMonthChooser);
 
         jYearChooser = new JYearChooser();
         jYearChooser.setPreferredSize(new Dimension(1000, 30));
-        jYearChooser.setBackground(new Color(245, 246, 250));
+//        jYearChooser.setBackground(new Color(245, 246, 250));
         jYearChooser.setYear(LocalDate.now().getYear());
         content.add(jYearChooser);
 
@@ -114,10 +113,16 @@ public class AddPayrollGUI extends DialogForm {
         int id, month, year;
         String name;
         Date entry_date;
-        BigDecimal total_salary, paid, debt;
+        double total_salary, paid, debt;
 
         month = jMonthChooser.getMonth() + 1;
         year = jYearChooser.getYear();
+
+        if (month > LocalDate.now().getMonthValue() || year > LocalDate.now().getYear()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn thời gian hiện tại hoặc trước đó!",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+
         LocalDate start = YearMonth.of(year, month).atDay(1);
         LocalDate end = YearMonth.of(year, month).atEndOfMonth();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
@@ -125,9 +130,9 @@ public class AddPayrollGUI extends DialogForm {
         id = payrollBLL.getAutoID(payrollBLL.searchPayrolls()); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
         name = "Bảng lương " + formatter.format(start) + " - " + formatter.format(end);
         entry_date = java.sql.Date.valueOf(LocalDate.now());
-        total_salary = BigDecimal.valueOf(0);
-        paid = BigDecimal.valueOf(0);
-        debt = BigDecimal.valueOf(0);
+        total_salary = 0;
+        paid = 0;
+        debt = 0;
         Payroll payroll = new Payroll(id, name, entry_date, month, year, total_salary, paid, debt); // false là tồn tại, true là đã xoá
 
         result = payrollBLL.addPayroll(payroll);

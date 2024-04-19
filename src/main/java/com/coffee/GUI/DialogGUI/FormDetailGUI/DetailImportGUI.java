@@ -7,7 +7,6 @@ import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.coffee.main.Cafe_Application;
-import com.coffee.main.PDF;
 import com.coffee.utils.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.itextpdf.text.Document;
@@ -132,10 +131,10 @@ public class DetailImportGUI extends DialogFormDetail {
         panel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-
-                String exportFolderPath = "Export\\PDF";
+                String exportFolderPath = Resource.getResourcePath("ExportPDF", false);
                 PDF.importBillDetailsPDF(import_note, exportFolderPath);
-
+                JOptionPane.showMessageDialog(null, "In phiếu nhập thành công.",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             }
         });
 

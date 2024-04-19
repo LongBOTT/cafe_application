@@ -156,6 +156,19 @@ public class PayrollDetailGUI extends Layout1 {
         panelPDF.setIcon(new FlatSVGIcon("icon/export.svg"));
         roundedPanelPDF.add(panelPDF);
 
+        RoundedPanel roundedPanelPaid = new RoundedPanel();
+        roundedPanelPaid.setLayout(new GridBagLayout());
+        roundedPanelPaid.setPreferredSize(new Dimension(150, 40));
+        roundedPanelPaid.setBackground(new Color(1, 120, 220));
+        roundedPanelPaid.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        FunctionPanel.add(roundedPanelPaid);
+
+        JLabel panelPaid = new JLabel("Trả lương tất cả");
+        panelPaid.setForeground(Color.white);
+        panelPaid.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        panelPaid.setIcon(new FlatSVGIcon("icon/tick-svgrepo-com.svg"));
+        roundedPanelPaid.add(panelPaid);
+
     }
 
     public void refresh() {
@@ -218,13 +231,13 @@ public class PayrollDetailGUI extends Layout1 {
 
             Payroll payroll1 = payroll;
             if (rowData[3].equals(false)) {
-                payroll1.setPaid(payroll1.getPaid().add(payrollDetail.getSalary_amount()));
-                payroll1.setDebt(payroll1.getDebt().subtract(payrollDetail.getSalary_amount()));
+                payroll1.setPaid(payroll1.getPaid() + payrollDetail.getSalary_amount());
+                payroll1.setDebt(payroll1.getDebt() - payrollDetail.getSalary_amount());
                 model.setValueAt(true, indexRow, indexColumn);
                 payrollDetail.setStatus(true);
             } else {
-                payroll1.setPaid(payroll1.getPaid().subtract(payrollDetail.getSalary_amount()));
-                payroll1.setDebt(payroll1.getDebt().add(payrollDetail.getSalary_amount()));
+                payroll1.setPaid(payroll1.getPaid() - payrollDetail.getSalary_amount());
+                payroll1.setDebt(payroll1.getDebt() + payrollDetail.getSalary_amount());
                 model.setValueAt(false, indexRow, indexColumn);
                 payrollDetail.setStatus(false);
             }

@@ -43,7 +43,7 @@ public class PayrollBLL extends Manager<Payroll> {
 
         List<Payroll_Detail> payrollDetails = new ArrayList<>();
 
-        BigDecimal totalSalary = BigDecimal.valueOf(0);
+        double totalSalary = 0;
         for (Staff staff : new StaffBLL().searchStaffs("deleted = 0")) {
             List<Work_Schedule> work_scheduleList = new Work_ScheduleBLL().searchWork_schedulesByStaff(staff.getId(), payroll.getYear(), payroll.getMonth());
             if (!work_scheduleList.isEmpty()) {
@@ -63,13 +63,11 @@ public class PayrollBLL extends Manager<Payroll> {
                             "staff_id = " + roleDetail.getStaff_id(),
                             "entry_date = '" + roleDetail.getEntry_date().format(myFormatObj) + "'");
                     double hours_amount = 0;
-                    BigDecimal bonus_amount = BigDecimal.valueOf(0);
-                    BigDecimal deduction_amount = BigDecimal.valueOf(0);
-                    BigDecimal salary_amount = BigDecimal.valueOf(0);
+                    double bonus_amount = 0;
+                    double deduction_amount = 0;
+                    double salary_amount = 0;
 
                     // tinh luương theo giờ làm
-                    DecimalFormat decimalFormat = new DecimalFormat("#.##");
-
                     if (roleDetail.getType_salary() == 1) {
                         for (Work_Schedule work_schedule : work_scheduleList) {
 
@@ -79,7 +77,7 @@ public class PayrollBLL extends Manager<Payroll> {
                                 return new Pair<>(false, "Vui lòng chấm công nhân viên " + staff.getName() + " ca " + work_schedule.getShift() + " vào ngày: " + work_schedule.getDate());
 
                         }
-                        salary_amount = BigDecimal.valueOf(roleDetail.getSalary());
+                        salary_amount = roleDetail.getSalary();
                     }
 
                     System.out.println(staff.getName());/////////////////////////////
@@ -107,11 +105,8 @@ public class PayrollBLL extends Manager<Payroll> {
                             System.out.println("Gio lam " + Math.abs(checkout - checkin));/////////////////////////////
 
                         }
-                        hours_amount = Double.parseDouble(decimalFormat.format(hours_amount));
-                        salary_amount = BigDecimal.valueOf(hours_amount * roleDetail.getSalary());
+                        salary_amount = hours_amount * roleDetail.getSalary();
                     }
-                    salary_amount = BigDecimal.valueOf(Double.parseDouble(decimalFormat.format(salary_amount)));
-
                     // tính tiền phụ cấp
 
                     for (Role_Detail_Bonus roleDetailBonus : roleDetailBonusList) {
@@ -123,14 +118,14 @@ public class PayrollBLL extends Manager<Payroll> {
                                 if (!dates.contains(work_schedule.getDate()))
                                     dates.add(work_schedule.getDate());
                             }
-                            bonus_amount = bonus_amount.add(BigDecimal.valueOf(dates.size() * bonus.getBonus_amount()));
+                            bonus_amount = bonus_amount + (dates.size() * bonus.getBonus_amount());
 
                             System.out.println("So ngay lam " + dates.size());/////////////////////////////
                             System.out.println("Tien phu cap " + dates.size() * bonus.getBonus_amount());/////////////////////////////
                         }
 
                         if (bonus.getBonus_type() == 1) {
-                            bonus_amount = bonus_amount.add(BigDecimal.valueOf(bonus.getBonus_amount()));
+                            bonus_amount = bonus_amount + bonus.getBonus_amount();
                             System.out.println("Tien phu cap thang " + bonus.getBonus_amount());/////////////////////////////
                         }
                     }
@@ -167,7 +162,7 @@ public class PayrollBLL extends Manager<Payroll> {
                                     shifts += 1;
                                 }
                             }
-                            deduction_amount = deduction_amount.add(BigDecimal.valueOf(shifts * deduction.getDeduction_amount()));
+                            deduction_amount = deduction_amount + (shifts * deduction.getDeduction_amount());
                             System.out.println("So ca di muon " + shifts);/////////////////////////////
                             System.out.println("Tien giam tru di muon " + shifts * deduction.getDeduction_amount());/////////////////////////////
 
@@ -199,21 +194,21 @@ public class PayrollBLL extends Manager<Payroll> {
                                     shifts += 1;
                                 }
                             }
-                            deduction_amount = deduction_amount.add(BigDecimal.valueOf(shifts * deduction.getDeduction_amount()));
+                            deduction_amount = deduction_amount + (shifts * deduction.getDeduction_amount());
                             System.out.println("So ca ve som " + shifts);/////////////////////////////
                             System.out.println("Tien giam tru ve som " + shifts * deduction.getDeduction_amount());/////////////////////////////
                         }
 
                         if (deduction.getDeduction_type() == 2) {
-                            deduction_amount = deduction_amount.add(BigDecimal.valueOf(deduction.getDeduction_amount()));
+                            deduction_amount = deduction_amount + (deduction.getDeduction_amount());
                             System.out.println("Tien giam tru co dinh " + deduction.getDeduction_amount());/////////////////////////////
                         }
                     }
 
                     System.out.println("Tien giam tru tong cong " + deduction_amount);
 
-                    salary_amount = salary_amount.add(bonus_amount);
-                    salary_amount = salary_amount.subtract(deduction_amount);
+                    salary_amount = salary_amount + bonus_amount;
+                    salary_amount = salary_amount - deduction_amount;
 
                     if (roleDetail.getType_salary() == 1) {
                         List<Date> dates = new ArrayList<>();
@@ -221,13 +216,12 @@ public class PayrollBLL extends Manager<Payroll> {
                             if (!dates.contains(work_schedule.getDate()))
                                 dates.add(work_schedule.getDate());
                         }
-                        salary_amount = salary_amount.divide(BigDecimal.valueOf(26L * dates.size())); // lương tháng cố định = (lương thoả thuận + phụ cấp - giảm trừ)/26 * số ngày làm thực tế
+                        salary_amount = salary_amount / 26.0 * dates.size(); // lương tháng cố định = (lương thoả thuận + phụ cấp - giảm trừ)/26 * số ngày làm thực tế
                     }
-                    salary_amount = BigDecimal.valueOf(Double.parseDouble(decimalFormat.format(salary_amount)));
 
                     Payroll_Detail payrollDetail = new Payroll_Detail(payroll.getId(), staff.getId(), hours_amount, bonus_amount, deduction_amount, salary_amount, false, roleDetail.getRole_id(), roleDetail.getEntry_date());
                     payrollDetails.add(payrollDetail);
-                    totalSalary = totalSalary.add(salary_amount);
+                    totalSalary = totalSalary + salary_amount;
                 }
             }
         }
@@ -250,6 +244,14 @@ public class PayrollBLL extends Manager<Payroll> {
             return new Pair<>(false, "Cập nhật bảng lương không thành công.");
 
         return new Pair<>(true, "Cập nhật bảng lương thành công.");
+    }
+
+    public Pair<Boolean, String> deletePayroll(Payroll payroll) {
+
+        if (payrollDAL.deletePayroll("id = " + payroll.getId()) == 0)
+            return new Pair<>(false, "Xoá bảng lương không thành công.");
+
+        return new Pair<>(true, "Xoá bảng lương thành công.");
     }
 
     public List<Payroll> searchPayrolls(String... conditions) {

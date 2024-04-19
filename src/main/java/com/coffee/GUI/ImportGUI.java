@@ -12,7 +12,9 @@ import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.Layout2;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
-import com.coffee.main.PDF;
+
+import com.coffee.utils.PDF;
+import com.coffee.utils.Resource;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
@@ -215,10 +217,10 @@ public class ImportGUI extends Layout2 {
                     java.util.Date dateTo = (java.util.Date) jDateChooser[1].getDate();
                     java.sql.Date sqlDateFrom = new java.sql.Date(dateFrom.getTime());
                     java.sql.Date sqlDateTo = new java.sql.Date(dateTo.getTime());
-                    String exportFolderPath = "Export\\PDF";
-
+                    String exportFolderPath = Resource.getResourcePath("ExportPDF", false);
                     PDF.exportImportNotePDF(importNoteBLL.getData(importNoteBLL.searchImport()), sqlDateFrom, sqlDateTo, exportFolderPath);
-
+                    JOptionPane.showMessageDialog(null, "Xuất PDF danh sách phiếu nhập hàng thành công.",
+                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 }
             });
             roundedPanel.add(panel);

@@ -30,9 +30,9 @@ public class Payroll_DetailDAL extends Manager {
                         Integer.parseInt(row.get(0)), // payroll_id
                         Integer.parseInt(row.get(1)), // staff_id
                         Double.parseDouble(row.get(2)), // hours_amount
-                        new BigDecimal(row.get(3)), // bonus_amount
-                        new BigDecimal(row.get(4)), // deduction_amount
-                        new BigDecimal(row.get(5)), // salary_amount
+                        Double.parseDouble(row.get(3)), // bonus_amount
+                        Double.parseDouble(row.get(4)), // deduction_amount
+                        Double.parseDouble(row.get(5)), // salary_amount
                         Boolean.parseBoolean(row.get(6)), // status
                         Integer.parseInt(row.get(7)), // role_id
                         LocalDateTime.parse(row.get(8)) // entry_date
