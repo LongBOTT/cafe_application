@@ -139,22 +139,7 @@ public class SupplierGUI extends Layout1 {
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                File file = chooseExcelFile(null);
-                if (file != null) {
-                    Pair<Boolean, String> result = null;
-                    try {
-                        result = new AddSupplierFromExcel().addSupplierFromExcel(file);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    if (!result.getKey()) {
-                        JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Thêm nhà cung cấp thành công",
-                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                        refresh();
-                    }
-                }
+
                 refresh();
             }
         }); // button refesh
@@ -195,6 +180,29 @@ public class SupplierGUI extends Layout1 {
             roundedPanel.setPreferredSize(new Dimension(130, 40));
             roundedPanel.setBackground(new Color(1, 120, 220));
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            roundedPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+
+                    File file = chooseExcelFile(null);
+                    if (file != null) {
+                        Pair<Boolean, String> result;
+                        try {
+                            result = new AddSupplierFromExcel().addSupplierFromExcel(file);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        if (!result.getKey()) {
+                            JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Thêm nhà cung cấp thành công",
+                                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            refresh();
+                        }
+                    }
+                }
+            });
+
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Nhập Excel");

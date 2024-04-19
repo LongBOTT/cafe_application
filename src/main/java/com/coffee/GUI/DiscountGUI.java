@@ -220,22 +220,7 @@ public class DiscountGUI extends Layout2 {
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                File file = chooseExcelFile(null);
-                if (file != null) {
-                    Pair<Boolean, String> result = null;
-                    try {
-                        result = new AddDiscountFromExcel().addDiscountsFromExcel(file);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    if (!result.getKey()) {
-                        JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Thêm chương trình giảm giá thành công",
-                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                        refresh();
-                    }
-                }
+                refresh();
             }
         });
         if (functions.stream().anyMatch(f -> f.getName().equals("add"))) {
@@ -257,6 +242,28 @@ public class DiscountGUI extends Layout2 {
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("excel"))) {
             RoundedPanel roundedPanel = getRoundedPanel();
+            roundedPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    File file = chooseExcelFile(null);
+                    if (file != null) {
+                        Pair<Boolean, String> result;
+                        try {
+                            result = new AddDiscountFromExcel().addDiscountsFromExcel(file);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        if (!result.getKey()) {
+                            JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Thêm chương trình giảm giá thành công",
+                                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            refresh();
+                        }
+                    }
+                }
+            });
+
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Nhập Excel");
