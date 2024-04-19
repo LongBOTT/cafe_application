@@ -1,5 +1,7 @@
 package com.coffee.DTO;
 
+import com.coffee.utils.VNString;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -55,7 +57,7 @@ public class Import_Note {
     public String toString() {
         return id + " | " +
                 staff_id + " | " +
-                total + " | " +
+                VNString.currency(Double.parseDouble(total.toString())) + " | " +
                 received_date;
     }
 }

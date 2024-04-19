@@ -2,8 +2,10 @@ package com.coffee.GUI;
 
 import com.coffee.BLL.*;
 import com.coffee.DTO.*;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.SalePanel;
+import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -75,7 +77,7 @@ public class SaleGUI extends SalePanel {
         staffName = new JLabel("Nhân viên: " + HomeGUI.staff.getName());
         date = new JLabel("Ngày: " + LocalDate.now());
         jTextFieldSearch = new JTextField();
-        jTextFieldCash = new JTextField();
+        jTextFieldCash = new MyTextFieldUnderLine();
         jLabelBill = new ArrayList<>();
         nameReceiptDetail = new ArrayList<>();
         deleteReceiptDetail = new ArrayList<>();
@@ -136,7 +138,13 @@ public class SaleGUI extends SalePanel {
 
         loadCategory();
 
-        loadProduct(productBLL.searchProducts("deleted = 0"));
+        Thread threadRender = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadProduct(productBLL.searchProducts("deleted = 0"));
+            }
+        });
+        threadRender.start();
 
         staffName.setFont((new Font("Palatino", Font.BOLD, 15)));
         StaffPanel.add(staffName);
@@ -155,14 +163,14 @@ public class SaleGUI extends SalePanel {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 20));
             label.setText(string);
-            label.setFont((new Font("Palatino", Font.PLAIN, 13)));
+            label.setFont((new Font("Palatino", Font.BOLD, 13)));
             ContainerButtons.add(label);
 
             if (string.equals("Thành tiền:") || string.equals("Khuyến mãi:") || string.equals("Tiền thừa:")) {
                 JLabel jLabel = new JLabel();
                 jLabel.setPreferredSize(new Dimension(230, 20));
                 jLabel.setFont((new Font("Palatino", Font.PLAIN, 13)));
-                jLabel.setText("0.0");
+                jLabel.setText(VNString.currency(0));
                 jLabelBill.add(jLabel);
                 ContainerButtons.add(jLabel, "wrap");
             } else {
@@ -238,9 +246,21 @@ public class SaleGUI extends SalePanel {
 
     private void searchProducts() {
         if (jTextFieldSearch.getText().isEmpty()) {
-            loadProduct(productBLL.searchProducts("deleted = 0"));
+            Thread threadRender = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    loadProduct(productBLL.searchProducts("deleted = 0"));
+                }
+            });
+            threadRender.start();
         } else {
-            loadProduct(productBLL.findProducts("name", jTextFieldSearch.getText()));
+            Thread threadRender = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    loadProduct(productBLL.findProducts("name", jTextFieldSearch.getText()));
+                }
+            });
+            threadRender.start();
         }
         categoryName = "";
     }
@@ -297,10 +317,23 @@ public class SaleGUI extends SalePanel {
     }
 
     private void searchCategory() {
-        if (categoryName.equals("TẤT CẢ"))
-            loadProduct(productBLL.searchProducts("deleted = 0"));
-        else
-            loadProduct(productBLL.findProductsBy(Map.of("category", categoryName)));
+        if (categoryName.equals("TẤT CẢ")) {
+            Thread threadRender = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    loadProduct(productBLL.searchProducts("deleted = 0"));
+                }
+            });
+            threadRender.start();
+        } else {
+            Thread threadRender = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    loadProduct(productBLL.findProductsBy(Map.of("category", categoryName)));
+                }
+            });
+            threadRender.start();
+        }
         jTextFieldSearch.setText("");
     }
 
@@ -347,11 +380,11 @@ public class SaleGUI extends SalePanel {
 
             double percent = checkPercentDiscount(product.getId());
             if (percent == 0) {
-                productPrice.setText(String.valueOf(product.getPrice()));
+                productPrice.setText(VNString.currency(product.getPrice()));
                 panel.add(productPrice);
             } else {
                 double newPrice = product.getPrice() - product.getPrice() * percent / 100;
-                productPrice.setText("<html><s>" + product.getPrice() + "</s>\t <span style='color: red'>" + newPrice + "</span></html>");
+                productPrice.setText("<html><s>" + VNString.currency(product.getPrice()) + "</s>\t <span style='color: red'>" + VNString.currency(newPrice) + "</span></html>");
                 panel.add(productPrice);
             }
 
@@ -414,13 +447,14 @@ public class SaleGUI extends SalePanel {
         productIncartPanelList.add(new JPanel());
         nameReceiptDetail.add(new JLabel());
         sizeReceiptDetail.add(new JComboBox<>());
-        quantityReceiptDetail.add(new JTextField());
+        quantityReceiptDetail.add(new MyTextFieldUnderLine());
         priceReceiptDetail.add(new JLabel());
         deleteReceiptDetail.add(new JLabel());
 
         int index = receiptDetailList.size() - 1;
 
         nameReceiptDetail.get(index).setFont(new Font("Inter", Font.BOLD, 13));
+        nameReceiptDetail.get(index).setCursor(new Cursor(Cursor.HAND_CURSOR));
         nameReceiptDetail.get(index).setText("<html>" + receiptDetailList.get(index).get(0) + "</html>");
         nameReceiptDetail.get(index).setPreferredSize(new Dimension(200, 40));
         nameReceiptDetail.get(index).addMouseListener(new MouseAdapter() {
@@ -451,8 +485,10 @@ public class SaleGUI extends SalePanel {
                 sizeReceiptDetail.get(index).addItem(product1.getSize());
             }
             sizeReceiptDetail.get(index).setPreferredSize(new Dimension(40, 40));
-            sizeReceiptDetail.get(index).setFont(new Font("Inter", Font.PLAIN, 8));
+            sizeReceiptDetail.get(index).setFont(new Font("Inter", Font.PLAIN, 10));
             sizeReceiptDetail.get(index).setSelectedItem(receiptDetailList.get(index).get(1));
+            sizeReceiptDetail.get(index).setBorder(BorderFactory.createEmptyBorder());
+            sizeReceiptDetail.get(index).setBackground(new Color(228, 231, 235));
             sizeReceiptDetail.get(index).addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     for (int j = 0; j < sizeReceiptDetail.size(); j++) {
@@ -500,8 +536,8 @@ public class SaleGUI extends SalePanel {
         });
         jPanel.add(quantityReceiptDetail.get(index));
 
-        priceReceiptDetail.get(index).setText(receiptDetailList.get(index).get(3).toString());
-        priceReceiptDetail.get(index).setFont(new Font("Inter", Font.PLAIN, 12));
+        priceReceiptDetail.get(index).setText(VNString.currency((Double) receiptDetailList.get(index).get(3)));
+        priceReceiptDetail.get(index).setFont(new Font("Inter", Font.BOLD, 12));
         priceReceiptDetail.get(index).setPreferredSize(new Dimension(90, 40));
         jPanel.add(priceReceiptDetail.get(index));
 
@@ -621,7 +657,7 @@ public class SaleGUI extends SalePanel {
 
         for (int i = 0; i < receiptDetailList.size(); i++) {
             JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-            jPanel.setBackground(new Color(245, 246, 250));
+            jPanel.setBackground(new Color(228, 231, 235));
             jPanel.setPreferredSize(new Dimension(450, 50));
 
             jPanel.add(nameReceiptDetail.get(i));
@@ -674,7 +710,7 @@ public class SaleGUI extends SalePanel {
         receiptDetailList.set(index, receipt);
 
         sizeReceiptDetail.get(index).setSelectedItem(receipt.get(1));
-        priceReceiptDetail.get(index).setText(receipt.get(3).toString());
+        priceReceiptDetail.get(index).setText(VNString.currency((Double) receipt.get(3)));
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
         calculateTotal();
@@ -702,7 +738,7 @@ public class SaleGUI extends SalePanel {
         receipt.set(3, quantity * price);
 
         receiptDetailList.set(index, receipt);
-        priceReceiptDetail.get(index).setText(receipt.get(3).toString());
+        priceReceiptDetail.get(index).setText(VNString.currency((Double) receipt.get(3)));
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
         calculateTotal();
@@ -730,7 +766,7 @@ public class SaleGUI extends SalePanel {
 
         for (int i = 0; i < receiptDetailList.size(); i++) {
             JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-            jPanel.setBackground(new Color(245, 246, 250));
+            jPanel.setBackground(new Color(228, 231, 235));
             jPanel.setPreferredSize(new Dimension(450, 50));
 
             jPanel.add(nameReceiptDetail.get(i));
@@ -772,9 +808,9 @@ public class SaleGUI extends SalePanel {
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
 
-        jLabelBill.get(0).setText("0.0");
-        jLabelBill.get(1).setText("0.0");
-        jLabelBill.get(2).setText("0.0");
+        jLabelBill.get(0).setText(VNString.currency(0));
+        jLabelBill.get(1).setText(VNString.currency(0));
+        jLabelBill.get(2).setText(VNString.currency(0));
 
         jTextFieldCash.setText("");
     }
@@ -784,16 +820,18 @@ public class SaleGUI extends SalePanel {
         for (List<Object> receiptDetail : receiptDetailList) {
             totalPrice += (Double) receiptDetail.get(3);
         }
-        jLabelBill.get(0).setText(String.valueOf(totalPrice));
-        jLabelBill.get(2).setText("0");
+        jLabelBill.get(0).setText(VNString.currency(totalPrice));
+        jLabelBill.get(2).setText(VNString.currency(0));
         jTextFieldCash.setText("");
+
+        System.out.println(Arrays.toString(receiptDetailList.toArray()));
     }
 
     private void calculateExcess() {
         double total = Double.parseDouble(jLabelBill.get(0).getText());
         double cash = Double.parseDouble(jTextFieldCash.getText());
         double excess = cash - total;
-        jLabelBill.get(2).setText(String.valueOf(excess));
+        jLabelBill.get(2).setText(VNString.currency(excess));
     }
 
     private double checkPercentDiscount(int product_id) {

@@ -36,12 +36,12 @@ public class Layout1 extends RoundedPanel {
 
         SearchPanel.setLayout(new GridBagLayout());
         SearchPanel.setBackground(new Color(191, 198, 208));
-        SearchPanel.setPreferredSize(new Dimension(530, 50));
+        SearchPanel.setPreferredSize(new Dimension(560, 50));
         top.add(SearchPanel, BorderLayout.WEST);
 
         FunctionPanel.setLayout(new FlowLayout());
         FunctionPanel.setBackground(new Color(191, 198, 208));
-        FunctionPanel.setPreferredSize(new Dimension(620, 50));
+        FunctionPanel.setPreferredSize(new Dimension(590, 50));
         top.add(FunctionPanel, BorderLayout.EAST);
 
     }

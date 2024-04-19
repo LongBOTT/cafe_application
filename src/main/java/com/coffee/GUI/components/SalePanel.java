@@ -120,6 +120,7 @@ public class SalePanel extends RoundedPanel {
         Title.setLayout(new FlowLayout());
         Title.setBackground(new Color(255, 255, 255));
         Title.setPreferredSize(new Dimension(440, 40));
+        Title.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(0x000000)));
         ContainerBill_detail.add(Title, BorderLayout.NORTH);
 
         Bill_detailPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -131,6 +132,7 @@ public class SalePanel extends RoundedPanel {
         ContainerButtons.setLayout(new MigLayout("", "10[]15[]10", "10[]20[]"));
         ContainerButtons.setPreferredSize(new Dimension(450, 210));
         ContainerButtons.setBackground(new Color(255, 255, 255));
+        ContainerButtons.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(0x000000)));
         ContainerBill_detail.add(ContainerButtons, BorderLayout.SOUTH);
 
     }

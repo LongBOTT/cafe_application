@@ -1,5 +1,7 @@
 package com.coffee.DTO;
 
+import com.coffee.utils.VNString;
+
 public class Bonus {
     private int id;
     private String name;
@@ -52,7 +54,7 @@ public class Bonus {
     public String toString() {
         return id + " | " +
                 name + " | " +
-                bonus_amount + " | " +
+                VNString.currency(bonus_amount) + " | " +
                 bonus_type;
     }
 }

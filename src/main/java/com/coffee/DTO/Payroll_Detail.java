@@ -1,5 +1,7 @@
 package com.coffee.DTO;
 
+import com.coffee.utils.VNString;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -108,7 +110,7 @@ public class Payroll_Detail {
         return payroll_id + " | " +
                 staff_id + " | " +
                 "staff_name" + " | " +
-                salary_amount + " | " +
+                VNString.currency(Double.parseDouble(salary_amount.toString())) + " | " +
                 status;
     }
 }

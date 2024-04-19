@@ -52,6 +52,7 @@ public class HomeGUI extends JFrame {
     private boolean pressover;
     private boolean over = false;
     public int indexModulePayrollGUI = -1;
+    public int indexModuleCreateWorkScheduleGUI = -1;
 
     public HomeGUI() {
         initComponents();
@@ -224,6 +225,8 @@ public class HomeGUI extends JFrame {
             List<Function> functions = function2D.get(i);
             allPanelModules[i] = getPanelModule(module.getId(), functions);
             int index = i;
+            if (module.getId() == 18)
+                indexModuleCreateWorkScheduleGUI = index;
             if (module.getId() == 19)
                 indexModulePayrollGUI = index;
             modules[i].addMouseListener(new MouseAdapter() {

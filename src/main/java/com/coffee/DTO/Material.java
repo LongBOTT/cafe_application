@@ -1,5 +1,7 @@
 package com.coffee.DTO;
 
+import com.coffee.utils.VNString;
+
 public class Material {
     private int id;
     private String name;
@@ -104,7 +106,7 @@ public class Material {
                 name + " | " +
                 remain + " | " +
                 unit + " | " +
-                unit_price + " | " +
+                VNString.currency(unit_price) + " | " +
                 deleted;
     }
 }

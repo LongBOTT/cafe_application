@@ -376,7 +376,6 @@ public class MaterialGUI extends Layout2 {
 
         if (indexColumn == indexColumnRemove) {
             deleteMaterial(materialBLL.searchMaterials("id = " + data[indexRow][0]).get(0));
-            refresh();
         }
     }
 

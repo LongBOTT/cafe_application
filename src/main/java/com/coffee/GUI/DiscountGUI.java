@@ -266,7 +266,7 @@ public class DiscountGUI extends Layout2 {
             roundedPanel.add(panel);
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("pdf"))) {
-            RoundedPanel roundedPanel = new RoundedPanel();
+            RoundedPanel roundedPanel = getRoundedPanel();
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Xuất PDF");
@@ -280,7 +280,7 @@ public class DiscountGUI extends Layout2 {
     private RoundedPanel getRoundedPanel() {
         RoundedPanel roundedPanel = new RoundedPanel();
         roundedPanel.setLayout(new GridBagLayout());
-        roundedPanel.setPreferredSize(new Dimension(130, 40));
+        roundedPanel.setPreferredSize(new Dimension(120, 40));
         roundedPanel.setBackground(new Color(1, 120, 220));
         roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
