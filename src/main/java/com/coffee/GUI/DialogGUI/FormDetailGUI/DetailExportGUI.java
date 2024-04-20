@@ -122,11 +122,11 @@ public class DetailExportGUI extends DialogFormDetail {
         panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
         panel.setForeground(Color.white);
         panel.setIcon(new FlatSVGIcon("icon/print.svg"));
-        panel.addMouseListener(new MouseAdapter() {
+        roundedPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                String exportFolderPath = Resource.getResourcePath("ExportPDF", false);
-                PDF.exportBillDetailsPDF(export, exportFolderPath);
+
+                PDF.exportBillDetailsPDF(export, "src/main/resources/ExportPDF");
                 JOptionPane.showMessageDialog(null, "In phiếu xuất thành công.",
                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
 

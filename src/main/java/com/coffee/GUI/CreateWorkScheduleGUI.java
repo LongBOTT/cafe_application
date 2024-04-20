@@ -6,6 +6,7 @@ import com.coffee.DTO.*;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddWorkScheduleGUI;
 import com.coffee.GUI.components.*;
 import com.coffee.ImportExcel.AddWorkScheduleFromExcel;
+import com.coffee.utils.PDF;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 
@@ -168,12 +169,21 @@ public class CreateWorkScheduleGUI extends Layout1 {
         roundedPanelPDF.setPreferredSize(new Dimension(130, 40));
         roundedPanelPDF.setBackground(new Color(1, 120, 220));
         roundedPanelPDF.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         FunctionPanel.add(roundedPanelPDF);
 
         JLabel panelPDF = new JLabel("Xuất PDF");
         panelPDF.setForeground(Color.white);
         panelPDF.setFont(new Font("Public Sans", Font.PLAIN, 13));
         panelPDF.setIcon(new FlatSVGIcon("icon/export.svg"));
+        roundedPanelPDF.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                PDF.exportWorkSchedulePDF(weekDates.get(0), weekDates.get(weekDates.size() - 1), "src/main/resources/ExportPDF");
+                JOptionPane.showMessageDialog(null, "Xuất PDF lịch làm việc thành công.",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
         roundedPanelPDF.add(panelPDF);
 
         RoundedPanel roundedPaneChamCong = new RoundedPanel();

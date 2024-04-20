@@ -9,11 +9,7 @@ import com.coffee.GUI.components.RoundedScrollPane;
 import com.coffee.main.Cafe_Application;
 import com.coffee.utils.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Paragraph;
 import net.miginfocom.swing.MigLayout;
-
-import com.itextpdf.text.pdf.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -128,11 +124,11 @@ public class DetailImportGUI extends DialogFormDetail {
         panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
         panel.setForeground(Color.white);
         panel.setIcon(new FlatSVGIcon("icon/print.svg"));
-        panel.addMouseListener(new MouseAdapter() {
+        roundedPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                String exportFolderPath = Resource.getResourcePath("ExportPDF", false);
-                PDF.importBillDetailsPDF(import_note, exportFolderPath);
+
+                PDF.importBillDetailsPDF(import_note, "src/main/resources/ExportPDF");
                 JOptionPane.showMessageDialog(null, "In phiếu nhập thành công.",
                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             }

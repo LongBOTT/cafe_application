@@ -267,11 +267,11 @@ public class MaterialGUI extends Layout2 {
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
             panel.setForeground(Color.white);
             panel.setIcon(new FlatSVGIcon("icon/export.svg"));
-            panel.addMouseListener(new MouseAdapter() {
+            roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    String exportFolderPath = Resource.getResourcePath("ExportPDF", false);
-                    PDF.exportMaterialPDF(materialBLL.getData(materialBLL.searchMaterials("deleted = 0")), exportFolderPath);
+
+                    PDF.exportMaterialPDF(materialBLL.getData(materialBLL.searchMaterials("deleted = 0")), "src/main/resources/ExportPDF");
                     JOptionPane.showMessageDialog(null, "Xuất PDF danh sách nguyên liệu thành công.",
                             "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 }

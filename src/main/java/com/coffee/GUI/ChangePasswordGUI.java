@@ -47,20 +47,20 @@ public class ChangePasswordGUI extends JDialog {
     private Thread currentCountDownThread;
 
     public ChangePasswordGUI() {
-        super((Frame) null, "Quên mật khẩu", true);
+        super((Frame) null, "Change Password", true);
 
         otpEnterEmail = new JPanel(new MigLayout("", "[]", "[]0[]"));
         otpEnterEmail.setPreferredSize(new Dimension(250, 400));
-        otpEnterEmail.setBackground(new Color(217, 217, 217));
+        otpEnterEmail.setBackground(new Color(255, 255, 255));
 
         otpConfirmPanel = new JPanel(new MigLayout("", "[]", "[]0[]"));
         otpConfirmPanel.setPreferredSize(new Dimension(250, 400));
-        otpConfirmPanel.setBackground(new Color(217, 217, 217));
+        otpConfirmPanel.setBackground(new Color(255, 255, 255));
 
 
         otpChangePassword = new JPanel(new MigLayout("", "[]", "[]0[]"));
         otpChangePassword.setPreferredSize(new Dimension(250, 400));
-        otpChangePassword.setBackground(new Color(217, 217, 217));
+        otpChangePassword.setBackground(new Color(255, 255, 255));
 
         account = new Account();
         email = "";
@@ -70,14 +70,14 @@ public class ChangePasswordGUI extends JDialog {
         setContentPane(contentPane);
 
         formChangePassword = new JPanel(new FlowLayout());
-        formChangePassword.setBackground(new Color(217, 217, 217));
+        formChangePassword.setBackground(new Color(255, 255, 255));
         formChangePassword.setPreferredSize(new Dimension(400, 500));
-        contentPane.add(formChangePassword, BorderLayout.WEST);
+        contentPane.add(formChangePassword, BorderLayout.EAST);
 
         jPanelLogo = new JPanel(new BorderLayout());
         jPanelLogo.setBackground(new Color(232, 206, 180));
         jPanelLogo.setPreferredSize(new Dimension(300, 500));
-        contentPane.add(jPanelLogo, BorderLayout.EAST);
+        contentPane.add(jPanelLogo, BorderLayout.WEST);
 
         labelLogo = new JLabel();
         labelLogo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -86,22 +86,22 @@ public class ChangePasswordGUI extends JDialog {
         jPanelLogo.add(labelLogo);
 
         jPanelTitle = new JPanel();
-        jPanelTitle.setBackground(new Color(217, 217, 217));
+        jPanelTitle.setBackground(new Color(255, 255, 255));
 
         jPanelTitleLogin = new JPanel(new GridBagLayout());
-        jPanelTitleLogin.setBackground(new Color(217, 217, 217));
+        jPanelTitleLogin.setBackground(new Color(255, 255, 255));
         jPanelTitleLogin.setPreferredSize(new Dimension(300, 100));
         jPanelTitle.add(jPanelTitleLogin);
 
         labelChangePassword = new JLabel("Khôi phục tài khoản", SwingConstants.CENTER);
         labelChangePassword.setFont(new Font("FlatLaf.style", Font.BOLD, 30));
-        labelChangePassword.setBorder(BorderFactory.createMatteBorder(0, 4, 0, 0, new Color(0x000000)));
         jPanelTitleLogin.add(labelChangePassword);
 
         toStep(step = 1);
         setSize(700, 500);
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(false);
+        setIconImage(new FlatSVGIcon("icon/ACB.svg").getImage());
         setLocationRelativeTo(Cafe_Application.loginGUI);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -128,6 +128,7 @@ public class ChangePasswordGUI extends JDialog {
         otpEnterEmail.add(lbEnterEmail, "span, center");
 
         JTextField txtEnterEmail = new JTextField();
+        txtEnterEmail.setBackground(new Color(243, 246, 254));
         txtEnterEmail.setPreferredSize(new Dimension(350, 40));
         txtEnterEmail.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent keyEvent) {
@@ -138,21 +139,21 @@ public class ChangePasswordGUI extends JDialog {
         otpEnterEmail.add(txtEnterEmail, "span, center, wrap");
 
         JPanel panel = new JPanel(new FlowLayout());
-        panel.setBackground(new Color(217, 217, 217));
+        panel.setBackground(new Color(255, 255, 255));
         panel.setBorder(new EmptyBorder(15, 0, 0, 0));
         otpEnterEmail.add(panel, "wrap,center");
 
         JButton[] buttons = new JButton[2];
         buttons[0] = new JButton("Huỷ");
-        buttons[0].setBackground(new Color(232, 206, 180));
-        buttons[0].setForeground(Color.BLACK);
+        buttons[0].setBackground(new Color(1, 120, 220));
+        buttons[0].setForeground(Color.white);
         buttons[0].setFont(new Font("FlatLaf.style", Font.BOLD, 12));
         buttons[0].addActionListener(e -> dispose());
         panel.add(buttons[0]);
 
         buttons[1] = new JButton("Tiếp tục");
-        buttons[1].setBackground(new Color(232, 206, 180));
-        buttons[1].setForeground(Color.BLACK);
+        buttons[1].setBackground(new Color(1, 120, 220));
+        buttons[1].setForeground(Color.white);
         buttons[1].setFont(new Font("FlatLaf.style", Font.BOLD, 12));
         buttons[1].addActionListener(e -> validateStep1(txtEnterEmail.getText()));
         panel.add(buttons[1]);
@@ -172,6 +173,7 @@ public class ChangePasswordGUI extends JDialog {
         otpConfirmPanel.add(label2, "span,center,wrap");
 
         JTextField textField = new JTextField();
+        textField.setBackground(new Color(243, 246, 254));
         textField.putClientProperty("JTextField.placeholderText", "OTP");
         textField.setFont(new Font("FlatLaf.style", Font.BOLD, 20));
         textField.setPreferredSize(new Dimension(90, 40));
@@ -209,7 +211,7 @@ public class ChangePasswordGUI extends JDialog {
         otpConfirmPanel.add(nothing, "wrap,center");
 
         JPanel panel = new JPanel(new FlowLayout());
-        panel.setBackground(new Color(217, 217, 217));
+        panel.setBackground(new Color(255, 255, 255));
         panel.setBorder(new EmptyBorder(15, 0, 0, 0));
         otpConfirmPanel.add(panel, "wrap,center");
 
@@ -217,8 +219,8 @@ public class ChangePasswordGUI extends JDialog {
         buttons[0] = new JButton();
         buttons[0].setText("Gửi lại");
         buttons[0].setFont(new Font("FlatLaf.style", Font.BOLD, 12));
-        buttons[0].setBackground(new Color(232, 206, 180));
-        buttons[0].setForeground(Color.BLACK);
+        buttons[0].setBackground(new Color(1, 120, 220));
+        buttons[0].setForeground(Color.white);
         buttons[0].addActionListener(e -> {
             sendOTP(nothing);
         });
@@ -227,16 +229,16 @@ public class ChangePasswordGUI extends JDialog {
         buttons[1] = new JButton();
         buttons[1].setText("Quay lại");
         buttons[1].setFont(new Font("FlatLaf.style", Font.BOLD, 12));
-        buttons[1].setBackground(new Color(232, 206, 180));
-        buttons[1].setForeground(Color.BLACK);
+        buttons[1].setBackground(new Color(1, 120, 220));
+        buttons[1].setForeground(Color.white);
         buttons[1].addActionListener(e -> toStep(--step));
         panel.add(buttons[1]);
 
         buttons[2] = new JButton();
         buttons[2].setText("Hủy");
         buttons[2].setFont(new Font("FlatLaf.style", Font.BOLD, 12));
-        buttons[2].setBackground(new Color(232, 206, 180));
-        buttons[2].setForeground(Color.BLACK);
+        buttons[2].setBackground(new Color(1, 120, 220));
+        buttons[2].setForeground(Color.white);
         buttons[2].addActionListener(e -> this.dispose());
         panel.add(buttons[2]);
 
@@ -258,6 +260,7 @@ public class ChangePasswordGUI extends JDialog {
         JPasswordField passwordField2 = new JPasswordField();
 
         passwordField1.setFont(new Font("FlatLaf.style", Font.PLAIN, 14));
+        passwordField1.setBackground(new Color(243, 246, 254));
         passwordField1.putClientProperty("JTextField.placeholderText", "Nhập mật khẩu mới");
         passwordField1.setPreferredSize(new Dimension(200, 32));
         passwordField1.addActionListener(e -> {
@@ -273,6 +276,7 @@ public class ChangePasswordGUI extends JDialog {
         otpChangePassword.add(label2, "span,center,wrap");
 
         passwordField2.setFont(new Font("FlatLaf.style", Font.PLAIN, 14));
+        passwordField2.setBackground(new Color(243, 246, 254));
         passwordField2.putClientProperty("JTextField.placeholderText", "Nhập lại mật khẩu mới");
         passwordField2.setPreferredSize(new Dimension(200, 32));
         passwordField2.addActionListener(e -> {
@@ -283,7 +287,7 @@ public class ChangePasswordGUI extends JDialog {
         otpChangePassword.add(passwordField2, "span,center,wrap");
 
         JPanel panel = new JPanel(new FlowLayout());
-        panel.setBackground(new Color(217, 217, 217));
+        panel.setBackground(new Color(255, 255, 255));
         panel.setBorder(new EmptyBorder(15, 0, 0, 0));
         otpChangePassword.add(panel, "span,center,wrap");
 
@@ -291,8 +295,8 @@ public class ChangePasswordGUI extends JDialog {
         buttons[0] = new JButton();
         buttons[0].setText("Xác nhận");
         buttons[0].setFont(new Font("FlatLaf.style", Font.BOLD, 12));
-        buttons[0].setBackground(new Color(232, 206, 180));
-        buttons[0].setForeground(Color.BLACK);
+        buttons[0].setBackground(new Color(1, 120, 220));
+        buttons[0].setForeground(Color.white);
         buttons[0].addActionListener(e -> {
             String password = new String(passwordField1.getPassword());
             String confirm = new String(passwordField2.getPassword());
@@ -303,8 +307,8 @@ public class ChangePasswordGUI extends JDialog {
         buttons[1] = new JButton();
         buttons[1].setText("Hủy");
         buttons[1].setFont(new Font("FlatLaf.style", Font.BOLD, 12));
-        buttons[1].setBackground(new Color(232, 206, 180));
-        buttons[1].setForeground(Color.BLACK);
+        buttons[1].setBackground(new Color(1, 120, 220));
+        buttons[1].setForeground(Color.white);
         buttons[1].addActionListener(e -> this.dispose());
         panel.add(buttons[1]);
     }
@@ -347,7 +351,7 @@ public class ChangePasswordGUI extends JDialog {
         currentCountDownThread = new Thread(() -> {
             activeOtp = Email.getOTP();
             nothing.setText("Hệ thống đang gửi mã OTP...");
-            Email.sendOTP(email, "Đặt lại mật khẩu Bách Hoá Xanh", activeOtp);
+            Email.sendOTP(email, "Đặt lại mật khẩu", activeOtp);
             LocalTime start = LocalTime.now();
             long temp = 0;
             while (seconds - temp > 0 && !Thread.currentThread().isInterrupted()) {
@@ -369,12 +373,12 @@ public class ChangePasswordGUI extends JDialog {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập email đúng định dạng");
             return;
         }
-        java.util.List<Staff> foundStaffs = new StaffBLL().findStaffsBy(Map.of("email", email));
+        List<Staff> foundStaffs = new StaffBLL().searchStaffs("[email] = '" + email + "'");
         if (foundStaffs.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Không tìm thấy tài khoản.");
             return;
         }
-        List<Account> foundAccounts = new AccountBLL().findAccountsBy(Map.of("staff_id", foundStaffs.get(0).getId()));
+        List<Account> foundAccounts = new AccountBLL().searchAccounts("[staff_id] = " + foundStaffs.get(0).getId());
         if (foundAccounts.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Không tìm thấy tài khoản.");
             return;

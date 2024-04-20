@@ -185,7 +185,7 @@ public class ReceiptGUI extends Layout2 {
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
             panel.setForeground(Color.white);
             panel.setIcon(new FlatSVGIcon("icon/export.svg"));
-            panel.addMouseListener(new MouseAdapter() {
+            roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     List<Receipt> receipts = new ReceiptBLL().searchReceipts();
@@ -193,8 +193,8 @@ public class ReceiptGUI extends Layout2 {
                     java.util.Date dateTo = (java.util.Date) jDateChooser[1].getDate();
                     java.sql.Date sqlDateFrom = new java.sql.Date(dateFrom.getTime());
                     java.sql.Date sqlDateTo = new java.sql.Date(dateTo.getTime());
-                    String exportFolderPath = Resource.getResourcePath("ExportPDF", false);
-                    PDF.exportReceiptsPDF(receiptBLL.getData(receiptBLL.searchReceipts()), sqlDateFrom, sqlDateTo, exportFolderPath);
+
+                    PDF.exportReceiptsPDF(receiptBLL.getData(receiptBLL.searchReceipts()), sqlDateFrom, sqlDateTo, "src/main/resources/ExportPDF");
                     JOptionPane.showMessageDialog(null, "Xuất PDF danh sách hoá đơn thành công.",
                             "Thông báo", JOptionPane.INFORMATION_MESSAGE);
 

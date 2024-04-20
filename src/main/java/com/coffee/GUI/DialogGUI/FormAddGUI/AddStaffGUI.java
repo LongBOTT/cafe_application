@@ -1,7 +1,9 @@
 package com.coffee.GUI.DialogGUI.FormAddGUI;
 
+import com.coffee.BLL.AccountBLL;
 import com.coffee.BLL.RoleBLL;
 import com.coffee.BLL.StaffBLL;
+import com.coffee.DTO.Account;
 import com.coffee.DTO.Staff;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
@@ -176,6 +178,14 @@ public class AddStaffGUI extends DialogForm {
 
 
         if (result.getKey()) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    AccountBLL accountBLL = new AccountBLL();
+                    accountBLL.addAccount(new Account(accountBLL.getAutoID(accountBLL.searchAccounts()), staff.getStaffNo(), staff.getId()));
+                }
+            });
+            thread.start();
             JOptionPane.showMessageDialog(null, result.getValue(), "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             dispose();
         } else {

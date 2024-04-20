@@ -2,6 +2,8 @@ package com.coffee.BLL;
 
 import com.coffee.DAL.AccountDAL;
 import com.coffee.DTO.Account;
+import com.coffee.DTO.Staff;
+import com.coffee.utils.Email;
 import com.coffee.utils.Password;
 import com.coffee.utils.VNString;
 import javafx.util.Pair;
@@ -10,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class AccountBLL extends Manager<Account>{
+public class AccountBLL extends Manager<Account> {
     private AccountDAL accountDAL;
 
     public AccountBLL() {
@@ -26,52 +28,53 @@ public class AccountBLL extends Manager<Account>{
         Pair<Boolean, String> result;
 
         result = validateUserName(account.getUsername());
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if (!result.getKey()) {
+            return new Pair<>(false, result.getValue());
         }
 
         result = exists(account);
         if (result.getKey()) {
-            return new Pair<>(false,result.getValue());
+            return new Pair<>(false, result.getValue());
         }
 
         if (accountDAL.addAccount(account) == 0)
             return new Pair<>(false, "Thêm tài khoản không thành công.");
-
-//        new Thread(() -> {
-//            Staff staff = new StaffBLL().findStaffsBy(Map.of("id", account.getStaffID())).get(0);
-//            String emailSubject = "Mật khẩu mặc định Bách Hóa Xanh";
-//            String emailBody = "Không được cung cấp mật khẩu này cho bất cứ ai: " + password;
-//            Email.sendOTP(staff.getEmail(), emailSubject, emailBody);
-//        }).start();
 
         String password = Password.generateRandomPassword(8);
         System.out.println(password);
         String hashedPassword = Password.hashPassword(password);
         account.setPassword("first" + hashedPassword);
         accountDAL.updateAccountPassword(account);
-        return new Pair<>(true,"Thêm tài khoản thành công.");
+
+        Staff staff = new StaffBLL().searchStaffs("id = " + account.getStaff_id()).get(0);
+        Email.sendOTP(staff.getEmail(), "Mở tài khoản nhân viên ",
+                "<html><p>Xin thông báo thông tin tài khoản của nhân viên</p>" +
+                        "    <p>Tên đăng nhập là: <strong>" + account.getUsername() + "</strong></p>" +
+                        "    <p>Mật khẩu mặc định là: <strong>" + password + "</strong></p>" +
+                        "    <p>Vui lòng thực hiện thay đổi mật khẩu.</p></html>");
+        
+        return new Pair<>(true, "Thêm tài khoản thành công.");
     }
 
     public Pair<Boolean, String> updateAccount(Account account) {
         Pair<Boolean, String> result;
 
         result = validateUserName(account.getUsername());
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if (!result.getKey()) {
+            return new Pair<>(false, result.getValue());
         }
 
         if (accountDAL.updateAccount(account) == 0)
             return new Pair<>(false, "Cập nhật tài khoản không thành công.");
 
-        return new Pair<>(true,"Cập nhật tài khoản thành công.");
+        return new Pair<>(true, "Cập nhật tài khoản thành công.");
     }
 
     public Pair<Boolean, String> updateAccountPassword(Account account, String password) {
         Pair<Boolean, String> result;
         result = validatePassWord(password);
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
+        if (!result.getKey()) {
+            return new Pair<>(false, result.getValue());
         }
         String hashedPassword = Password.hashPassword(password);
         account.setPassword("first" + hashedPassword);
@@ -79,14 +82,14 @@ public class AccountBLL extends Manager<Account>{
         if (accountDAL.updateAccountPassword(account) == 0)
             return new Pair<>(false, "Thay đổi mật khẩu không thành công.");
 
-        return new Pair<>(true,"Thay đổi mật khẩu thành công.");
+        return new Pair<>(true, "Thay đổi mật khẩu thành công.");
     }
 
     public Pair<Boolean, String> deleteAccount(Account account) {
         if (accountDAL.deleteAccount("id = " + account.getId()) == 0)
             return new Pair<>(false, "Xoá tài khoản không thành công.");
 
-        return new Pair<>(true,"Xoá tài khoản thành công.");
+        return new Pair<>(true, "Xoá tài khoản thành công.");
     }
 
     public List<Account> searchAccounts(String... conditions) {
@@ -111,39 +114,39 @@ public class AccountBLL extends Manager<Account>{
         return accounts;
     }
 
-    public Pair<Boolean, String> exists(Account newAccount){
+    public Pair<Boolean, String> exists(Account newAccount) {
         List<Account> accounts = accountDAL.searchAccounts("username = '" + newAccount.getUsername() + "'");
-        if(!accounts.isEmpty()){
+        if (!accounts.isEmpty()) {
             return new Pair<>(true, "Tên tài khoản đã tồn tại.");
         }
         return new Pair<>(false, "");
     }
 
-    public Pair<Boolean, String> validatePassWord(String passWord){
-        if(passWord.isBlank())
-            return new Pair<>(false,"Mật khẩu tài khoản không được bỏ trống.");
-        if(passWord.contains(" "))
-            return new Pair<>(false,"Mật khẩu tài khoản không được có khoảng trắng.");
-        if(!VNString.containsUpperCase(passWord))
-            return new Pair<>(false,"Mật khẩu phải chứa ít nhất 1 chữ cái in hoa.");
-        if(!VNString.containsNumber(passWord))
-            return new Pair<>(false,"Mật khẩu phải chứa ít nhất 1 chữ số.");
-        if(!VNString.containsSpecial(passWord))
-            return new Pair<>(false,"Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt.");
-        if(!VNString.containsLowerCase(passWord))
-            return new Pair<>(false,"Mật khẩu phải chứa ít nhất 1 chữ cái thường.");
-        return new Pair<>(true,passWord);
+    public Pair<Boolean, String> validatePassWord(String passWord) {
+        if (passWord.isBlank())
+            return new Pair<>(false, "Mật khẩu tài khoản không được bỏ trống.");
+        if (passWord.contains(" "))
+            return new Pair<>(false, "Mật khẩu tài khoản không được có khoảng trắng.");
+        if (!VNString.containsUpperCase(passWord))
+            return new Pair<>(false, "Mật khẩu phải chứa ít nhất 1 chữ cái in hoa.");
+        if (!VNString.containsNumber(passWord))
+            return new Pair<>(false, "Mật khẩu phải chứa ít nhất 1 chữ số.");
+        if (!VNString.containsSpecial(passWord))
+            return new Pair<>(false, "Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt.");
+        if (!VNString.containsLowerCase(passWord))
+            return new Pair<>(false, "Mật khẩu phải chứa ít nhất 1 chữ cái thường.");
+        return new Pair<>(true, passWord);
     }
 
 
-    public Pair<Boolean, String> validateUserName(String username){
-        if(username.isBlank())
-            return new Pair<>(false,"Tên tài khoản không được để trống.");
-        if(VNString.containsUnicode(username))
-            return new Pair<>(false,"Tên tài khoản không được chứa ký tự không hỗ trợ.");
-        if(VNString.containsSpecial(username))
-            return new Pair<>(false,"Tên tài khoản không được chứa ký tự đặc biệt.");
-        return new Pair<>(true,username);
+    public Pair<Boolean, String> validateUserName(String username) {
+        if (username.isBlank())
+            return new Pair<>(false, "Tên tài khoản không được để trống.");
+        if (VNString.containsUnicode(username))
+            return new Pair<>(false, "Tên tài khoản không được chứa ký tự không hỗ trợ.");
+        if (VNString.containsSpecial(username))
+            return new Pair<>(false, "Tên tài khoản không được chứa ký tự đặc biệt.");
+        return new Pair<>(true, username);
     }
 
     @Override
@@ -156,6 +159,7 @@ public class AccountBLL extends Manager<Account>{
         };
 
     }
+
     public static void main(String[] args) {
         AccountBLL accountBLL = new AccountBLL();
         Account account = new Account(accountBLL.getAutoID(accountBLL.searchAccounts()), "ducanh", 4);

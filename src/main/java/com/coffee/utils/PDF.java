@@ -2,6 +2,12 @@ package com.coffee.utils;
 
 import com.coffee.BLL.*;
 import com.coffee.DTO.*;
+import com.coffee.GUI.components.DataTable;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -11,9 +17,9 @@ import org.apache.pdfbox.pdmodel.common.PDImmutableRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
@@ -21,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static com.coffee.GUI.components.WorkSchedulePanel.getDaysBetween;
@@ -116,6 +123,19 @@ public class PDF {
                 addTextAt(data.get(i)[j], columns[j] + 0.1F, firstRow + i, regularFont, fontSize - 1);
     }
 
+    public void addTableWorkSchedule(List<String[]> data, float fontSize, float startLine, float firstRow, float[] columns) {
+        int rows = data.size();
+
+        for (int i = 0; i <= rows; ++i)
+            addLineAt(columns[0], startLine + i, columns[columns.length - 1], startLine + i, 0.5F);
+        for (float column : columns)
+            addLineAt(column, startLine, column, startLine + rows, 0.5F);
+        for (int j = 0; j < columns.length - 1; ++j)
+            addTextAt(data.get(0)[j], columns[j] + 0.1F, firstRow, boldFont, fontSize);
+        for (int i = 1; i < rows; ++i)
+            for (int j = 0; j < columns.length - 1; ++j)
+                addTextAt("data.get(i)[j]", columns[j] + 0.1F, firstRow + i, regularFont, fontSize - 1);
+    }
 
     public static String getFileNameDatetodate(String path, String name, Date from, Date to) {
         int max = 0;
@@ -442,62 +462,244 @@ public class PDF {
         return true;
     }
 
-    public static boolean exportWorkSchedulePDF(Object[][] managers, Object[][] sales, Object[][] warehouses, Date from, Date to, String path) {
-        try {
-            Files.createDirectories(Paths.get(path));
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-        File file = new File(getFileNameDatetodate(path, "workSchedule", from, to));
-        PDF pdf = new PDF(6, 10 + managers.length + sales.length + warehouses.length, 250F, 30F);
-
-        pdf.addTextAt("LỊCH LÀM VIỆC", 2.6F, 2, pdf.boldFont, 25);
-        pdf.addTextAt(new SimpleDateFormat("dd/MM/yyy").format(from) + " - " + new SimpleDateFormat("dd/MM/yyy").format(to), 2.5F, 3, pdf.boldFont, 20);
-
+    public static void exportWorkSchedulePDF(Date from, Date to, String path) {
         List<Date> dates = getDaysBetween(from, to);
         DateTimeFormatter dtfInput = DateTimeFormatter.ofPattern("u-M-d", Locale.ENGLISH);
         DateTimeFormatter dtfOutput = DateTimeFormatter.ofPattern("EEEE", Locale.ENGLISH);
 
-        List<String[]> tableData = new ArrayList<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String[] columns = new String[]{"       ",
+                LocalDate.parse(dateFormat.format(dates.get(0)), dtfInput).format(dtfOutput) +
+                        " (" + LocalDate.parse(dateFormat.format(dates.get(0)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
+                LocalDate.parse(dateFormat.format(dates.get(1)), dtfInput).format(dtfOutput) +
+                        " (" + LocalDate.parse(dateFormat.format(dates.get(1)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
+                LocalDate.parse(dateFormat.format(dates.get(2)), dtfInput).format(dtfOutput) +
+                        " (" + LocalDate.parse(dateFormat.format(dates.get(2)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
+                LocalDate.parse(dateFormat.format(dates.get(3)), dtfInput).format(dtfOutput) +
+                        " (" + LocalDate.parse(dateFormat.format(dates.get(3)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
+                LocalDate.parse(dateFormat.format(dates.get(4)), dtfInput).format(dtfOutput) +
+                        " (" + LocalDate.parse(dateFormat.format(dates.get(4)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
+                LocalDate.parse(dateFormat.format(dates.get(5)), dtfInput).format(dtfOutput) +
+                        " (" + LocalDate.parse(dateFormat.format(dates.get(5)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
+                LocalDate.parse(dateFormat.format(dates.get(6)), dtfInput).format(dtfOutput) +
+                        " (" + LocalDate.parse(dateFormat.format(dates.get(6)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")"};
 
-        tableData.add(List.of("",
-                        LocalDate.parse(dateFormat.format(dates.get(0)), dtfInput).format(dtfOutput) +
-                                " (" + LocalDate.parse(dateFormat.format(dates.get(0)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
-                        LocalDate.parse(dateFormat.format(dates.get(1)), dtfInput).format(dtfOutput) +
-                                " (" + LocalDate.parse(dateFormat.format(dates.get(1)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
-                        LocalDate.parse(dateFormat.format(dates.get(2)), dtfInput).format(dtfOutput) +
-                                " (" + LocalDate.parse(dateFormat.format(dates.get(2)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
-                        LocalDate.parse(dateFormat.format(dates.get(3)), dtfInput).format(dtfOutput) +
-                                " (" + LocalDate.parse(dateFormat.format(dates.get(3)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
-                        LocalDate.parse(dateFormat.format(dates.get(4)), dtfInput).format(dtfOutput) +
-                                " (" + LocalDate.parse(dateFormat.format(dates.get(4)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
-                        LocalDate.parse(dateFormat.format(dates.get(5)), dtfInput).format(dtfOutput) +
-                                " (" + LocalDate.parse(dateFormat.format(dates.get(5)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
-                        LocalDate.parse(dateFormat.format(dates.get(6)), dtfInput).format(dtfOutput) +
-                                " (" + LocalDate.parse(dateFormat.format(dates.get(6)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")")
-                .toArray(new String[0]));
+        DataTable dataTable = new DataTable(new Object[0][0], columns);
+        Object[][] data = new Object[12][8];
 
+        Object[] row = new Object[]{"Quản Lý", "", "", "", "", "", "", ""};
+        data[0] = row;
 
-        String[] datamanager = new String[]{"Ca 1", "", "", "", "", "", "", ""};
+        row = new Object[]{"Ca 1", "", "", "", "", "", "", ""};
+        List<Integer> managerIDList = new ArrayList<>();
+        List<Role_Detail> managerrole_detailList = new Role_DetailBLL().searchRole_detailsByRole(2, new SimpleDateFormat("yyyy-MM-dd").format(java.sql.Date.valueOf(LocalDate.now())));
+        for (Role_Detail roleDetail : managerrole_detailList)
+            managerIDList.add(roleDetail.getStaff_id());
 
-        for (int i = 0; i < managers.length; i++) {
-            int shift = Integer.parseInt(managers[i][3].toString());
-            if (shift == 1) {
-                String staffName = new StaffBLL().searchStaffs("id = " + Integer.parseInt(managers[i][1].toString())).get(0).getName();
-                datamanager[1] += staffName;
-                datamanager = new String[]{"", "", "", "", "", "", "", ""};
-            }
+        List<Work_Schedule> managerWork_schedules = new ArrayList<>();
+        for (Integer id : managerIDList) {
+            managerWork_schedules.addAll(new Work_ScheduleBLL().searchWork_schedules("staff_id = " + id,
+                    "date >= '" + new SimpleDateFormat("yyyy-MM-dd").format(from) + "'",
+                    "date <= '" + new SimpleDateFormat("yyyy-MM-dd").format(to) + "'"));
         }
 
+        for (Work_Schedule work_schedule : managerWork_schedules) {
+            if (work_schedule.getShift() == 1) {
+                int index = dates.indexOf(work_schedule.getDate());
+                String staffName = new StaffBLL().searchStaffs("id = " + work_schedule.getStaff_id()).get(0).getName();
+                row[index + 1] += staffName + "\n" + "\n";
+            }
+        }
+        data[1] = row;
 
-        tableData.add(datamanager);
+        row = new Object[]{"Ca 2", "", "", "", "", "", "", ""};
+        for (Work_Schedule work_schedule : managerWork_schedules) {
+            if (work_schedule.getShift() == 2) {
+                int index = dates.indexOf(work_schedule.getDate());
+                String staffName = new StaffBLL().searchStaffs("id = " + work_schedule.getStaff_id()).get(0).getName();
+                row[index + 1] += staffName + "\n" + "\n";
+            }
+        }
+        data[2] = row;
 
-        pdf.addTable(tableData, 16F, 4F, 4.6F, new float[]{0.5F, 1F, 1.7F, 2.4F, 3.1F, 3.8F, 4.5F, 5.2F});
+        row = new Object[]{"Ca 3", "", "", "", "", "", "", ""};
+        for (Work_Schedule work_schedule : managerWork_schedules) {
+            if (work_schedule.getShift() == 3) {
+                int index = dates.indexOf(work_schedule.getDate());
+                String staffName = new StaffBLL().searchStaffs("id = " + work_schedule.getStaff_id()).get(0).getName();
+                row[index + 1] += staffName + "\n" + "\n";
+            }
+        }
+        data[3] = row;
 
-        pdf.closeDocument(file);
-        return true;
+        row = new Object[]{"Kho", "", "", "", "", "", "", ""};
+        data[4] = row;
+
+        row = new Object[]{"Ca 1", "", "", "", "", "", "", ""};
+        List<Integer> staffWearHouseIDList = new ArrayList<>();
+        List<Role_Detail> staffWearHouserole_detailList = new Role_DetailBLL().searchRole_detailsByRole(3, new SimpleDateFormat("yyyy-MM-dd").format(java.sql.Date.valueOf(LocalDate.now())));
+        for (Role_Detail roleDetail : staffWearHouserole_detailList)
+            staffWearHouseIDList.add(roleDetail.getStaff_id());
+
+        List<Work_Schedule> staffWearHouseWork_schedules = new ArrayList<>();
+        for (Integer id : staffWearHouseIDList) {
+            staffWearHouseWork_schedules.addAll(new Work_ScheduleBLL().searchWork_schedules("staff_id = " + id,
+                    "date >= '" + new SimpleDateFormat("yyyy-MM-dd").format(from) + "'",
+                    "date <= '" + new SimpleDateFormat("yyyy-MM-dd").format(to) + "'"));
+        }
+
+        for (Work_Schedule work_schedule : staffWearHouseWork_schedules) {
+            if (work_schedule.getShift() == 1) {
+                int index = dates.indexOf(work_schedule.getDate());
+                String staffName = new StaffBLL().searchStaffs("id = " + work_schedule.getStaff_id()).get(0).getName();
+                row[index + 1] += staffName + "\n" + "\n";
+            }
+        }
+        data[5] = row;
+
+        row = new Object[]{"Ca 2", "", "", "", "", "", "", ""};
+        for (Work_Schedule work_schedule : staffWearHouseWork_schedules) {
+            if (work_schedule.getShift() == 2) {
+                int index = dates.indexOf(work_schedule.getDate());
+                String staffName = new StaffBLL().searchStaffs("id = " + work_schedule.getStaff_id()).get(0).getName();
+                row[index + 1] += staffName + "\n" + "\n";
+            }
+        }
+        data[6] = row;
+
+        row = new Object[]{"Ca 3", "", "", "", "", "", "", ""};
+        for (Work_Schedule work_schedule : staffWearHouseWork_schedules) {
+            if (work_schedule.getShift() == 3) {
+                int index = dates.indexOf(work_schedule.getDate());
+                String staffName = new StaffBLL().searchStaffs("id = " + work_schedule.getStaff_id()).get(0).getName();
+                row[index + 1] += staffName + "\n" + "\n";
+            }
+        }
+        data[7] = row;
+
+        row = new Object[]{"Bán Hàng", "", "", "", "", "", "", ""};
+        data[8] = row;
+
+        row = new Object[]{"Ca 1", "", "", "", "", "", "", ""};
+        List<Integer> staffSalesIDList = new ArrayList<>();
+        List<Role_Detail> staffSalesrole_detailList = new Role_DetailBLL().searchRole_detailsByRole(4, new SimpleDateFormat("yyyy-MM-dd").format(java.sql.Date.valueOf(LocalDate.now())));
+        for (Role_Detail roleDetail : staffSalesrole_detailList)
+            staffSalesIDList.add(roleDetail.getStaff_id());
+
+        List<Work_Schedule> staffSalesWork_schedules = new ArrayList<>();
+        for (Integer id : staffSalesIDList) {
+            staffSalesWork_schedules.addAll(new Work_ScheduleBLL().searchWork_schedules("staff_id = " + id,
+                    "date >= '" + new SimpleDateFormat("yyyy-MM-dd").format(from) + "'",
+                    "date <= '" + new SimpleDateFormat("yyyy-MM-dd").format(to) + "'"));
+        }
+
+        for (Work_Schedule work_schedule : staffSalesWork_schedules) {
+            if (work_schedule.getShift() == 1) {
+                int index = dates.indexOf(work_schedule.getDate());
+                String staffName = new StaffBLL().searchStaffs("id = " + work_schedule.getStaff_id()).get(0).getName();
+                row[index + 1] += staffName + "\n" + "\n";
+            }
+        }
+        data[9] = row;
+
+        row = new Object[]{"Ca 2", "", "", "", "", "", "", ""};
+        for (Work_Schedule work_schedule : staffSalesWork_schedules) {
+            if (work_schedule.getShift() == 2) {
+                int index = dates.indexOf(work_schedule.getDate());
+                String staffName = new StaffBLL().searchStaffs("id = " + work_schedule.getStaff_id()).get(0).getName();
+                row[index + 1] += staffName + "\n" + "\n";
+            }
+        }
+        data[10] = row;
+
+        row = new Object[]{"Ca 3", "", "", "", "", "", "", ""};
+        for (Work_Schedule work_schedule : staffSalesWork_schedules) {
+            if (work_schedule.getShift() == 3) {
+                int index = dates.indexOf(work_schedule.getDate());
+                String staffName = new StaffBLL().searchStaffs("id = " + work_schedule.getStaff_id()).get(0).getName();
+                row[index + 1] += staffName + "\n" + "\n";
+            }
+        }
+        data[11] = row;
+
+        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+        model.setRowCount(0);
+        for (Object[] object : data) {
+            model.addRow(object);
+        }
+        PDF.createWorkSchedulePDF("Lịch Làm Việc", dataTable, "src/main/resources/ExportPDF", java.sql.Date.valueOf("2024-03-11"), java.sql.Date.valueOf("2024-03-17"));
+    }
+
+    public static void createWorkSchedulePDF(String title, JTable table, String dest, Date from, Date to) {
+        try {
+            // Create PDF document
+            Document document = new Document(new RectangleReadOnly(PageSize.A4.getHeight(), PageSize.A4.getWidth()));
+
+            // Initialize PDF writer
+            PdfWriter.getInstance(document, new FileOutputStream(getFileName(dest, "workSchedule", java.sql.Date.valueOf(LocalDate.now()))));
+
+            // Open document
+            document.open();
+            String fontPath = "font/Roboto/Roboto-Regular.ttf"; // adjust the path as needed
+            Font regularFont = getCustomFont(fontPath);
+            regularFont.setSize(9F);
+
+            fontPath = "font/Roboto/Roboto-Bold.ttf";
+            Font boldFont = getCustomFont(fontPath);
+
+            fontPath = "font/Roboto/Roboto-Italic.ttf";
+            Font italicFont = getCustomFont(fontPath);
+
+            // Add title to the document
+            boldFont.setSize(25);
+            Paragraph titleParagraph = new Paragraph(30F, title, boldFont);
+            titleParagraph.setAlignment(Paragraph.ALIGN_CENTER);
+            document.add(titleParagraph);
+
+
+            boldFont.setSize(20);
+            Paragraph dateParagraph = new Paragraph(30f, new SimpleDateFormat("dd/MM/yyy").format(from) + " - " + new SimpleDateFormat("dd/MM/yyy").format(to), boldFont);
+            dateParagraph.setAlignment(Paragraph.ALIGN_CENTER);
+            document.add(dateParagraph);
+            document.add(new Paragraph(30f, " "));
+
+            // Convert JTable to PDF table
+            PdfPTable pdfTable = new PdfPTable(table.getColumnCount());
+            pdfTable.setWidthPercentage(100); // Set table width to 100% of page width
+            pdfTable.setWidths(new float[]{30f, 60f, 60f, 60f, 60f, 60f, 60f, 60f});
+
+            boldFont.setSize(10F);
+            for (int i = 0; i < table.getColumnCount(); i++) {
+                pdfTable.addCell(new Phrase(table.getColumnName(i), boldFont));
+            }
+            List<String> strings = List.of("Quản Lý", "Kho", "Bán Hàng");
+            for (int i = 0; i < table.getRowCount(); i++) {
+                boolean flag = table.getValueAt(i, 0) != null && strings.contains(table.getValueAt(i, 0).toString());
+                for (int j = 0; j < table.getColumnCount(); j++) {
+                    if (table.getValueAt(i, j) == null)
+                        pdfTable.addCell(new Phrase(" ", regularFont));
+                    else
+                        pdfTable.addCell(new Phrase(table.getValueAt(i, j).toString(), regularFont));
+
+                }
+                if (flag) {
+                    for (int j = 1; j < table.getColumnCount(); j++) {
+                        PdfPCell cell = pdfTable.getRow(i + 1).getCells()[j];
+                        cell.setBackgroundColor(BaseColor.GRAY);
+                    }
+                }
+            }
+
+            // Add PDF table to document
+            document.add(pdfTable);
+
+            // Close document
+            document.close();
+
+            System.out.println("PDF created successfully.");
+        } catch (DocumentException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     PDType0Font newFont(String path) {
@@ -506,6 +708,11 @@ public class PDF {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static Font getCustomFont(String fontPath) throws IOException, DocumentException {
+        BaseFont bf = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        return new Font(bf, 12);
     }
 
     public static void main(String[] args) {
@@ -520,24 +727,9 @@ public class PDF {
 //            PDF.importBillDetailsPDF(importNotes.get(0),"C:\\Users\\MI\\OneDrive\\Documents\\GitHub\\cafe_application\\src\\main\\java\\com\\coffee\\Export" );
 //
 
-        List<Integer> staffIDList = new ArrayList<>();
-        List<Role_Detail> role_detailList = new Role_DetailBLL().searchRole_detailsByRole(2, new SimpleDateFormat("yyyy-MM-dd").format(java.sql.Date.valueOf(LocalDate.now())));
-        for (Role_Detail roleDetail : role_detailList)
-//            if (!staffIDList.contains(roleDetail.getStaff_id()))
-            staffIDList.add(roleDetail.getStaff_id());
-
-        List<Work_Schedule> work_schedules = new ArrayList<>();
-        for (Integer id : staffIDList) {
-            work_schedules.addAll(new Work_ScheduleBLL().searchWork_schedules("staff_id = " + id,
-                    "date >= '2024-03-11'",
-                    "date <= '2024-03-18'"));
-        }
-        PDF.exportWorkSchedulePDF(new Work_ScheduleBLL().getData(work_schedules), new Work_ScheduleBLL().getData(work_schedules), new Work_ScheduleBLL().getData(work_schedules),
-                java.sql.Date.valueOf("2024-03-11"),
-                java.sql.Date.valueOf("2024-03-18"),
-                Resource.getResourcePath("ExportPDF", false));
-
+        PDF.exportWorkSchedulePDF(java.sql.Date.valueOf("2024-03-11"), java.sql.Date.valueOf("2024-03-17"), "src/main/resources/ExportPDF");
     }
+
 }
 
 

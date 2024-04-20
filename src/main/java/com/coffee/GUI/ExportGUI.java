@@ -209,7 +209,7 @@ public class ExportGUI extends Layout2 {
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
             panel.setForeground(Color.white);
             panel.setIcon(new FlatSVGIcon("icon/export.svg"));
-            panel.addMouseListener(new MouseAdapter() {
+            roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     List<Export_Note> exportNotes = new Export_NoteBLL().searchExport_Note();
@@ -217,8 +217,8 @@ public class ExportGUI extends Layout2 {
                     java.util.Date dateTo = (java.util.Date) jDateChooser[1].getDate();
                     java.sql.Date sqlDateFrom = new java.sql.Date(dateFrom.getTime());
                     java.sql.Date sqlDateTo = new java.sql.Date(dateTo.getTime());
-                    String exportFolderPath = Resource.getResourcePath("ExportPDF", false);
-                    PDF.exportExportNotePDF(exportNoteBLL.getData(exportNoteBLL.searchExport_Note()), sqlDateFrom, sqlDateTo, exportFolderPath);
+
+                    PDF.exportExportNotePDF(exportNoteBLL.getData(exportNoteBLL.searchExport_Note()), sqlDateFrom, sqlDateTo, "src/main/resources/ExportPDF");
                     JOptionPane.showMessageDialog(null, "Xuất PDF danh sách phiếu xuất hàng thành công.",
                             "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 }
