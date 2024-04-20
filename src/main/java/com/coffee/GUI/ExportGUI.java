@@ -93,6 +93,12 @@ public class ExportGUI extends Layout2 {
             jDateChooser[i].setDateFormatString("dd/MM/yyyy");
             jDateChooser[i].setPreferredSize(new Dimension(200, 30));
             jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
+
+            dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
+            dateTextField[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            dateTextField[i].setText(LocalDate.now().format(formatter));
+
             if (i == 0) {
                 JLabel jLabel = new JLabel("Từ Ngày");
                 jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
@@ -212,13 +218,7 @@ public class ExportGUI extends Layout2 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    List<Export_Note> exportNotes = new Export_NoteBLL().searchExport_Note();
-                    java.util.Date dateFrom = (java.util.Date) jDateChooser[0].getDate();
-                    java.util.Date dateTo = (java.util.Date) jDateChooser[1].getDate();
-                    java.sql.Date sqlDateFrom = new java.sql.Date(dateFrom.getTime());
-                    java.sql.Date sqlDateTo = new java.sql.Date(dateTo.getTime());
-
-                    PDF.exportExportNotePDF(exportNoteBLL.getData(exportNoteBLL.searchExport_Note()), sqlDateFrom, sqlDateTo, "src/main/resources/ExportPDF");
+                    PDF.exportExportNotePDF(exportNoteBLL.getData(exportNoteBLL.searchExport_Note()), "src/main/resources/ExportPDF");
                     JOptionPane.showMessageDialog(null, "Xuất PDF danh sách phiếu xuất hàng thành công.",
                             "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -232,6 +232,13 @@ public class ExportGUI extends Layout2 {
         jDateChooser[0].getDateEditor().setDate(null);
         jDateChooser[1].getDateEditor().setDate(null);
         loadDataTable(exportNoteBLL.getData(exportNoteBLL.searchExport_Note()));
+        for (int i=0 ; i<2; i++)
+        {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            dateTextField[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
+            dateTextField[i].setText(LocalDate.now().format(formatter));
+            dateTextField[i].setText(LocalDate.now().format(formatter));
+        }
     }
 
     public void loadDataTable(Object[][] objects) {

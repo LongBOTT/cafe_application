@@ -95,7 +95,7 @@ public class Payroll {
     @Override
     public String toString() {
         return id + " | " +
-                "<html>" + name + "</html> | " +
+                " " + name + " | " +
                 month + "/" + year + " | " +
                 VNString.currency(total_salary) + " | " +
                 VNString.currency(paid) + " | " +

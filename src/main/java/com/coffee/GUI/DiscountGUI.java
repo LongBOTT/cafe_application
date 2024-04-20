@@ -177,6 +177,10 @@ public class DiscountGUI extends Layout2 {
             jDateChooser[i].setPreferredSize(new Dimension(150, 30));
             jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
 
+            dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            dateTextField[i].setText(LocalDate.now().format(formatter));
+
             if (i == 0) {
                 JLabel jLabel = new JLabel("Từ Ngày");
                 jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
@@ -217,27 +221,27 @@ public class DiscountGUI extends Layout2 {
         refreshLabel.setForeground(Color.white);
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
         refreshPanel.add(refreshLabel);
-        refreshPanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                File file = chooseExcelFile(null);
-                if (file != null) {
-                    Pair<Boolean, String> result = null;
-                    try {
-                        result = new AddDiscountFromExcel().addDiscountsFromExcel(file);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    if (!result.getKey()) {
-                        JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Thêm chương trình giảm giá thành công",
-                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                        refresh();
-                    }
-                }
-            }
-        });
+//        refreshPanel.addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mousePressed(MouseEvent e) {
+//                File file = chooseExcelFile(null);
+//                if (file != null) {
+//                    Pair<Boolean, String> result = null;
+//                    try {
+//                        result = new AddDiscountFromExcel().addDiscountsFromExcel(file);
+//                    } catch (IOException ex) {
+//                        throw new RuntimeException(ex);
+//                    }
+//                    if (!result.getKey()) {
+//                        JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+//                    } else {
+//                        JOptionPane.showMessageDialog(null, "Thêm chương trình giảm giá thành công",
+//                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+//                        refresh();
+//                    }
+//                }
+//            }
+//        });
         if (functions.stream().anyMatch(f -> f.getName().equals("add"))) {
             RoundedPanel roundedPanel = getRoundedPanel();
             roundedPanel.addMouseListener(new MouseAdapter() {
@@ -295,9 +299,16 @@ public class DiscountGUI extends Layout2 {
         jDateChooser[0].setDate(null);
         jDateChooser[1].setDate(null);
         processDateChangeEvent = true;
-
-
         loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));
+
+        for (int i=0 ; i<2; i++)
+        {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
+            dateTextField[i].setBackground(new Color(245, 246, 250));
+            dateTextField[i].setText(LocalDate.now().format(formatter));
+            dateTextField[i].setText(LocalDate.now().format(formatter));
+        }
     }
 
     private void searchDiscountByName() {
