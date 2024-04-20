@@ -119,6 +119,16 @@ public class ProductDAL extends Manager {
         }
     }
 
+    public List<List<String>> getRemain(int id, String size) {
+        try {
+            return executeQuery("SELECT MIN(ma.remain DIV (re.quantity * 0.001)) \n" +
+                    "FROM recipe re JOIN material ma ON re.material_id = ma.id\n" +
+                    "WHERE re.product_id = " + id + " AND re.size = '" + size + "'");
+        } catch (SQLException | IOException e) {
+            return new ArrayList<>();
+        }
+    }
+
     public static void main(String[] args) {
         ProductDAL s = new ProductDAL();
         System.out.println(s.searchProducts());

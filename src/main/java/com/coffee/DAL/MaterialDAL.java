@@ -102,4 +102,46 @@ public class MaterialDAL extends Manager {
         }
         return new ArrayList<>();
     }
+
+    public int sub(int id, String size, int quantity) {
+        try {
+            return executeUpdate("DROP TABLE IF EXISTS TempTable;\n" +
+                    "CREATE TEMPORARY TABLE TempTable (\n" +
+                    "    id INT,\n" +
+                    "    quantity DOUBLE\n" +
+                    ");\n" +
+                    "\n" +
+                    "INSERT INTO TempTable\n" +
+                    "SELECT ma.id, re.quantity\n" +
+                    "FROM recipe re JOIN material ma ON re.material_id = ma.id\n" +
+                    "WHERE re.product_id = " + id + " AND re.size = '" + size + "';\n" +
+                    "\n" +
+                    "UPDATE material\n" +
+                    "SET remain = remain - (SELECT quantity FROM TempTable WHERE id = material.id) * " + quantity + " * 0.001\n" +
+                    "WHERE material.id IN (SELECT id FROM TempTable)");
+        } catch (SQLException | IOException e) {
+            return 0;
+        }
+    }
+
+    public int plus(int id, String size, int quantity) {
+        try {
+            return executeUpdate("DROP TABLE IF EXISTS TempTable; " +
+                    "CREATE TEMPORARY TABLE TempTable (\n" +
+                    "    id INT,\n" +
+                    "    quantity DOUBLE\n" +
+                    ");\n" +
+                    "\n" +
+                    "INSERT INTO TempTable\n" +
+                    "SELECT ma.id, re.quantity\n" +
+                    "FROM recipe re JOIN material ma ON re.material_id = ma.id\n" +
+                    "WHERE re.product_id = " + id + " AND re.size = '" + size + "';\n" +
+                    "\n" +
+                    "UPDATE material\n" +
+                    "SET remain = remain + (SELECT quantity FROM TempTable WHERE id = material.id) * " + quantity + " * 0.001\n" +
+                    "WHERE material.id IN (SELECT id FROM TempTable)");
+        } catch (SQLException | IOException e) {
+            return 0;
+        }
+    }
 }

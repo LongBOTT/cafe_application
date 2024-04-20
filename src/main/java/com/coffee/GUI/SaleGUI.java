@@ -2,6 +2,7 @@ package com.coffee.GUI;
 
 import com.coffee.BLL.*;
 import com.coffee.DTO.*;
+import com.coffee.GUI.components.Circle_ProgressBar;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.SalePanel;
@@ -16,7 +17,9 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.TextAttribute;
+import java.io.IOException;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
@@ -63,6 +66,7 @@ public class SaleGUI extends SalePanel {
     private List<Pair<Integer, JLabel>> remainList = new ArrayList<>();
     private List<Pair<Integer, RoundedPanel>> productRoundPanelList = new ArrayList<>();
     private RoundedPanel selectedCategory = null;
+    public List<Product> resultSearch = new ArrayList<>();
 
     public SaleGUI(Account account) {
         super();
@@ -165,6 +169,7 @@ public class SaleGUI extends SalePanel {
             public void run() {
                 loadProductRoundPanel();
                 loadProduct(productBLL.searchProducts("deleted = 0"));
+                resultSearch = productBLL.searchProducts("deleted = 0");
             }
         });
         threadRender.start();
@@ -278,6 +283,7 @@ public class SaleGUI extends SalePanel {
             }
         }
         if (categoryName.equals("TẤT CẢ") && status.equals("Tất cả") && jTextFieldSearch.getText().isEmpty()) {
+            resultSearch = productList;
             loadProduct(productList);
         } else {
             if (!jTextFieldSearch.getText().isEmpty()) {
@@ -295,6 +301,7 @@ public class SaleGUI extends SalePanel {
                     productList.removeIf(product -> !checkOutOfRemain(product.getId()));
                 }
             }
+            resultSearch = productList;
             loadProduct(productList);
         }
     }
@@ -726,54 +733,101 @@ public class SaleGUI extends SalePanel {
 
     private void saveSizeChanged(int index) {
         List<Object> receipt = receiptDetailList.get(index);
-        receipt.set(1, sizeReceiptDetail.get(index).getSelectedItem());
 
-        int quantity = Integer.parseInt(quantityReceiptDetail.get(index).getText());
+        int quantity = Integer.parseInt(receipt.get(2).toString());
         Product product = productBLL.findProductsBy(Map.of("name", receipt.get(0),
                 "size", Objects.requireNonNull(sizeReceiptDetail.get(index).getSelectedItem()))).get(0);
         int remain = checkRemainProduct(product);
         if (quantity > remain) {
+            sizeReceiptDetail.get(index).setSelectedItem(receipt.get(1).toString());
             JOptionPane.showMessageDialog(this, "Số lượng sản phẩm còn lại: " + remain + ".\nVui lòng thay đổi số lượng mua.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
+
+        try {
+            materialBLL.getMaterialDAL().executeProcedureAddMaterial(product.getId(), receipt.get(1).toString(), Integer.parseInt(receipt.get(2).toString()));
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+        receipt.set(1, sizeReceiptDetail.get(index).getSelectedItem());
+        try {
+            materialBLL.getMaterialDAL().executeProcedureSubMaterial(product.getId(), receipt.get(1).toString(), Integer.parseInt(receipt.get(2).toString()));
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+
         double price;
 //        double percent = checkPercentDiscount(product.getId());
-//        if (percent == 0) {
         price = product.getPrice();
+//        if (percent == 0) {
 //        } else {
 //            price = product.getPrice() - product.getPrice() * percent / 100;
 //        }
         receipt.set(3, quantity * price);
 
         receiptDetailList.set(index, receipt);
-
-        sizeReceiptDetail.get(index).setSelectedItem(receipt.get(1));
+//        sizeReceiptDetail.get(index).setSelectedItem(receipt.get(1));
         priceReceiptDetail.get(index).setText(VNString.currency(Double.parseDouble(receipt.get(3).toString())));
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
         calculateTotal();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadProductRoundPanel();
+                loadProduct(resultSearch);
+            }
+        });
+        thread.start();
     }
 
     private void saveQuantityChanged(int index) {
         List<Object> receipt = receiptDetailList.get(index);
 
+        if (quantityReceiptDetail.get(index).getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập số lượng sản phẩm.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
         int quantity = Integer.parseInt(quantityReceiptDetail.get(index).getText());
         Product product = productBLL.findProductsBy(Map.of("name", receipt.get(0),
-                "size", Objects.requireNonNull(sizeReceiptDetail.get(index).getSelectedItem()))).get(0);
+                "size", receipt.get(1).toString())).get(0);
         int remain = checkRemainProduct(product);
         if (quantity > remain) {
             quantityReceiptDetail.get(index).setText(receipt.get(2).toString());
             JOptionPane.showMessageDialog(this, "Số lượng sản phẩm còn lại: " + remain + ".\nVui lòng thay đổi số lượng mua.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        receipt.set(2, Integer.parseInt(quantityReceiptDetail.get(index).getText()));
-        double price;
-        double percent = checkPercentDiscount(product.getId());
-        if (percent == 0) {
-            price = product.getPrice();
+
+        if (!receipt.get(1).toString().equals("0")) {
+            try {
+                materialBLL.getMaterialDAL().executeProcedureAddMaterial(product.getId(), receipt.get(1).toString(), Integer.parseInt(receipt.get(2).toString()));
+            } catch (SQLException | IOException e) {
+                throw new RuntimeException(e);
+            }
+            receipt.set(2, Integer.parseInt(quantityReceiptDetail.get(index).getText()));
+            try {
+                materialBLL.getMaterialDAL().executeProcedureSubMaterial(product.getId(), receipt.get(1).toString(), Integer.parseInt(receipt.get(2).toString()));
+            } catch (SQLException | IOException e) {
+                throw new RuntimeException(e);
+            }
         } else {
-            price = product.getPrice() - product.getPrice() * percent / 100;
+            List<Material> materialList = materialBLL.findMaterialsBy(Map.of("name", product.getName()));
+            Material newMaterial = materialList.get(0);
+            Material oldMaterial = materialList.get(0);
+            newMaterial.setRemain(newMaterial.getRemain() + Double.parseDouble(receipt.get(2).toString()));
+            receipt.set(2, Integer.parseInt(quantityReceiptDetail.get(index).getText()));
+            newMaterial.setRemain(newMaterial.getRemain() - Double.parseDouble(receipt.get(2).toString()));
+            materialBLL.updateMaterial(newMaterial, oldMaterial);
         }
+
+        double price;
+//        double percent = checkPercentDiscount(product.getId());
+        price = product.getPrice();
+//        if (percent == 0) {
+//        } else {
+//            price = product.getPrice() - product.getPrice() * percent / 100;
+//        }
         receipt.set(3, quantity * price);
 
         receiptDetailList.set(index, receipt);
@@ -781,9 +835,44 @@ public class SaleGUI extends SalePanel {
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
         calculateTotal();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadProductRoundPanel();
+                loadProduct(resultSearch);
+            }
+        });
+        thread.start();
     }
 
     private void deleteProductInCart(int index) {
+        List<Object> receipt = receiptDetailList.get(index);
+        Product product = productBLL.findProductsBy(Map.of("name", receipt.get(0),
+                "size", receipt.get(1).toString())).get(0);
+        if (!receipt.get(1).toString().equals("0")) {
+            try {
+                materialBLL.getMaterialDAL().executeProcedureAddMaterial(product.getId(), receipt.get(1).toString(), Integer.parseInt(receipt.get(2).toString()));
+            } catch (SQLException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            List<Material> materialList = materialBLL.findMaterialsBy(Map.of("name", product.getName()));
+            Material newMaterial = materialList.get(0);
+            Material oldMaterial = materialList.get(0);
+            newMaterial.setRemain(newMaterial.getRemain() + Double.parseDouble(receipt.get(2).toString()));
+            materialBLL.updateMaterial(newMaterial, oldMaterial);
+        }
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadProductRoundPanel();
+                loadProduct(resultSearch);
+            }
+        });
+        thread.start();
+
         receiptDetailList.remove(index);
         nameReceiptDetail.remove(index);
         sizeReceiptDetail.remove(index);
@@ -797,6 +886,13 @@ public class SaleGUI extends SalePanel {
         buttonGroupsIce.remove(index);
         loadProductInCart();
         calculateTotal();
+
+        Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
+        circleProgressBar.getRootPane().setOpaque(false);
+        circleProgressBar.getContentPane().setBackground(new Color(0, 0, 0, 0));
+        circleProgressBar.setBackground(new Color(0, 0, 0, 0));
+        circleProgressBar.progress();
+        circleProgressBar.setVisible(true);
     }
 
     private void loadProductInCart() {
@@ -830,6 +926,32 @@ public class SaleGUI extends SalePanel {
     }
 
     private void cancelBill() {
+        for (List<Object> receipt : receiptDetailList) {
+            Product product = productBLL.findProductsBy(Map.of("name", receipt.get(0),
+                    "size", receipt.get(1).toString())).get(0);
+            if (!receipt.get(1).toString().equals("0")) {
+                try {
+                    materialBLL.getMaterialDAL().executeProcedureAddMaterial(product.getId(), receipt.get(1).toString(), Integer.parseInt(receipt.get(2).toString()));
+                } catch (SQLException | IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                List<Material> materialList = materialBLL.findMaterialsBy(Map.of("name", product.getName()));
+                Material newMaterial = materialList.get(0);
+                Material oldMaterial = materialList.get(0);
+                newMaterial.setRemain(newMaterial.getRemain() + Double.parseDouble(receipt.get(2).toString()));
+                materialBLL.updateMaterial(newMaterial, oldMaterial);
+            }
+        }
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadProductRoundPanel();
+                loadProduct(resultSearch);
+            }
+        });
+        thread.start();
+
         receiptDetailList.removeAll(receiptDetailList);
         nameReceiptDetail.removeAll(nameReceiptDetail);
         sizeReceiptDetail.removeAll(sizeReceiptDetail);
@@ -852,6 +974,12 @@ public class SaleGUI extends SalePanel {
         jLabelBill.get(2).setText(VNString.currency(0));
 
         jTextFieldCash.setText("");
+        Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
+        circleProgressBar.getRootPane().setOpaque(false);
+        circleProgressBar.getContentPane().setBackground(new Color(0, 0, 0, 0));
+        circleProgressBar.setBackground(new Color(0, 0, 0, 0));
+        circleProgressBar.progress();
+        circleProgressBar.setVisible(true);
     }
 
     private void calculateTotal() {
@@ -867,6 +995,14 @@ public class SaleGUI extends SalePanel {
     }
 
     private void calculateExcess() {
+        if (receiptDetailList.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        if (jTextFieldCash.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập số tiền nhận.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
         double total = Double.parseDouble(jLabelBill.get(0).getText());
         double cash = Double.parseDouble(jTextFieldCash.getText());
         double excess = cash - total;
@@ -921,29 +1057,7 @@ public class SaleGUI extends SalePanel {
                 return (int) material.getRemain();
             }
         } else {
-            List<Recipe> recipes = recipeBLL.findRecipesBy(Map.of("product_id", product.getId(), "size", product.getSize()));
-            List<Pair<Integer, Double>> quantityMaterials = new ArrayList<>();
-
-            for (Recipe recipe : recipes) {
-                for (Material material : materials)
-                    if (recipe.getMaterial_id() == material.getId())
-                        quantityMaterials.add(new Pair<>(material.getId(), material.getRemain()));
-            }
-
-            if (quantityMaterials.isEmpty())
-                return 0;
-
-            quantityMaterials.sort(Comparator.comparing(Pair::getValue));
-
-            double minRemain = quantityMaterials.get(0).getValue();
-            double quantityRecipe = 0;
-
-            for (Recipe recipe : recipes) {
-                if (recipe.getMaterial_id() == quantityMaterials.get(0).getKey())
-                    quantityRecipe = recipe.getQuantity();
-            }
-
-            return (int) (minRemain / quantityRecipe);
+            return Integer.parseInt(productBLL.getRemain(product.getId(), product.getSize()).get(0).get(0));
         }
     }
 

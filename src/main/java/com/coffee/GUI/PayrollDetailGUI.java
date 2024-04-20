@@ -129,32 +129,32 @@ public class PayrollDetailGUI extends Layout1 {
         returnLabel.setIcon(new FlatSVGIcon("icon/return.svg"));
         returnPanel.add(returnLabel);
 
-        RoundedPanel roundedPanelExcel = new RoundedPanel();
-        roundedPanelExcel.setLayout(new GridBagLayout());
-        roundedPanelExcel.setPreferredSize(new Dimension(130, 40));
-        roundedPanelExcel.setBackground(new Color(1, 120, 220));
-        roundedPanelExcel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        FunctionPanel.add(roundedPanelExcel);
+//        RoundedPanel roundedPanelExcel = new RoundedPanel();
+//        roundedPanelExcel.setLayout(new GridBagLayout());
+//        roundedPanelExcel.setPreferredSize(new Dimension(130, 40));
+//        roundedPanelExcel.setBackground(new Color(1, 120, 220));
+//        roundedPanelExcel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+//        FunctionPanel.add(roundedPanelExcel);
+//
+//        JLabel panelExcel = new JLabel("Xuất Excel");
+//        panelExcel.setForeground(Color.white);
+//        panelExcel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+//        panelExcel.setIcon(new FlatSVGIcon("icon/import.svg"));
+//        roundedPanelExcel.add(panelExcel);
 
-        JLabel panelExcel = new JLabel("Xuất Excel");
-        panelExcel.setForeground(Color.white);
-        panelExcel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-        panelExcel.setIcon(new FlatSVGIcon("icon/import.svg"));
-        roundedPanelExcel.add(panelExcel);
 
-
-        RoundedPanel roundedPanelPDF = new RoundedPanel();
-        roundedPanelPDF.setLayout(new GridBagLayout());
-        roundedPanelPDF.setPreferredSize(new Dimension(130, 40));
-        roundedPanelPDF.setBackground(new Color(1, 120, 220));
-        roundedPanelPDF.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        FunctionPanel.add(roundedPanelPDF);
-
-        JLabel panelPDF = new JLabel("Xuất PDF");
-        panelPDF.setForeground(Color.white);
-        panelPDF.setFont(new Font("Public Sans", Font.PLAIN, 13));
-        panelPDF.setIcon(new FlatSVGIcon("icon/export.svg"));
-        roundedPanelPDF.add(panelPDF);
+//        RoundedPanel roundedPanelPDF = new RoundedPanel();
+//        roundedPanelPDF.setLayout(new GridBagLayout());
+//        roundedPanelPDF.setPreferredSize(new Dimension(130, 40));
+//        roundedPanelPDF.setBackground(new Color(1, 120, 220));
+//        roundedPanelPDF.setCursor(new Cursor(Cursor.HAND_CURSOR));
+//        FunctionPanel.add(roundedPanelPDF);
+//
+//        JLabel panelPDF = new JLabel("Xuất PDF");
+//        panelPDF.setForeground(Color.white);
+//        panelPDF.setFont(new Font("Public Sans", Font.PLAIN, 13));
+//        panelPDF.setIcon(new FlatSVGIcon("icon/export.svg"));
+//        roundedPanelPDF.add(panelPDF);
 
         RoundedPanel roundedPanelPaid = new RoundedPanel();
         roundedPanelPaid.setLayout(new GridBagLayout());

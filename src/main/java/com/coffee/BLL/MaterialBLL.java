@@ -233,6 +233,14 @@ public class MaterialBLL extends Manager<Material> {
         };
     }
 
+    public void sub(int id, String size, int quantity) {
+        materialDAL.sub(id, size, quantity);
+    }
+
+    public void plus(int id, String size, int quantity) {
+        materialDAL.plus(id, size, quantity);
+    }
+
     public static void main(String[] args) {
 //        MaterialBLL materialBLL = new MaterialBLL();
 //        Material material = new Material(materialBLL.getAutoID(materialBLL.searchMaterials()), "xzy", 1, 1, "d", false);

@@ -157,6 +157,10 @@ public class ProductBLL extends Manager<Product> {
         return productDAL.getBestSellers();
     }
 
+    public List<List<String>> getRemain(int id, String size) {
+        return productDAL.getRemain(id, size);
+    }
+
     public static void main(String[] args) {
         ProductBLL productBLL = new ProductBLL();
 //        Product product = new Product(productBLL.getAutoID(productBLL.searchProducts()), "xyz", "abc", 50, "d", "aaa", false);
