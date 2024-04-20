@@ -153,6 +153,10 @@ public class ProductBLL extends Manager<Product> {
         return productDAL.getCategories();
     }
 
+    public List<List<String>> getBestSellers() {
+        return productDAL.getBestSellers();
+    }
+
     public static void main(String[] args) {
         ProductBLL productBLL = new ProductBLL();
 //        Product product = new Product(productBLL.getAutoID(productBLL.searchProducts()), "xyz", "abc", 50, "d", "aaa", false);

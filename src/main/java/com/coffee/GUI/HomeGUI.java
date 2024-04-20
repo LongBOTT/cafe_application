@@ -51,6 +51,7 @@ public class HomeGUI extends JFrame {
     private int currentPanel = 0;
     private boolean pressover;
     private boolean over = false;
+    public int indexSaleGUI = -1;
     public int indexModulePayrollGUI = -1;
     public int indexModuleCreateWorkScheduleGUI = -1;
     public int indexModuleMaterialGUI = -1;
@@ -226,6 +227,8 @@ public class HomeGUI extends JFrame {
             List<Function> functions = function2D.get(i);
             allPanelModules[i] = getPanelModule(module.getId(), functions);
             int index = i;
+            if (module.getId() == 1)
+                indexSaleGUI = index;
             if (module.getId() == 2)
                 indexModuleMaterialGUI = index;
             if (module.getId() == 18)

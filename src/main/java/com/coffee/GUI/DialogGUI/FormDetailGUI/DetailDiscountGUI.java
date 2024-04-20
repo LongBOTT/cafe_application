@@ -107,7 +107,7 @@ public class DetailDiscountGUI extends DialogFormDetail_1 {
         if (!status)
             txtStatus.setText("Kích hoạt");
         else
-            txtStatus.setText("Chưa áp dụng");
+            txtStatus.setText("Ngừng áp dụng");
 
 
         JPanel panelTimeApplication = new JPanel();
@@ -153,23 +153,23 @@ public class DetailDiscountGUI extends DialogFormDetail_1 {
         lblFormValue.setText("");
         containerForm.add(lblFormValue);
 
-        btnAddConditions = new JButton("Thêm điều kiện");
-        btnAddConditions.setIcon(new FlatSVGIcon("icon/Add1.svg"));
-        btnAddConditions.setPreferredSize(new Dimension(100, 40));
-        btnAddConditions.setFont(new Font("Public Sans", Font.PLAIN, 15));
-        btnAddConditions.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnAddConditions.setFocusPainted(false);
-
-        btnAddConditions.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            }
-        });
+//        btnAddConditions = new JButton("Thêm điều kiện");
+//        btnAddConditions.setIcon(new FlatSVGIcon("icon/Add1.svg"));
+//        btnAddConditions.setPreferredSize(new Dimension(100, 40));
+//        btnAddConditions.setFont(new Font("Public Sans", Font.PLAIN, 15));
+//        btnAddConditions.setCursor(new Cursor(Cursor.HAND_CURSOR));
+//        btnAddConditions.setFocusPainted(false);
+//
+//        btnAddConditions.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//            }
+//        });
 
         center.add(lblDiscountType);
         center.add(lblTypeValue);
         center.add(containerForm);
-        center.add(btnAddConditions);
+//        center.add(btnAddConditions);
 
         JLabel totalBill = createLabel("Tổng hóa đơn");
         JLabel lbDiscount = createLabel("Giảm giá");
@@ -188,7 +188,7 @@ public class DetailDiscountGUI extends DialogFormDetail_1 {
         containerBillTypeContent.setLayout(new MigLayout("", ""));
 
         containerBillTypeContent.setBackground(new Color(242, 242, 242));
-        containerBillTypeContent.setPreferredSize(new Dimension(920,350));
+        containerBillTypeContent.setPreferredSize(new Dimension(920, 350));
         scrollPaneBill = new JScrollPane(containerBillTypeContent);
         scrollPaneBill.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPaneBill.setBorder(null);
@@ -208,13 +208,12 @@ public class DetailDiscountGUI extends DialogFormDetail_1 {
         scrollPane.getVerticalScrollBar().setUnitIncrement(13);
 
         boolean type = discount.isType();
-        if (!type){
+        if (!type) {
             lblTypeValue.setText("Sản phẩm");
             lblFormValue.setText("Giảm giá (theo SL mua)");
             loadDiscountProductPanels();
             bottom.add(scrollPane, BorderLayout.CENTER);
-        }
-        else{
+        } else {
             lblTypeValue.setText("Đơn hàng");
             lblFormValue.setText("Giảm giá đơn hàng");
             loadDiscountBillPanels();
@@ -229,9 +228,9 @@ public class DetailDiscountGUI extends DialogFormDetail_1 {
         for (Discount_Detail discount_detail : list_discount_detail) {
             RoundedPanel panel = createPanel_Bill(containerBillTypeContent);
             JTextField txtTotalBill = (JTextField) panel.getComponent(1);
-            txtTotalBill.setText(discount_detail.getDiscountBill()+"");
+            txtTotalBill.setText(discount_detail.getDiscountBill() + "");
             JTextField txtReduction = (JTextField) panel.getComponent(3);
-            txtReduction.setText(discount_detail.getPercent()+"");
+            txtReduction.setText(discount_detail.getPercent() + "");
         }
     }
 

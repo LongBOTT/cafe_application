@@ -3,6 +3,7 @@ package com.coffee.BLL;
 import com.coffee.DAL.DiscountDAL;
 import com.coffee.DTO.Discount;
 import javafx.util.Pair;
+
 import java.time.LocalDate;
 import java.util.*;
 
@@ -13,10 +14,6 @@ public class DiscountBLL extends Manager<Discount> {
     public DiscountBLL() {
         discountDAL = new DiscountDAL();
     }
-
-
-
-
 
 
     public Object[][] getData() {
@@ -38,6 +35,14 @@ public class DiscountBLL extends Manager<Discount> {
             return new Pair<>(false, result.getValue());
         }
 
+        if (discountDAL.updateDiscount(discount) == 0)
+            return new Pair<>(false, "Cập nhật đợt giảm giá không thành công.");
+
+        return new Pair<>(true, "Cập nhật giảm giá thành công.");
+
+    }
+
+    public Pair<Boolean, String> updateStatusDiscount(Discount discount) {
         if (discountDAL.updateDiscount(discount) == 0)
             return new Pair<>(false, "Cập nhật đợt giảm giá không thành công.");
 

@@ -117,8 +117,8 @@ public class AddDiscountGUInew extends DialogFormDetail_1 {
         radio1 = new JRadioButton("Kích hoạt");
         radio1.setActionCommand("Kích hoạt");
 
-        radio2 = new JRadioButton("Chưa áp dụng");
-        radio2.setActionCommand("Chưa áp dụng");
+        radio2 = new JRadioButton("Ngừng áp dụng");
+        radio2.setActionCommand("Ngừng áp dụng");
         btgroup = new ButtonGroup();
         btgroup.add(radio1);
         btgroup.add(radio2);

@@ -84,7 +84,7 @@ public class DiscountGUI extends Layout2 {
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
-        jComboBoxSearch = new JComboBox<>(new String[]{"Tất cả", "Kích hoạt", "Chưa áp dụng"});
+        jComboBoxSearch = new JComboBox<>(new String[]{"Tất cả", "Kích hoạt", "Ngừng áp dụng"});
         JLabel lbFilter = new JLabel("Trạng thái");
         lbFilter.setFont((new Font("Public Sans", Font.BOLD, 14)));
         columnNames = new String[]{"Mã Giảm Giá", "Tên chương trình", "Ngày Bắt Đầu", "Ngày Kết Thúc", "Hình thức", "Trạng Thái"};
@@ -335,7 +335,7 @@ public class DiscountGUI extends Layout2 {
         String selectedItem = Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString();
         if (selectedItem.equals("Kích hoạt")) {
             loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("status = 0")));
-        } else if (selectedItem.equals("Chưa áp dụng")) {
+        } else if (selectedItem.equals("Ngừng áp dụng")) {
             loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("status = 1")));
         } else
             loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));

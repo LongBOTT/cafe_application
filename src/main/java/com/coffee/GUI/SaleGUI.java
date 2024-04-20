@@ -33,7 +33,6 @@ public class SaleGUI extends SalePanel {
     private final Account account;
     private List<Discount_Detail> discountDetails;
     private RoundedPanel containerSearch;
-    private List<RoundedPanel> productPanelList;
     private List<JPanel> productIncartPanelList;
     private List<JPanel> productIncartNotelList;
     private JLabel iconSearch;
@@ -50,6 +49,7 @@ public class SaleGUI extends SalePanel {
     private JButton jButtonSearch;
     private JButton jButtonPay;
     private JButton jButtonCancel;
+    private ButtonGroup bg;
     private List<ButtonGroup> buttonGroupsSugar;
     private List<ButtonGroup> buttonGroupsIce;
     private List<String> categoriesName;
@@ -60,6 +60,9 @@ public class SaleGUI extends SalePanel {
     private String categoryName = "TẤT CẢ";
     private int indexShowOption = -1;
     private boolean note = false;
+    private List<Pair<Integer, JLabel>> remainList = new ArrayList<>();
+    private List<Pair<Integer, RoundedPanel>> productRoundPanelList = new ArrayList<>();
+    private RoundedPanel selectedCategory = null;
 
     public SaleGUI(Account account) {
         super();
@@ -69,7 +72,6 @@ public class SaleGUI extends SalePanel {
 
     public void initComponents() {
         containerSearch = new RoundedPanel();
-        productPanelList = new ArrayList<>();
         productIncartPanelList = new ArrayList<>();
         productIncartNotelList = new ArrayList<>();
         productNameList = new ArrayList<>();
@@ -100,7 +102,7 @@ public class SaleGUI extends SalePanel {
 
         containerSearch.setLayout(new MigLayout("", "10[]20[]10", ""));
         containerSearch.setBackground(new Color(245, 246, 250));
-        containerSearch.setPreferredSize(new Dimension(600, 40));
+        containerSearch.setPreferredSize(new Dimension(350, 40));
         SearchPanel.add(containerSearch);
 
         iconSearch.setIcon(new FlatSVGIcon("icon/search.svg"));
@@ -109,7 +111,7 @@ public class SaleGUI extends SalePanel {
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập tên sản phẩm");
-        jTextFieldSearch.setPreferredSize(new Dimension(550, 30));
+        jTextFieldSearch.setPreferredSize(new Dimension(350, 30));
         jTextFieldSearch.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -136,11 +138,32 @@ public class SaleGUI extends SalePanel {
         jButtonSearch.addActionListener(e -> searchProducts());
         SearchPanel.add(jButtonSearch);
 
+        JRadioButton radio1 = new JRadioButton("Tất cả");
+        radio1.setSelected(true);
+        radio1.addActionListener(e -> searchProducts());
+        SearchPanel.add(radio1);
+        JRadioButton radio2 = new JRadioButton("Khuyến mãi");
+        radio2.addActionListener(e -> searchProducts());
+        SearchPanel.add(radio2);
+        JRadioButton radio3 = new JRadioButton("Bán chạy");
+        radio3.addActionListener(e -> searchProducts());
+        SearchPanel.add(radio3);
+        JRadioButton radio4 = new JRadioButton("Hết hàng");
+        radio4.addActionListener(e -> searchProducts());
+        SearchPanel.add(radio4);
+
+        bg = new ButtonGroup();
+        bg.add(radio1);
+        bg.add(radio2);
+        bg.add(radio3);
+        bg.add(radio4);
+
         loadCategory();
 
         Thread threadRender = new Thread(new Runnable() {
             @Override
             public void run() {
+                loadProductRoundPanel();
                 loadProduct(productBLL.searchProducts("deleted = 0"));
             }
         });
@@ -235,7 +258,7 @@ public class SaleGUI extends SalePanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 String[] options = new String[]{"Huỷ", "Xác nhận"};
-                int choice = JOptionPane.showOptionDialog(null, "Xác nhận lập hoá đơn?",
+                int choice = JOptionPane.showOptionDialog(null, "Xác nhận xuất hoá đơn?",
                         "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
 //                if (choice == 1)
 //                    payBill();
@@ -245,24 +268,35 @@ public class SaleGUI extends SalePanel {
     }
 
     private void searchProducts() {
-        if (jTextFieldSearch.getText().isEmpty()) {
-            Thread threadRender = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    loadProduct(productBLL.searchProducts("deleted = 0"));
-                }
-            });
-            threadRender.start();
-        } else {
-            Thread threadRender = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    loadProduct(productBLL.findProducts("name", jTextFieldSearch.getText()));
-                }
-            });
-            threadRender.start();
+        List<Product> productList = productBLL.searchProducts("deleted = 0");
+        String status = "";
+        for (Enumeration<AbstractButton> buttons = bg.getElements(); buttons.hasMoreElements(); ) {
+            AbstractButton button = buttons.nextElement();
+            if (button.isSelected()) {
+                status = button.getText();
+                break;
+            }
         }
-        categoryName = "";
+        if (categoryName.equals("TẤT CẢ") && status.equals("Tất cả") && jTextFieldSearch.getText().isEmpty()) {
+            loadProduct(productList);
+        } else {
+            if (!jTextFieldSearch.getText().isEmpty()) {
+                productList = productBLL.findProducts("name", jTextFieldSearch.getText());
+            }
+            if (!categoryName.equals("TẤT CẢ")) {
+                productList.removeIf(product -> !product.getCategory().equals(categoryName));
+            }
+            if (!status.equals("Tất cả")) {
+                if (status.equals("Khuyến mãi")) {
+                    productList.removeIf(product -> !checkDiscountType0(product.getId()));
+                } else if (status.equals("Bán chạy")) {
+                    productList.removeIf(product -> !checkBestSellers(product.getId()));
+                } else if (status.equals("Hết hàng")) {
+                    productList.removeIf(product -> !checkOutOfRemain(product.getId()));
+                }
+            }
+            loadProduct(productList);
+        }
     }
 
     private static JLabel getjLabel(String tittle) {
@@ -278,7 +312,6 @@ public class SaleGUI extends SalePanel {
         return jLabel;
     }
 
-
     public void loadCategory() {
         Category.removeAll();
         categoriesName.removeAll(categoriesName);
@@ -287,16 +320,20 @@ public class SaleGUI extends SalePanel {
         for (String category : categoriesName) {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new FlowLayout());
-            roundedPanel.setBackground(new Color(253, 143, 143));
+            roundedPanel.setBackground(new Color(255, 180, 180, 181));
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     RoundedPanel roundedPanel = (RoundedPanel) e.getComponent();
+                    selectedCategory.setBackground(new Color(255, 180, 180, 181));
+                    roundedPanel.setBackground(new Color(253, 143, 143));
+                    selectedCategory = roundedPanel;
+
                     JLabel jLabel = (JLabel) roundedPanel.getComponent(0);
                     if (!categoryName.equals(jLabel.getText())) {
                         categoryName = jLabel.getText();
-                        searchCategory();
+                        searchProducts();
 //                        System.out.println(jLabel.getText());
                     }
                 }
@@ -311,49 +348,30 @@ public class SaleGUI extends SalePanel {
 
             roundedPanel.setPreferredSize(new Dimension(Math.max(jLabel.getPreferredSize().width + 10, 100), 31));
 
+            if (category.equals("TẤT CẢ")) {
+                roundedPanel.setBackground(new Color(253, 143, 143));
+                selectedCategory = roundedPanel;
+            }
         }
         Category.repaint();
         Category.revalidate();
     }
 
-    private void searchCategory() {
-        if (categoryName.equals("TẤT CẢ")) {
-            Thread threadRender = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    loadProduct(productBLL.searchProducts("deleted = 0"));
-                }
-            });
-            threadRender.start();
-        } else {
-            Thread threadRender = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    loadProduct(productBLL.findProductsBy(Map.of("category", categoryName)));
-                }
-            });
-            threadRender.start();
-        }
-        jTextFieldSearch.setText("");
-    }
+    public void loadProductRoundPanel() {
+        productNameList.clear();
+        productRoundPanelList.clear();
+        remainList.clear();
 
-    public void loadProduct(List<Product> products) {
-        ContainerProduct.removeAll();
-        productPanelList.removeAll(productPanelList);
-        productIDList.removeAll(productIDList);
-        productNameList.removeAll(productNameList);
-
-        for (Product product : products) {
+        for (Product product : productBLL.searchProducts("deleted = 0")) {
             if (productNameList.contains(product.getName())) {
                 continue;
             }
             RoundedPanel panel = new RoundedPanel();
-            panel.setLayout(new FlowLayout(FlowLayout.CENTER));
+            panel.setLayout(new MigLayout("", "5[]5"));
             panel.setBackground(new Color(228, 231, 235));
             panel.setPreferredSize(new Dimension(155, 260));
             panel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            productPanelList.add(panel);
-
+            productRoundPanelList.add(new Pair<>(product.getId(), panel));
 
             ImageIcon icon = new FlatSVGIcon("image/Product/" + product.getImage() + ".svg");
             Image image = icon.getImage();
@@ -362,15 +380,20 @@ public class SaleGUI extends SalePanel {
 
             JLabel productImage = new JLabel(icon);
             productImage.scrollRectToVisible(new Rectangle());
-            panel.add(productImage);
+            panel.add(productImage, "wrap");
 
             JLabel productName = new JLabel();
             productName.setPreferredSize(new Dimension(150, 30));
             productName.setVerticalAlignment(JLabel.CENTER);
             productName.setHorizontalAlignment(JLabel.CENTER);
-            productName.setText(product.getName());
             productName.setFont((new Font("Inter", Font.BOLD, 13)));
-            panel.add(productName);
+            productName.setText(product.getName());
+
+            panel.add(productName, "wrap");
+
+            boolean checkBestSeller = checkBestSellers(product.getId());
+            if (checkBestSeller)
+                productName.setIcon(new FlatSVGIcon("icon/fire-svgrepo-com.svg"));
 
             JLabel productPrice = new JLabel();
             productPrice.setVerticalAlignment(JLabel.CENTER);
@@ -378,14 +401,13 @@ public class SaleGUI extends SalePanel {
             productPrice.setFont((new Font("Inter", Font.BOLD, 10)));
             productPrice.setPreferredSize(new Dimension(150, 30));
 
-            double percent = checkPercentDiscount(product.getId());
-            if (percent == 0) {
+            boolean check = checkDiscountType0(product.getId());
+            if (!check) {
                 productPrice.setText(VNString.currency(product.getPrice()));
-                panel.add(productPrice);
+                panel.add(productPrice, "wrap");
             } else {
-                double newPrice = product.getPrice() - product.getPrice() * percent / 100;
-                productPrice.setText("<html><s>" + VNString.currency(product.getPrice()) + "</s>\t <span style='color: red'>" + VNString.currency(newPrice) + "</span></html>");
-                panel.add(productPrice);
+                productPrice.setText("<html>" + VNString.currency(product.getPrice()) + "\t <span style='color: red'>Khuyến mãi</span></html>");
+                panel.add(productPrice, "wrap");
             }
 
             JLabel productRemain = new JLabel();
@@ -395,32 +417,48 @@ public class SaleGUI extends SalePanel {
             productRemain.setFont((new Font("Inter", Font.BOLD, 10)));
             int remain = checkRemainProduct(product);
             productRemain.setText("Còn Lại: " + remain);
-            panel.add(productRemain);
-
+            panel.add(productRemain, "wrap");
+            remainList.add(new Pair<>(product.getId(), productRemain));
             productNameList.add(product.getName());
-            productIDList.add(product.getId());
         }
 
-        for (RoundedPanel panel : productPanelList) {
-            panel.addMouseListener(new MouseAdapter() {
+        for (int i = 0; i < productRoundPanelList.size(); i++) {
+            productRoundPanelList.get(i).getValue().addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    for (int i = 0; i < productPanelList.size(); i++) {
-                        if (productPanelList.get(i) == e.getComponent()) {
-                            addProductToCart(productBLL.findProductsBy(Map.of("id", productIDList.get(i))).get(0));
+                    for (int j = 0; j < productRoundPanelList.size(); j++) {
+                        if (productRoundPanelList.get(j).getValue() == e.getComponent()) {
+                            addProductToCart(productBLL.findProductsBy(Map.of("id", productRoundPanelList.get(j).getKey())).get(0));
+                            break;
                         }
                     }
                 }
             });
         }
+        ContainerProduct.repaint();
+        ContainerProduct.revalidate();
+    }
 
-        for (RoundedPanel panel : productPanelList) {
-            ContainerProduct.add(panel);
+    public void loadProduct(List<Product> products) {
+        ContainerProduct.removeAll();
+        productIDList.clear();
+
+        for (Product product : products) {
+            if (productIDList.contains(product.getId())) {
+                continue;
+            }
+            for (Pair<Integer, RoundedPanel> roundedPanelPair : productRoundPanelList) {
+                if (roundedPanelPair.getKey() == product.getId()) {
+                    ContainerProduct.add(roundedPanelPair.getValue());
+                    break;
+                }
+            }
+            productIDList.add(product.getId());
         }
 
-        ContainerProduct.setPreferredSize(new Dimension(690, productNameList.size() % 4 == 0 ?
-                270 * productNameList.size() / 4 :
-                270 * (productNameList.size() + (4 - productNameList.size() % 4)) / 4));
+        ContainerProduct.setPreferredSize(new Dimension(690, productIDList.size() % 4 == 0 ?
+                270 * productIDList.size() / 4 :
+                270 * (productIDList.size() + (4 - productIDList.size() % 4)) / 4));
         ContainerProduct.repaint();
         ContainerProduct.revalidate();
     }
@@ -429,14 +467,14 @@ public class SaleGUI extends SalePanel {
         List<Object> receiptDetail = new ArrayList<>();
         receiptDetail.add(product.getName());
         receiptDetail.add(product.getSize());
-        receiptDetail.add(Integer.parseInt("1"));
-        double percent = checkPercentDiscount(product.getId());
-        if (percent == 0) {
-            receiptDetail.add(product.getPrice());
-        } else {
-            double newPrice = product.getPrice() - product.getPrice() * percent / 100;
-            receiptDetail.add(newPrice);
-        }
+        receiptDetail.add(0);
+//        double percent = checkPercentDiscount(product.getId());
+//        if (percent == 0) {
+        receiptDetail.add(0);
+//        } else {
+//            double newPrice = product.getPrice() - product.getPrice() * percent / 100;
+//            receiptDetail.add(newPrice);
+//        }
         receiptDetailList.add(receiptDetail);
 
         JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -536,7 +574,7 @@ public class SaleGUI extends SalePanel {
         });
         jPanel.add(quantityReceiptDetail.get(index));
 
-        priceReceiptDetail.get(index).setText(VNString.currency((Double) receiptDetailList.get(index).get(3)));
+        priceReceiptDetail.get(index).setText(VNString.currency(Double.parseDouble(receiptDetailList.get(index).get(3).toString())));
         priceReceiptDetail.get(index).setFont(new Font("Inter", Font.BOLD, 12));
         priceReceiptDetail.get(index).setPreferredSize(new Dimension(90, 40));
         jPanel.add(priceReceiptDetail.get(index));
@@ -699,18 +737,18 @@ public class SaleGUI extends SalePanel {
             return;
         }
         double price;
-        double percent = checkPercentDiscount(product.getId());
-        if (percent == 0) {
-            price = product.getPrice();
-        } else {
-            price = product.getPrice() - product.getPrice() * percent / 100;
-        }
+//        double percent = checkPercentDiscount(product.getId());
+//        if (percent == 0) {
+        price = product.getPrice();
+//        } else {
+//            price = product.getPrice() - product.getPrice() * percent / 100;
+//        }
         receipt.set(3, quantity * price);
 
         receiptDetailList.set(index, receipt);
 
         sizeReceiptDetail.get(index).setSelectedItem(receipt.get(1));
-        priceReceiptDetail.get(index).setText(VNString.currency((Double) receipt.get(3)));
+        priceReceiptDetail.get(index).setText(VNString.currency(Double.parseDouble(receipt.get(3).toString())));
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
         calculateTotal();
@@ -718,16 +756,17 @@ public class SaleGUI extends SalePanel {
 
     private void saveQuantityChanged(int index) {
         List<Object> receipt = receiptDetailList.get(index);
-        receipt.set(2, Integer.parseInt(quantityReceiptDetail.get(index).getText()));
 
         int quantity = Integer.parseInt(quantityReceiptDetail.get(index).getText());
         Product product = productBLL.findProductsBy(Map.of("name", receipt.get(0),
                 "size", Objects.requireNonNull(sizeReceiptDetail.get(index).getSelectedItem()))).get(0);
         int remain = checkRemainProduct(product);
         if (quantity > remain) {
+            quantityReceiptDetail.get(index).setText(receipt.get(2).toString());
             JOptionPane.showMessageDialog(this, "Số lượng sản phẩm còn lại: " + remain + ".\nVui lòng thay đổi số lượng mua.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
+        receipt.set(2, Integer.parseInt(quantityReceiptDetail.get(index).getText()));
         double price;
         double percent = checkPercentDiscount(product.getId());
         if (percent == 0) {
@@ -738,7 +777,7 @@ public class SaleGUI extends SalePanel {
         receipt.set(3, quantity * price);
 
         receiptDetailList.set(index, receipt);
-        priceReceiptDetail.get(index).setText(VNString.currency((Double) receipt.get(3)));
+        priceReceiptDetail.get(index).setText(VNString.currency(Double.parseDouble(receipt.get(3).toString())));
         Bill_detailPanel.repaint();
         Bill_detailPanel.revalidate();
         calculateTotal();
@@ -818,7 +857,7 @@ public class SaleGUI extends SalePanel {
     private void calculateTotal() {
         double totalPrice = 0;
         for (List<Object> receiptDetail : receiptDetailList) {
-            totalPrice += (Double) receiptDetail.get(3);
+            totalPrice += Double.parseDouble(receiptDetail.get(3).toString());
         }
         jLabelBill.get(0).setText(VNString.currency(totalPrice));
         jLabelBill.get(2).setText(VNString.currency(0));
@@ -841,6 +880,35 @@ public class SaleGUI extends SalePanel {
             }
         }
         return 0;
+    }
+
+    private boolean checkDiscountType0(int product_id) {
+        for (Discount_Detail discountDetail : discountDetails) {
+            if (product_id == discountDetail.getProduct_id()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkBestSellers(int product_id) {
+        for (List<String> list : productBLL.getBestSellers()) {
+            if (product_id == Integer.parseInt(list.get(0))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkOutOfRemain(int product_id) {
+        for (Pair<Integer, JLabel> jLabelPair : remainList) {
+            if (jLabelPair.getKey() == product_id) {
+                int remain = Integer.parseInt(jLabelPair.getValue().getText().split(": ")[1]);
+                if (remain == 0)
+                    return true;
+            }
+        }
+        return false;
     }
 
     private int checkRemainProduct(Product product) {
@@ -880,10 +948,10 @@ public class SaleGUI extends SalePanel {
     }
 
     private void checkDiscount() {
-        for (Discount discount : discountBLL.searchDiscounts()) {
+        for (Discount discount : discountBLL.searchDiscounts("status = 0")) {
             if (discount.getEnd_date().before(Date.valueOf(LocalDate.now()))) {
                 discount.setStatus(true);
-                discountBLL.updateDiscount(discount);
+                discountBLL.updateStatusDiscount(discount);
             }
         }
     }

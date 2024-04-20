@@ -19,6 +19,7 @@ public class ProductDAL extends Manager {
                         "image",
                         "deleted"));
     }
+
     public List<Product> convertToProducts(List<List<String>> data) {
         return convert(data, row -> {
             try {
@@ -104,6 +105,17 @@ public class ProductDAL extends Manager {
             return categories;
         } catch (SQLException | IOException e) {
             return categories;
+        }
+    }
+
+    public List<List<String>> getBestSellers() {
+        try {
+            return executeQuery("SELECT rd.product_id\n" +
+                    "FROM receipt_detail rd\n" +
+                    "GROUP BY rd.product_id\n" +
+                    "ORDER BY COUNT(rd.receipt_id) DESC LIMIT 10");
+        } catch (SQLException | IOException e) {
+            return new ArrayList<>();
         }
     }
 

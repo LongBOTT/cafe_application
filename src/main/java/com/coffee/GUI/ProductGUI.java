@@ -9,6 +9,7 @@ import com.coffee.GUI.DialogGUI.FromEditGUI.EditProductGUI;
 import com.coffee.GUI.components.*;
 import com.coffee.ImportExcel.AddDiscountFromExcel;
 import com.coffee.ImportExcel.AddProductFromExcel;
+import com.coffee.main.Cafe_Application;
 import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
@@ -169,6 +170,16 @@ public class ProductGUI extends Layout3 {
                 public void mousePressed(MouseEvent e) {
                     new AddProductGUI();
                     refresh();
+                    if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
+                        Thread thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
+                                saleGUI.loadProductRoundPanel();
+                            }
+                        });
+                        thread.start();
+                    }
                 }
             });
             FunctionPanel.add(roundedPanel);
@@ -383,6 +394,16 @@ public class ProductGUI extends Layout3 {
         if (indexColumn == indexColumnEdit) {
             new EditProductGUI(productBLL.findProductsBy(Map.of("name", selectedValue.toString())));
             refresh();
+            if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
+                        saleGUI.loadProductRoundPanel();
+                    }
+                });
+                thread.start();
+            }
         }
 
         if (indexColumn == indexColumnRemove) {
@@ -401,6 +422,16 @@ public class ProductGUI extends Layout3 {
                     JOptionPane.showMessageDialog(null, result.getValue(),
                             "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                     refresh();
+                    if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
+                        Thread thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
+                                saleGUI.loadProductRoundPanel();
+                            }
+                        });
+                        thread.start();
+                    }
                 } else {
                     JOptionPane.showMessageDialog(null, result.getValue(),
                             "Lỗi", JOptionPane.ERROR_MESSAGE);
