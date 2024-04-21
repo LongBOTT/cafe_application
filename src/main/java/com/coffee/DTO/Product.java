@@ -100,4 +100,7 @@ public class Product {
                 image + " | " +
                 deleted;
     }
+    public Product clone() {
+        return new Product(id, name, size, category, capital_price, price, image, deleted);
+    }
 }

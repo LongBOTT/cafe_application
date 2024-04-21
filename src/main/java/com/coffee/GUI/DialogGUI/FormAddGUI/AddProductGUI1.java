@@ -174,8 +174,6 @@ public class AddProductGUI1 extends DialogForm {
 
 
         JButton buttonCancel = new JButton("Huỷ");
-        buttonCancel.setBackground(new Color(213, 50, 77));
-        buttonCancel.setForeground(new Color(255, 255, 255));
         buttonCancel.setPreferredSize(new Dimension(100, 35));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonCancel.setCursor(new Cursor(HAND_CURSOR));
@@ -198,7 +196,7 @@ public class AddProductGUI1 extends DialogForm {
 
 
         JButton buttonAdd = new JButton("Thêm");
-        buttonAdd.setBackground(new Color(65, 149, 67));
+        buttonAdd.setBackground(new Color(1, 120, 220));
         buttonAdd.setForeground(new Color(255, 255, 255));
         buttonAdd.setPreferredSize(new Dimension(100, 35));
         buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
@@ -311,7 +309,7 @@ public class AddProductGUI1 extends DialogForm {
     private List<DataSearch> search(String text) {
         List<DataSearch> list = new ArrayList<>();
 
-        List<Material> materials = materialBLL.findMaterialsBySell("name",text,true);
+        List<Material> materials = materialBLL.findMaterialsBySell("name", text, true);
         for (Material m : materials) {
             if (list.size() == 7) {
                 break;

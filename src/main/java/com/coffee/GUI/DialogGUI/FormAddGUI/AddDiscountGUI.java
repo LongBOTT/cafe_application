@@ -2,7 +2,6 @@ package com.coffee.GUI.DialogGUI.FormAddGUI;
 
 import com.coffee.BLL.DiscountBLL;
 import com.coffee.BLL.Discount_DetailBLL;
-import com.coffee.BLL.MaterialBLL;
 import com.coffee.BLL.ProductBLL;
 import com.coffee.DTO.Discount;
 import com.coffee.DTO.Discount_Detail;
@@ -15,8 +14,6 @@ import com.coffee.GUI.components.swing.EventClick;
 import com.coffee.GUI.components.swing.PanelSearch;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
-import com.toedter.calendar.JTextFieldDateEditor;
-import javafx.scene.layout.Pane;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
@@ -29,7 +26,7 @@ import java.util.*;
 import java.util.List;
 
 
-public class AddDiscountGUInew extends DialogFormDetail_1 {
+public class AddDiscountGUI extends DialogFormDetail_1 {
     private DiscountBLL discountBLL = new DiscountBLL();
     List<Discount_Detail> discountInfoList = new ArrayList<>();
     int id = discountBLL.getAutoID(discountBLL.searchDiscounts());
@@ -60,7 +57,7 @@ public class AddDiscountGUInew extends DialogFormDetail_1 {
     private JRadioButton radio2;
     private ButtonGroup btgroup;
 
-    public AddDiscountGUInew() {
+    public AddDiscountGUI() {
         super();
         super.setTitle("Thêm chương trình giảm giá");
         super.getContentPane().setBackground(new Color(255, 255, 255));

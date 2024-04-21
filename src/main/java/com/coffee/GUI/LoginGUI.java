@@ -107,7 +107,7 @@ public class LoginGUI extends JFrame {
 
         // sửa
         jTextFieldUserName = new JTextField();
-        jTextFieldUserName.setText("longbott");
+        jTextFieldUserName.setText("vminhthuan");
         jTextFieldUserName.setBackground(new Color(221, 229, 250));
         jTextFieldUserName.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldUserName.setPreferredSize(new Dimension(270, 40));
@@ -137,7 +137,7 @@ public class LoginGUI extends JFrame {
         panelPasswd.add(iconLock);
 
         jTextFieldPassword = new JPasswordField();
-        jTextFieldPassword.setText("Long123.");
+        jTextFieldPassword.setText("Thuan123.");
         jTextFieldPassword.setBackground(new Color(221, 229, 250));
         jTextFieldPassword.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldPassword.setPreferredSize(new Dimension(270, 40));

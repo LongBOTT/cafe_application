@@ -12,9 +12,12 @@ import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.Layout2;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
+import com.coffee.ImportExcel.AddImportFromExcel;
+import com.coffee.ImportExcel.AddProductFromExcel;
 import com.coffee.main.PDF;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
+import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -24,10 +27,14 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
+
+import static com.coffee.utils.Resource.chooseExcelFile;
 
 public class ImportGUI extends Layout2 {
 
@@ -187,6 +194,27 @@ public class ImportGUI extends Layout2 {
             roundedPanel.setPreferredSize(new Dimension(130, 40));
             roundedPanel.setBackground(new Color(1, 120, 220));
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            roundedPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    File file = chooseExcelFile(null);
+                    if (file != null) {
+                        Pair<Boolean, String> result;
+                        try {
+                            result = new AddImportFromExcel().addImportFromExcel(file);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        if (!result.getKey()) {
+                            JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Thêm phiếu nhập thành công",
+                                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            refresh();
+                        }
+                    }
+                }
+            });
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Nhập Excel");

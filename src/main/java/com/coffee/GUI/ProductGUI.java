@@ -137,22 +137,6 @@ public class ProductGUI extends Layout3 {
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                File file = chooseExcelFile(null);
-                if (file != null) {
-                    Pair<Boolean, String> result = null;
-                    try {
-                        result = new AddProductFromExcel().AddProductFromExcell(file);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    if (!result.getKey()) {
-                        JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Thêm sản phẩm thành công",
-                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                        refresh();
-                    }
-                }
                 refresh();
             }
         });
@@ -178,10 +162,10 @@ public class ProductGUI extends Layout3 {
                             "Thêm sản phẩm");
 
                     if (option == JOptionPane.YES_OPTION) {
-                        new AddProductGUI();
+                        new AddProductGUI1();
                         refresh();
                     } else if (option == JOptionPane.NO_OPTION) {
-                        new AddProductGUI1();
+                        new AddProductGUI();
                         refresh();
                     }
 
@@ -197,6 +181,27 @@ public class ProductGUI extends Layout3 {
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("excel"))) {
             RoundedPanel roundedPanel = getRoundedPanel();
+            roundedPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    File file = chooseExcelFile(null);
+                    if (file != null) {
+                        Pair<Boolean, String> result;
+                        try {
+                            result = new AddProductFromExcel().AddProductFromExcell(file);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        if (!result.getKey()) {
+                            JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Thêm sản phẩm thành công",
+                                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            refresh();
+                        }
+                    }
+                }
+            });
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Nhập Excel");
@@ -204,6 +209,7 @@ public class ProductGUI extends Layout3 {
             panel.setForeground(Color.white);
             panel.setIcon(new FlatSVGIcon("icon/import.svg"));
             roundedPanel.add(panel);
+
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("pdf"))) {
             RoundedPanel roundedPanel = getRoundedPanel();
