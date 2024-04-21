@@ -9,6 +9,7 @@ import com.coffee.GUI.components.Layout1;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.coffee.main.Cafe_Application;
+import com.coffee.utils.PDF;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JMonthChooser;
 import com.toedter.calendar.JYearChooser;
@@ -59,7 +60,7 @@ public class PayrollGUI extends Layout1 {
     private void init(List<Function> functions) {
         containerSearch = new RoundedPanel();
 
-        columnNames = new String[]{"Mã", "Tên", "Kỳ Làm Việc", "Tổng Lương", "Đã Trả", "Còn Lại"};
+        columnNames = new String[]{"Mã", "Kỳ Hạn Bảng Lương", "Kỳ Làm Việc", "Tổng Lương", "Đã Trả", "Còn Lại"};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
@@ -160,6 +161,7 @@ public class PayrollGUI extends Layout1 {
         refreshLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));
         refreshLabel.setForeground(Color.white);
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
+
         refreshPanel.add(refreshLabel);
 
         if (functions.stream().anyMatch(f -> f.getName().equals("add"))) {
@@ -210,13 +212,21 @@ public class PayrollGUI extends Layout1 {
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
             panel.setForeground(Color.white);
             panel.setIcon(new FlatSVGIcon("icon/export.svg"));
+            roundedPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    PDF.exportPayrollPDF(payrollBLL.getData(payrollBLL.searchPayrolls()), "src/main/resources/ExportPDF");
+                    JOptionPane.showMessageDialog(null, "Xuất PDF danh sách bảng lương thành công.",
+                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                }
+            });
             roundedPanel.add(panel);
         }
     }
 
     public void refresh() {
         jMonthChooserStart.setMonth(0);
-        jYearChooserStart.setYear(2000);
+        jYearChooserStart.setYear(2010);
 
         jMonthChooserEnd.setMonth(LocalDate.now().getMonth().getValue() - 1);
         jYearChooserEnd.setYear(LocalDate.now().getYear());

@@ -102,9 +102,7 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
             jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
 
             dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
-            dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
-            dateTextField[i].setBackground(new Color(245, 246, 250));
-
+            dateTextField[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             dateTextField[i].setText(LocalDate.now().format(formatter));
 
@@ -183,6 +181,14 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
         jDateChooser[0].getDateEditor().setDate(null);
         jDateChooser[1].getDateEditor().setDate(null);
         loadDataTable(leave_Of_Absence_FormBLL.getData(leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms()));
+        for (int i=0 ; i<2; i++)
+        {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
+            dateTextField[i].setBackground(new Color(245, 246, 250));
+            dateTextField[i].setText(LocalDate.now().format(formatter));
+            dateTextField[i].setText(LocalDate.now().format(formatter));
+        }
     }
 
     private void searchLeave_Of_Absence_Forms() {
