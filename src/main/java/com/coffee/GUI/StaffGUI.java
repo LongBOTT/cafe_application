@@ -155,22 +155,7 @@ public class StaffGUI extends Layout1 {
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                File file = chooseExcelFile(null);
-                if (file != null) {
-                    Pair<Boolean, String> result = null;
-                    try {
-                        result = new AddEmployeeFromExcel().addStaffFromExcel(file);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    if (!result.getKey()) {
-                        JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Thêm nhân viên thành công",
-                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                        refresh();
-                    }
-                }
+
                 refresh();
             }
         });
@@ -210,6 +195,27 @@ public class StaffGUI extends Layout1 {
             roundedPanel.setPreferredSize(new Dimension(130, 40));
             roundedPanel.setBackground(new Color(1, 120, 220));
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            roundedPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    File file = chooseExcelFile(null);
+                    if (file != null) {
+                        Pair<Boolean, String> result = null;
+                        try {
+                            result = new AddEmployeeFromExcel().addStaffFromExcel(file);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        if (!result.getKey()) {
+                            JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Thêm nhân viên thành công",
+                                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            refresh();
+                        }
+                    }
+                }
+            });
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Nhập Excel");
@@ -261,6 +267,58 @@ public class StaffGUI extends Layout1 {
 
         }
     }
+
+
+    private void searchStaffByName() {
+        String searchText = jTextFieldSearch.getText().trim();
+        if (searchText.isEmpty()) {
+            loadDataTable(staffBLL.getData(staffBLL.searchStaffs("deleted = 0")));
+        } else {
+            List<Staff> foundStaff = staffBLL.findStaffs("name", searchText);
+            if (!foundStaff.isEmpty()) {
+                loadDataTable(staffBLL.getData(foundStaff));
+            } else {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên có tên '" + searchText + "'", "Không tìm thấy", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
+
+    private void searchStaffByRole() {
+        if (jTextFieldSearch.getText().isEmpty()) {
+
+            loadDataTable(staffBLL.getData(staffBLL.searchStaffs("deleted = 0")));
+        } else {
+            String roleName = jTextFieldSearch.getText();
+            List<Role> roles = new RoleBLL().searchRoles("name = '" + roleName + "'");
+
+            if (!roles.isEmpty()) {
+                int roleId = roles.get(0).getId();
+                List<Role_Detail> roleDetails = new Role_DetailBLL().searchRole_details("role_id = " + roleId);
+
+                if (!roleDetails.isEmpty()) {
+                    List<Integer> staffIds = new ArrayList<>();
+                    for (Role_Detail roleDetail : roleDetails) {
+                        staffIds.add(roleDetail.getStaff_id());
+                    }
+                    List<Staff> staffs = new ArrayList<>();
+                    for (Integer staffId : staffIds) {
+                        List<Staff> tempStaffs = staffBLL.searchStaffs("id = " + staffId);
+                        if (!tempStaffs.isEmpty()) {
+                            staffs.add(tempStaffs.get(0));
+                        }
+                    }
+
+                    loadDataTable(staffBLL.getData(staffs));
+                } else {
+                    JOptionPane.showMessageDialog(this, "Không có nhân viên nào có chức vụ '" + roleName + "'", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy chức vụ '" + roleName + "'", "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+
 
     public void loadDataTable(Object[][] objects) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();

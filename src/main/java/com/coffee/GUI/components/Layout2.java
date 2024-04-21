@@ -54,7 +54,6 @@ public class Layout2 extends RoundedPanel {
         containerSearchPanel.add(FilterDatePanel);
 
         SearchPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-
         SearchPanel.setBackground(new Color(191, 198, 208));
         SearchPanel.setPreferredSize(new Dimension(800, 50));
         containerSearchPanel.add(SearchPanel);

@@ -104,7 +104,7 @@ public class ProductBLL extends Manager<Product> {
             return new Pair<>(false, result.getValue());
         }
 
-        result = validatePrice(String.valueOf(product.getPrice()));
+        result = validatePrice(String.valueOf(product.getPrice()),"Giá bán");
         if (!result.getKey()) {
             return new Pair<>(false, result.getValue());
         }
@@ -127,11 +127,11 @@ public class ProductBLL extends Manager<Product> {
         return new Pair<>(true, "");
     }
 
-    public Pair<Boolean, String> validatePrice(String price) {
+    public Pair<Boolean, String> validatePrice(String price,String title) {
         if (price.isBlank())
-            return new Pair<>(false, "Giá bán của sản phẩm không được để trống.");
+            return new Pair<>(false, title + " của sản phẩm không được để trống.");
         if (!VNString.checkUnsignedNumber(price))
-            return new Pair<>(false, "Giá bán của sản phẩm phải lớn hơn 0.");
+            return new Pair<>(false, title + " của sản phẩm phải lớn hơn 0.");
         return new Pair<>(true, price);
     }
 

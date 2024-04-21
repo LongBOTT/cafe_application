@@ -4,6 +4,7 @@ import com.coffee.BLL.ProductBLL;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Product;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddProductGUI;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddProductGUI1;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailProductGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditProductGUI;
 import com.coffee.GUI.components.*;
@@ -137,22 +138,6 @@ public class ProductGUI extends Layout3 {
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                File file = chooseExcelFile(null);
-                if (file != null) {
-                    Pair<Boolean, String> result = null;
-                    try {
-                        result = new AddProductFromExcel().AddProductFromExcell(file);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    if (!result.getKey()) {
-                        JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Thêm sản phẩm thành công",
-                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                        refresh();
-                    }
-                }
                 refresh();
             }
         });
@@ -181,6 +166,23 @@ public class ProductGUI extends Layout3 {
                         });
                         thread.start();
                     }
+                    int option = JOptionPane.showOptionDialog(null,
+                            "Chọn loại sản phẩm bạn muốn thêm:",
+                            "Xác nhận",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            new String[]{"Thêm sản phẩm", "Thêm sản phẩm chế biến"},
+                            "Thêm sản phẩm");
+
+                    if (option == JOptionPane.YES_OPTION) {
+                        new AddProductGUI1();
+                        refresh();
+                    } else if (option == JOptionPane.NO_OPTION) {
+                        new AddProductGUI();
+                        refresh();
+                    }
+
                 }
             });
             FunctionPanel.add(roundedPanel);
@@ -193,6 +195,27 @@ public class ProductGUI extends Layout3 {
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("excel"))) {
             RoundedPanel roundedPanel = getRoundedPanel();
+            roundedPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    File file = chooseExcelFile(null);
+                    if (file != null) {
+                        Pair<Boolean, String> result;
+                        try {
+                            result = new AddProductFromExcel().AddProductFromExcell(file);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        if (!result.getKey()) {
+                            JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Thêm sản phẩm thành công",
+                                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            refresh();
+                        }
+                    }
+                }
+            });
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Nhập Excel");
@@ -200,6 +223,7 @@ public class ProductGUI extends Layout3 {
             panel.setForeground(Color.white);
             panel.setIcon(new FlatSVGIcon("icon/import.svg"));
             roundedPanel.add(panel);
+
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("pdf"))) {
             RoundedPanel roundedPanel = getRoundedPanel();

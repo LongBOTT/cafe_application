@@ -114,6 +114,7 @@ public class MaterialBLL extends Manager<Material> {
         return list;
     }
 
+
     public List<Material> findMaterialsBySell(String key, String value, boolean sell) {
         List<Material> list = new ArrayList<>();
         List<Material> materialList = materialDAL.searchMaterials("deleted = 0");
@@ -128,11 +129,11 @@ public class MaterialBLL extends Manager<Material> {
 
     public List<Material> findMaterialsBy(Map<String, Object> conditions) {
         List<Material> materials = materialDAL.searchMaterials("deleted = 0");
-        ;
         for (Map.Entry<String, Object> entry : conditions.entrySet())
             materials = findObjectsBy(entry.getKey(), entry.getValue(), materials);
         return materials;
     }
+
 
     public Pair<Boolean, String> validateName(String name) {
         if (name == null || name.isBlank())

@@ -7,6 +7,7 @@ import com.coffee.GUI.DialogGUI.FormAddGUI.AddWorkScheduleGUI;
 import com.coffee.GUI.components.*;
 import com.coffee.ImportExcel.AddWorkScheduleFromExcel;
 import com.coffee.utils.PDF;
+import com.coffee.ImportExcel.Timekeeping;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 
@@ -197,6 +198,27 @@ public class CreateWorkScheduleGUI extends Layout1 {
         panelChamCong.setForeground(Color.white);
         panelChamCong.setFont(new Font("Public Sans", Font.PLAIN, 13));
         panelChamCong.setIcon(new FlatSVGIcon("icon/write-svgrepo-com.svg"));
+        roundedPaneChamCong.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                File file = chooseExcelFile(null);
+                if (file != null) {
+                    Pair<Boolean, String> result;
+                    try {
+                        result = new Timekeeping().addWorkChamCongFromExcel(file);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    if (!result.getKey()) {
+                        JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Chấm công thành công",
+                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        refresh();
+                    }
+                }
+            }
+        });
         roundedPaneChamCong.add(panelChamCong);
 
         bottom.setBackground(Color.white);

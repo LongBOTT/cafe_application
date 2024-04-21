@@ -15,8 +15,11 @@ import com.coffee.GUI.components.RoundedScrollPane;
 
 import com.coffee.utils.PDF;
 import com.coffee.utils.Resource;
+import com.coffee.ImportExcel.AddImportFromExcel;
+import com.coffee.ImportExcel.AddProductFromExcel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
+import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -26,10 +29,14 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
+
+import static com.coffee.utils.Resource.chooseExcelFile;
 
 public class ImportGUI extends Layout2 {
 
@@ -194,6 +201,27 @@ public class ImportGUI extends Layout2 {
             roundedPanel.setPreferredSize(new Dimension(130, 40));
             roundedPanel.setBackground(new Color(1, 120, 220));
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            roundedPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    File file = chooseExcelFile(null);
+                    if (file != null) {
+                        Pair<Boolean, String> result;
+                        try {
+                            result = new AddImportFromExcel().addImportFromExcel(file);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        if (!result.getKey()) {
+                            JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Thêm phiếu nhập thành công",
+                                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            refresh();
+                        }
+                    }
+                }
+            });
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Nhập Excel");
@@ -259,8 +287,7 @@ public class ImportGUI extends Layout2 {
         jDateChooser[0].getDateEditor().setDate(null);
         jDateChooser[1].getDateEditor().setDate(null);
         loadDataTable(importNoteBLL.getData(importNoteBLL.searchImport()));
-        for (int i=0 ; i<2; i++)
-        {
+        for (int i = 0; i < 2; i++) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             dateTextField[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
             dateTextField[i].setText(LocalDate.now().format(formatter));

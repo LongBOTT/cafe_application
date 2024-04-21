@@ -1,10 +1,8 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.DiscountBLL;
-import com.coffee.DTO.Discount;
-import com.coffee.DTO.Discount_Detail;
 import com.coffee.DTO.Function;
-import com.coffee.GUI.DialogGUI.FormAddGUI.AddDiscountGUInew;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddDiscountGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailDiscountGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditDiscountGUI;
 import com.coffee.GUI.components.*;
@@ -23,16 +21,14 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeListenerProxy;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -80,7 +76,6 @@ public class DiscountGUI extends Layout2 {
 
     private void init(List<Function> functions) {
         containerSearch = new RoundedPanel();
-        SearchPanel.setLayout(new MigLayout("", "[]10[]40[]20[]"));
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
@@ -114,7 +109,7 @@ public class DiscountGUI extends Layout2 {
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
         containerSearch.setBackground(new Color(245, 246, 250));
-        containerSearch.setPreferredSize(new Dimension(320, 40));
+        containerSearch.setPreferredSize(new Dimension(280, 40));
         SearchPanel.add(containerSearch);
 
         iconSearch.setIcon(new FlatSVGIcon("icon/search.svg"));
@@ -123,12 +118,12 @@ public class DiscountGUI extends Layout2 {
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Tìm kiếm theo tên chương trình");
-        jTextFieldSearch.setPreferredSize(new Dimension(220, 30));
+        jTextFieldSearch.setPreferredSize(new Dimension(250, 30));
         containerSearch.add(jTextFieldSearch);
 
         jButtonSearch.setBackground(new Color(1, 120, 220));
         jButtonSearch.setForeground(Color.white);
-        jButtonSearch.setPreferredSize(new Dimension(100, 40));
+        jButtonSearch.setPreferredSize(new Dimension(100, 30));
         jButtonSearch.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -139,7 +134,7 @@ public class DiscountGUI extends Layout2 {
 
         jComboBoxSearch.setBackground(new Color(1, 120, 220));
         jComboBoxSearch.setForeground(Color.white);
-        jComboBoxSearch.setPreferredSize(new Dimension(150, 40));
+        jComboBoxSearch.setPreferredSize(new Dimension(150, 30));
         jComboBoxSearch.addActionListener(e -> {
             SelectDiscountStatus();
         });
@@ -150,7 +145,7 @@ public class DiscountGUI extends Layout2 {
 
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
-        refreshPanel.setPreferredSize(new Dimension(120, 40));
+        refreshPanel.setPreferredSize(new Dimension(130, 40));
         refreshPanel.setBackground(new Color(1, 120, 220));
         refreshPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         refreshPanel.addMouseListener(new MouseAdapter() {
@@ -174,7 +169,7 @@ public class DiscountGUI extends Layout2 {
 
             jDateChooser[i] = new JDateChooser();
             jDateChooser[i].setDateFormatString("dd/MM/yyyy");
-            jDateChooser[i].setPreferredSize(new Dimension(150, 30));
+            jDateChooser[i].setPreferredSize(new Dimension(200, 30));
             jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
 
             dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
@@ -185,19 +180,14 @@ public class DiscountGUI extends Layout2 {
                 JLabel jLabel = new JLabel("Từ Ngày");
                 jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
                 FilterDatePanel.add(jLabel);
-                JLabel jLabel1 = new JLabel("         ");
-                FilterDatePanel.add(jLabel1);
             } else {
                 JLabel jLabel = new JLabel("Đến Ngày");
                 jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
                 FilterDatePanel.add(jLabel);
-                JLabel jLabel1 = new JLabel("         ");
-                FilterDatePanel.add(jLabel1);
             }
             FilterDatePanel.add(jDateChooser[i]);
-            JLabel jLabel1 = new JLabel("      ");
-            FilterDatePanel.add(jLabel1);
         }
+
         jDateChooser[0].addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
@@ -221,33 +211,19 @@ public class DiscountGUI extends Layout2 {
         refreshLabel.setForeground(Color.white);
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
         refreshPanel.add(refreshLabel);
-//        refreshPanel.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                File file = chooseExcelFile(null);
-//                if (file != null) {
-//                    Pair<Boolean, String> result = null;
-//                    try {
-//                        result = new AddDiscountFromExcel().addDiscountsFromExcel(file);
-//                    } catch (IOException ex) {
-//                        throw new RuntimeException(ex);
-//                    }
-//                    if (!result.getKey()) {
-//                        JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-//                    } else {
-//                        JOptionPane.showMessageDialog(null, "Thêm chương trình giảm giá thành công",
-//                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-//                        refresh();
-//                    }
-//                }
-//            }
-//        });
+
+        refreshPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                refresh();
+            }
+        });
         if (functions.stream().anyMatch(f -> f.getName().equals("add"))) {
             RoundedPanel roundedPanel = getRoundedPanel();
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    new AddDiscountGUInew();
+                    new AddDiscountGUI();
                     refresh();
                 }
             });
@@ -261,6 +237,28 @@ public class DiscountGUI extends Layout2 {
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("excel"))) {
             RoundedPanel roundedPanel = getRoundedPanel();
+            roundedPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    File file = chooseExcelFile(null);
+                    if (file != null) {
+                        Pair<Boolean, String> result;
+                        try {
+                            result = new AddDiscountFromExcel().addDiscountsFromExcel(file);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        if (!result.getKey()) {
+                            JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Thêm chương trình giảm giá thành công",
+                                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            refresh();
+                        }
+                    }
+                }
+            });
+
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Nhập Excel");
@@ -284,7 +282,7 @@ public class DiscountGUI extends Layout2 {
     private RoundedPanel getRoundedPanel() {
         RoundedPanel roundedPanel = new RoundedPanel();
         roundedPanel.setLayout(new GridBagLayout());
-        roundedPanel.setPreferredSize(new Dimension(120, 40));
+        roundedPanel.setPreferredSize(new Dimension(130, 40));
         roundedPanel.setBackground(new Color(1, 120, 220));
         roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
@@ -301,8 +299,7 @@ public class DiscountGUI extends Layout2 {
         processDateChangeEvent = true;
         loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));
 
-        for (int i=0 ; i<2; i++)
-        {
+        for (int i = 0; i < 2; i++) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
             dateTextField[i].setBackground(new Color(245, 246, 250));

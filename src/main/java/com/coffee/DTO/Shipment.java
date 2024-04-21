@@ -58,7 +58,7 @@ public class Shipment {
         this.import_id = import_id;
     }
 
-    public double getQuantity() {
+    public Double getQuantity() {
         return quantity;
     }
 
