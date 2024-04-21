@@ -129,7 +129,7 @@ public class SalePanel extends RoundedPanel {
         scrollPane[2].setPreferredSize(new Dimension(450, 400));
         ContainerBill_detail.add(scrollPane[2], BorderLayout.CENTER);
 
-        ContainerButtons.setLayout(new MigLayout("", "10[]15[]10", "10[]20[]"));
+        ContainerButtons.setLayout(new MigLayout("", "10[]15[]10", "10[]10[]10[]10[]"));
         ContainerButtons.setPreferredSize(new Dimension(450, 210));
         ContainerButtons.setBackground(new Color(255, 255, 255));
         ContainerButtons.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(0x000000)));

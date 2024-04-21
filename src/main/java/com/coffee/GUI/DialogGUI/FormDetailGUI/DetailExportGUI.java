@@ -11,6 +11,7 @@ import com.coffee.main.Cafe_Application;
 
 import com.coffee.utils.PDF;
 import com.coffee.utils.Resource;
+import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
 
@@ -104,7 +105,7 @@ public class DetailExportGUI extends DialogFormDetail {
         contentbot.add(label);
 
         JLabel textField = new JLabel();
-        String total = "" + export.getTotal();
+        String total = VNString.currency(Double.parseDouble(export.getTotal().toString()));
         textField.setText(total);
         textField.setPreferredSize(new Dimension(1000, 30));
         textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));

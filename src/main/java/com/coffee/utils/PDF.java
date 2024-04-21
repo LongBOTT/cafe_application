@@ -182,7 +182,7 @@ public class PDF {
                                 max = num;
                             }
                         } catch (NumberFormatException e) {
-                        //ignore file
+                            //ignore file
                         }
                     }
                 }
@@ -378,9 +378,16 @@ public class PDF {
 
         pdf.addTable(tableData, 16F, 6.5F, 7.1F, new float[]{0.5F, 1.5F, 2.5F, 3.5F, 4.5F});
 
-        pdf.addTextAt(" Tổng tiền: " + VNString.currency(receipt.getTotal()), 0.5F, receipts.size() + 9, pdf.italicFont, 20);
-        pdf.addTextAt(" Dư thừa: " + VNString.currency(receipt.getExcess()), 0.5F, receipts.size() + 10, pdf.italicFont, 20);
-        pdf.addTextAt(" Đã nhận: " + VNString.currency(receipt.getReceived()), 0.5F, receipts.size() + 11, pdf.italicFont, 20);
+        pdf.addTextAt(" Tổng Cộng: " + VNString.currency(receipt.getTotal_price()), 0.5F, receipts.size() + 9, pdf.italicFont, 20);
+        if (receipt.getDiscount_id() == 0)
+            pdf.addTextAt(" Khuyến Mãi: " + VNString.currency(receipt.getTotal_discount()), 0.5F, receipts.size() + 10, pdf.italicFont, 20);
+
+        else
+            pdf.addTextAt(" Khuyến Mãi: " + "-" + VNString.currency(receipt.getTotal_discount()) + " (Mã giảm giá: " + receipt.getDiscount_id() + ")", 0.5F, receipts.size() + 10, pdf.italicFont, 20);
+
+        pdf.addTextAt(" Thành Tiền: " + VNString.currency(receipt.getTotal()), 0.5F, receipts.size() + 11, pdf.italicFont, 20);
+        pdf.addTextAt(" Tiền Nhận: " + VNString.currency(receipt.getReceived()), 0.5F, receipts.size() + 12, pdf.italicFont, 20);
+        pdf.addTextAt(" Tiền Thừa: " + VNString.currency(receipt.getExcess()), 0.5F, receipts.size() + 13, pdf.italicFont, 20);
 
         pdf.closeDocument(file);
         return true;
@@ -394,7 +401,7 @@ public class PDF {
             System.out.println(e.getMessage());
             return false;
         }
-        File file = new File(getFileNameDate(path, "Receipts", java.sql.Date.valueOf(LocalDate.now() )));
+        File file = new File(getFileNameDate(path, "Receipts", java.sql.Date.valueOf(LocalDate.now())));
         PDF pdf = new PDF(6, 10 + objects.length, 167F, 30F);
         pdf.addTextAt("BẢNG HÓA ĐƠN ", 2.2F, 2, pdf.boldFont, 25);
 
@@ -428,7 +435,7 @@ public class PDF {
             System.out.println(e.getMessage());
             return false;
         }
-        File file = new File(getFileNameDate(path, "Export_Note", java.sql.Date.valueOf(LocalDate.now() )));
+        File file = new File(getFileNameDate(path, "Export_Note", java.sql.Date.valueOf(LocalDate.now())));
         PDF pdf = new PDF(6, 10 + objects.length, 167F, 30F);
         pdf.addTextAt("BẢNG PHIẾU NHẬP HÀNG", 2.2F, 2, pdf.boldFont, 25);
 
@@ -462,7 +469,7 @@ public class PDF {
             System.out.println(e.getMessage());
             return false;
         }
-        File file = new File(getFileNameDate(path, "Export_Note", java.sql.Date.valueOf(LocalDate.now()) ));
+        File file = new File(getFileNameDate(path, "Export_Note", java.sql.Date.valueOf(LocalDate.now())));
         PDF pdf = new PDF(6, 10 + objects.length, 167F, 30F);
         pdf.addTextAt("BẢNG PHIẾU NHẬP HÀNG", 2.2F, 2, pdf.boldFont, 25);
 
@@ -496,7 +503,7 @@ public class PDF {
             System.out.println(e.getMessage());
             return false;
         }
-        File file = new File(getFileNameDate(path, "Pay_Roll", java.sql.Date.valueOf(LocalDate.now()) ));
+        File file = new File(getFileNameDate(path, "Pay_Roll", java.sql.Date.valueOf(LocalDate.now())));
         PDF pdf = new PDF(6, 10 + objects.length, 220F, 30F);
         pdf.addTextAt("BẢNG TỔNG LƯƠNG ", 2.2F, 2, pdf.boldFont, 25);
 
@@ -533,7 +540,7 @@ public class PDF {
             System.out.println(e.getMessage());
             return false;
         }
-        File file = new File(getFileNameDate(path, "Pay_Roll_Detail", java.sql.Date.valueOf(LocalDate.now()) ));
+        File file = new File(getFileNameDate(path, "Pay_Roll_Detail", java.sql.Date.valueOf(LocalDate.now())));
         PDF pdf = new PDF(6, 10 + objects.length, 220F, 30F);
         pdf.addTextAt("BẢNG TỔNG LƯƠNG ", 2.2F, 2, pdf.boldFont, 25);
 

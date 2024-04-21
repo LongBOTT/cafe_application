@@ -106,7 +106,7 @@ public class DetailImportGUI extends DialogFormDetail {
         contentbot.add(label);
 
         JLabel textField = new JLabel();
-        String total = "" + import_note.getTotal();
+        String total = VNString.currency(Double.parseDouble(import_note.getTotal().toString()));
         textField.setText(total);
         textField.setPreferredSize(new Dimension(1000, 30));
         textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));

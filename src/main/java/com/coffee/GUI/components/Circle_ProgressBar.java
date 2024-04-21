@@ -43,7 +43,7 @@ public class Circle_ProgressBar extends JDialog {
                         i++;
                         liquidProgress.setValue(i);
                         try {
-                            sleep(20);
+                            sleep(10);
                         } catch (InterruptedException e) {
                             System.out.println(e.getMessage());
                         }

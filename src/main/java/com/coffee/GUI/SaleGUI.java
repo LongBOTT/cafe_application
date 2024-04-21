@@ -6,6 +6,7 @@ import com.coffee.GUI.components.Circle_ProgressBar;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.SalePanel;
+import com.coffee.main.Cafe_Application;
 import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
@@ -27,7 +28,7 @@ import java.util.List;
 public class SaleGUI extends SalePanel {
     private final ProductBLL productBLL = new ProductBLL();
     private final StaffBLL staffBLL = new StaffBLL();
-    private final RecipeBLL receiptBLL = new RecipeBLL();
+    private final ReceiptBLL receiptBLL = new ReceiptBLL();
     private final RecipeBLL recipeBLL = new RecipeBLL();
     private final MaterialBLL materialBLL = new MaterialBLL();
     private final Receipt_DetailBLL receipt_detailBLL = new Receipt_DetailBLL();
@@ -67,6 +68,13 @@ public class SaleGUI extends SalePanel {
     private List<Pair<Integer, RoundedPanel>> productRoundPanelList = new ArrayList<>();
     private RoundedPanel selectedCategory = null;
     public List<Product> resultSearch = new ArrayList<>();
+    private int discountType = -1;
+    private Discount discountActive;
+    private double totalPrice;
+    private double totalDiscount;
+    private double total = -1;
+    private double cash = -1;
+    private double excess = -1;
 
     public SaleGUI(Account account) {
         super();
@@ -101,8 +109,17 @@ public class SaleGUI extends SalePanel {
 
         checkDiscount();
 
-        Discount discount = discountBLL.searchDiscounts("status = 0").get(0);
-        discountDetails = discountDetailBLL.findDiscount_DetailsBy(Map.of("discount_id", discount.getId()));
+        List<Discount> list = discountBLL.searchDiscounts("status = 0");
+
+        if (!list.isEmpty()) {
+            discountActive = list.get(0);
+            if (discountActive.isType())
+                discountType = 1;
+            else
+                discountType = 0;
+
+            discountDetails = discountDetailBLL.findDiscount_DetailsBy(Map.of("discount_id", discountActive.getId()));
+        }
 
         containerSearch.setLayout(new MigLayout("", "10[]20[]10", ""));
         containerSearch.setBackground(new Color(245, 246, 250));
@@ -180,23 +197,23 @@ public class SaleGUI extends SalePanel {
         date.setFont(new Font("Palatino", Font.PLAIN, 13));
         StaffPanel.add(date);
 
-        List<String> titles = new ArrayList<>(List.of(new String[]{"Sản phẩm", "Size", "SL", "Thành tiền", "Xoá"}));
+        List<String> titles = new ArrayList<>(List.of(new String[]{"Sản phẩm", "Size", "SL", "Tổng cộng", "Xoá"}));
 
         for (String tittle : titles) {
             JLabel jLabel = getjLabel(tittle);
             Title.add(jLabel);
         }
 
-        for (String string : new String[]{"Thành tiền:", "Khuyến mãi:", "Tiền nhận:", "Tiền thừa:"}) {
+        for (String string : new String[]{"Tổng cộng:", "Khuyến mãi:", "Thành Tiền:", "Tiền nhận:", "Tiền thừa:"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 20));
             label.setText(string);
             label.setFont((new Font("Palatino", Font.BOLD, 13)));
             ContainerButtons.add(label);
 
-            if (string.equals("Thành tiền:") || string.equals("Khuyến mãi:") || string.equals("Tiền thừa:")) {
+            if (string.equals("Tổng cộng:") || string.equals("Khuyến mãi:") || string.equals("Thành Tiền:") || string.equals("Tiền thừa:")) {
                 JLabel jLabel = new JLabel();
-                jLabel.setPreferredSize(new Dimension(230, 20));
+                jLabel.setPreferredSize(new Dimension(230, 10));
                 jLabel.setFont((new Font("Palatino", Font.PLAIN, 13)));
                 jLabel.setText(VNString.currency(0));
                 jLabelBill.add(jLabel);
@@ -265,11 +282,57 @@ public class SaleGUI extends SalePanel {
                 String[] options = new String[]{"Huỷ", "Xác nhận"};
                 int choice = JOptionPane.showOptionDialog(null, "Xác nhận xuất hoá đơn?",
                         "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
-//                if (choice == 1)
-//                    payBill();
+                if (choice == 1)
+                    payBill();
             }
         });
         ContainerButtons.add(jButtonPay, "wrap");
+    }
+
+    private void payBill() {
+        for (List<Object> receiptDetail : receiptDetailList) {
+            if (receiptDetail.get(2).toString().equals("0")) {
+                JOptionPane.showMessageDialog(this, "Số lượng sản phẩm phải lớn hơn 0.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+        }
+        if (receiptDetailList.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        if (cash == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập số tiền nhận.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        if (excess == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập số tiền nhận và nhấn enter để tính tiền thừa.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        int id = receiptBLL.getAutoID(receiptBLL.searchReceipts());
+        int discount_id;
+        if (discountType == -1)
+            discount_id = 0;
+        else
+            discount_id = discountActive.getId();
+        Receipt receipt = new Receipt(id, HomeGUI.staff.getId(), Date.valueOf(LocalDate.now()), totalPrice, totalDiscount, total, cash, excess, discount_id);
+
+        Pair<Boolean, String> result = receiptBLL.addReceipt(receipt);
+        if (result.getKey()) {
+            for (List<Object> receiptDetail : receiptDetailList) {
+                if (receiptDetail.get(2).toString().equals("0")) {
+                    JOptionPane.showMessageDialog(this, "Số lượng sản phẩm phải lớn hơn 0.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+            }
+            if (Cafe_Application.homeGUI.indexModuleReceiptGUI != -1) {
+                ReceiptGUI receiptGUI = (ReceiptGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModuleReceiptGUI];
+                receiptGUI.refresh();
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, result.getValue(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void searchProducts() {
@@ -757,12 +820,7 @@ public class SaleGUI extends SalePanel {
         }
 
         double price;
-//        double percent = checkPercentDiscount(product.getId());
         price = product.getPrice();
-//        if (percent == 0) {
-//        } else {
-//            price = product.getPrice() - product.getPrice() * percent / 100;
-//        }
         receipt.set(3, quantity * price);
 
         receiptDetailList.set(index, receipt);
@@ -822,12 +880,7 @@ public class SaleGUI extends SalePanel {
         }
 
         double price;
-//        double percent = checkPercentDiscount(product.getId());
         price = product.getPrice();
-//        if (percent == 0) {
-//        } else {
-//            price = product.getPrice() - product.getPrice() * percent / 100;
-//        }
         receipt.set(3, quantity * price);
 
         receiptDetailList.set(index, receipt);
@@ -972,6 +1025,10 @@ public class SaleGUI extends SalePanel {
         jLabelBill.get(0).setText(VNString.currency(0));
         jLabelBill.get(1).setText(VNString.currency(0));
         jLabelBill.get(2).setText(VNString.currency(0));
+        jLabelBill.get(3).setText(VNString.currency(0));
+        total = -1;
+        cash = -1;
+        excess = -1;
 
         jTextFieldCash.setText("");
         Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
@@ -984,18 +1041,60 @@ public class SaleGUI extends SalePanel {
 
     private void calculateTotal() {
         double totalPrice = 0;
+        double totalDiscount = 0;
         for (List<Object> receiptDetail : receiptDetailList) {
             totalPrice += Double.parseDouble(receiptDetail.get(3).toString());
+
+            if (discountType == 0) {
+                Product product = productBLL.findProductsBy(Map.of("name", receiptDetail.get(0),
+                        "size", receiptDetail.get(1).toString())).get(0);
+                List<Pair<Double, Double>> list = checkPercentDiscountType0(product.getId(), product.getSize());
+                if (!list.isEmpty()) {
+                    double quantity = 0, percent = 0;
+                    for (Pair<Double, Double> pair : list) {
+                        if (pair.getKey() <= Double.parseDouble(receiptDetail.get(2).toString())) {
+                            if (pair.getKey() > quantity) {
+                                quantity = pair.getKey();
+                                percent = pair.getValue();
+                            }
+
+                        }
+                    }
+                    totalDiscount += Double.parseDouble(receiptDetail.get(3).toString()) * percent / 100;
+                }
+            }
+        }
+        if (discountType == 1) {
+            double discountBill = 0, percent = 0;
+            for (Discount_Detail discountDetail : discountDetails) {
+                if (discountDetail.getDiscountBill() <= totalPrice) {
+                    if (discountDetail.getDiscountBill() > discountBill) {
+                        discountBill = discountDetail.getDiscountBill();
+                        percent = discountDetail.getPercent();
+                    }
+                }
+            }
+            totalDiscount = totalPrice * percent / 100;
         }
         jLabelBill.get(0).setText(VNString.currency(totalPrice));
-        jLabelBill.get(2).setText(VNString.currency(0));
+        if (totalDiscount == 0)
+            jLabelBill.get(1).setText(VNString.currency(totalDiscount));
+        else
+            jLabelBill.get(1).setText("-" + VNString.currency(totalDiscount) + " (Mã giảm giá: " + discountActive.getId() + ")");
+        jLabelBill.get(2).setText(VNString.currency(totalPrice - totalDiscount));
+        jLabelBill.get(3).setText(VNString.currency(0));
         jTextFieldCash.setText("");
-
+        cash = -1;
+        excess = -1;
+        this.totalPrice = totalPrice;
+        this.totalDiscount = totalDiscount;
+        this.total = totalPrice - totalDiscount;
         System.out.println(Arrays.toString(receiptDetailList.toArray()));
     }
 
     private void calculateExcess() {
         if (receiptDetailList.isEmpty()) {
+            jTextFieldCash.setText("");
             JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
@@ -1003,25 +1102,33 @@ public class SaleGUI extends SalePanel {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập số tiền nhận.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        double total = Double.parseDouble(jLabelBill.get(0).getText());
-        double cash = Double.parseDouble(jTextFieldCash.getText());
-        double excess = cash - total;
-        jLabelBill.get(2).setText(VNString.currency(excess));
+        if ((Double.parseDouble(jTextFieldCash.getText()) - total) < 0) {
+            jTextFieldCash.setText("");
+            JOptionPane.showMessageDialog(this, "Không đủ tiền thanh toán.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            cash = Double.parseDouble(jTextFieldCash.getText());
+            excess = cash - total;
+            jLabelBill.get(3).setText(VNString.currency(excess));
+        }
+
     }
 
-    private double checkPercentDiscount(int product_id) {
+    private List<Pair<Double, Double>> checkPercentDiscountType0(int product_id, String size) {
+        List<Pair<Double, Double>> list = new ArrayList<>();
         for (Discount_Detail discountDetail : discountDetails) {
-            if (product_id == discountDetail.getProduct_id()) {
-                return discountDetail.getPercent();
+            if (product_id == discountDetail.getProduct_id() && size.equals(discountDetail.getSize())) {
+                list.add(new Pair<>(discountDetail.getQuantity(), discountDetail.getPercent()));
             }
         }
-        return 0;
+        return list;
     }
 
     private boolean checkDiscountType0(int product_id) {
-        for (Discount_Detail discountDetail : discountDetails) {
-            if (product_id == discountDetail.getProduct_id()) {
-                return true;
+        if (discountType == 0) {
+            for (Discount_Detail discountDetail : discountDetails) {
+                if (product_id == discountDetail.getProduct_id()) {
+                    return true;
+                }
             }
         }
         return false;

@@ -52,6 +52,7 @@ public class HomeGUI extends JFrame {
     private boolean pressover;
     private boolean over = false;
     public int indexSaleGUI = -1;
+    public int indexModuleReceiptGUI = -1;
     public int indexModulePayrollGUI = -1;
     public int indexModuleCreateWorkScheduleGUI = -1;
     public int indexModuleMaterialGUI = -1;
@@ -231,6 +232,8 @@ public class HomeGUI extends JFrame {
                 indexSaleGUI = index;
             if (module.getId() == 2)
                 indexModuleMaterialGUI = index;
+            if (module.getId() == 7)
+                indexModuleReceiptGUI = index;
             if (module.getId() == 18)
                 indexModuleCreateWorkScheduleGUI = index;
             if (module.getId() == 19)
