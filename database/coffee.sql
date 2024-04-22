@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 22, 2024 at 08:00 PM
+-- Generation Time: Apr 22, 2024 at 08:17 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -622,23 +622,23 @@ CREATE TABLE `payroll_detail` (
   `payroll_id` bigint(20) NOT NULL,
   `staff_id` bigint(20) NOT NULL,
   `hours_amount` double DEFAULT NULL,
-  `bonus_amount` double DEFAULT NULL,
-  `deduction_amount` double DEFAULT NULL,
-  `salary_amount` double DEFAULT NULL,
-  `status` bit(1) DEFAULT NULL,
   `allowance_amount` double DEFAULT NULL,
-  `fine_amount` double DEFAULT NULL
+  `deduction_amount` double DEFAULT NULL,
+  `bonus_amount` double DEFAULT NULL,
+  `fine_amount` double DEFAULT NULL,
+  `salary_amount` double DEFAULT NULL,
+  `status` bit(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `payroll_detail`
 --
 
-INSERT INTO `payroll_detail` (`payroll_id`, `staff_id`, `hours_amount`, `bonus_amount`, `deduction_amount`, `salary_amount`, `status`, `allowance_amount`, `fine_amount`) VALUES
-(2, 4, 39, 35000, 0, 1010000, b'1', NULL, NULL),
-(2, 5, 34, 25000, 0, 875000, b'1', NULL, NULL),
-(2, 6, 16.67, 15000, 90000, 341750, b'1', NULL, NULL),
-(2, 7, 28, 15000, 0, 715000, b'1', NULL, NULL);
+INSERT INTO `payroll_detail` (`payroll_id`, `staff_id`, `hours_amount`, `allowance_amount`, `deduction_amount`, `bonus_amount`, `fine_amount`, `salary_amount`, `status`) VALUES
+(2, 4, 39, NULL, 0, 35000, NULL, 1010000, b'1'),
+(2, 5, 34, NULL, 0, 25000, NULL, 875000, b'1'),
+(2, 6, 16.67, NULL, 90000, 15000, NULL, 341750, b'1'),
+(2, 7, 28, NULL, 0, 15000, NULL, 715000, b'1');
 
 -- --------------------------------------------------------
 
