@@ -99,7 +99,7 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
 
         editor.setPreferredSize(new Dimension(280, 40));
         editor.setFont(new Font("Inter", Font.BOLD, 15));
-        FilterDatePanel.add(editor);
+        FilterDatePanel.add(editor, BorderLayout.WEST);
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
         containerSearch.setBackground(new Color(245, 246, 250));

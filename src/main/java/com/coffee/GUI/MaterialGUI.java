@@ -112,7 +112,7 @@ public class MaterialGUI extends Layout2 {
 
         JLabel jLabelStatus = new JLabel("Tồn nguyên liệu: ");
         jLabelStatus.setFont(new Font("Lexend", Font.BOLD, 14));
-        FilterDatePanel.add(jLabelStatus);
+        FilterDatePanel.add(jLabelStatus, BorderLayout.WEST);
 
         jComboBox.setBackground(new Color(1, 120, 220));
         jComboBox.setForeground(Color.white);
@@ -123,7 +123,7 @@ public class MaterialGUI extends Layout2 {
                 searchMaterials();
             }
         });
-        FilterDatePanel.add(jComboBox);
+        FilterDatePanel.add(jComboBox, BorderLayout.WEST);
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
         containerSearch.setBackground(new Color(245, 246, 250));

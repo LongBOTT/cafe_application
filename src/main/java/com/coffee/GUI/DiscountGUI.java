@@ -125,7 +125,7 @@ public class DiscountGUI extends Layout2 {
 
         jComboBoxSearch.setBackground(new Color(1, 120, 220));
         jComboBoxSearch.setForeground(Color.white);
-        jComboBoxSearch.setPreferredSize(new Dimension(150, 30));
+        jComboBoxSearch.setPreferredSize(new Dimension(100, 30));
         jComboBoxSearch.addActionListener(e -> {
             SelectDiscountStatus();
         });
@@ -163,7 +163,7 @@ public class DiscountGUI extends Layout2 {
 
         editor.setPreferredSize(new Dimension(280, 40));
         editor.setFont(new Font("Inter", Font.BOLD, 15));
-        FilterDatePanel.add(editor);
+        FilterDatePanel.add(editor, BorderLayout.WEST);
 
         JLabel refreshLabel = new JLabel("Làm mới");
         refreshLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));

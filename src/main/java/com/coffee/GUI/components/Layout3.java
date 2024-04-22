@@ -55,7 +55,7 @@ public class Layout3 extends RoundedPanel {
         SearchPanel.setPreferredSize(new Dimension(510, 50));
         top.add(SearchPanel, BorderLayout.WEST);
 
-        FunctionPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        FunctionPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         FunctionPanel.setBackground(new Color(191, 198, 208));
         FunctionPanel.setPreferredSize(new Dimension(620, 50));
         top.add(FunctionPanel, BorderLayout.EAST);
