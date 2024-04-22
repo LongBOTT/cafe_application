@@ -79,7 +79,7 @@ public class DiscountGUI extends Layout2 {
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
-        jComboBoxSearch = new JComboBox<>(new String[]{"Tất cả", "Kích hoạt", "Ngừng áp dụng"});
+        jComboBoxSearch = new JComboBox<>(new String[]{"Tất cả", "Đang áp dụng", "Ngừng áp dụng"});
         JLabel lbFilter = new JLabel("Trạng thái");
         lbFilter.setFont((new Font("Public Sans", Font.BOLD, 14)));
         columnNames = new String[]{"Mã Giảm Giá", "Tên chương trình", "Ngày Bắt Đầu", "Ngày Kết Thúc", "Hình thức", "Trạng Thái"};
@@ -111,7 +111,6 @@ public class DiscountGUI extends Layout2 {
         containerSearch.setBackground(new Color(245, 246, 250));
         containerSearch.setPreferredSize(new Dimension(280, 40));
         SearchPanel.add(containerSearch);
-
         iconSearch.setIcon(new FlatSVGIcon("icon/search.svg"));
         containerSearch.add(iconSearch);
 
@@ -173,8 +172,6 @@ public class DiscountGUI extends Layout2 {
             jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
 
             dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            dateTextField[i].setText(LocalDate.now().format(formatter));
 
             if (i == 0) {
                 JLabel jLabel = new JLabel("Từ Ngày");
@@ -303,8 +300,8 @@ public class DiscountGUI extends Layout2 {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
             dateTextField[i].setBackground(new Color(245, 246, 250));
-            dateTextField[i].setText(LocalDate.now().format(formatter));
-            dateTextField[i].setText(LocalDate.now().format(formatter));
+            dateTextField[i].setText("");
+            dateTextField[i].setText("");
         }
     }
 
@@ -341,7 +338,7 @@ public class DiscountGUI extends Layout2 {
 
     private void SelectDiscountStatus() {
         String selectedItem = Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString();
-        if (selectedItem.equals("Kích hoạt")) {
+        if (selectedItem.equals("Đang áp dụng")) {
             loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("status = 0")));
         } else if (selectedItem.equals("Ngừng áp dụng")) {
             loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("status = 1")));

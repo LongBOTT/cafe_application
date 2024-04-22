@@ -105,7 +105,7 @@ public class DetailDiscountGUI extends DialogFormDetail_1 {
 
         boolean status = discount.isStatus();
         if (!status)
-            txtStatus.setText("Kích hoạt");
+            txtStatus.setText("Đang áp dụng");
         else
             txtStatus.setText("Ngừng áp dụng");
 
@@ -153,18 +153,7 @@ public class DetailDiscountGUI extends DialogFormDetail_1 {
         lblFormValue.setText("");
         containerForm.add(lblFormValue);
 
-//        btnAddConditions = new JButton("Thêm điều kiện");
-//        btnAddConditions.setIcon(new FlatSVGIcon("icon/Add1.svg"));
-//        btnAddConditions.setPreferredSize(new Dimension(100, 40));
-//        btnAddConditions.setFont(new Font("Public Sans", Font.PLAIN, 15));
-//        btnAddConditions.setCursor(new Cursor(Cursor.HAND_CURSOR));
-//        btnAddConditions.setFocusPainted(false);
-//
-//        btnAddConditions.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//            }
-//        });
+
 
         center.add(lblDiscountType);
         center.add(lblTypeValue);
@@ -372,22 +361,11 @@ public class DetailDiscountGUI extends DialogFormDetail_1 {
         JTextField txtS = new MyTextFieldUnderLine();
 
         txtS.setPreferredSize(new Dimension(500, 30));
+        txtS.setFocusable(false);
 
 
-        JButton category = createButton();
-        category.setVisible(false);
-        category.setIcon(new FlatSVGIcon("icon/icons8-category-20.svg"));
-
-        JComboBox<String> comboBox = createCategoryByButton(category);
-        comboBox.addActionListener(e -> {
-            String value = comboBox.getSelectedItem().toString();
-            txtSearch = txtS;
-            txtSearch.setText("Thể loại: " + value);
-        });
 
         contaierSearch.add(txtS);
-        contaierSearch.add(category);
-        contaierSearch.add(comboBox);
 
         JButton btnRemove = createButton();
         btnRemove.setIcon(new FlatSVGIcon("icon/icons8-remove-26.svg"));

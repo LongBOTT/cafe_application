@@ -22,6 +22,7 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
 
@@ -111,8 +112,8 @@ public class AddDiscountGUI extends DialogFormDetail_1 {
         txtDiscountCode.setText(id + "");
         txtProgramName = new MyTextFieldUnderLine();
 
-        radio1 = new JRadioButton("Kích hoạt");
-        radio1.setActionCommand("Kích hoạt");
+        radio1 = new JRadioButton("Đang áp dụng");
+        radio1.setActionCommand("Đang áp dụng");
 
         radio2 = new JRadioButton("Ngừng áp dụng");
         radio2.setActionCommand("Ngừng áp dụng");
@@ -280,17 +281,21 @@ public class AddDiscountGUI extends DialogFormDetail_1 {
                 assert selectedValue != null;
                 if (selectedValue.equals("Đơn hàng")) {
                     if (checkDiscount() && get_discount_information_from_bill_panels()) {
+                        // trước khi thêm đợt giảm giá mới, cập nhật các mã giãm giá cũ về ngưng áp dụng
+                        updateStatusDicount();
                         if (addDiscount() && addDiscount_Detail()) {
                             JOptionPane.showMessageDialog(null, "Thêm đợt giảm giá thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                             dispose();
                         }
                     }
                 } else {
-                    if (checkDiscount() && get_discount_information_from_product_panels())
+                    if (checkDiscount() && get_discount_information_from_product_panels()) {
+                        updateStatusDicount();
                         if (addDiscount() && addDiscount_Detail()) {
                             JOptionPane.showMessageDialog(null, "Thêm đợt giảm giá thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                             dispose();
                         }
+                    }
                 }
 
             }
@@ -344,12 +349,25 @@ public class AddDiscountGUI extends DialogFormDetail_1 {
         ButtonModel selectedButtonModel = btgroup.getSelection();
         if (selectedButtonModel != null) {
             String selectedValue = selectedButtonModel.getActionCommand();
-            status = !selectedValue.equals("Kích hoạt");
+            status = !selectedValue.equals("Đang áp dụng");
         }
 
         Discount discount = new Discount(id, name, startDate, endDate, type, status);
         result = discountBLL.addDiscount(discount);
         return result.getKey();
+    }
+
+    private void updateStatusDicount() {
+        List<Discount> discountList = discountBLL.searchDiscounts("status =0");
+
+        for (Discount discount :discountList) {
+                discount.setStatus(true);
+                Pair<Boolean,String> result=  discountBLL.updateStatusDiscount(discount);
+                if (!result.getKey()) {
+                    JOptionPane.showMessageDialog(null, result.getValue(),
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+        }
     }
 
     private boolean addDiscount_Detail() {

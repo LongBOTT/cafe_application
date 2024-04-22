@@ -277,8 +277,10 @@ public class AddProductGUI1 extends DialogForm {
             result = productBLL.addProduct(product);
             if (!result.getKey())
                 JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-            else
+            else {
                 JOptionPane.showMessageDialog(null, result.getValue(), "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                dispose();
+            }
         } else {
             JOptionPane.showMessageDialog(null, error, "Lỗi", JOptionPane.ERROR_MESSAGE);
 
