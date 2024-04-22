@@ -13,7 +13,6 @@ import com.coffee.GUI.components.swing.DataSearch;
 import com.coffee.GUI.components.swing.EventClick;
 import com.coffee.GUI.components.swing.PanelSearch;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
@@ -286,284 +285,284 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         }
     }
 
-        private void updateStatusDicount () {
-            List<Discount> discountList = discountBLL.searchDiscounts("status =0");
+    private void updateStatusDicount() {
+        List<Discount> discountList = discountBLL.searchDiscounts("status =0");
 
-            for (Discount discount : discountList) {
-                discount.setStatus(true);
-                discountBLL.updateStatusDiscount(discount);
-            }
+        for (Discount discount : discountList) {
+            discount.setStatus(true);
+            discountBLL.updateStatusDiscount(discount);
         }
+    }
 
-        private void loadDiscountBillPanels () {
-            containerBillTypeContent.removeAll();
-            for (Discount_Detail discount_detail : list_discount_detail) {
-                RoundedPanel panel = createPanel_Bill(containerBillTypeContent);
-                JTextField txtTotalBill = (JTextField) panel.getComponent(1);
-                txtTotalBill.setText(discount_detail.getDiscountBill() + "");
-                JTextField txtReduction = (JTextField) panel.getComponent(3);
-                txtReduction.setText(discount_detail.getPercent() + "");
-            }
+    private void loadDiscountBillPanels() {
+        containerBillTypeContent.removeAll();
+        for (Discount_Detail discount_detail : list_discount_detail) {
+            RoundedPanel panel = createPanel_Bill(containerBillTypeContent);
+            JTextField txtTotalBill = (JTextField) panel.getComponent(1);
+            txtTotalBill.setText(discount_detail.getDiscountBill() + "");
+            JTextField txtReduction = (JTextField) panel.getComponent(3);
+            txtReduction.setText(discount_detail.getPercent() + "");
         }
+    }
 
-        private RoundedPanel createPanel_Bill (RoundedPanel contaierDiscountBill){
-            RoundedPanel Panel_Bill = new RoundedPanel();
-            Panel_Bill.setName("Panel_Bill");
+    private RoundedPanel createPanel_Bill(RoundedPanel contaierDiscountBill) {
+        RoundedPanel Panel_Bill = new RoundedPanel();
+        Panel_Bill.setName("Panel_Bill");
 //        Panel_Bill.setBackground(new Color(255,255,255));
-            Panel_Bill.setBackground(new Color(242, 242, 242));
-            Panel_Bill.setPreferredSize(new Dimension(920, 30));
+        Panel_Bill.setBackground(new Color(242, 242, 242));
+        Panel_Bill.setPreferredSize(new Dimension(920, 30));
 
-            Panel_Bill.setLayout(new MigLayout("", "25[]20[]25[]20[]20[]520[]"));
-            Border bottomBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(225, 225, 225));
-            Panel_Bill.setBorder(bottomBorder);
+        Panel_Bill.setLayout(new MigLayout("", "25[]20[]25[]20[]20[]520[]"));
+        Border bottomBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(225, 225, 225));
+        Panel_Bill.setBorder(bottomBorder);
 
-            JLabel quantity = createLabel("Từ");
-            JTextField txtQuantity = new MyTextFieldUnderLine();
-            txtQuantity.setFocusable(false);
+        JLabel quantity = createLabel("Từ");
+        JTextField txtQuantity = new MyTextFieldUnderLine();
+        txtQuantity.setFocusable(false);
 
-            JLabel discount = createLabel("Giảm ");
-            JTextField txtValue = new MyTextFieldUnderLine();
-            txtValue.setFocusable(false);
+        JLabel discount = createLabel("Giảm ");
+        JTextField txtValue = new MyTextFieldUnderLine();
+        txtValue.setFocusable(false);
 
-            JButton percent = createButton();
-            percent.setContentAreaFilled(true);
-            percent.setText(" % ");
-            percent.setBackground(new Color(52, 147, 54));
-            percent.setForeground(Color.WHITE);
-            percent.setFont(new Font("Times New Roman", Font.BOLD, 14));
-            percent.setPreferredSize(new Dimension(30, 30));
-            percent.setMargin(new Insets(0, 5, 0, 5));
+        JButton percent = createButton();
+        percent.setContentAreaFilled(true);
+        percent.setText(" % ");
+        percent.setBackground(new Color(52, 147, 54));
+        percent.setForeground(Color.WHITE);
+        percent.setFont(new Font("Times New Roman", Font.BOLD, 14));
+        percent.setPreferredSize(new Dimension(30, 30));
+        percent.setMargin(new Insets(0, 5, 0, 5));
 
-            Panel_Bill.add(quantity);
-            Panel_Bill.add(txtQuantity);
-            Panel_Bill.add(discount);
-            Panel_Bill.add(txtValue);
-            Panel_Bill.add(percent);
+        Panel_Bill.add(quantity);
+        Panel_Bill.add(txtQuantity);
+        Panel_Bill.add(discount);
+        Panel_Bill.add(txtValue);
+        Panel_Bill.add(percent);
 
-            JButton btnRemoveRow = createButton();
-            btnRemoveRow.setIcon(new FlatSVGIcon("icon/icons8-remove-26.svg"));
+        JButton btnRemoveRow = createButton();
+        btnRemoveRow.setIcon(new FlatSVGIcon("icon/icons8-remove-26.svg"));
 
-            btnRemoveRow.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
+        btnRemoveRow.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 //                contaierDiscountBill.remove(Panel_Bill);
 //                contaierDiscountBill.revalidate();
 //                contaierDiscountBill.repaint();
-                }
-            });
+            }
+        });
 
-            Panel_Bill.add(btnRemoveRow);
+        Panel_Bill.add(btnRemoveRow);
 
-            contaierDiscountBill.add(Panel_Bill, "wrap ");
-            contaierDiscountBill.revalidate();
-            contaierDiscountBill.repaint();
-            return Panel_Bill;
+        contaierDiscountBill.add(Panel_Bill, "wrap ");
+        contaierDiscountBill.revalidate();
+        contaierDiscountBill.repaint();
+        return Panel_Bill;
+    }
+
+    private void loadDiscountProductPanels() {
+        containerProductType.removeAll();
+        Set<String> uniqueProducts = new HashSet<>();
+        for (Discount_Detail discount_detail : list_discount_detail) {
+            String idSize = discount_detail.getProduct_id() + ":" + discount_detail.getSize();
+            uniqueProducts.add(idSize);
         }
 
-        private void loadDiscountProductPanels () {
-            containerProductType.removeAll();
-            Set<String> uniqueProducts = new HashSet<>();
-            for (Discount_Detail discount_detail : list_discount_detail) {
-                String idSize = discount_detail.getProduct_id() + ":" + discount_detail.getSize();
-                uniqueProducts.add(idSize);
-            }
-
-            for (String productId_size : uniqueProducts) {
-                RoundedPanel contaierDiscountProduct = new RoundedPanel();
-                contaierDiscountProduct.setLayout(new MigLayout("", "[]"));
-                contaierDiscountProduct.setPreferredSize(new Dimension(915, 100));
-                RoundedPanel contaierNameProduct = createPanelProductName(contaierDiscountProduct);
-                JTextField txtProductName = (JTextField) ((RoundedPanel) contaierNameProduct.getComponent(1)).getComponent(0);
-
-                String[] parts = productId_size.split(":");
-                String product_id = parts[0];
-                int product_id_int = Integer.parseInt(product_id);
-                String size = parts[1];
-                String name = productBLL.searchProducts("id = " + product_id).get(0).getName();
-
-                txtProductName.setText(name + " (" + size + ")");
-                contaierDiscountProduct.add(contaierNameProduct, BorderLayout.NORTH);
-
-                List<Discount_Detail> listCondition = getProductCondition(product_id_int, size);
-                for (Discount_Detail d : listCondition) {
-                    RoundedPanel Panel_Discount_Detail_Product = createPanel_Discount_Detail_Product(contaierDiscountProduct);
-                    JTextField txtQuantity = (JTextField) Panel_Discount_Detail_Product.getComponent(1);
-                    JTextField txtValue = (JTextField) Panel_Discount_Detail_Product.getComponent(3);
-                    txtQuantity.setText(String.valueOf(d.getQuantity()));
-                    txtValue.setText(String.valueOf(d.getPercent()));
-                }
-
-                RoundedPanel containerbtnAddRow = createContaierBtnAddRow(contaierDiscountProduct);
-                contaierDiscountProduct.add(containerbtnAddRow, BorderLayout.SOUTH);
-
-                containerProductType.add(contaierDiscountProduct, "wrap");
-            }
-
-            containerProductType.revalidate();
-            containerProductType.repaint();
-        }
-
-        public List<Discount_Detail> getProductCondition ( int product_id, String size){
-            List<Discount_Detail> list = new ArrayList<>();
-            for (Discount_Detail d : list_discount_detail) {
-                if (d.getProduct_id() == product_id && d.getSize().equals(size)) {
-                    list.add(d);
-                }
-            }
-            return list;
-        }
-
-        private void createPanelDiscountProduct () {
+        for (String productId_size : uniqueProducts) {
             RoundedPanel contaierDiscountProduct = new RoundedPanel();
             contaierDiscountProduct.setLayout(new MigLayout("", "[]"));
             contaierDiscountProduct.setPreferredSize(new Dimension(915, 100));
-
             RoundedPanel contaierNameProduct = createPanelProductName(contaierDiscountProduct);
+            JTextField txtProductName = (JTextField) ((RoundedPanel) contaierNameProduct.getComponent(1)).getComponent(0);
+
+            String[] parts = productId_size.split(":");
+            String product_id = parts[0];
+            int product_id_int = Integer.parseInt(product_id);
+            String size = parts[1];
+            String name = productBLL.searchProducts("id = " + product_id).get(0).getName();
+
+            txtProductName.setText(name + " (" + size + ")");
             contaierDiscountProduct.add(contaierNameProduct, BorderLayout.NORTH);
 
-            createPanel_Discount_Detail_Product(contaierDiscountProduct);
+            List<Discount_Detail> listCondition = getProductCondition(product_id_int, size);
+            for (Discount_Detail d : listCondition) {
+                RoundedPanel Panel_Discount_Detail_Product = createPanel_Discount_Detail_Product(contaierDiscountProduct);
+                JTextField txtQuantity = (JTextField) Panel_Discount_Detail_Product.getComponent(1);
+                JTextField txtValue = (JTextField) Panel_Discount_Detail_Product.getComponent(3);
+                txtQuantity.setText(String.valueOf(d.getQuantity()));
+                txtValue.setText(String.valueOf(d.getPercent()));
+            }
 
             RoundedPanel containerbtnAddRow = createContaierBtnAddRow(contaierDiscountProduct);
             contaierDiscountProduct.add(containerbtnAddRow, BorderLayout.SOUTH);
 
             containerProductType.add(contaierDiscountProduct, "wrap");
-            containerProductType.revalidate();
-            containerProductType.repaint();
-
         }
 
-        private RoundedPanel createPanelProductName (RoundedPanel contaierDiscountProduct){
-            RoundedPanel contaierNameProduct = new RoundedPanel();
-            contaierNameProduct.setLayout(new MigLayout("", "10[]30[]240[]"));
-            Border bottomBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(225, 225, 225)); // Viền dưới
-            contaierNameProduct.setBorder(bottomBorder);
+        containerProductType.revalidate();
+        containerProductType.repaint();
+    }
 
-            JLabel lblBuy = createLabel("Khi mua");
-            RoundedPanel contaierSearch = new RoundedPanel();
-            contaierSearch.setLayout(new MigLayout("", "[][]"));
-            JTextField txtS = new MyTextFieldUnderLine();
-
-            txtS.setPreferredSize(new Dimension(500, 30));
-            txtS.setFocusable(false);
-
-
-            contaierSearch.add(txtS);
-
-
-            JButton btnRemove = createButton();
-            btnRemove.setIcon(new FlatSVGIcon("icon/icons8-remove-26.svg"));
-
-
-            contaierNameProduct.add(lblBuy);
-            contaierNameProduct.add(contaierSearch);
-            contaierNameProduct.add(btnRemove);
-
-            return contaierNameProduct;
-        }
-
-        private RoundedPanel createPanel_Discount_Detail_Product (RoundedPanel contaierDiscountProduct){
-            RoundedPanel Panel_Discount_Detail_Product = new RoundedPanel();
-            Panel_Discount_Detail_Product.setName("Panel_Discount_Detail_Product");
-            Panel_Discount_Detail_Product.setLayout(new MigLayout("", "100[]20[]20[]20[]20[]390[]10"));
-            Border bottomBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(225, 225, 225));
-            Panel_Discount_Detail_Product.setBorder(bottomBorder);
-
-            JLabel quantity = createLabel("Số lượng từ");
-            JTextField txtQuantity = new MyTextFieldUnderLine();
-            txtQuantity.setFocusable(false);
-            JLabel discount = createLabel("Giảm giá");
-            JTextField txtValue = new MyTextFieldUnderLine();
-            txtValue.setFocusable(false);
-
-            JButton percent = createButton();
-            percent.setContentAreaFilled(true);
-            percent.setText(" % ");
-            percent.setBackground(new Color(52, 147, 54));
-            percent.setForeground(Color.WHITE);
-            percent.setFont(new Font("Times New Roman", Font.BOLD, 14));
-            percent.setPreferredSize(new Dimension(30, 40));
-            percent.setMargin(new Insets(0, 5, 0, 5));
-
-            Panel_Discount_Detail_Product.add(quantity);
-            Panel_Discount_Detail_Product.add(txtQuantity);
-            Panel_Discount_Detail_Product.add(discount);
-            Panel_Discount_Detail_Product.add(txtValue);
-            Panel_Discount_Detail_Product.add(percent);
-
-            JButton btnRemoveRow = createButton();
-            btnRemoveRow.setIcon(new FlatSVGIcon("icon/icons8-minus-26.svg"));
-
-            Panel_Discount_Detail_Product.add(btnRemoveRow);
-
-            contaierDiscountProduct.add(Panel_Discount_Detail_Product, "wrap ");
-            contaierDiscountProduct.revalidate();
-            contaierDiscountProduct.repaint();
-            return Panel_Discount_Detail_Product;
-        }
-
-        private RoundedPanel createContaierBtnAddRow (RoundedPanel contaierDiscountProduct){
-            RoundedPanel containerbtnAddRow = new RoundedPanel();
-            JButton btnAddRow = createButton();
-            btnAddRow.setText(" + Thêm dòng");
-            btnAddRow.setForeground(new Color(99, 165, 210));
-            btnAddRow.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-
-            containerbtnAddRow.setLayout(new FlowLayout(FlowLayout.LEFT, 80, 0));
-            containerbtnAddRow.add(btnAddRow);
-            return containerbtnAddRow;
-        }
-
-
-        private JComboBox<String> createCategoryByButton (JButton category){
-            String[] categories = productBLL.getCategories().toArray(new String[0]);
-
-            JComboBox<String> comboBox = new JComboBox<>(new String[]{"-- Chọn thể loại --", "Tất cả"});
-            comboBox.setVisible(false);
-            comboBox.setBorder(null);
-            comboBox.setBackground(new Color(242, 242, 242));
-
-            for (String c : categories) {
-                comboBox.addItem(c);
+    public List<Discount_Detail> getProductCondition(int product_id, String size) {
+        List<Discount_Detail> list = new ArrayList<>();
+        for (Discount_Detail d : list_discount_detail) {
+            if (d.getProduct_id() == product_id && d.getSize().equals(size)) {
+                list.add(d);
             }
-            category.addActionListener(new ActionListener() {
-                boolean isComboBoxVisible = false;
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    isComboBoxVisible = !isComboBoxVisible;
-
-                    if (isComboBoxVisible) {
-                        Point location = category.getLocationOnScreen();
-                        comboBox.setLocation(location.x, location.y + category.getHeight());
-                        comboBox.setVisible(true);
-                        comboBox.requestFocus();
-                    } else {
-                        comboBox.setVisible(false);
-                    }
-                }
-            });
-            return comboBox;
         }
+        return list;
+    }
 
+    private void createPanelDiscountProduct() {
+        RoundedPanel contaierDiscountProduct = new RoundedPanel();
+        contaierDiscountProduct.setLayout(new MigLayout("", "[]"));
+        contaierDiscountProduct.setPreferredSize(new Dimension(915, 100));
 
-        private JLabel createLabel (String title){
-            JLabel label = new JLabel();
-            label.setPreferredSize(new Dimension(80, 30));
-            label.setText(title);
-            label.setFont((new Font("Public Sans", Font.BOLD, 14)));
-            return label;
-        }
+        RoundedPanel contaierNameProduct = createPanelProductName(contaierDiscountProduct);
+        contaierDiscountProduct.add(contaierNameProduct, BorderLayout.NORTH);
 
-        private JButton createButton () {
-            JButton button = new JButton();
-            button.setBorderPainted(false);
-            button.setFocusPainted(false);
-            button.setContentAreaFilled(false);
-            button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            return button;
-        }
+        createPanel_Discount_Detail_Product(contaierDiscountProduct);
+
+        RoundedPanel containerbtnAddRow = createContaierBtnAddRow(contaierDiscountProduct);
+        contaierDiscountProduct.add(containerbtnAddRow, BorderLayout.SOUTH);
+
+        containerProductType.add(contaierDiscountProduct, "wrap");
+        containerProductType.revalidate();
+        containerProductType.repaint();
 
     }
+
+    private RoundedPanel createPanelProductName(RoundedPanel contaierDiscountProduct) {
+        RoundedPanel contaierNameProduct = new RoundedPanel();
+        contaierNameProduct.setLayout(new MigLayout("", "10[]30[]240[]"));
+        Border bottomBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(225, 225, 225)); // Viền dưới
+        contaierNameProduct.setBorder(bottomBorder);
+
+        JLabel lblBuy = createLabel("Khi mua");
+        RoundedPanel contaierSearch = new RoundedPanel();
+        contaierSearch.setLayout(new MigLayout("", "[][]"));
+        JTextField txtS = new MyTextFieldUnderLine();
+
+        txtS.setPreferredSize(new Dimension(500, 30));
+        txtS.setFocusable(false);
+
+
+        contaierSearch.add(txtS);
+
+
+        JButton btnRemove = createButton();
+        btnRemove.setIcon(new FlatSVGIcon("icon/icons8-remove-26.svg"));
+
+
+        contaierNameProduct.add(lblBuy);
+        contaierNameProduct.add(contaierSearch);
+        contaierNameProduct.add(btnRemove);
+
+        return contaierNameProduct;
+    }
+
+    private RoundedPanel createPanel_Discount_Detail_Product(RoundedPanel contaierDiscountProduct) {
+        RoundedPanel Panel_Discount_Detail_Product = new RoundedPanel();
+        Panel_Discount_Detail_Product.setName("Panel_Discount_Detail_Product");
+        Panel_Discount_Detail_Product.setLayout(new MigLayout("", "100[]20[]20[]20[]20[]390[]10"));
+        Border bottomBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(225, 225, 225));
+        Panel_Discount_Detail_Product.setBorder(bottomBorder);
+
+        JLabel quantity = createLabel("Số lượng từ");
+        JTextField txtQuantity = new MyTextFieldUnderLine();
+        txtQuantity.setFocusable(false);
+        JLabel discount = createLabel("Giảm giá");
+        JTextField txtValue = new MyTextFieldUnderLine();
+        txtValue.setFocusable(false);
+
+        JButton percent = createButton();
+        percent.setContentAreaFilled(true);
+        percent.setText(" % ");
+        percent.setBackground(new Color(52, 147, 54));
+        percent.setForeground(Color.WHITE);
+        percent.setFont(new Font("Times New Roman", Font.BOLD, 14));
+        percent.setPreferredSize(new Dimension(30, 40));
+        percent.setMargin(new Insets(0, 5, 0, 5));
+
+        Panel_Discount_Detail_Product.add(quantity);
+        Panel_Discount_Detail_Product.add(txtQuantity);
+        Panel_Discount_Detail_Product.add(discount);
+        Panel_Discount_Detail_Product.add(txtValue);
+        Panel_Discount_Detail_Product.add(percent);
+
+        JButton btnRemoveRow = createButton();
+        btnRemoveRow.setIcon(new FlatSVGIcon("icon/icons8-minus-26.svg"));
+
+        Panel_Discount_Detail_Product.add(btnRemoveRow);
+
+        contaierDiscountProduct.add(Panel_Discount_Detail_Product, "wrap ");
+        contaierDiscountProduct.revalidate();
+        contaierDiscountProduct.repaint();
+        return Panel_Discount_Detail_Product;
+    }
+
+    private RoundedPanel createContaierBtnAddRow(RoundedPanel contaierDiscountProduct) {
+        RoundedPanel containerbtnAddRow = new RoundedPanel();
+        JButton btnAddRow = createButton();
+        btnAddRow.setText(" + Thêm dòng");
+        btnAddRow.setForeground(new Color(99, 165, 210));
+        btnAddRow.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+
+        containerbtnAddRow.setLayout(new FlowLayout(FlowLayout.LEFT, 80, 0));
+        containerbtnAddRow.add(btnAddRow);
+        return containerbtnAddRow;
+    }
+
+
+    private JComboBox<String> createCategoryByButton(JButton category) {
+        String[] categories = productBLL.getCategories().toArray(new String[0]);
+
+        JComboBox<String> comboBox = new JComboBox<>(new String[]{"-- Chọn thể loại --", "Tất cả"});
+        comboBox.setVisible(false);
+        comboBox.setBorder(null);
+        comboBox.setBackground(new Color(242, 242, 242));
+
+        for (String c : categories) {
+            comboBox.addItem(c);
+        }
+        category.addActionListener(new ActionListener() {
+            boolean isComboBoxVisible = false;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                isComboBoxVisible = !isComboBoxVisible;
+
+                if (isComboBoxVisible) {
+                    Point location = category.getLocationOnScreen();
+                    comboBox.setLocation(location.x, location.y + category.getHeight());
+                    comboBox.setVisible(true);
+                    comboBox.requestFocus();
+                } else {
+                    comboBox.setVisible(false);
+                }
+            }
+        });
+        return comboBox;
+    }
+
+
+    private JLabel createLabel(String title) {
+        JLabel label = new JLabel();
+        label.setPreferredSize(new Dimension(80, 30));
+        label.setText(title);
+        label.setFont((new Font("Public Sans", Font.BOLD, 14)));
+        return label;
+    }
+
+    private JButton createButton() {
+        JButton button = new JButton();
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        button.setContentAreaFilled(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return button;
+    }
+
+}
 
 
 

@@ -3,12 +3,12 @@ package com.coffee.GUI.DialogGUI.FormDetailGUI;
 
 import com.coffee.BLL.StaffBLL;
 import com.coffee.DTO.Leave_Of_Absence_Form;
+import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -21,9 +21,6 @@ import java.util.Map;
 
 public class DetailLeave_Of_Absence_FormGUI extends JDialog {
     private List<JLabel> attributeLeaveOfAbsenceForm;
-    private JTextField[] jTextFieldDate;
-    private JTextField[] dateTextField;
-    private JDateChooser[] jDateChooser;
     private JTextArea jTextArea;
     private Leave_Of_Absence_Form leaveOfAbsenceForm;
 
@@ -50,9 +47,6 @@ public class DetailLeave_Of_Absence_FormGUI extends JDialog {
 
     private void initComponents() {
         attributeLeaveOfAbsenceForm = new ArrayList<>();
-        jDateChooser = new JDateChooser[3];
-        jTextFieldDate = new JTextField[3];
-        dateTextField = new JTextField[3];
         jTextArea = new JTextArea();
 
         RoundedPanel top = new RoundedPanel();
@@ -103,44 +97,20 @@ public class DetailLeave_Of_Absence_FormGUI extends JDialog {
 
             }
             if (string.equals("Ngày tạo")) {
-                jTextFieldDate[0] = new JTextField();
-                jTextFieldDate[0].setFont(new Font("Times New Roman", Font.BOLD, 15));
-                jTextFieldDate[0].setPreferredSize(new Dimension(1000, 50));
-                jTextFieldDate[0].setAutoscrolls(true);
+                textField.setText(leaveOfAbsenceForm.getDate().toString());
+                textField.setPreferredSize(new Dimension(1000, 50));
+                textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+                textField.setBackground(Color.white);
 
-                jDateChooser[0] = new JDateChooser();
-                jDateChooser[0].setDateFormatString("dd/MM/yyyy");
-                jDateChooser[0].setPreferredSize(new Dimension(1000, 50));
-                jDateChooser[0].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
-
-                dateTextField[0] = (JTextField) jDateChooser[0].getDateEditor().getUiComponent();
-                dateTextField[0].setFont(new Font("Lexend", Font.BOLD, 14));
-
-                jDateChooser[0].setDate(leaveOfAbsenceForm.getDate());
-                jDateChooser[0].setEnabled(false);
-
-                center.add(jDateChooser[0], "wrap");
-                continue;
+                center.add(textField, "wrap");
             }
             if (string.equals("Ngày nghỉ")) {
-                jTextFieldDate[1] = new JTextField();
-                jTextFieldDate[1].setFont(new Font("Times New Roman", Font.BOLD, 15));
-                jTextFieldDate[1].setPreferredSize(new Dimension(1000, 50));
-                jTextFieldDate[1].setAutoscrolls(true);
+                textField.setText(leaveOfAbsenceForm.getDate_off().toString());
+                textField.setPreferredSize(new Dimension(1000, 50));
+                textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+                textField.setBackground(Color.white);
 
-                jDateChooser[1] = new JDateChooser();
-                jDateChooser[1].setDateFormatString("dd/MM/yyyy");
-                jDateChooser[1].setPreferredSize(new Dimension(1000, 50));
-                jDateChooser[1].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
-
-                dateTextField[1] = (JTextField) jDateChooser[1].getDateEditor().getUiComponent();
-                dateTextField[1].setFont(new Font("Lexend", Font.BOLD, 14));
-
-                jDateChooser[1].setDate(leaveOfAbsenceForm.getDate_off());
-                jDateChooser[1].setEnabled(false);
-
-                center.add(jDateChooser[1], "wrap");
-                continue;
+                center.add(textField, "wrap");
             }
             if (string.equals("Ca")) {
                 textField.setText(leaveOfAbsenceForm.getShifts());

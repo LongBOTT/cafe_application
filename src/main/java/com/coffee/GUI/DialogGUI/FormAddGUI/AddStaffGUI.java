@@ -6,10 +6,10 @@ import com.coffee.BLL.StaffBLL;
 import com.coffee.DTO.Account;
 import com.coffee.DTO.Staff;
 import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
-import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -36,7 +36,8 @@ public class AddStaffGUI extends DialogForm {
     private JComboBox<String> jComboBoxSearch;
     private JButton buttonAdd;
 
-    private JDateChooser jDateChooser = new JDateChooser();
+    private DatePicker datePicker;
+    private JFormattedTextField editor;
 
     private JTextField textField = new JTextField();
     public static JTextField textFieldRole;
@@ -90,11 +91,14 @@ public class AddStaffGUI extends DialogForm {
             textField.setBackground(new Color(245, 246, 250));
 
             if (string.trim().equals("Ngày Sinh")) {
-                jDateChooser = new JDateChooser();
-                jDateChooser.setDateFormatString("dd/MM/yyyy");
-                jDateChooser.setPreferredSize(new Dimension(180, 35));
-                jDateChooser.setMinSelectableDate(java.sql.Date.valueOf("1000-01-01"));
-                content.add(jDateChooser, "wrap");
+                datePicker = new DatePicker();
+                editor = new JFormattedTextField();
+                datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.SINGLE_DATE_SELECTED);
+                datePicker.setEditor(editor);
+                datePicker.setCloseAfterSelected(true);
+                editor.setPreferredSize(new Dimension(180, 35));
+                editor.setFont(new Font("Inter", Font.BOLD, 15));
+                content.add(editor, "wrap");
             } else {
                 if (string.trim().equals("Giới Tính")) {
                     JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -162,12 +166,11 @@ public class AddStaffGUI extends DialogForm {
         boolean gender;
         Date birthdate;
 
-// add get đúng trong list
         id = staffBLL.getAutoID(staffBLL.searchStaffs());
         name = jTextFieldsStaff.get(0).getText().trim();
         staffNo = jTextFieldsStaff.get(1).getText().trim();
         gender = !radioMale.isSelected();
-        birthdate = jDateChooser.getDate() != null ? java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser.getDate())) : null;
+        birthdate = datePicker.getDateSQL_Single();
         phone = jTextFieldsStaff.get(2).getText().trim();
         address = jTextFieldsStaff.get(3).getText().trim();
         email = jTextFieldsStaff.get(4).getText().trim();

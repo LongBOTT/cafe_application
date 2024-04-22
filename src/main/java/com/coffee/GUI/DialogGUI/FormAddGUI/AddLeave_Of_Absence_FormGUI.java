@@ -4,12 +4,14 @@ package com.coffee.GUI.DialogGUI.FormAddGUI;
 import com.coffee.BLL.Leave_Of_Absence_FormBLL;
 import com.coffee.DTO.Leave_Of_Absence_Form;
 import com.coffee.DTO.Staff;
+import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
+import raven.datetime.component.date.DateEvent;
+import raven.datetime.component.date.DateSelectionListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,9 +29,8 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
     private Staff staff;
     private List<JLabel> attributeLeaveOfAbsenceForm;
     private JTextField textField;
-    private JTextField[] jTextFieldDate;
-    private JTextField[] dateTextField;
-    private JDateChooser[] jDateChooser;
+    private DatePicker datePicker;
+    private JFormattedTextField editor;
     private JTextArea jTextArea;
     private JButton buttonCreate;
     private Leave_Of_Absence_FormBLL leaveOfAbsenceFormBLL = new Leave_Of_Absence_FormBLL();
@@ -61,9 +62,8 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
     private void initComponents() {
         attributeLeaveOfAbsenceForm = new ArrayList<>();
         textField = new JTextField();
-        jDateChooser = new JDateChooser[2];
-        jTextFieldDate = new JTextField[2];
-        dateTextField = new JTextField[2];
+        datePicker = new DatePicker();
+        editor = new JFormattedTextField();
         jTextArea = new JTextArea();
         buttonCreate = new JButton("Tạo");
         jCheckBox1 = new JCheckBox();
@@ -118,20 +118,14 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
                 center.add(textField, "wrap");
             }
             if (string.equals("Ngày nghỉ")) {
-                jTextFieldDate[0] = new JTextField();
-                jTextFieldDate[0].setFont(new Font("Times New Roman", Font.BOLD, 15));
-                jTextFieldDate[0].setPreferredSize(new Dimension(1000, 50));
-                jTextFieldDate[0].setAutoscrolls(true);
+                datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.SINGLE_DATE_SELECTED);
+                datePicker.setEditor(editor);
+                datePicker.setCloseAfterSelected(true);
 
-                jDateChooser[0] = new JDateChooser();
-                jDateChooser[0].setDateFormatString("dd/MM/yyyy");
-                jDateChooser[0].setPreferredSize(new Dimension(1000, 50));
-                jDateChooser[0].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
+                editor.setPreferredSize(new Dimension(280, 40));
+                editor.setFont(new Font("Inter", Font.BOLD, 15));
 
-                dateTextField[0] = (JTextField) jDateChooser[0].getDateEditor().getUiComponent();
-                dateTextField[0].setFont(new Font("Lexend", Font.BOLD, 14));
-
-                center.add(jDateChooser[0], "wrap");
+                center.add(editor, "wrap");
                 continue;
             }
             if (string.equals("Ca")) {
@@ -178,13 +172,13 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
         id = leaveOfAbsenceFormBLL.getAutoID(leaveOfAbsenceFormBLL.searchLeave_Of_Absence_Forms());
         staff_id = staff.getId();
 
-        if (jDateChooser[0].getDateEditor().getDate() == null) {
+        if (datePicker.getDateSQL_Single() == null) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn ngày nghỉ.",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        if (jDateChooser[0].getDateEditor().getDate().before(java.sql.Date.valueOf(LocalDate.now()))) {
+        if (datePicker.getDateSQL_Single().before(java.sql.Date.valueOf(LocalDate.now()))) {
             JOptionPane.showMessageDialog(null, "Ngày nghỉ không được trước ngày hiện tại.",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
@@ -197,7 +191,7 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
         }
 
         date = java.sql.Date.valueOf(LocalDate.now());
-        date_off = java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[0].getDate()));
+        date_off = datePicker.getDateSQL_Single();
 
         if (jTextArea.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng nhập lý do.",

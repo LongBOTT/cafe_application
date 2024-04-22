@@ -14,7 +14,6 @@ import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
@@ -35,7 +34,6 @@ public class EditStaffGUI extends DialogForm {
     private List<JTextField> jTextFieldsStaff;
     public static JTextField textFieldRole;
     public static boolean changeRole = false;
-    private JDateChooser jDateChooser = new JDateChooser();
     private Staff staff;
 
     public EditStaffGUI(Staff staff) {
@@ -78,15 +76,9 @@ public class EditStaffGUI extends DialogForm {
             textField.setBackground(new Color(245, 246, 250));
 
             if (string.trim().equals("Ngày Sinh")) {
-                Date birthDate = staff.getBirthdate();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                jDateChooser = new JDateChooser();
-                jDateChooser.setDateFormatString("dd/MM/yyyy");
-                jDateChooser.setDate(birthDate);
-                jDateChooser.setPreferredSize(new Dimension(180, 35));
-                jDateChooser.setMinSelectableDate(java.sql.Date.valueOf("1000-01-01"));
-                jDateChooser.setEnabled(false);
-                content.add(jDateChooser, "wrap");
+                textField.setText(staff.getBirthdate().toString());
+                textField.setEditable(false);
+                content.add(textField, "wrap");
 
                 continue;
             } else {

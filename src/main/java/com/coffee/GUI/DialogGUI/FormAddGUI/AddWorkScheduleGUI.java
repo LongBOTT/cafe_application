@@ -8,13 +8,13 @@ import com.coffee.DTO.Work_Schedule;
 import com.coffee.DTO.Staff;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.components.AutocompleteJComboBox;
+import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.StringSearchable;
 import com.coffee.GUI.components.swing.DataSearch;
 import com.coffee.GUI.components.swing.EventClick;
 import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.GUI.components.swing.PanelSearch;
 import com.coffee.main.Cafe_Application;
-import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
@@ -33,7 +33,8 @@ public class AddWorkScheduleGUI extends DialogForm {
     private List<JTextField> jTextFieldWork_Schedule;
     private JTextField jTextFieldDate;
     private JTextField dateTextField;
-    private JDateChooser jDateChooser;
+    private DatePicker datePicker;
+    private JFormattedTextField editor;
     private JButton buttonCancel;
     private JButton buttonAdd;
     private JCheckBox jCheckBox1;
@@ -82,7 +83,8 @@ public class AddWorkScheduleGUI extends DialogForm {
     private void init() {
         titleName = new JLabel();
         jTextFieldDate = new JTextField();
-        jDateChooser = new JDateChooser();
+        datePicker = new DatePicker();
+        editor = new JFormattedTextField();
         dateTextField = new JTextField();
         attributeWork_Schedule = new ArrayList<>();
         jTextFieldWork_Schedule = new ArrayList<>();
@@ -133,20 +135,12 @@ public class AddWorkScheduleGUI extends DialogForm {
                 continue;
             }
             if (string.equals("Ngày")) {
-                jTextFieldDate = new JTextField();
-                jTextFieldDate.setFont(new Font("Times New Roman", Font.BOLD, 15));
-                jTextFieldDate.setPreferredSize(new Dimension(200, 30));
-                jTextFieldDate.setAutoscrolls(true);
-
-                jDateChooser = new JDateChooser();
-                jDateChooser.setDateFormatString("dd/MM/yyyy");
-                jDateChooser.setPreferredSize(new Dimension(200, 30));
-                jDateChooser.setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
-
-                dateTextField = (JTextField) jDateChooser.getDateEditor().getUiComponent();
-                dateTextField.setFont(new Font("Lexend", Font.BOLD, 14));
-
-                content.add(jDateChooser, "wrap");
+                datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.SINGLE_DATE_SELECTED);
+                datePicker.setEditor(editor);
+                datePicker.setCloseAfterSelected(true);
+                editor.setPreferredSize(new Dimension(200, 30));
+                editor.setFont(new Font("Inter", Font.BOLD, 15));
+                content.add(editor, "wrap");
                 continue;
             }
             if (string.equals("Ca")) {
@@ -217,8 +211,12 @@ public class AddWorkScheduleGUI extends DialogForm {
         work_schedules.sort(Comparator.comparing(Work_Schedule::getId));
         id = work_ScheduleBLL.getAutoID(work_schedules);
 
-        date = java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser.getDate()));
-
+        date = datePicker.getDateSQL_Single();
+        if (date == null) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn ngày làm!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         if (jCheckBox1.isSelected())
             shifts.add(1);
 

@@ -10,6 +10,7 @@ import com.coffee.GUI.DialogGUI.DialogFormDetail;
 import com.coffee.GUI.HomeGUI;
 import com.coffee.GUI.MaterialGUI;
 import com.coffee.GUI.components.DataTable;
+import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.coffee.GUI.components.swing.DataSearch;
@@ -19,9 +20,10 @@ import com.coffee.GUI.components.swing.PanelSearch;
 import com.coffee.main.Cafe_Application;
 import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
+import raven.datetime.component.date.DateEvent;
+import raven.datetime.component.date.DateSelectionListener;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -53,9 +55,8 @@ public class AddImportGUI extends DialogFormDetail {
     private MyTextField txtSearch;
     private PanelSearch search;
     private JPopupMenu menu;
-    private JTextField[] jTextFieldDate;
-    private JTextField[] dateTextField;
-    private JDateChooser[] jDateChooser;
+    private DatePicker[] datePicker;
+    private JFormattedTextField[] editor;
     private int materialID = -1;
     private int import_id;
     private int shipment_id;
@@ -105,9 +106,8 @@ public class AddImportGUI extends DialogFormDetail {
         contentbot.setLayout(new MigLayout("",
                 "50[]20[]50",
                 "10[]10[]10"));
-        jDateChooser = new JDateChooser[2];
-        dateTextField = new JTextField[2];
-        jTextFieldDate = new JTextField[2];
+        datePicker = new DatePicker[2];
+        editor = new JFormattedTextField[2];
 
         titleName.setText("Tạo Phiếu Nhập");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
@@ -239,23 +239,20 @@ public class AddImportGUI extends DialogFormDetail {
                 jPanel.add(jTextFieldQuantity);
             } else {
 
-                jTextFieldDate[i] = new JTextField();
-                jTextFieldDate[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
-                jTextFieldDate[i].setPreferredSize(new Dimension(200, 30));
-                jTextFieldDate[i].setAutoscrolls(true);
+                datePicker[i] = new DatePicker();
+                editor[i] = new JFormattedTextField();
 
-                jDateChooser[i] = new JDateChooser();
-                jDateChooser[i].setDateFormatString("dd/MM/yyyy");
-                jDateChooser[i].setPreferredSize(new Dimension(200, 30));
-                jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
+                datePicker[i].setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.SINGLE_DATE_SELECTED);
+                datePicker[i].setEditor(editor[i]);
+                datePicker[i].setCloseAfterSelected(true);
 
-                dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
-                dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
-                dateTextField[i].setBackground(new Color(255, 255, 255));
+                editor[i].setPreferredSize(new Dimension(200, 40));
+                editor[i].setFont(new Font("Inter", Font.BOLD, 15));
+
                 if (string.equals("Ngày Sản Xuất"))
-                    jPanel.add(jDateChooser[i], "wrap");
+                    jPanel.add(editor[i], "wrap");
                 else
-                    jPanel.add(jDateChooser[i]);
+                    jPanel.add(editor[i]);
                 i++;
             }
         }
@@ -270,7 +267,6 @@ public class AddImportGUI extends DialogFormDetail {
         btnThem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 addShipment();
-                refresh();
             }
 
         });
@@ -398,19 +394,19 @@ public class AddImportGUI extends DialogFormDetail {
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (jDateChooser[0].getDate() == null) {
+        if (datePicker[0].getDateSQL_Single() == null) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn nhập ngày sản xuất!",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (jDateChooser[1].getDate() == null) {
+        if (datePicker[1].getDateSQL_Single() == null) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn nhập ngày hết hạn!",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        mfg = java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[0].getDate()));
-        exp = java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[1].getDate()));
-        if (mfg.after(exp)) {
+        mfg = datePicker[0].getDateSQL_Single();
+        exp = datePicker[1].getDateSQL_Single();
+        if (!mfg.before(exp)) {
             JOptionPane.showMessageDialog(null, "Ngày sản xuất và ngày hết hạn không hợp lệ!",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
@@ -438,14 +434,15 @@ public class AddImportGUI extends DialogFormDetail {
         }
         Shipment shipment = new Shipment(shipment_id, materialID, supplier_id, import_id, quantity, quantity, mfg, exp);
         shipmentList.add(shipment);
+        refresh();
     }
 
     private void refresh() {
         txtSearch.setText("");
         jComboBoxSupplier.setSelectedIndex(0);
         jTextFieldQuantity.setText("");
-        jDateChooser[0].setDate(null);
-        jDateChooser[1].setDate(null);
+        datePicker[0].clearSelectedDate();
+        datePicker[1].clearSelectedDate();
 
         loadDataTable(shipmentBLL.getData(shipmentList));
 

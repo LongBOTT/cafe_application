@@ -7,13 +7,13 @@ import com.coffee.DTO.Discount;
 import com.coffee.DTO.Discount_Detail;
 import com.coffee.DTO.Product;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
+import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.swing.DataSearch;
 import com.coffee.GUI.components.swing.EventClick;
 import com.coffee.GUI.components.swing.PanelSearch;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
@@ -32,7 +32,8 @@ public class AddDiscountGUI extends DialogFormDetail_1 {
     List<Discount_Detail> discountInfoList = new ArrayList<>();
     int id = discountBLL.getAutoID(discountBLL.searchDiscounts());
     Discount_DetailBLL discount_detailBLL = new Discount_DetailBLL();
-    private JDateChooser[] jDateChooser = new JDateChooser[0];
+    private DatePicker[] datePicker;
+    private JFormattedTextField[] editor;
 
     private ProductBLL productBLL = new ProductBLL();
 
@@ -134,13 +135,19 @@ public class AddDiscountGUI extends DialogFormDetail_1 {
         panelStatus.add(radio1);
         panelStatus.add(radio2);
 
-        jDateChooser = new JDateChooser[2];
+        datePicker = new DatePicker[2];
+        editor = new JFormattedTextField[2];
 
         for (int i = 0; i < 2; i++) {
-            jDateChooser[i] = new JDateChooser();
-            jDateChooser[i].setDateFormatString("dd/MM/yyyy");
-            jDateChooser[i].setPreferredSize(new Dimension(130, 30));
-            jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
+            datePicker[i] = new DatePicker();
+            editor[i] = new JFormattedTextField();
+
+            datePicker[i].setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.SINGLE_DATE_SELECTED);
+            datePicker[i].setEditor(editor[i]);
+            datePicker[i].setCloseAfterSelected(true);
+
+            editor[i].setPreferredSize(new Dimension(150, 30));
+            editor[i].setFont(new Font("Inter", Font.BOLD, 15));
 
             if (i == 0) {
                 panelTimeApplication.add(lblWordEffect);
@@ -148,7 +155,7 @@ public class AddDiscountGUI extends DialogFormDetail_1 {
                 lblArrive.setPreferredSize(new Dimension(30, 30));
                 panelTimeApplication.add(lblArrive);
             }
-            panelTimeApplication.add(jDateChooser[i]);
+            panelTimeApplication.add(editor[i]);
         }
 
         top.add(lblDiscountCode);
@@ -316,8 +323,8 @@ public class AddDiscountGUI extends DialogFormDetail_1 {
             return false;
         }
 
-        startDate = jDateChooser[0].getDate() != null ? java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[0].getDate())) : null;
-        endDate = jDateChooser[1].getDate() != null ? java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[1].getDate())) : null;
+        startDate = datePicker[0].getDateSQL_Single();
+        endDate = datePicker[1].getDateSQL_Single();
 
         result = discountBLL.validateDate(startDate, endDate);
         if (!result.getKey()) {
@@ -337,8 +344,8 @@ public class AddDiscountGUI extends DialogFormDetail_1 {
 
         name = txtProgramName.getText();
 
-        startDate = jDateChooser[0].getDate() != null ? java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[0].getDate())) : null;
-        endDate = jDateChooser[1].getDate() != null ? java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[1].getDate())) : null;
+        startDate = datePicker[0].getDateSQL_Single() != null ? java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(datePicker[0].getDateSQL_Single())) : null;
+        endDate = datePicker[1].getDateSQL_Single() != null ? java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(datePicker[1].getDateSQL_Single())) : null;
 
         Object selectedItem = cbDiscountType.getSelectedItem();
         if (selectedItem != null) {
@@ -360,13 +367,13 @@ public class AddDiscountGUI extends DialogFormDetail_1 {
     private void updateStatusDicount() {
         List<Discount> discountList = discountBLL.searchDiscounts("status =0");
 
-        for (Discount discount :discountList) {
-                discount.setStatus(true);
-                Pair<Boolean,String> result=  discountBLL.updateStatusDiscount(discount);
-                if (!result.getKey()) {
-                    JOptionPane.showMessageDialog(null, result.getValue(),
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
-                }
+        for (Discount discount : discountList) {
+            discount.setStatus(true);
+            Pair<Boolean, String> result = discountBLL.updateStatusDiscount(discount);
+            if (!result.getKey()) {
+                JOptionPane.showMessageDialog(null, result.getValue(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

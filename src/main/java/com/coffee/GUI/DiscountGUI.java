@@ -9,10 +9,10 @@ import com.coffee.GUI.components.*;
 import com.coffee.ImportExcel.AddDiscountFromExcel;
 import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JDateChooser;
-import com.toedter.calendar.JTextFieldDateEditor;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
+import raven.datetime.component.date.DateEvent;
+import raven.datetime.component.date.DateSelectionListener;
 
 
 import javax.swing.*;
@@ -22,14 +22,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -43,7 +39,6 @@ public class DiscountGUI extends Layout2 {
     private JButton jButtonSearch;
     private JComboBox<String> jComboBoxSearch;
     private List<Function> functions;
-
     private DiscountBLL discountBLL = new DiscountBLL();
     private DataTable dataTable;
     private RoundedScrollPane scrollPane;
@@ -54,12 +49,8 @@ public class DiscountGUI extends Layout2 {
     private boolean edit = false;
     private boolean remove = false;
     private String[] columnNames;
-
-    private JDateChooser[] jDateChooser = new JDateChooser[0];
-
-    private JTextField[] dateTextField = new JTextField[0];
-
-    private JTextField[] jTextFieldDate = new JTextFieldDateEditor[0];
+    private DatePicker datePicker;
+    private JFormattedTextField editor;
     private boolean processDateChangeEvent = true;
     private Object[][] data = new Object[0][0];
 
@@ -156,53 +147,23 @@ public class DiscountGUI extends Layout2 {
         });
         FunctionPanel.add(refreshPanel);
 
-        jTextFieldDate = new JTextField[2];
-        dateTextField = new JTextField[2];
-        jDateChooser = new JDateChooser[2];
+        datePicker = new DatePicker();
+        editor = new JFormattedTextField();
 
 
-        for (int i = 0; i < 2; i++) {
-            jTextFieldDate[i] = new JTextField();
-            jTextFieldDate[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
-            jTextFieldDate[i].setPreferredSize(new Dimension(200, 30));
-            jTextFieldDate[i].setAutoscrolls(true);
-
-            jDateChooser[i] = new JDateChooser();
-            jDateChooser[i].setDateFormatString("dd/MM/yyyy");
-            jDateChooser[i].setPreferredSize(new Dimension(200, 30));
-            jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
-
-            dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
-
-            if (i == 0) {
-                JLabel jLabel = new JLabel("Từ Ngày");
-                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
-                FilterDatePanel.add(jLabel);
-            } else {
-                JLabel jLabel = new JLabel("Đến Ngày");
-                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
-                FilterDatePanel.add(jLabel);
-            }
-            FilterDatePanel.add(jDateChooser[i]);
-        }
-
-        jDateChooser[0].addPropertyChangeListener(new PropertyChangeListener() {
+        datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
+        datePicker.setEditor(editor);
+        datePicker.setCloseAfterSelected(true);
+        datePicker.addDateSelectionListener(new DateSelectionListener() {
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if ("date".equals(evt.getPropertyName())) {
-                    searchDiscountByStartDate_EndDate();
-                }
+            public void dateSelected(DateEvent dateEvent) {
+                searchDiscountByStartDate_EndDate();
             }
         });
 
-        jDateChooser[1].addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if ("date".equals(evt.getPropertyName())) {
-                    searchDiscountByStartDate_EndDate();
-                }
-            }
-        });
+        editor.setPreferredSize(new Dimension(280, 40));
+        editor.setFont(new Font("Inter", Font.BOLD, 15));
+        FilterDatePanel.add(editor);
 
         JLabel refreshLabel = new JLabel("Làm mới");
         refreshLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));
@@ -301,18 +262,11 @@ public class DiscountGUI extends Layout2 {
         jComboBoxSearch.setSelectedIndex(0);
 
         processDateChangeEvent = false;
-        jDateChooser[0].setDate(null);
-        jDateChooser[1].setDate(null);
+        datePicker.clearSelectedDate();
+
         processDateChangeEvent = true;
         loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0")));
 
-        for (int i = 0; i < 2; i++) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
-            dateTextField[i].setBackground(new Color(245, 246, 250));
-            dateTextField[i].setText("");
-            dateTextField[i].setText("");
-        }
     }
 
     private void searchDiscountByName() {
@@ -322,28 +276,22 @@ public class DiscountGUI extends Layout2 {
         } else {
             loadDataTable(discountBLL.getData(discountBLL.findDiscounts("name", value)));
         }
+        datePicker.clearSelectedDate();
+        jComboBoxSearch.setSelectedIndex(0);
     }
 
     private void searchDiscountByStartDate_EndDate() {
         if (!processDateChangeEvent) {
             return;
         }
-        Date startDate = jDateChooser[0].getDate();
-        Date endDate = jDateChooser[1].getDate();
+        if (datePicker.getDateSQL_Between().length != 0) {
+            Date startDate = datePicker.getDateSQL_Between()[0];
+            Date endDate = datePicker.getDateSQL_Between()[1];
 
-        if (startDate != null && endDate != null && startDate.before(endDate)) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            String startDateStr = dateFormat.format(startDate);
-            String endDateStr = dateFormat.format(endDate);
-
-            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0 AND start_date >= '" + startDateStr + "' AND end_date <= '" + endDateStr + "'")));
-        } else if (startDate != null && endDate != null && startDate.after(endDate)) {
-            JOptionPane.showMessageDialog(this, "Ngày bắt đầu phải nhỏ hơn ngày kết thúc", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        } else if (startDate != null && endDate == null) {
-            // Người dùng chọn ngày bắt đầu trước khi chọn ngày kết thúc, không làm gì cả
-        } else {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn cả ngày bắt đầu và ngày kết thúc", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0 AND start_date >= '" + startDate + "' AND end_date <= '" + endDate + "'")));
         }
+//        jTextFieldSearch.setText("");
+//        jComboBoxSearch.setSelectedIndex(0);
     }
 
     private void SelectDiscountStatus() {
@@ -355,6 +303,8 @@ public class DiscountGUI extends Layout2 {
             loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0 AND status = 1")));
         } else
             loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0")));
+        datePicker.clearSelectedDate();
+        jTextFieldSearch.setText("");
     }
 
     public void loadDataTable(Object[][] objects) {

@@ -1,7 +1,6 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.Export_NoteBLL;
-import com.coffee.BLL.MaterialBLL;
 import com.coffee.BLL.StaffBLL;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Export_Note;
@@ -14,11 +13,10 @@ import com.coffee.GUI.components.Layout2;
 import com.coffee.GUI.components.*;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.coffee.utils.PDF;
-import com.coffee.utils.Resource;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JDateChooser;
-import com.toedter.calendar.JTextFieldDateEditor;
 import net.miginfocom.swing.MigLayout;
+import raven.datetime.component.date.DateEvent;
+import raven.datetime.component.date.DateSelectionListener;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -27,8 +25,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -45,9 +41,8 @@ public class ExportGUI extends Layout2 {
     private int indexColumnDetail = -1;
     private boolean detail = false;
     private String[] columnNames;
-    private JDateChooser[] jDateChooser = new JDateChooser[0];
-    private JTextField[] dateTextField = new JTextField[0];
-    private JTextField[] jTextFieldDate = new JTextFieldDateEditor[0];
+    private DatePicker datePicker;
+    private JFormattedTextField editor;
     private Date date;
     private StaffBLL staffBLL = new StaffBLL();
     private Object[][] data = new Object[0][0];
@@ -65,9 +60,8 @@ public class ExportGUI extends Layout2 {
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
-        jDateChooser = new JDateChooser[2];
-        dateTextField = new JTextField[2];
-        jTextFieldDate = new JTextField[2];
+        datePicker = new DatePicker();
+        editor = new JFormattedTextField();
 
 
         columnNames = new String[]{"Mã Phiếu Nhập", "Nhân Viên", "Tổng Tiền", "Ngày Xuất"};
@@ -83,33 +77,19 @@ public class ExportGUI extends Layout2 {
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
 
-        for (int i = 0; i < 2; i++) {
-            jTextFieldDate[i] = new JTextField();
-            jTextFieldDate[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
-            jTextFieldDate[i].setPreferredSize(new Dimension(200, 30));
-            jTextFieldDate[i].setAutoscrolls(true);
-
-            jDateChooser[i] = new JDateChooser();
-            jDateChooser[i].setDateFormatString("dd/MM/yyyy");
-            jDateChooser[i].setPreferredSize(new Dimension(200, 30));
-            jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
-
-            dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
-            dateTextField[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            dateTextField[i].setText(LocalDate.now().format(formatter));
-
-            if (i == 0) {
-                JLabel jLabel = new JLabel("Từ Ngày");
-                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
-                FilterDatePanel.add(jLabel);
-            } else {
-                JLabel jLabel = new JLabel("Đến Ngày");
-                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
-                FilterDatePanel.add(jLabel);
+        datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
+        datePicker.setEditor(editor);
+        datePicker.setCloseAfterSelected(true);
+        datePicker.addDateSelectionListener(new DateSelectionListener() {
+            @Override
+            public void dateSelected(DateEvent dateEvent) {
+                searchExports();
             }
-            FilterDatePanel.add(jDateChooser[i]);
-        }
+        });
+
+        editor.setPreferredSize(new Dimension(280, 40));
+        editor.setFont(new Font("Inter", Font.BOLD, 15));
+        FilterDatePanel.add(editor);
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
         containerSearch.setBackground(new Color(245, 246, 250));
@@ -229,15 +209,8 @@ public class ExportGUI extends Layout2 {
 
     public void refresh() {
         jTextFieldSearch.setText("");
-        jDateChooser[0].getDateEditor().setDate(null);
-        jDateChooser[1].getDateEditor().setDate(null);
+        datePicker.clearSelectedDate();
         loadDataTable(exportNoteBLL.getData(exportNoteBLL.searchExport_Note()));
-        for (int i = 0; i < 2; i++) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            dateTextField[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
-            dateTextField[i].setText(LocalDate.now().format(formatter));
-            dateTextField[i].setText(LocalDate.now().format(formatter));
-        }
     }
 
     public void loadDataTable(Object[][] objects) {
@@ -278,7 +251,7 @@ public class ExportGUI extends Layout2 {
 
     private void searchExports() {
         List<Export_Note> import_noteList = exportNoteBLL.searchExport_Note();
-        if (jTextFieldSearch.getText().isEmpty() && jDateChooser[0].getDateEditor().getDate() == null && jDateChooser[1].getDateEditor().getDate() == null) {
+        if (jTextFieldSearch.getText().isEmpty() && datePicker.getDateSQL_Between().length == 0) {
             loadDataTable(exportNoteBLL.getData(import_noteList));
         } else {
             if (!jTextFieldSearch.getText().isEmpty()) {
@@ -287,10 +260,10 @@ public class ExportGUI extends Layout2 {
                     staffIDList.add(staff.getId());
                 import_noteList.removeIf(import_note -> !staffIDList.contains(import_note.getStaff_id()));
             }
-            if (jDateChooser[0].getDateEditor().getDate() != null || jDateChooser[1].getDateEditor().getDate() != null) {
-                if (jDateChooser[0].getDateEditor().getDate() != null && jDateChooser[1].getDateEditor().getDate() != null) {
-                    Date startDate = jDateChooser[0].getDate();
-                    Date endDate = jDateChooser[1].getDate();
+            Date startDate = datePicker.getDateSQL_Between()[0];
+            Date endDate = datePicker.getDateSQL_Between()[1];
+            if (startDate != null || endDate != null) {
+                if (startDate != null && endDate != null) {
                     if (startDate.after(endDate)) {
                         JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
                                 "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -298,11 +271,9 @@ public class ExportGUI extends Layout2 {
                     }
                     import_noteList.removeIf(import_note -> (import_note.getInvoice_date().before(startDate) || import_note.getInvoice_date().after(endDate)));
                 } else {
-                    if (jDateChooser[0].getDateEditor().getDate() == null) {
-                        Date endDate = jDateChooser[1].getDate();
+                    if (startDate == null) {
                         import_noteList.removeIf(import_note -> (import_note.getInvoice_date().before(java.sql.Date.valueOf("1000-1-1")) || import_note.getInvoice_date().after(endDate)));
                     } else {
-                        Date startDate = jDateChooser[0].getDate();
                         import_noteList.removeIf(import_note -> (import_note.getInvoice_date().before(startDate)));
                     }
                 }

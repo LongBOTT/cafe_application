@@ -143,13 +143,18 @@ public class WorkSchedulePanel extends JScrollPane {
             jLabelName.setFont(new Font("Inter", Font.BOLD, 12));
             jPanel.add(jLabelName, BorderLayout.CENTER);
 
-            String checkin = work_schedule.getCheck_in().equals("null") ? "--" : work_schedule.getCheck_in();
-            String checkout = work_schedule.getCheck_out().equals("null") ? "--" : work_schedule.getCheck_out();
+            if (work_schedule.getCheck_in().equals("Phép") && work_schedule.getCheck_out().equals("Phép")) {
+                JLabel jLabelCheckInOut = new JLabel("Nghỉ có phép");
+                jLabelCheckInOut.setFont(new Font("Inter", Font.PLAIN, 10));
+                jPanel.add(jLabelCheckInOut, BorderLayout.SOUTH);
+            } else {
+                String checkin = work_schedule.getCheck_in().equals("null") ? "--" : work_schedule.getCheck_in();
+                String checkout = work_schedule.getCheck_out().equals("null") ? "--" : work_schedule.getCheck_out();
 
-            JLabel jLabelCheckInOut = new JLabel(checkin + " " + checkout);
-            jLabelCheckInOut.setFont(new Font("Inter", Font.PLAIN, 10));
-            jPanel.add(jLabelCheckInOut, BorderLayout.SOUTH);
-
+                JLabel jLabelCheckInOut = new JLabel(checkin + " " + checkout);
+                jLabelCheckInOut.setFont(new Font("Inter", Font.PLAIN, 10));
+                jPanel.add(jLabelCheckInOut, BorderLayout.SOUTH);
+            }
             roundedPanels[i][j].add(jPanel, "wrap");
         }
     }

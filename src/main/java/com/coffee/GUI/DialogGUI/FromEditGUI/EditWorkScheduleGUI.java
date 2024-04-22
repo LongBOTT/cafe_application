@@ -7,19 +7,18 @@ import com.coffee.DTO.Work_Schedule;
 import com.coffee.GUI.CreateWorkScheduleGUI;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.components.AutocompleteJComboBox;
+import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
-import com.coffee.GUI.components.datechooser.DateChooser;
-import com.coffee.GUI.components.datechooser.EventDateChooser;
-import com.coffee.GUI.components.datechooser.SelectedAction;
-import com.coffee.GUI.components.datechooser.SelectedDate;
+
 import com.coffee.main.Cafe_Application;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
+import raven.datetime.component.date.DateEvent;
+import raven.datetime.component.date.DateSelectionListener;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
@@ -35,8 +34,8 @@ public class EditWorkScheduleGUI extends DialogForm {
     private Work_ScheduleBLL workScheduleBLL = new Work_ScheduleBLL();
     private Work_Schedule workSchedule;
     private List<String> staffList = new ArrayList<>();
-    private DateChooser dateChooser;
-    private JTextField txtDate;
+    private DatePicker datePicker;
+    private JFormattedTextField editor;
 
     public EditWorkScheduleGUI(Work_Schedule workSchedule) {
         super();
@@ -58,9 +57,9 @@ public class EditWorkScheduleGUI extends DialogForm {
         content.setLayout(new MigLayout("",
                 "50[]20[]50",
                 "20[]20[]20"));
-        dateChooser = new DateChooser();
-        txtDate = new JTextField();
-        dateChooser.setTextRefernce(txtDate);
+        datePicker = new DatePicker();
+        editor = new JFormattedTextField();
+
 
         titleName.setText("Chấm công");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
@@ -84,30 +83,33 @@ public class EditWorkScheduleGUI extends DialogForm {
             }
 
             if (string.equals("Ngày")) {
-                dateChooser.setSelectedDate(workSchedule.getDate());
-                dateChooser.addEventDateChooser(new EventDateChooser() {
+                datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.SINGLE_DATE_SELECTED);
+                datePicker.setEditor(editor);
+                datePicker.setCloseAfterSelected(true);
+                datePicker.setSelectedDate(workSchedule.getDate());
+                datePicker.addDateSelectionListener(new DateSelectionListener() {
                     @Override
-                    public void dateSelected(SelectedAction action, SelectedDate date) {
-                        if (dateChooser.getSelectedDate().getDateSQL().compareTo(workSchedule.getDate()) != 0) {
+                    public void dateSelected(DateEvent dateEvent) {
+                        if (datePicker.getDateSQL_Single() != null && datePicker.getDateSQL_Single().compareTo(workSchedule.getDate()) != 0) {
                             for (Enumeration<AbstractButton> buttons = bgShift.getElements(); buttons.hasMoreElements(); ) {
                                 AbstractButton button = buttons.nextElement();
 
                                 if (button.isSelected()) {
                                     if (button.getText().contains("1:"))
-                                        checkExistByDate(dateChooser.getSelectedDate().getDateSQL(), 1);
+                                        checkExistByDate(datePicker.getDateSQL_Single(), 1);
 
                                     else if (button.getText().contains("2:"))
-                                        checkExistByDate(dateChooser.getSelectedDate().getDateSQL(), 2);
+                                        checkExistByDate(datePicker.getDateSQL_Single(), 2);
 
                                     else if (button.getText().contains("3:"))
-                                        checkExistByDate(dateChooser.getSelectedDate().getDateSQL(), 3);
+                                        checkExistByDate(datePicker.getDateSQL_Single(), 3);
                                 }
                             }
                         }
                     }
                 });
-                txtDate.setPreferredSize(new Dimension(1000, 30));
-                content.add(txtDate, "wrap");
+                editor.setPreferredSize(new Dimension(1000, 30));
+                content.add(editor, "wrap");
                 continue;
             }
 
@@ -121,7 +123,7 @@ public class EditWorkScheduleGUI extends DialogForm {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if (workSchedule.getShift() != 1)
-                            checkExistByShift(dateChooser.getSelectedDate().getDateSQL(), 1);
+                            checkExistByShift(datePicker.getDateSQL_Single(), 1);
                     }
                 });
 
@@ -130,7 +132,7 @@ public class EditWorkScheduleGUI extends DialogForm {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if (workSchedule.getShift() != 2)
-                            checkExistByShift(dateChooser.getSelectedDate().getDateSQL(), 2);
+                            checkExistByShift(datePicker.getDateSQL_Single(), 2);
                     }
                 });
 
@@ -139,7 +141,7 @@ public class EditWorkScheduleGUI extends DialogForm {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if (workSchedule.getShift() != 3)
-                            checkExistByShift(dateChooser.getSelectedDate().getDateSQL(), 3);
+                            checkExistByShift(datePicker.getDateSQL_Single(), 3);
                     }
                 });
 
@@ -179,12 +181,12 @@ public class EditWorkScheduleGUI extends DialogForm {
                 jPanel.add(textField2);
 
                 if (!workSchedule.getCheck_in().equals("null")) {
-                    if (!workSchedule.getCheck_in().equals("P")) {
+                    if (!workSchedule.getCheck_in().equals("Phép")) {
                         textField1.setText(workSchedule.getCheck_in().split(":")[0]);
                         textField2.setText(workSchedule.getCheck_in().split(":")[1]);
                     } else {
-                        textField1.setText("P");
-                        textField2.setText("P");
+                        textField1.setEnabled(false);
+                        textField2.setEnabled(false);
                     }
 
                 }
@@ -230,12 +232,12 @@ public class EditWorkScheduleGUI extends DialogForm {
                 jPanel.add(textField2);
 
                 if (!workSchedule.getCheck_out().equals("null")) {
-                    if (!workSchedule.getCheck_out().equals("P")) {
+                    if (!workSchedule.getCheck_out().equals("Phép")) {
                         textField1.setText(workSchedule.getCheck_out().split(":")[0]);
                         textField2.setText(workSchedule.getCheck_out().split(":")[1]);
                     } else {
-                        textField1.setText("P");
-                        textField2.setText("P");
+                        textField1.setEnabled(false);
+                        textField2.setEnabled(false);
                     }
                 }
 
@@ -314,7 +316,7 @@ public class EditWorkScheduleGUI extends DialogForm {
         ));
 
         if (!work_schedules.isEmpty()) {
-            dateChooser.setSelectedDate(workSchedule.getDate());
+            datePicker.setSelectedDate(workSchedule.getDate());
             JOptionPane.showMessageDialog(null, "Lịch làm việc đã tồn tại!",
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
 
@@ -355,7 +357,14 @@ public class EditWorkScheduleGUI extends DialogForm {
 
         id = workSchedule.getId();
         staff_id = workSchedule.getStaff_id();
-        date = dateChooser.getSelectedDate().getDateSQL();
+        date = datePicker.getDateSQL_Single();
+
+        if (date == null) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn ngày làm việc!",
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
         for (Enumeration<AbstractButton> buttons = bgShift.getElements(); buttons.hasMoreElements(); ) {
             AbstractButton button = buttons.nextElement();
 
@@ -370,10 +379,16 @@ public class EditWorkScheduleGUI extends DialogForm {
                     shift = 3;
             }
         }
-        checkin = jTextFieldWork_Schedule.get(1).getText().isEmpty() || jTextFieldWork_Schedule.get(2).getText().isEmpty() ?
-                "null" : jTextFieldWork_Schedule.get(1).getText() + ":" + jTextFieldWork_Schedule.get(2).getText();
-        checkout = jTextFieldWork_Schedule.get(3).getText().isEmpty() || jTextFieldWork_Schedule.get(4).getText().isEmpty() ?
-                "null" : jTextFieldWork_Schedule.get(3).getText() + ":" + jTextFieldWork_Schedule.get(4).getText();
+        if (workSchedule.getCheck_in().equals("Phép") && workSchedule.getCheck_out().equals("Phép")) {
+            checkin = workSchedule.getCheck_in();
+            checkout = workSchedule.getCheck_out();
+        } else {
+            checkin = jTextFieldWork_Schedule.get(1).getText().isEmpty() || jTextFieldWork_Schedule.get(2).getText().isEmpty() ?
+                    "null" : jTextFieldWork_Schedule.get(1).getText() + ":" + jTextFieldWork_Schedule.get(2).getText();
+            checkout = jTextFieldWork_Schedule.get(3).getText().isEmpty() || jTextFieldWork_Schedule.get(4).getText().isEmpty() ?
+                    "null" : jTextFieldWork_Schedule.get(3).getText() + ":" + jTextFieldWork_Schedule.get(4).getText();
+        }
+
 
         Work_Schedule workSchedule = new Work_Schedule(id, staff_id, date, checkin, checkout, shift);
 

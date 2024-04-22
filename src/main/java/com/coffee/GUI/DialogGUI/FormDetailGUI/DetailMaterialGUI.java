@@ -7,12 +7,14 @@ import com.coffee.DTO.Shipment;
 import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.DialogFormDetail;
 import com.coffee.GUI.components.DataTable;
+import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
+import raven.datetime.component.date.DateEvent;
+import raven.datetime.component.date.DateSelectionListener;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -37,7 +39,8 @@ public class DetailMaterialGUI extends DialogFormDetail {
     private String[] columnNames;
     private RoundedScrollPane scrollPane;
     private Material material;
-    private JDateChooser[] jDateChooser = new JDateChooser[2];
+    private DatePicker datePicker;
+    private JFormattedTextField editor;
 
     public DetailMaterialGUI(Material material) {
         super();
@@ -54,6 +57,9 @@ public class DetailMaterialGUI extends DialogFormDetail {
         jComboBoxRemain = new JComboBox<>(new String[]{"Tất cả", "Dưới mức tồn", "Vượt mức tồn", "Còn hàng", "Hết hàng", "Sắp hết hạn"});
         jComboBoxSupplier = new JComboBox<>();
         attributeMaterial = new ArrayList<>();
+        datePicker = new DatePicker();
+        editor = new JFormattedTextField();
+
         contenttop.setLayout(new MigLayout("",
                 "100[]20[]20[]20[]100",
                 "10[]10[]10"));
@@ -128,24 +134,19 @@ public class DetailMaterialGUI extends DialogFormDetail {
         contentmid.add(jPanel, BorderLayout.NORTH);
 
 
-        for (int i = 0; i < 2; i++) {
-            jDateChooser[i] = new JDateChooser();
-            jDateChooser[i].setDateFormatString("dd/MM/yyyy");
-            jDateChooser[i].setPreferredSize(new Dimension(200, 30));
-            jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
-            if (i == 0) {
-                JLabel jLabel = new JLabel("Ngày Nhập Từ");
-                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
-                jPanel.add(jLabel);
-                jPanel.add(jDateChooser[i]);
-            } else {
-                JLabel jLabel = new JLabel("Đến Ngày");
-                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
-                jPanel.add(jLabel);
-                jPanel.add(jDateChooser[i], "wrap");
+        datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
+        datePicker.setEditor(editor);
+        datePicker.setCloseAfterSelected(true);
+        datePicker.addDateSelectionListener(new DateSelectionListener() {
+            @Override
+            public void dateSelected(DateEvent dateEvent) {
+                searchShipments();
             }
+        });
 
-        }
+        editor.setPreferredSize(new Dimension(280, 30));
+        editor.setFont(new Font("Inter", Font.BOLD, 15));
+        jPanel.add(editor, "span, wrap");
 
         JLabel label = new JLabel();
         label.setText("Trạng thái lô hàng");
@@ -209,24 +210,18 @@ public class DetailMaterialGUI extends DialogFormDetail {
 
     private void searchShipments() {
         List<Shipment> shipmentList = new ArrayList<>();
-        Date startDate = jDateChooser[0].getDate();
-        Date endDate = jDateChooser[1].getDate();
 
-        if (startDate != null && endDate != null && startDate.before(endDate)) {
+
+        if (datePicker.getDateSQL_Between().length != 0) {
+            Date startDate = datePicker.getDateSQL_Between()[0];
+            Date endDate = datePicker.getDateSQL_Between()[1];
             for (Shipment shipment : shipmentBLL.findShipmentsBy(Map.of("material_id", material.getId()))) {
                 Import_Note importNote = new Import_NoteBLL().findImportBy(Map.of("id", shipment.getImport_id())).get(0);
                 if (importNote.getReceived_date().after(startDate) && importNote.getReceived_date().before(endDate)) {
                     shipmentList.add(shipment);
                 }
             }
-        } else if (startDate != null && endDate != null && startDate.after(endDate)) {
-            JOptionPane.showMessageDialog(this, "Ngày bắt đầu phải nhỏ hơn ngày kết thúc", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        } else if (startDate != null && endDate == null) {
-            // Người dùng chọn ngày bắt đầu trước khi chọn ngày kết thúc, không làm gì cả
-        } else if (startDate == null && endDate != null) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn cả ngày bắt đầu và ngày kết thúc", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-        if (startDate == null && endDate == null)
+        } else
             shipmentList = shipmentBLL.findShipmentsBy(Map.of("material_id", material.getId()));
         if (jComboBoxRemain.getSelectedIndex() == 1) {
             shipmentList.removeIf(shipment -> shipment.getRemain() >= material.getMinRemain());
