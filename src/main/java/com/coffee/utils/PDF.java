@@ -360,12 +360,13 @@ public class PDF {
 
         tableData.add(List.of(
                 " Sản Phẩm ",
-                "Loại ",
+                " Size ",
                 " Số Lượng ",
-                " Giá ").toArray(new String[0]));
+                " Giá ",
+                " Ghi Chú").toArray(new String[0]));
 
         for (Receipt_Detail receipt_detail : receipts) {
-            String[] data = new String[4];
+            String[] data = new String[5];
             int productId = receipt_detail.getProduct_id();
             List<Product> products = new ProductBLL().searchProducts("id = '" + productId + "'");
 
@@ -373,10 +374,11 @@ public class PDF {
             data[1] = receipt_detail.getSize();
             data[2] = String.valueOf(receipt_detail.getQuantity());
             data[3] = VNString.currency(receipt_detail.getPrice());
+            data[4] = receipt_detail.getNotice();
             tableData.add(data);
         }
 
-        pdf.addTable(tableData, 16F, 6.5F, 7.1F, new float[]{0.5F, 1.5F, 2.5F, 3.5F, 4.5F});
+        pdf.addTable(tableData, 16F, 6.5F, 7.1F, new float[]{0.5F, 1.5F, 2.5F, 3.5F, 4.5F, 7.0F});
 
         pdf.addTextAt(" Tổng Cộng: " + VNString.currency(receipt.getTotal_price()), 0.5F, receipts.size() + 9, pdf.italicFont, 20);
         if (receipt.getDiscount_id() == 0)

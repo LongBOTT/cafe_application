@@ -2,6 +2,7 @@ package com.coffee.GUI;
 
 import com.coffee.BLL.*;
 import com.coffee.DTO.*;
+import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailReceiptGUI;
 import com.coffee.GUI.components.Circle_ProgressBar;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedPanel;
@@ -315,24 +316,115 @@ public class SaleGUI extends SalePanel {
             discount_id = 0;
         else
             discount_id = discountActive.getId();
+
         Receipt receipt = new Receipt(id, HomeGUI.staff.getId(), Date.valueOf(LocalDate.now()), totalPrice, totalDiscount, total, cash, excess, discount_id);
 
         Pair<Boolean, String> result = receiptBLL.addReceipt(receipt);
         if (result.getKey()) {
+            List<Receipt_Detail> receipt_details = new ArrayList<>();
+
             for (List<Object> receiptDetail : receiptDetailList) {
-                if (receiptDetail.get(2).toString().equals("0")) {
-                    JOptionPane.showMessageDialog(this, "Số lượng sản phẩm phải lớn hơn 0.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                    return;
+                if (receiptDetail.size() == 6) {
+                    boolean checkExist = false;
+                    Product product = productBLL.findProductsBy(Map.of("name", receiptDetail.get(0),
+                            "size", receiptDetail.get(1).toString())).get(0);
+                    String notice = receiptDetail.get(4).toString() + " đường, " + receiptDetail.get(5).toString() + " đá";
+
+                    for (Receipt_Detail detail : receipt_details) {
+                        if (product.getId() == detail.getProduct_id() && product.getSize().equals(detail.getSize()) && notice.equals(detail.getNotice())) {
+                            checkExist = true;
+                            detail.setQuantity(detail.getQuantity() + Double.parseDouble(receiptDetail.get(2).toString()));
+                            detail.setPrice(detail.getPrice() + Double.parseDouble(receiptDetail.get(3).toString()));
+                            break;
+                        }
+                    }
+
+                    if (!checkExist) {
+                        Receipt_Detail newReceipt_detail = new Receipt_Detail(receipt.getId(), product.getId(), product.getSize(), Double.parseDouble(receiptDetail.get(2).toString()), Double.parseDouble(receiptDetail.get(3).toString()), notice);
+                        receipt_details.add(newReceipt_detail);
+                    }
+                } else {
+                    boolean checkExist = false;
+                    Product product = productBLL.findProductsBy(Map.of("name", receiptDetail.get(0),
+                            "size", receiptDetail.get(1).toString())).get(0);
+//                    String notice = receiptDetail.get(4).toString() + " đường, " + receiptDetail.get(5).toString() + " đá";
+
+                    for (Receipt_Detail detail : receipt_details) {
+                        if (product.getId() == detail.getProduct_id() && product.getSize().equals(detail.getSize())) {
+                            checkExist = true;
+                            detail.setQuantity(detail.getQuantity() + Double.parseDouble(receiptDetail.get(2).toString()));
+                            detail.setPrice(detail.getPrice() + Double.parseDouble(receiptDetail.get(3).toString()));
+                            break;
+                        }
+                    }
+
+                    if (!checkExist) {
+                        Receipt_Detail newReceipt_detail = new Receipt_Detail(receipt.getId(), product.getId(), product.getSize(), Double.parseDouble(receiptDetail.get(2).toString()), Double.parseDouble(receiptDetail.get(3).toString()), " ");
+                        receipt_details.add(newReceipt_detail);
+                    }
                 }
+
             }
+
+            Receipt_DetailBLL receiptDetailBLL = new Receipt_DetailBLL();
+
+            for (Receipt_Detail receipt_detail : receipt_details) {
+                receiptDetailBLL.addReceipt_Detail(receipt_detail);
+            }
+
             if (Cafe_Application.homeGUI.indexModuleReceiptGUI != -1) {
                 ReceiptGUI receiptGUI = (ReceiptGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModuleReceiptGUI];
                 receiptGUI.refresh();
             }
+            JOptionPane.showMessageDialog(null, result.getValue(),
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            refresh();
+            new DetailReceiptGUI(receipt);
         } else {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void refresh() {
+        receiptDetailList.removeAll(receiptDetailList);
+        nameReceiptDetail.removeAll(nameReceiptDetail);
+        sizeReceiptDetail.removeAll(sizeReceiptDetail);
+        quantityReceiptDetail.removeAll(quantityReceiptDetail);
+        deleteReceiptDetail.removeAll(deleteReceiptDetail);
+
+        productIncartNotelList.removeAll(productIncartNotelList);
+        buttonGroupsSugar.removeAll(buttonGroupsSugar);
+        buttonGroupsIce.removeAll(buttonGroupsIce);
+
+        productIncartPanelList.removeAll(productIncartPanelList);
+
+        Bill_detailPanel.removeAll();
+        Bill_detailPanel.setPreferredSize(new Dimension(450, 400));
+        Bill_detailPanel.repaint();
+        Bill_detailPanel.revalidate();
+
+        jLabelBill.get(0).setText(VNString.currency(0));
+        jLabelBill.get(1).setText(VNString.currency(0));
+        jLabelBill.get(2).setText(VNString.currency(0));
+        jLabelBill.get(3).setText(VNString.currency(0));
+        total = -1;
+        cash = -1;
+        excess = -1;
+
+        jTextFieldCash.setText("");
+
+        loadCategory();
+
+        Thread threadRender = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadProductRoundPanel();
+                loadProduct(productBLL.searchProducts("deleted = 0"));
+                resultSearch = productBLL.searchProducts("deleted = 0");
+            }
+        });
+        threadRender.start();
     }
 
     private void searchProducts() {
@@ -570,7 +662,7 @@ public class SaleGUI extends SalePanel {
             public void mousePressed(MouseEvent e) {
                 for (int j = 0; j < nameReceiptDetail.size(); j++) {
                     if (nameReceiptDetail.get(j) == e.getComponent()) {
-                        if (j != indexShowOption && !receiptDetailList.get(j).get(1).equals("0")) {
+                        if (j != indexShowOption && !receiptDetailList.get(j).get(1).equals("Không")) {
                             showOption(j);
                             indexShowOption = j;
                             note = true;
@@ -588,7 +680,7 @@ public class SaleGUI extends SalePanel {
         });
         jPanel.add(nameReceiptDetail.get(index));
 
-        if (!product.getSize().equals("0")) {
+        if (!product.getSize().equals("Không")) {
             for (Product product1 : productBLL.findProductsBy(Map.of("name", receiptDetailList.get(index).get(0)))) {
                 sizeReceiptDetail.get(index).addItem(product1.getSize());
             }
@@ -612,7 +704,7 @@ public class SaleGUI extends SalePanel {
             receiptDetail.add("100%");
             receiptDetail.add("100%");
         } else {
-            sizeReceiptDetail.get(index).addItem("0");
+            sizeReceiptDetail.get(index).addItem("Không");
             JLabel panel = new JLabel();
             panel.setFont(new Font("Inter", Font.PLAIN, 8));
             panel.setPreferredSize(new Dimension(40, 40));
@@ -769,7 +861,7 @@ public class SaleGUI extends SalePanel {
             jPanel.setPreferredSize(new Dimension(450, 50));
 
             jPanel.add(nameReceiptDetail.get(i));
-            if (receiptDetailList.get(i).get(1).equals("0")) {
+            if (receiptDetailList.get(i).get(1).equals("Không")) {
                 JLabel panel = new JLabel();
                 panel.setFont(new Font("Inter", Font.PLAIN, 8));
                 panel.setPreferredSize(new Dimension(40, 40));
@@ -857,7 +949,7 @@ public class SaleGUI extends SalePanel {
             return;
         }
 
-        if (!receipt.get(1).toString().equals("0")) {
+        if (!receipt.get(1).toString().equals("Không")) {
             try {
                 materialBLL.getMaterialDAL().executeProcedureAddMaterial(product.getId(), receipt.get(1).toString(), Integer.parseInt(receipt.get(2).toString()));
             } catch (SQLException | IOException e) {
@@ -903,7 +995,7 @@ public class SaleGUI extends SalePanel {
         List<Object> receipt = receiptDetailList.get(index);
         Product product = productBLL.findProductsBy(Map.of("name", receipt.get(0),
                 "size", receipt.get(1).toString())).get(0);
-        if (!receipt.get(1).toString().equals("0")) {
+        if (!receipt.get(1).toString().equals("Không")) {
             try {
                 materialBLL.getMaterialDAL().executeProcedureAddMaterial(product.getId(), receipt.get(1).toString(), Integer.parseInt(receipt.get(2).toString()));
             } catch (SQLException | IOException e) {
@@ -958,7 +1050,7 @@ public class SaleGUI extends SalePanel {
             jPanel.setPreferredSize(new Dimension(450, 50));
 
             jPanel.add(nameReceiptDetail.get(i));
-            if (receiptDetailList.get(i).get(1).equals("0")) {
+            if (receiptDetailList.get(i).get(1).equals("Không")) {
                 JLabel panel = new JLabel();
                 panel.setFont(new Font("Inter", Font.PLAIN, 8));
                 panel.setPreferredSize(new Dimension(40, 40));
@@ -982,7 +1074,7 @@ public class SaleGUI extends SalePanel {
         for (List<Object> receipt : receiptDetailList) {
             Product product = productBLL.findProductsBy(Map.of("name", receipt.get(0),
                     "size", receipt.get(1).toString())).get(0);
-            if (!receipt.get(1).toString().equals("0")) {
+            if (!receipt.get(1).toString().equals("Không")) {
                 try {
                     materialBLL.getMaterialDAL().executeProcedureAddMaterial(product.getId(), receipt.get(1).toString(), Integer.parseInt(receipt.get(2).toString()));
                 } catch (SQLException | IOException e) {
@@ -1155,7 +1247,7 @@ public class SaleGUI extends SalePanel {
     }
 
     private int checkRemainProduct(Product product) {
-        if (Objects.equals(product.getSize(), "0")) {
+        if (Objects.equals(product.getSize(), "Không")) {
             List<Material> materialList = materialBLL.findMaterialsBy(Map.of("name", product.getName()));
             if (materialList.isEmpty())
                 return 0;

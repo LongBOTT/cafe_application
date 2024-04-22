@@ -160,6 +160,7 @@ public class ProductGUI extends Layout3 {
                             @Override
                             public void run() {
                                 SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
+                                saleGUI.loadCategory();
                                 saleGUI.loadProductRoundPanel();
                                 saleGUI.loadProduct(saleGUI.resultSearch);
                             }
@@ -424,6 +425,7 @@ public class ProductGUI extends Layout3 {
                     @Override
                     public void run() {
                         SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
+                        saleGUI.loadCategory();
                         saleGUI.loadProductRoundPanel();
                         saleGUI.loadProduct(saleGUI.resultSearch);
                     }
@@ -453,6 +455,7 @@ public class ProductGUI extends Layout3 {
                             @Override
                             public void run() {
                                 SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
+                                saleGUI.loadCategory();
                                 saleGUI.loadProductRoundPanel();
                                 saleGUI.loadProduct(saleGUI.resultSearch);
                             }

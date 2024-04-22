@@ -215,7 +215,7 @@ public class PayrollGUI extends Layout1 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    PDF.exportPayrollPDF(payrollBLL.getData(payrollBLL.searchPayrolls()), "src/main/resources/ExportPDF");
+                    PDF.exportPayrollPDF(data, "src/main/resources/ExportPDF");
                     JOptionPane.showMessageDialog(null, "Xuất PDF danh sách bảng lương thành công.",
                             "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 }

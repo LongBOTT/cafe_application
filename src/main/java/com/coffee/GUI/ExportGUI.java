@@ -218,7 +218,7 @@ public class ExportGUI extends Layout2 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    PDF.exportExportNotePDF(exportNoteBLL.getData(exportNoteBLL.searchExport_Note()), "src/main/resources/ExportPDF");
+                    PDF.exportExportNotePDF(data, "src/main/resources/ExportPDF");
                     JOptionPane.showMessageDialog(null, "Xuất PDF danh sách phiếu xuất hàng thành công.",
                             "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -232,8 +232,7 @@ public class ExportGUI extends Layout2 {
         jDateChooser[0].getDateEditor().setDate(null);
         jDateChooser[1].getDateEditor().setDate(null);
         loadDataTable(exportNoteBLL.getData(exportNoteBLL.searchExport_Note()));
-        for (int i=0 ; i<2; i++)
-        {
+        for (int i = 0; i < 2; i++) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             dateTextField[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
             dateTextField[i].setText(LocalDate.now().format(formatter));

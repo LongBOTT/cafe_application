@@ -7,6 +7,7 @@ import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailDiscountGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditDiscountGUI;
 import com.coffee.GUI.components.*;
 import com.coffee.ImportExcel.AddDiscountFromExcel;
+import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JTextFieldDateEditor;
@@ -141,7 +142,7 @@ public class DiscountGUI extends Layout2 {
         SearchPanel.add(lbFilter);
         SearchPanel.add(jComboBoxSearch);
 
-        loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));
+        loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0")));
 
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
@@ -174,7 +175,7 @@ public class DiscountGUI extends Layout2 {
 
             dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            dateTextField[i].setText(LocalDate.now().format(formatter));
+//            dateTextField[i].setText(LocalDate.now().format(formatter));
 
             if (i == 0) {
                 JLabel jLabel = new JLabel("Từ Ngày");
@@ -225,6 +226,15 @@ public class DiscountGUI extends Layout2 {
                 public void mousePressed(MouseEvent e) {
                     new AddDiscountGUI();
                     refresh();
+                    if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
+                        Thread thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI] = new SaleGUI(HomeGUI.account);
+                            }
+                        });
+                        thread.start();
+                    }
                 }
             });
             FunctionPanel.add(roundedPanel);
@@ -297,21 +307,21 @@ public class DiscountGUI extends Layout2 {
         jDateChooser[0].setDate(null);
         jDateChooser[1].setDate(null);
         processDateChangeEvent = true;
-        loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));
+        loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0")));
 
         for (int i = 0; i < 2; i++) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
             dateTextField[i].setBackground(new Color(245, 246, 250));
-            dateTextField[i].setText(LocalDate.now().format(formatter));
-            dateTextField[i].setText(LocalDate.now().format(formatter));
+//            dateTextField[i].setText(LocalDate.now().format(formatter));
+//            dateTextField[i].setText(LocalDate.now().format(formatter));
         }
     }
 
     private void searchDiscountByName() {
         String value = jTextFieldSearch.getText();
         if (value.isEmpty()) {
-            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));
+            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0")));
         } else {
             loadDataTable(discountBLL.getData(discountBLL.findDiscounts("name", value)));
         }
@@ -329,7 +339,7 @@ public class DiscountGUI extends Layout2 {
             String startDateStr = dateFormat.format(startDate);
             String endDateStr = dateFormat.format(endDate);
 
-            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("start_date >= '" + startDateStr + "' AND end_date <= '" + endDateStr + "'")));
+            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0 AND start_date >= '" + startDateStr + "' AND end_date <= '" + endDateStr + "'")));
         } else if (startDate != null && endDate != null && startDate.after(endDate)) {
             JOptionPane.showMessageDialog(this, "Ngày bắt đầu phải nhỏ hơn ngày kết thúc", "Lỗi", JOptionPane.ERROR_MESSAGE);
         } else if (startDate != null && endDate == null) {
@@ -342,11 +352,11 @@ public class DiscountGUI extends Layout2 {
     private void SelectDiscountStatus() {
         String selectedItem = Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString();
         if (selectedItem.equals("Kích hoạt")) {
-            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("status = 0")));
+            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0 AND status = 0")));
         } else if (selectedItem.equals("Ngừng áp dụng")) {
-            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("status = 1")));
+            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0 AND status = 1")));
         } else
-            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));
+            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0")));
     }
 
     public void loadDataTable(Object[][] objects) {
@@ -406,6 +416,13 @@ public class DiscountGUI extends Layout2 {
         if (indexColumn == indexColumnEdit) {
             new EditDiscountGUI(discountBLL.searchDiscounts("id = " + data[indexRow][0]).get(0));
             refresh();
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI] = new SaleGUI(HomeGUI.account);
+                }
+            });
+            thread.start();
         }
     }
 

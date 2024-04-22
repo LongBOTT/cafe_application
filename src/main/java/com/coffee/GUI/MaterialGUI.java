@@ -271,7 +271,7 @@ public class MaterialGUI extends Layout2 {
                 @Override
                 public void mousePressed(MouseEvent e) {
 
-                    PDF.exportMaterialPDF(materialBLL.getData(materialBLL.searchMaterials("deleted = 0")), "src/main/resources/ExportPDF");
+                    PDF.exportMaterialPDF(data, "src/main/resources/ExportPDF");
                     JOptionPane.showMessageDialog(null, "Xuất PDF danh sách nguyên liệu thành công.",
                             "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 }

@@ -245,7 +245,7 @@ public class ImportGUI extends Layout2 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    PDF.exportImportNotePDF(importNoteBLL.getData(importNoteBLL.searchImport()), "src/main/resources/ExportPDF");
+                    PDF.exportImportNotePDF(data, "src/main/resources/ExportPDF");
                     JOptionPane.showMessageDialog(null, "Xuất PDF danh sách phiếu nhập hàng thành công.",
                             "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 }

@@ -35,7 +35,7 @@ public class DetailReceiptGUI extends DialogFormDetail {
     public DetailReceiptGUI(Receipt receipt) {
         super();
         super.setTitle("Thông tin hóa đơn");
-        super.setSize(new Dimension(600, 700));
+        super.setSize(new Dimension(800, 600));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init(receipt);
         setVisible(true);
@@ -83,7 +83,7 @@ public class DetailReceiptGUI extends DialogFormDetail {
 
         }
 
-        columnNames = new String[]{"Sản Phẩm", "Size", "SL", "Giá",};
+        columnNames = new String[]{"Sản Phẩm", "Size", "SL", "Giá", "Ghi Chú"};
         dataTable = new DataTable(new Object[0][0], columnNames);
         dataTable.getColumnModel().getColumn(1).setMaxWidth(50);
         dataTable.getColumnModel().getColumn(2).setMaxWidth(50);
@@ -178,7 +178,7 @@ public class DetailReceiptGUI extends DialogFormDetail {
         }
 
         for (Object[] object : data) {
-            object = Arrays.copyOfRange(object, 1, 5);
+            object = Arrays.copyOfRange(object, 1, 6);
             model.addRow(object);
         }
     }

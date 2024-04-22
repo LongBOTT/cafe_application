@@ -30,10 +30,10 @@ public class DiscountBLL extends Manager<Discount> {
         Pair<Boolean, String> result;
 
 
-        result = validateDate(discount.getStart_date(), discount.getEnd_date());
-        if (!result.getKey()) {
-            return new Pair<>(false, result.getValue());
-        }
+//        result = validateDate(discount.getStart_date(), discount.getEnd_date());
+//        if (!result.getKey()) {
+//            return new Pair<>(false, result.getValue());
+//        }
 
         if (discountDAL.updateDiscount(discount) == 0)
             return new Pair<>(false, "Cập nhật đợt giảm giá không thành công.");

@@ -194,7 +194,7 @@ public class ReceiptGUI extends Layout2 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    PDF.exportReceiptsPDF(receiptBLL.getData(receiptBLL.searchReceipts()),  "src/main/resources/ExportPDF");
+                    PDF.exportReceiptsPDF(data, "src/main/resources/ExportPDF");
                     JOptionPane.showMessageDialog(null, "Xuất PDF danh sách hoá đơn thành công.",
                             "Thông báo", JOptionPane.INFORMATION_MESSAGE);
 
@@ -209,8 +209,7 @@ public class ReceiptGUI extends Layout2 {
         jDateChooser[0].getDateEditor().setDate(null);
         jDateChooser[1].getDateEditor().setDate(null);
         loadDataTable(receiptBLL.getData(receiptBLL.searchReceipts()));
-        for (int i=0 ; i<2; i++)
-        {
+        for (int i = 0; i < 2; i++) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             dateTextField[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
             dateTextField[i].setText(LocalDate.now().format(formatter));

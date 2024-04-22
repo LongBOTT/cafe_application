@@ -8,16 +8,18 @@ public class Receipt_Detail {
     private String size;
     private double quantity;
     private double price;
+    private String notice;
 
     public Receipt_Detail() {
     }
 
-    public Receipt_Detail(int receipt_id, int product_id, String size, double quantity, double price) {
+    public Receipt_Detail(int receipt_id, int product_id, String size, double quantity, double price, String notice) {
         this.receipt_id = receipt_id;
         this.product_id = product_id;
         this.size = size;
         this.quantity = quantity;
         this.price = price;
+        this.notice = notice;
     }
 
     public int getReceipt_id() {
@@ -60,12 +62,21 @@ public class Receipt_Detail {
         this.price = price;
     }
 
+    public String getNotice() {
+        return notice;
+    }
+
+    public void setNotice(String notice) {
+        this.notice = notice;
+    }
+
     @Override
     public String toString() {
         return receipt_id + " | " +
                 product_id + " | " +
                 size + " | " +
                 quantity + " | " +
-                VNString.currency(price);
+                VNString.currency(price) + " | " +
+                notice;
     }
 }
