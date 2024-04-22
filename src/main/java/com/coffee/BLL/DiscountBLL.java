@@ -27,9 +27,9 @@ public class DiscountBLL extends Manager<Discount> {
     }
 
     public Pair<Boolean, String> updateDiscount(Discount discount) {
-        Pair<Boolean, String> result;
-
-
+//        Pair<Boolean, String> result;
+//
+//
 //        result = validateDate(discount.getStart_date(), discount.getEnd_date());
 //        if (!result.getKey()) {
 //            return new Pair<>(false, result.getValue());
