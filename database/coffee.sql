@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 21, 2024 at 05:12 PM
+-- Generation Time: Apr 22, 2024 at 08:00 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -88,21 +88,21 @@ INSERT INTO `account` (`id`, `username`, `password`, `staff_id`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `bonus`
+-- Table structure for table `allowance`
 --
 
-CREATE TABLE `bonus` (
+CREATE TABLE `allowance` (
   `id` bigint(20) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
-  `bonus_amount` double DEFAULT NULL,
-  `bonus_type` int(11) DEFAULT NULL
+  `allowance_amount` double DEFAULT NULL,
+  `allowance_type` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `bonus`
+-- Dumping data for table `allowance`
 --
 
-INSERT INTO `bonus` (`id`, `name`, `bonus_amount`, `bonus_type`) VALUES
+INSERT INTO `allowance` (`id`, `name`, `allowance_amount`, `allowance_type`) VALUES
 (1, 'Tiền gửi xe', 5000, 0),
 (2, 'Tip', 200000, 1),
 (3, 'Thưởng', 500000, 1),
@@ -294,7 +294,8 @@ INSERT INTO `deduction` (`id`, `name`, `deduction_amount`, `deduction_type`) VAL
 (2, 'Về sớm', 30000, 1),
 (3, 'Làm sai đơn hàng', 50000, 2),
 (4, 'abcc', 333.02, 1),
-(5, 'b', 3, 0);
+(5, 'b', 3, 0),
+(6, 'Nghỉ làm không phép', 30000, 3);
 
 -- --------------------------------------------------------
 
@@ -317,8 +318,9 @@ CREATE TABLE `discount` (
 
 INSERT INTO `discount` (`id`, `name`, `start_date`, `end_date`, `type`, `status`) VALUES
 (0, 'default', '1000-01-01', '1000-01-01', b'0', b'1'),
-(1, 'Giỗ tổ 10/03', '2024-04-15', '2024-04-30', b'1', b'0'),
-(2, 'Lễ 30/4', '2024-04-28', '2024-04-30', b'0', b'1');
+(1, 'Giỗ tổ 10/03', '2024-04-22', '2024-04-30', b'1', b'1'),
+(2, 'Lễ 30/4', '2024-04-28', '2024-04-30', b'0', b'1'),
+(3, 'k', '2024-04-23', '2024-04-26', b'1', b'0');
 
 -- --------------------------------------------------------
 
@@ -345,7 +347,8 @@ INSERT INTO `discount_detail` (`discount_id`, `product_id`, `Size`, `quantity`, 
 (2, 1, 'L', 1, 5, 0),
 (2, 1, 'M', 1, 5, 0),
 (2, 2, 'L', 1, 5, 0),
-(2, 2, 'M', 1, 5, 0);
+(2, 2, 'M', 1, 5, 0),
+(3, 0, '0', 0, 20, 500000);
 
 -- --------------------------------------------------------
 
@@ -452,7 +455,8 @@ INSERT INTO `import_note` (`id`, `staff_id`, `total`, `received_date`) VALUES
 (8, 4, 20000, '2024-04-14'),
 (9, 4, 400000, '2024-04-14'),
 (10, 2, 960000, '2024-04-19'),
-(11, 2, 800000, '2024-04-19');
+(11, 2, 800000, '2024-04-19'),
+(12, 2, 60000, '2024-04-22');
 
 -- --------------------------------------------------------
 
@@ -464,8 +468,8 @@ CREATE TABLE `leave_of_absence_form` (
   `id` bigint(20) NOT NULL,
   `staff_id` bigint(20) DEFAULT NULL,
   `date` date DEFAULT NULL,
-  `start_date` date DEFAULT NULL,
-  `end_date` date DEFAULT NULL,
+  `date_off` date DEFAULT NULL,
+  `shifts` varchar(255) DEFAULT NULL,
   `reason` varchar(255) DEFAULT NULL,
   `status` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -474,8 +478,11 @@ CREATE TABLE `leave_of_absence_form` (
 -- Dumping data for table `leave_of_absence_form`
 --
 
-INSERT INTO `leave_of_absence_form` (`id`, `staff_id`, `date`, `start_date`, `end_date`, `reason`, `status`) VALUES
-(1, 4, '2024-03-16', '2024-03-18', '2024-03-19', 'bệnh', 2);
+INSERT INTO `leave_of_absence_form` (`id`, `staff_id`, `date`, `date_off`, `shifts`, `reason`, `status`) VALUES
+(1, 4, '2024-03-16', '2024-03-18', '1, 2, 3', 'bệnh', 2),
+(2, 2, '2024-04-22', '2024-04-22', '1, 2', 'sdsd', 0),
+(3, 2, '2024-04-22', '2024-04-22', '1, 2, 3', 'ádasd', 1),
+(4, 3, '2024-04-22', '2024-04-23', '1, 2, 3', 'ádasasd', 1);
 
 -- --------------------------------------------------------
 
@@ -504,22 +511,22 @@ INSERT INTO `material` (`id`, `name`, `remain`, `min_remain`, `max_remain`, `uni
 (3, 'Cà phê bột truyền thống', 70, 50, 100, 'kg', 20000, b'0', b'0', 32),
 (4, 'Đường túi', 50, 50, 100, 'kg', 20000, b'0', b'0', 50),
 (5, 'Bánh cookie', 100, 50, 100, 'cái', 20000, b'0', b'0', 30),
-(6, 'Đá viên', 82, 50, 100, 'kg', 20000, b'0', b'0', 20),
-(7, 'Sữa đặc', 98.8, 50, 100, 'lít', 20000, b'0', b'0', 31),
+(6, 'Đá viên', 77, 50, 100, 'kg', 20000, b'0', b'0', 20),
+(7, 'Sữa đặc', 100, 50, 100, 'lít', 20000, b'0', b'0', 31),
 (8, 'Nước nóng', 100, 50, 100, 'lít', 20000, b'0', b'0', 0),
 (9, 'Syrup hạnh nhân', 100, 50, 100, 'lít', 20000, b'0', b'0', 10),
 (10, 'Sữa tươi', 100, 50, 100, 'lít', 20000, b'0', b'0', 0),
-(11, 'Sữa Béo (NDC)', 100, 50, 100, 'lít', 20000, b'0', b'0', 0),
+(11, 'Sữa Béo (NDC)', 100, 50, 100, 'lít', 20000, b'0', b'0', 3),
 (12, 'Thạch Cà Phê', 500, 50, 100, 'kg', 20000, b'0', b'0', 0),
-(13, 'Milk foam', 200, 50, 100, 'lít', 20000, b'0', b'0', 0),
+(13, 'Milk foam', 196.25, 50, 100, 'lít', 20000, b'0', b'0', 0),
 (14, 'Bột chocolate trang trí', 50, 50, 100, 'kg', 20000, b'0', b'0', 0),
 (15, 'Sốt chocolate', 200, 50, 100, 'lít', 20000, b'0', b'0', 0),
-(16, 'Cà phê đen pha sẵn', 499.4, 50, 100, 'lít', 20000, b'0', b'0', 0),
-(18, 'Đường nước ', 100, 50, 100, 'kg', 20000, b'0', b'0', 0),
+(16, 'Cà phê đen pha sẵn', 499.7, 50, 100, 'lít', 20000, b'0', b'0', 0),
+(18, 'Đường nước ', 97.625, 50, 100, 'kg', 20000, b'0', b'0', 0),
 (19, 'Trà đào pha sẵn ', 100, 50, 100, 'lít', 20000, b'0', b'0', 0),
 (20, 'Đào lát', 100, 50, 100, 'kg', 20000, b'0', b'0', 0),
-(21, 'Hạt sen', 200, 50, 100, 'kg', 20000, b'0', b'0', 0),
-(22, 'Củ năng', 500, 50, 100, 'kg', 20000, b'0', b'0', 0),
+(21, 'Hạt sen', 198.5, 50, 100, 'kg', 20000, b'0', b'0', 0),
+(22, 'Củ năng', 498.75, 50, 100, 'kg', 20000, b'0', b'0', 0),
 (23, 'Syrup vải', 200, 50, 100, 'lít', 20000, b'0', b'0', 0),
 (24, 'Nước vải ngâm', 500, 50, 100, 'lít', 20000, b'0', b'0', 0),
 (25, 'Vải trái', 200, 50, 100, 'kg', 20000, b'0', b'0', 0),
@@ -535,7 +542,7 @@ INSERT INTO `material` (`id`, `name`, `remain`, `min_remain`, `max_remain`, `uni
 (35, 'Sốt chocolate trang trí', 50, 50, 100, 'lít', 20000, b'0', b'0', 0),
 (36, 'Cà phê sữa pha sẵn', 500, 50, 100, 'lít', 20000, b'0', b'0', 0),
 (37, 'Thạch cà phê', 300, 50, 100, 'kg', 20000, b'0', b'0', 0),
-(38, 'Trà oolong pha sẵn ', 200, 50, 100, 'lít', 20000, b'0', b'0', 0),
+(38, 'Trà oolong pha sẵn ', 192.5, 50, 100, 'lít', 20000, b'0', b'0', 0),
 (39, 'Thạch Đào', 200, 50, 100, 'kg', 20000, b'0', b'0', 0),
 (40, 'Syrup Đào', 100, 50, 100, 'lít', 20000, b'0', b'0', 0),
 (41, 'Syrup sả', 100, 50, 100, 'lít', 20000, b'0', b'0', 0),
@@ -603,7 +610,7 @@ CREATE TABLE `payroll` (
 --
 
 INSERT INTO `payroll` (`id`, `name`, `entry_date`, `month`, `year`, `total_salary`, `paid`, `debt`) VALUES
-(2, 'Bảng lương 01/03/2024 - 31/03/2024', '2024-03-28', 3, 2024, 2941750, 715000, 2226750);
+(2, 'Bảng lương 01/03/2024 - 31/03/2024', '2024-03-28', 3, 2024, 2941750, 2941750, 0);
 
 -- --------------------------------------------------------
 
@@ -619,19 +626,19 @@ CREATE TABLE `payroll_detail` (
   `deduction_amount` double DEFAULT NULL,
   `salary_amount` double DEFAULT NULL,
   `status` bit(1) DEFAULT NULL,
-  `role_id` bigint(20) DEFAULT NULL,
-  `entry_date` datetime DEFAULT NULL
+  `allowance_amount` double DEFAULT NULL,
+  `fine_amount` double DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `payroll_detail`
 --
 
-INSERT INTO `payroll_detail` (`payroll_id`, `staff_id`, `hours_amount`, `bonus_amount`, `deduction_amount`, `salary_amount`, `status`, `role_id`, `entry_date`) VALUES
-(2, 4, 39, 35000, 0, 1010000, b'0', 3, '2024-03-28 07:49:54'),
-(2, 5, 34, 25000, 0, 875000, b'0', 4, '2024-03-28 09:46:57'),
-(2, 6, 16.67, 15000, 90000, 341750, b'0', 4, '2024-03-28 09:48:38'),
-(2, 7, 28, 15000, 0, 715000, b'1', 4, '2024-03-28 09:46:31');
+INSERT INTO `payroll_detail` (`payroll_id`, `staff_id`, `hours_amount`, `bonus_amount`, `deduction_amount`, `salary_amount`, `status`, `allowance_amount`, `fine_amount`) VALUES
+(2, 4, 39, 35000, 0, 1010000, b'1', NULL, NULL),
+(2, 5, 34, 25000, 0, 875000, b'1', NULL, NULL),
+(2, 6, 16.67, 15000, 90000, 341750, b'1', NULL, NULL),
+(2, 7, 28, 15000, 0, 715000, b'1', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -655,7 +662,7 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`id`, `name`, `size`, `category`, `capital_price`, `price`, `image`, `deleted`) VALUES
-(0, 'default', '0', '0', 0, 0, '0', b'1'),
+(0, 'default', 'Không', '0', 0, 0, '0', b'1'),
 (1, 'Phin Đen Đá', 'L', 'CÀ PHÊ PHIN', 39, 39000, 'SP01', b'0'),
 (1, 'Phin Đen Đá', 'M', 'CÀ PHÊ PHIN', 35, 35000, 'SP01', b'0'),
 (1, 'Phin Đen Đá', 'S', 'CÀ PHÊ PHIN', 29, 29000, 'SP01', b'0'),
@@ -677,10 +684,10 @@ INSERT INTO `product` (`id`, `name`, `size`, `category`, `capital_price`, `price
 (7, 'Trà Thạch Vãi', 'L', 'TRÀ', 65, 65000, 'SP07', b'0'),
 (7, 'Trà Thạch Vãi', 'M', 'TRÀ', 55, 55000, 'SP07', b'0'),
 (7, 'Trà Thạch Vãi', 'S', 'TRÀ', 45, 45000, 'SP07', b'0'),
-(8, 'Bánh Chuối', '0', 'BÁNH', 29, 29000, 'SP08', b'0'),
-(9, 'Bánh Su Kem', '0', 'BÁNH', 29, 29000, 'SP09', b'0'),
-(10, 'Phô Mai Chanh Dây', '0', 'BÁNH', 29, 29000, 'SP10', b'0'),
-(11, 'Phô Mai Trà Xanh', '0', 'BÁNH', 29, 29000, 'SP11', b'0'),
+(8, 'Bánh Chuối', 'Không', 'BÁNH', 29, 29000, 'SP08', b'0'),
+(9, 'Bánh Su Kem', 'Không', 'BÁNH', 29, 29000, 'SP09', b'0'),
+(10, 'Phô Mai Chanh Dây', 'Không', 'BÁNH', 29, 29000, 'SP10', b'0'),
+(11, 'Phô Mai Trà Xanh', 'Không', 'BÁNH', 29, 29000, 'SP11', b'0'),
 (12, 'PhinDi Hạnh Nhân', 'L', 'PHINDI', 55, 55000, 'SP12', b'0'),
 (12, 'PhinDi Hạnh Nhân', 'M', 'PHINDI', 49, 49000, 'SP12', b'0'),
 (12, 'PhinDi Hạnh Nhân', 'S', 'PHINDI', 45, 45000, 'SP12', b'0'),
@@ -726,8 +733,8 @@ CREATE TABLE `receipt` (
 --
 
 INSERT INTO `receipt` (`id`, `staff_id`, `invoice_date`, `total_price`, `total_discount`, `total`, `received`, `excess`, `discount_id`) VALUES
-(1, 1, '2024-02-07', 40, 10, 40, 10, 30, 0),
-(2, 2, '2024-04-21', 900000, 90000, 810000, 1000000, 190000, 1);
+(1, 2, '2024-04-22', 145000, 7250, 137750, 140000, 2250, 1),
+(2, 2, '2024-04-22', 145000, 7250, 137750, 140000, 2250, 1);
 
 -- --------------------------------------------------------
 
@@ -741,7 +748,7 @@ CREATE TABLE `receipt_detail` (
   `size` varchar(255) NOT NULL,
   `quantity` double DEFAULT NULL,
   `price` double DEFAULT NULL,
-  `notice` varchar(255) DEFAULT NULL
+  `notice` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -749,15 +756,8 @@ CREATE TABLE `receipt_detail` (
 --
 
 INSERT INTO `receipt_detail` (`receipt_id`, `product_id`, `size`, `quantity`, `price`, `notice`) VALUES
-(1, 1, 'M', 2, 200, '100% đường, 100% đá'),
-(1, 2, 'L', 2, 200, '100% đường, 100% đá'),
-(1, 3, 'M', 2, 200, '100% đường, 100% đá'),
-(1, 4, 'L', 2, 200, '100% đường, 100% đá'),
-(1, 5, 'M', 2, 200, '100% đường, 100% đá'),
-(1, 6, 'L', 2, 200, '100% đường, 100% đá'),
-(1, 7, 'L', 2, 200, '100% đường, 100% đá'),
-(1, 8, '0', 2, 200, '100% đường, 100% đá'),
-(1, 9, '0', 2, 200, '100% đường, 100% đá');
+(1, 8, 'Không', 5, 145000, ' '),
+(2, 8, 'Không', 5, 145000, ' ');
 
 -- --------------------------------------------------------
 
@@ -1040,67 +1040,52 @@ INSERT INTO `role_detail` (`role_id`, `staff_id`, `entry_date`, `salary`, `type_
 (2, 3, '2024-03-28 09:48:02', 7000000, 1),
 (3, 4, '2024-02-28 00:00:00', 25000, 2),
 (3, 4, '2024-03-28 07:49:54', 25000, 2),
+(3, 4, '2024-04-22 10:58:53', 25000, 2),
 (4, 5, '2024-02-28 00:00:00', 25000, 2),
 (4, 5, '2024-03-28 07:50:09', 25000, 2),
 (4, 5, '2024-03-28 09:46:57', 25000, 2),
+(4, 5, '2024-04-22 10:59:24', 25000, 2),
 (4, 6, '2024-03-12 00:00:00', 25000, 2),
 (4, 6, '2024-03-27 12:35:13', 25000, 2),
 (4, 6, '2024-03-28 09:48:38', 25000, 2),
+(4, 6, '2024-04-22 10:59:37', 25000, 2),
 (4, 7, '2024-03-12 00:00:00', 25000, 2),
 (4, 7, '2024-03-28 07:50:27', 25000, 2),
-(4, 7, '2024-03-28 09:46:31', 25000, 2);
+(4, 7, '2024-03-28 09:46:31', 25000, 2),
+(4, 7, '2024-04-22 10:59:47', 25000, 2);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `role_detail_bonus`
+-- Table structure for table `salary_format`
 --
 
-CREATE TABLE `role_detail_bonus` (
-  `role_id` bigint(20) NOT NULL,
-  `staff_id` bigint(20) NOT NULL,
-  `entry_date` datetime NOT NULL,
-  `bonus_id` bigint(20) NOT NULL
+CREATE TABLE `salary_format` (
+  `id` bigint(20) NOT NULL,
+  `name` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `role_detail_bonus`
+-- Table structure for table `salary_format_allowance`
 --
 
-INSERT INTO `role_detail_bonus` (`role_id`, `staff_id`, `entry_date`, `bonus_id`) VALUES
-(2, 2, '2024-03-28 09:47:27', 1),
-(2, 3, '2024-03-28 09:48:02', 1),
-(3, 4, '2024-03-28 07:49:54', 1),
-(4, 5, '2024-03-28 09:46:57', 1),
-(4, 6, '2024-03-28 09:48:38', 1),
-(4, 7, '2024-03-28 09:46:31', 1);
+CREATE TABLE `salary_format_allowance` (
+  `salary_format_id` bigint(20) NOT NULL,
+  `allowance_id` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `role_detail_deduction`
+-- Table structure for table `salary_format_detail_copy1`
 --
 
-CREATE TABLE `role_detail_deduction` (
-  `role_id` bigint(20) NOT NULL,
-  `staff_id` bigint(20) NOT NULL,
-  `entry_date` datetime NOT NULL,
+CREATE TABLE `salary_format_detail_copy1` (
+  `salary_format_id` bigint(20) NOT NULL,
   `deduction_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `role_detail_deduction`
---
-
-INSERT INTO `role_detail_deduction` (`role_id`, `staff_id`, `entry_date`, `deduction_id`) VALUES
-(3, 4, '2024-03-28 07:49:54', 1),
-(3, 4, '2024-03-28 07:49:54', 2),
-(4, 5, '2024-03-28 09:46:57', 1),
-(4, 5, '2024-03-28 09:46:57', 2),
-(4, 6, '2024-03-28 09:48:38', 1),
-(4, 6, '2024-03-28 09:48:38', 2),
-(4, 7, '2024-03-28 09:46:31', 1),
-(4, 7, '2024-03-28 09:46:31', 2);
 
 -- --------------------------------------------------------
 
@@ -1140,7 +1125,8 @@ INSERT INTO `shipment` (`id`, `material_id`, `supplier_id`, `import_id`, `quanti
 (15, 5, 1, 10, 2, 2, '2024-04-17', '2024-04-20'),
 (17, 7, 5, 10, 2, 2, '2024-04-03', '2024-04-17'),
 (18, 3, 2, 11, 20, 20, '2024-04-08', '2024-08-19'),
-(19, 4, 1, 11, 20, 20, '2024-04-19', '2024-09-19');
+(19, 4, 1, 11, 20, 20, '2024-04-19', '2024-09-19'),
+(20, 11, 2, 12, 3, 3, '2024-04-17', '2024-04-17');
 
 -- --------------------------------------------------------
 
@@ -1157,21 +1143,22 @@ CREATE TABLE `staff` (
   `phone` varchar(255) DEFAULT NULL,
   `address` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
-  `deleted` bit(1) DEFAULT NULL
+  `deleted` bit(1) DEFAULT NULL,
+  `salary_format_id` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `staff`
 --
 
-INSERT INTO `staff` (`id`, `no`, `name`, `gender`, `birthdate`, `phone`, `address`, `email`, `deleted`) VALUES
-(1, '079203023641', 'Admin', b'0', '2003-08-30', '0961234942', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'admin@gmail.com', b'0'),
-(2, '079203023644', 'Nguyễn Hoàng Long', b'0', '2003-08-30', '0963333946', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'colong30082003@gmail.com', b'0'),
-(3, '079203023642', 'Nguyễn Minh Thuận', b'0', '2003-08-30', '0964512947', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'nguyenminhthuan@gmail.com', b'0'),
-(4, '079203023643', 'Vũ Minh Thuận', b'0', '2003-08-30', '0964512944', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'vmiinhthuan@gmail.com', b'0'),
-(5, '079203023645', 'Trần Huỳnh Đức Anh', b'0', '2003-08-30', '0964512940', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'ducanh@gmail.com', b'0'),
-(6, '079203023522', 'Nguyễn Tiến Dũng', b'0', '2003-08-30', '0964512920', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'abc@gmail.com', b'0'),
-(7, '079203023777', 'Nguyễn Tiến Quang', b'0', '2003-08-30', '0964513325', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'abcd@gmail.com', b'0');
+INSERT INTO `staff` (`id`, `no`, `name`, `gender`, `birthdate`, `phone`, `address`, `email`, `deleted`, `salary_format_id`) VALUES
+(1, '079203023641', 'Admin', b'0', '2003-08-30', '0961234942', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'admin@gmail.com', b'0', NULL),
+(2, '079203023644', 'Nguyễn Hoàng Long', b'0', '2003-08-30', '0963333946', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'colong30082003@gmail.com', b'0', NULL),
+(3, '079203023642', 'Nguyễn Minh Thuận', b'0', '2003-08-30', '0964512947', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'nguyenminhthuan@gmail.com', b'0', NULL),
+(4, '079203023643', 'Vũ Minh Thuận', b'0', '2003-08-30', '0964512944', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'vmiinhthuan@gmail.com', b'0', NULL),
+(5, '079203023645', 'Trần Huỳnh Đức Anh', b'0', '2003-08-30', '0964512940', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'ducanh@gmail.com', b'0', NULL),
+(6, '079203023522', 'Nguyễn Tiến Dũng', b'0', '2003-08-30', '0964512920', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'abc@gmail.com', b'0', NULL),
+(7, '079203023777', 'Nguyễn Tiến Quang', b'0', '2003-08-30', '0964513325', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'abcd@gmail.com', b'0', NULL);
 
 -- --------------------------------------------------------
 
@@ -1211,49 +1198,84 @@ CREATE TABLE `work_schedule` (
   `date` date DEFAULT NULL,
   `check_in` varchar(255) DEFAULT 'null',
   `check_out` varchar(255) DEFAULT 'null',
-  `shift` int(11) DEFAULT NULL
+  `shift` int(11) DEFAULT NULL,
+  `notice` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `work_schedule`
 --
 
-INSERT INTO `work_schedule` (`id`, `staff_id`, `date`, `check_in`, `check_out`, `shift`) VALUES
-(1, 4, '2024-03-11', '18:00', '23:00', 3),
-(2, 4, '2024-03-12', '12:00', '18:00', 2),
-(3, 4, '2024-03-13', '18:00', '23:00', 3),
-(4, 4, '2024-03-14', '12:00', '18:00', 2),
-(5, 4, '2024-03-15', '6:00', '12:00', 1),
-(6, 4, '2024-03-16', '12:00', '18:00', 2),
-(7, 4, '2024-03-17', '18:00', '23:00', 3),
-(8, 5, '2024-03-11', '6:00', '12:00', 1),
-(9, 5, '2024-03-12', '12:00', '18:00', 2),
-(10, 5, '2024-03-13', '18:00', '23:00', 3),
-(11, 5, '2024-03-14', '6:00', '12:00', 1),
-(12, 6, '2024-03-14', '12:20', '18:00', 2),
-(13, 6, '2024-03-15', '6:00', '11:30', 1),
-(14, 6, '2024-03-16', '12:00', '17:30', 2),
-(15, 7, '2024-03-11', '18:00', '23:00', 3),
-(16, 7, '2024-03-12', '12:00', '18:00', 2),
-(18, 5, '2024-03-17', '6:00', '12:00', 1),
-(19, 5, '2024-03-17', '18:00', '23:00', 3),
-(20, 7, '2024-03-16', '6:00', '12:00', 1),
-(21, 7, '2024-03-16', '12:00', '18:00', 2),
-(22, 7, '2024-03-16', '18:00', '23:00', 3),
-(23, 3, '2024-04-20', '22:20', '23:00', 1),
-(24, 3, '2024-04-20', '2:3', '3:3', 2),
-(25, 2, '2024-03-11', 'Nguyễn Hoàng Long ', 'null', 1),
-(26, 2, '2024-03-11', 'null', 'null', 2),
-(27, 2, '2024-03-11', 'null', 'null', 3),
-(28, 3, '2024-04-11', 'null', 'null', 1),
-(29, 3, '2024-04-11', 'null', 'null', 2),
-(30, 3, '2024-03-12', 'null', 'null', 2),
-(31, 3, '2024-03-12', 'null', 'null', 3),
-(32, 3, '2024-03-11', 'null', 'null', 1),
-(33, 3, '2024-03-11', 'null', 'null', 2),
-(34, 4, '2024-04-02', 'null', 'null', 1),
-(35, 4, '2024-04-02', 'null', 'null', 2),
-(36, 7, '2024-04-20', 'null', 'null', 2);
+INSERT INTO `work_schedule` (`id`, `staff_id`, `date`, `check_in`, `check_out`, `shift`, `notice`) VALUES
+(1, 4, '2024-03-11', '18:00', '23:00', 3, NULL),
+(2, 4, '2024-03-12', '12:00', '18:00', 2, NULL),
+(3, 4, '2024-03-13', '18:00', '23:00', 3, NULL),
+(4, 4, '2024-03-14', '12:00', '18:00', 2, NULL),
+(5, 4, '2024-03-15', '6:00', '12:00', 1, NULL),
+(6, 4, '2024-03-16', '12:00', '18:00', 2, NULL),
+(7, 4, '2024-03-17', '18:00', '23:00', 3, NULL),
+(8, 5, '2024-03-11', '6:00', '12:00', 1, NULL),
+(9, 5, '2024-03-12', '12:00', '18:00', 2, NULL),
+(10, 5, '2024-03-13', '18:00', '23:00', 3, NULL),
+(11, 5, '2024-03-14', '6:00', '12:00', 1, NULL),
+(12, 6, '2024-03-14', '12:20', '18:00', 2, NULL),
+(13, 6, '2024-03-15', '6:00', '11:30', 1, NULL),
+(14, 6, '2024-03-16', '12:00', '17:30', 2, NULL),
+(15, 7, '2024-03-11', '18:00', '23:00', 3, NULL),
+(16, 7, '2024-03-12', '12:00', '18:00', 2, NULL),
+(18, 5, '2024-03-17', '6:00', '12:00', 1, NULL),
+(19, 5, '2024-03-17', '18:00', '23:00', 3, NULL),
+(20, 7, '2024-03-16', '6:00', '12:00', 1, NULL),
+(21, 7, '2024-03-16', '12:00', '18:00', 2, NULL),
+(22, 7, '2024-03-16', '18:00', '23:00', 3, NULL),
+(23, 3, '2024-04-20', '22:20', '23:00', 1, NULL),
+(24, 3, '2024-04-20', '2:3', '3:3', 2, NULL),
+(25, 2, '2024-03-11', 'Phép', 'Phép', 1, NULL),
+(26, 2, '2024-03-11', 'null', 'null', 2, NULL),
+(27, 2, '2024-03-11', 'null', 'null', 3, NULL),
+(28, 3, '2024-04-11', 'null', 'null', 1, NULL),
+(29, 3, '2024-04-11', 'null', 'null', 2, NULL),
+(30, 3, '2024-03-12', 'null', 'null', 2, NULL),
+(31, 3, '2024-03-12', 'null', 'null', 3, NULL),
+(32, 3, '2024-03-11', 'null', 'null', 1, NULL),
+(33, 3, '2024-03-11', 'null', 'null', 2, NULL),
+(34, 4, '2024-04-02', 'null', 'null', 1, NULL),
+(35, 4, '2024-04-02', 'null', 'null', 2, NULL),
+(36, 7, '2024-04-20', 'null', 'null', 2, NULL),
+(37, 3, '2024-04-23', 'Phép', 'Phép', 1, NULL),
+(38, 3, '2024-04-23', 'Phép', 'Phép', 2, NULL),
+(39, 3, '2024-04-23', 'Phép', 'Phép', 3, NULL),
+(40, 6, '2024-04-23', '9:10', 'null', 1, NULL),
+(41, 6, '2024-04-23', 'null', 'null', 2, NULL),
+(42, 6, '2024-04-23', 'null', 'null', 3, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `work_schedule_bonus`
+--
+
+CREATE TABLE `work_schedule_bonus` (
+  `work_schedule_id` bigint(20) NOT NULL,
+  `bonus_name` bigint(20) NOT NULL,
+  `bonus_amount` double DEFAULT NULL,
+  `quanity` int(11) DEFAULT NULL,
+  `bonus_total` double DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `work_schedule_fine`
+--
+
+CREATE TABLE `work_schedule_fine` (
+  `work_schedule_id` bigint(20) NOT NULL,
+  `fine_name` bigint(20) NOT NULL,
+  `fine_amount` double DEFAULT NULL,
+  `quanity` int(11) DEFAULT NULL,
+  `fine_total` double DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
@@ -1267,9 +1289,9 @@ ALTER TABLE `account`
   ADD KEY `fk_account_staff` (`staff_id`);
 
 --
--- Indexes for table `bonus`
+-- Indexes for table `allowance`
 --
-ALTER TABLE `bonus`
+ALTER TABLE `allowance`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1378,7 +1400,7 @@ ALTER TABLE `receipt`
 -- Indexes for table `receipt_detail`
 --
 ALTER TABLE `receipt_detail`
-  ADD PRIMARY KEY (`receipt_id`,`product_id`,`size`) USING BTREE,
+  ADD PRIMARY KEY (`receipt_id`,`product_id`,`size`,`notice`) USING BTREE,
   ADD KEY `fk_receipt_detail_product` (`product_id`),
   ADD KEY `receipt_detail_product_size_fk` (`size`);
 
@@ -1406,22 +1428,24 @@ ALTER TABLE `role_detail`
   ADD KEY `entry_date` (`entry_date`);
 
 --
--- Indexes for table `role_detail_bonus`
+-- Indexes for table `salary_format`
 --
-ALTER TABLE `role_detail_bonus`
-  ADD PRIMARY KEY (`role_id`,`staff_id`,`entry_date`,`bonus_id`),
-  ADD KEY `fk_bonus_staff` (`staff_id`),
-  ADD KEY `fk_bonus_entrydate` (`entry_date`),
-  ADD KEY `fk_bonusid` (`bonus_id`);
+ALTER TABLE `salary_format`
+  ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `role_detail_deduction`
+-- Indexes for table `salary_format_allowance`
 --
-ALTER TABLE `role_detail_deduction`
-  ADD PRIMARY KEY (`role_id`,`staff_id`,`entry_date`,`deduction_id`) USING BTREE,
-  ADD KEY `fk_bonus_staff` (`staff_id`),
-  ADD KEY `fk_bonus_entrydate` (`entry_date`),
-  ADD KEY `fk_bonusid` (`deduction_id`);
+ALTER TABLE `salary_format_allowance`
+  ADD PRIMARY KEY (`salary_format_id`,`allowance_id`) USING BTREE,
+  ADD KEY `fk_allowance` (`allowance_id`);
+
+--
+-- Indexes for table `salary_format_detail_copy1`
+--
+ALTER TABLE `salary_format_detail_copy1`
+  ADD PRIMARY KEY (`salary_format_id`,`deduction_id`) USING BTREE,
+  ADD KEY `fk_deduction` (`deduction_id`);
 
 --
 -- Indexes for table `shipment`
@@ -1436,7 +1460,8 @@ ALTER TABLE `shipment`
 -- Indexes for table `staff`
 --
 ALTER TABLE `staff`
-  ADD PRIMARY KEY (`id`) USING BTREE;
+  ADD PRIMARY KEY (`id`) USING BTREE,
+  ADD KEY `fk_salary_format` (`salary_format_id`);
 
 --
 -- Indexes for table `supplier`
@@ -1450,6 +1475,18 @@ ALTER TABLE `supplier`
 ALTER TABLE `work_schedule`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_work_schedule_staff` (`staff_id`);
+
+--
+-- Indexes for table `work_schedule_bonus`
+--
+ALTER TABLE `work_schedule_bonus`
+  ADD PRIMARY KEY (`work_schedule_id`,`bonus_name`) USING BTREE;
+
+--
+-- Indexes for table `work_schedule_fine`
+--
+ALTER TABLE `work_schedule_fine`
+  ADD PRIMARY KEY (`work_schedule_id`,`fine_name`) USING BTREE;
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -1555,22 +1592,18 @@ ALTER TABLE `role_detail`
   ADD CONSTRAINT `fk_role_detail_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `role_detail_bonus`
+-- Constraints for table `salary_format_allowance`
 --
-ALTER TABLE `role_detail_bonus`
-  ADD CONSTRAINT `fk_bonus_entrydate` FOREIGN KEY (`entry_date`) REFERENCES `role_detail` (`entry_date`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_bonus_role` FOREIGN KEY (`role_id`) REFERENCES `role_detail` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_bonus_staff` FOREIGN KEY (`staff_id`) REFERENCES `role_detail` (`staff_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_bonusid` FOREIGN KEY (`bonus_id`) REFERENCES `bonus` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `salary_format_allowance`
+  ADD CONSTRAINT `fk_allowance` FOREIGN KEY (`allowance_id`) REFERENCES `allowance` (`id`),
+  ADD CONSTRAINT `fk_salary` FOREIGN KEY (`salary_format_id`) REFERENCES `salary_format` (`id`);
 
 --
--- Constraints for table `role_detail_deduction`
+-- Constraints for table `salary_format_detail_copy1`
 --
-ALTER TABLE `role_detail_deduction`
-  ADD CONSTRAINT `role_detail_deduction_ibfk_1` FOREIGN KEY (`entry_date`) REFERENCES `role_detail` (`entry_date`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `role_detail_deduction_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `role_detail` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `role_detail_deduction_ibfk_3` FOREIGN KEY (`staff_id`) REFERENCES `role_detail` (`staff_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `role_detail_deduction_ibfk_4` FOREIGN KEY (`deduction_id`) REFERENCES `deduction` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `salary_format_detail_copy1`
+  ADD CONSTRAINT `salary_format_detail_copy1_ibfk_2` FOREIGN KEY (`deduction_id`) REFERENCES `deduction` (`id`),
+  ADD CONSTRAINT `salary_format_detail_copy1_ibfk_3` FOREIGN KEY (`salary_format_id`) REFERENCES `salary_format` (`id`);
 
 --
 -- Constraints for table `shipment`
@@ -1581,10 +1614,28 @@ ALTER TABLE `shipment`
   ADD CONSTRAINT `fk_shipment_supplier` FOREIGN KEY (`supplier_id`) REFERENCES `supplier` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `staff`
+--
+ALTER TABLE `staff`
+  ADD CONSTRAINT `fk_salary_format` FOREIGN KEY (`salary_format_id`) REFERENCES `salary_format` (`id`);
+
+--
 -- Constraints for table `work_schedule`
 --
 ALTER TABLE `work_schedule`
   ADD CONSTRAINT `fk_work_schedule_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `work_schedule_bonus`
+--
+ALTER TABLE `work_schedule_bonus`
+  ADD CONSTRAINT `fk_workschedule1` FOREIGN KEY (`work_schedule_id`) REFERENCES `work_schedule` (`id`);
+
+--
+-- Constraints for table `work_schedule_fine`
+--
+ALTER TABLE `work_schedule_fine`
+  ADD CONSTRAINT `fk_workschedule` FOREIGN KEY (`work_schedule_id`) REFERENCES `work_schedule` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
