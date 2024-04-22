@@ -14,8 +14,8 @@ public class Leave_Of_Absence_FormDAL extends Manager {
                 List.of("id",
                         "staff_id",
                         "date",
-                        "start_date",
-                        "end_date",
+                        "date_off",
+                        "shifts",
                         "reason",
                         "status"
                 ));
@@ -28,8 +28,8 @@ public class Leave_Of_Absence_FormDAL extends Manager {
                         Integer.parseInt(row.get(0)), // id
                         Integer.parseInt(row.get(1)), // staff_id
                         Date.valueOf(row.get(2)), // date
-                        Date.valueOf(row.get(3)), // start_date
-                        Date.valueOf(row.get(4)), // end_date
+                        Date.valueOf(row.get(3)), // date_off
+                        row.get(4), // end_date
                         row.get(5), // reason
                         Integer.parseInt(row.get(6)) // status
                 );
@@ -45,8 +45,8 @@ public class Leave_Of_Absence_FormDAL extends Manager {
             return create(leave_Of_Absence_Form.getId(),
                     leave_Of_Absence_Form.getStaff_id(),
                     leave_Of_Absence_Form.getDate(),
-                    leave_Of_Absence_Form.getStart_date(),
-                    leave_Of_Absence_Form.getEnd_date(),
+                    leave_Of_Absence_Form.getDate_off(),
+                    leave_Of_Absence_Form.getShifts(),
                     leave_Of_Absence_Form.getReason(),
                     0
             );
@@ -62,8 +62,8 @@ public class Leave_Of_Absence_FormDAL extends Manager {
             updateValues.add(leave_Of_Absence_Form.getId());
             updateValues.add(leave_Of_Absence_Form.getStaff_id());
             updateValues.add(leave_Of_Absence_Form.getDate());
-            updateValues.add(leave_Of_Absence_Form.getStart_date());
-            updateValues.add(leave_Of_Absence_Form.getEnd_date());
+            updateValues.add(leave_Of_Absence_Form.getDate_off());
+            updateValues.add(leave_Of_Absence_Form.getShifts());
             updateValues.add(leave_Of_Absence_Form.getReason());
             updateValues.add(leave_Of_Absence_Form.getStatus());
             return update(updateValues, "id = " + leave_Of_Absence_Form.getId());

@@ -33,12 +33,15 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
     private JTextArea jTextArea;
     private JButton buttonCreate;
     private Leave_Of_Absence_FormBLL leaveOfAbsenceFormBLL = new Leave_Of_Absence_FormBLL();
+    private JCheckBox jCheckBox1;
+    private JCheckBox jCheckBox2;
+    private JCheckBox jCheckBox3;
 
     public AddLeave_Of_Absence_FormGUI(Staff staff) {
         super((Frame) null, "", true);
         this.staff = staff;
         getContentPane().setBackground(new Color(242, 245, 250));
-        setTitle("Tạo đơn nghỉ phép");
+        setTitle("Tạo Đơn Nghỉ Phép");
         setLayout(new BorderLayout());
         setIconImage(new FlatSVGIcon("image/coffee_logo.svg").getImage());
         setSize(new Dimension(600, 500));
@@ -63,6 +66,9 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
         dateTextField = new JTextField[2];
         jTextArea = new JTextArea();
         buttonCreate = new JButton("Tạo");
+        jCheckBox1 = new JCheckBox();
+        jCheckBox2 = new JCheckBox();
+        jCheckBox3 = new JCheckBox();
 
         RoundedPanel top = new RoundedPanel();
         top.setLayout(new GridBagLayout());
@@ -95,7 +101,7 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
         jLabelTitle.setFont(new Font("Lexend", Font.BOLD, 18));
         roundedPanelTitle.add(jLabelTitle);
 
-        for (String string : new String[]{"Họ tên", "Từ ngày", "Đến ngày", "Lý do"}) {
+        for (String string : new String[]{"Họ tên", "Ngày nghỉ", "Ca", "Lý do"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
@@ -111,7 +117,7 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
                 textField.setEditable(false);
                 center.add(textField, "wrap");
             }
-            if (string.equals("Từ ngày")) {
+            if (string.equals("Ngày nghỉ")) {
                 jTextFieldDate[0] = new JTextField();
                 jTextFieldDate[0].setFont(new Font("Times New Roman", Font.BOLD, 15));
                 jTextFieldDate[0].setPreferredSize(new Dimension(1000, 50));
@@ -128,21 +134,19 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
                 center.add(jDateChooser[0], "wrap");
                 continue;
             }
-            if (string.equals("Đến ngày")) {
-                jTextFieldDate[1] = new JTextField();
-                jTextFieldDate[1].setFont(new Font("Times New Roman", Font.BOLD, 15));
-                jTextFieldDate[1].setPreferredSize(new Dimension(1000, 50));
-                jTextFieldDate[1].setAutoscrolls(true);
+            if (string.equals("Ca")) {
+                JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                jPanel.setPreferredSize(new Dimension(1000, 30));
+                jPanel.setBackground(new Color(242, 245, 250));
 
-                jDateChooser[1] = new JDateChooser();
-                jDateChooser[1].setDateFormatString("dd/MM/yyyy");
-                jDateChooser[1].setPreferredSize(new Dimension(1000, 50));
-                jDateChooser[1].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
+                jCheckBox1.setText("1: 6h - 12h");
+                jCheckBox2.setText("2: 12h - 18h");
+                jCheckBox3.setText("3: 18h - 23h");
 
-                dateTextField[1] = (JTextField) jDateChooser[1].getDateEditor().getUiComponent();
-                dateTextField[1].setFont(new Font("Lexend", Font.BOLD, 14));
-
-                center.add(jDateChooser[1], "wrap");
+                jPanel.add(jCheckBox1);
+                jPanel.add(jCheckBox2);
+                jPanel.add(jCheckBox3);
+                center.add(jPanel, "wrap");
                 continue;
             }
             if (string.equals("Lý do")) {
@@ -168,29 +172,56 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
         Pair<Boolean, String> result;
 
         int id, staff_id;
-        Date date, start_date, end_date;
-        String reason;
+        Date date, date_off;
+        String shifts, reason;
 
         id = leaveOfAbsenceFormBLL.getAutoID(leaveOfAbsenceFormBLL.searchLeave_Of_Absence_Forms());
         staff_id = staff.getId();
 
         if (jDateChooser[0].getDateEditor().getDate() == null) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn ngày bắt đầu.",
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn ngày nghỉ.",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (jDateChooser[1].getDateEditor().getDate() == null) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn ngày kết thúc.",
+
+        if (jDateChooser[0].getDateEditor().getDate().before(java.sql.Date.valueOf(LocalDate.now()))) {
+            JOptionPane.showMessageDialog(null, "Ngày nghỉ không được trước ngày hiện tại.",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected() && !jCheckBox3.isSelected()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn ca nghỉ.",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         date = java.sql.Date.valueOf(LocalDate.now());
-        start_date = java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[0].getDate()));
-        end_date = java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[1].getDate()));
+        date_off = java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser[0].getDate()));
+
+        if (jTextArea.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng nhập lý do.",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         reason = jTextArea.getText();
 
-        Leave_Of_Absence_Form leaveOfAbsenceForm = new Leave_Of_Absence_Form(id, staff_id, date, start_date, end_date, reason, 0);
+        String[] string = new String[0];
+        if (jCheckBox1.isSelected()) {
+            string = Arrays.copyOf(string, string.length + 1);
+            string[string.length - 1] = "1";
+        }
+        if (jCheckBox2.isSelected()) {
+            string = Arrays.copyOf(string, string.length + 1);
+            string[string.length - 1] = "2";
+        }
+        if (jCheckBox3.isSelected()) {
+            string = Arrays.copyOf(string, string.length + 1);
+            string[string.length - 1] = "3";
+        }
+        shifts = String.join(", ", string);
+
+        Leave_Of_Absence_Form leaveOfAbsenceForm = new Leave_Of_Absence_Form(id, staff_id, date, date_off, shifts, reason, 0);
 
         result = leaveOfAbsenceFormBLL.addLeave_Of_Absence_Form(leaveOfAbsenceForm);
 

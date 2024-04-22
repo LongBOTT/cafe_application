@@ -21,6 +21,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
@@ -48,6 +50,7 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
     private StaffBLL staffBLL = new StaffBLL();
     private Date date;
     private Object[][] data = new Object[0][0];
+    private JComboBox<String> jComboBox;
 
     public Leave_Of_Absence_FormGUI(List<Function> functions) {
         super();
@@ -68,8 +71,9 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
         jDateChooser = new JDateChooser[2];
         dateTextField = new JTextField[2];
         jTextFieldDate = new JTextField[2];
+        jComboBox = new JComboBox<>(new String[]{"Tất cả", "Chưa duyệt", "Duyệt", "Không duyệt"});
 
-        columnNames = new String[]{"Mã Đơn", "Họ tên", "Ngày tạo đơn", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"};
+        columnNames = new String[]{"Mã Đơn", "Họ tên", "Ngày tạo đơn", "Ngày nghỉ", "Ca nghỉ", "Trạng thái"};
 
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
@@ -104,7 +108,7 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
             dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
             dateTextField[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            dateTextField[i].setText(LocalDate.now().format(formatter));
+//            dateTextField[i].setText(LocalDate.now().format(formatter));
 
             if (i == 0) {
                 JLabel jLabel = new JLabel("Từ Ngày");
@@ -154,6 +158,18 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
         jButtonSearch.addActionListener(e -> searchLeave_Of_Absence_Forms());
         SearchPanel.add(jButtonSearch);
 
+        jComboBox.setSelectedIndex(0);
+        jComboBox.setBackground(new Color(1, 120, 220));
+        jComboBox.setForeground(Color.white);
+        jComboBox.setPreferredSize(new Dimension(200, 30));
+        jComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchLeave_Of_Absence_Forms();
+            }
+        });
+        SearchPanel.add(jComboBox);
+
         loadDataTable(leave_Of_Absence_FormBLL.getData(leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms()));
 
         RoundedPanel refreshPanel = new RoundedPanel();
@@ -177,23 +193,32 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
     }
 
     public void refresh() {
+        jComboBox.setSelectedIndex(0);
         jTextFieldSearch.setText("");
         jDateChooser[0].getDateEditor().setDate(null);
         jDateChooser[1].getDateEditor().setDate(null);
         loadDataTable(leave_Of_Absence_FormBLL.getData(leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms()));
-        for (int i=0 ; i<2; i++)
-        {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
-            dateTextField[i].setBackground(new Color(245, 246, 250));
-            dateTextField[i].setText(LocalDate.now().format(formatter));
-            dateTextField[i].setText(LocalDate.now().format(formatter));
-        }
+//        for (int i = 0; i < 2; i++) {
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+//            dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
+//            dateTextField[i].setBackground(new Color(245, 246, 250));
+//            dateTextField[i].setText(LocalDate.now().format(formatter));
+//            dateTextField[i].setText(LocalDate.now().format(formatter));
+//        }
     }
 
     private void searchLeave_Of_Absence_Forms() {
         List<Leave_Of_Absence_Form> work_scheduleList = leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms();
         if (jTextFieldSearch.getText().isEmpty() && jDateChooser[0].getDateEditor().getDate() == null && jDateChooser[1].getDateEditor().getDate() == null) {
+            if (jComboBox.getSelectedIndex() == 1) {
+                work_scheduleList.removeIf(leaveOfAbsenceForm -> leaveOfAbsenceForm.getStatus() != 0);
+            }
+            if (jComboBox.getSelectedIndex() == 2) {
+                work_scheduleList.removeIf(leaveOfAbsenceForm -> leaveOfAbsenceForm.getStatus() != 1);
+            }
+            if (jComboBox.getSelectedIndex() == 3) {
+                work_scheduleList.removeIf(leaveOfAbsenceForm -> leaveOfAbsenceForm.getStatus() != 2);
+            }
             loadDataTable(leave_Of_Absence_FormBLL.getData(work_scheduleList));
         } else {
             if (!jTextFieldSearch.getText().isEmpty()) {
@@ -221,6 +246,15 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
                         work_scheduleList.removeIf(work_schedule -> (work_schedule.getDate().before(startDate)));
                     }
                 }
+            }
+            if (jComboBox.getSelectedIndex() == 1) {
+                work_scheduleList.removeIf(leaveOfAbsenceForm -> leaveOfAbsenceForm.getStatus() != 0);
+            }
+            if (jComboBox.getSelectedIndex() == 2) {
+                work_scheduleList.removeIf(leaveOfAbsenceForm -> leaveOfAbsenceForm.getStatus() != 1);
+            }
+            if (jComboBox.getSelectedIndex() == 3) {
+                work_scheduleList.removeIf(leaveOfAbsenceForm -> leaveOfAbsenceForm.getStatus() != 2);
             }
             loadDataTable(leave_Of_Absence_FormBLL.getData(work_scheduleList));
         }

@@ -606,6 +606,8 @@ public class ChangeRoleGUI extends JDialog {
                     jLabelDeductionType.setText("Giảm trừ về sớm");
                 if (deduction.getDeduction_type() == 2)
                     jLabelDeductionType.setText("Giảm trừ cố định");
+                if (deduction.getDeduction_type() == 3)
+                    jLabelDeductionType.setText("Giảm trừ nghỉ làm");
                 jLabelDeductionType.setFont((new Font("Public Sans", Font.PLAIN, 13)));
                 jPanelDeduction.add(jLabelDeductionType);
 

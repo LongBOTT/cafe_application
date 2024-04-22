@@ -6,22 +6,38 @@ public class Leave_Of_Absence_Form {
     private int id;
     private int staff_id;
     private Date date;
-    private Date start_date;
-    private Date end_date;
+    private Date date_off;
+    private String shifts;
     private String reason;
     private int status;
 
     public Leave_Of_Absence_Form() {
     }
 
-    public Leave_Of_Absence_Form(int id, int staff_id, Date date, Date start_date, Date end_date, String reason, int status) {
+    public Leave_Of_Absence_Form(int id, int staff_id, Date date, Date date_off, String shifts, String reason, int status) {
         this.id = id;
         this.staff_id = staff_id;
         this.date = date;
-        this.start_date = start_date;
-        this.end_date = end_date;
+        this.date_off = date_off;
+        this.shifts = shifts;
         this.reason = reason;
         this.status = status;
+    }
+
+    public Date getDate_off() {
+        return date_off;
+    }
+
+    public void setDate_off(Date date_off) {
+        this.date_off = date_off;
+    }
+
+    public String getShifts() {
+        return shifts;
+    }
+
+    public void setShifts(String shifts) {
+        this.shifts = shifts;
     }
 
     public int getId() {
@@ -48,22 +64,6 @@ public class Leave_Of_Absence_Form {
         this.date = date;
     }
 
-    public Date getStart_date() {
-        return start_date;
-    }
-
-    public void setStart_date(Date start_date) {
-        this.start_date = start_date;
-    }
-
-    public Date getEnd_date() {
-        return end_date;
-    }
-
-    public void setEnd_date(Date end_date) {
-        this.end_date = end_date;
-    }
-
     public String getReason() {
         return reason;
     }
@@ -86,8 +86,8 @@ public class Leave_Of_Absence_Form {
         return id + " | " +
                 staff_id + " | " +
                 date + " | " +
-                start_date + " | " +
-                end_date + " | " +
+                date_off + " | " +
+                shifts + " | " +
                 status1;
     }
 }

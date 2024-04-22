@@ -3,7 +3,10 @@ package com.coffee.GUI.DialogGUI.FromEditGUI;
 
 import com.coffee.BLL.Leave_Of_Absence_FormBLL;
 import com.coffee.BLL.StaffBLL;
+import com.coffee.BLL.Work_ScheduleBLL;
 import com.coffee.DTO.Leave_Of_Absence_Form;
+import com.coffee.DTO.Work_Schedule;
+import com.coffee.GUI.CreateWorkScheduleGUI;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.swing.MyTextField;
@@ -98,7 +101,7 @@ public class EditLeave_Of_Absence_FormGUI extends JDialog {
         jLabelTitle.setFont(new Font("Lexend", Font.BOLD, 18));
         roundedPanelTitle.add(jLabelTitle);
 
-        for (String string : new String[]{"Họ tên", "Ngày tạo", "Từ ngày", "Đến ngày", "Lý do"}) {
+        for (String string : new String[]{"Họ tên", "Ngày tạo", "Ngày nghỉ", "Ca", "Lý do"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
@@ -134,7 +137,7 @@ public class EditLeave_Of_Absence_FormGUI extends JDialog {
                 center.add(jDateChooser[0], "wrap");
                 continue;
             }
-            if (string.equals("Từ ngày")) {
+            if (string.equals("Ngày nghỉ")) {
                 jTextFieldDate[1] = new JTextField();
                 jTextFieldDate[1].setFont(new Font("Times New Roman", Font.BOLD, 15));
                 jTextFieldDate[1].setPreferredSize(new Dimension(1000, 50));
@@ -148,31 +151,17 @@ public class EditLeave_Of_Absence_FormGUI extends JDialog {
                 dateTextField[1] = (JTextField) jDateChooser[1].getDateEditor().getUiComponent();
                 dateTextField[1].setFont(new Font("Lexend", Font.BOLD, 14));
 
-                jDateChooser[1].setDate(leaveOfAbsenceForm.getStart_date());
+                jDateChooser[1].setDate(leaveOfAbsenceForm.getDate_off());
                 jDateChooser[1].setEnabled(false);
 
                 center.add(jDateChooser[1], "wrap");
                 continue;
             }
-            if (string.equals("Đến ngày")) {
-                jTextFieldDate[2] = new JTextField();
-                jTextFieldDate[2].setFont(new Font("Times New Roman", Font.BOLD, 15));
-                jTextFieldDate[2].setPreferredSize(new Dimension(1000, 50));
-                jTextFieldDate[2].setAutoscrolls(true);
-
-                jDateChooser[2] = new JDateChooser();
-                jDateChooser[2].setDateFormatString("dd/MM/yyyy");
-                jDateChooser[2].setPreferredSize(new Dimension(1000, 50));
-                jDateChooser[2].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
-
-                dateTextField[2] = (JTextField) jDateChooser[2].getDateEditor().getUiComponent();
-                dateTextField[2].setFont(new Font("Lexend", Font.BOLD, 14));
-
-                jDateChooser[2].setDate(leaveOfAbsenceForm.getEnd_date());
-                jDateChooser[2].setEnabled(false);
-
-                center.add(jDateChooser[2], "wrap");
-                continue;
+            if (string.equals("Ca")) {
+                textField.setText(leaveOfAbsenceForm.getShifts());
+                textField.setPreferredSize(new Dimension(1000, 50));
+                textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+                textField.setBackground(Color.white);
             }
             if (string.equals("Lý do")) {
                 jTextArea.setBackground(new Color(255, 255, 255));
@@ -214,14 +203,36 @@ public class EditLeave_Of_Absence_FormGUI extends JDialog {
     private void accept() {
         Pair<Boolean, String> result;
 
+        String[] shiftsIntegers = leaveOfAbsenceForm.getShifts().split(", ");
+        for (String s : shiftsIntegers) {
+            List<Work_Schedule> work_schedules = new Work_ScheduleBLL().searchWork_schedules("staff_id = " + leaveOfAbsenceForm.getStaff_id(), "date ='" + leaveOfAbsenceForm.getDate_off() + "'", "shift = " + s);
+            if (work_schedules.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Nhân viên không có lịch làm việc vào ngày " + leaveOfAbsenceForm.getDate_off() + ", ca " + s,
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+        }
+
         leaveOfAbsenceForm.setStatus(1);
 
         result = leaveOfAbsenceFormBLL.updateLeave_Of_Absence_Form(leaveOfAbsenceForm);
 
         if (result.getKey()) {
+            for (String s : shiftsIntegers) {
+                List<Work_Schedule> work_schedules = new Work_ScheduleBLL().searchWork_schedules("staff_id = " + leaveOfAbsenceForm.getStaff_id(), "date ='" + leaveOfAbsenceForm.getDate_off() + "'", "shift = " + s);
+                if (!work_schedules.isEmpty()) {
+                    Work_Schedule work_schedule = work_schedules.get(0);
+                    work_schedule.setCheck_in("P");
+                    work_schedule.setCheck_out("P");
+                    new Work_ScheduleBLL().updateWork_schedule(work_schedule);
+                }
+            }
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             dispose();
+            CreateWorkScheduleGUI createWorkScheduleGUI = (CreateWorkScheduleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModuleCreateWorkScheduleGUI];
+            createWorkScheduleGUI.refresh();
         } else {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);

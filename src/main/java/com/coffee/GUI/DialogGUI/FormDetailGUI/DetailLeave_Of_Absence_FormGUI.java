@@ -86,7 +86,7 @@ public class DetailLeave_Of_Absence_FormGUI extends JDialog {
         jLabelTitle.setFont(new Font("Lexend", Font.BOLD, 18));
         roundedPanelTitle.add(jLabelTitle);
 
-        for (String string : new String[]{"Họ tên", "Ngày tạo", "Từ ngày", "Đến ngày", "Lý do"}) {
+        for (String string : new String[]{"Họ tên", "Ngày tạo", "Ngày nghỉ", "Ca", "Lý do"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
@@ -122,7 +122,7 @@ public class DetailLeave_Of_Absence_FormGUI extends JDialog {
                 center.add(jDateChooser[0], "wrap");
                 continue;
             }
-            if (string.equals("Từ ngày")) {
+            if (string.equals("Ngày nghỉ")) {
                 jTextFieldDate[1] = new JTextField();
                 jTextFieldDate[1].setFont(new Font("Times New Roman", Font.BOLD, 15));
                 jTextFieldDate[1].setPreferredSize(new Dimension(1000, 50));
@@ -136,31 +136,17 @@ public class DetailLeave_Of_Absence_FormGUI extends JDialog {
                 dateTextField[1] = (JTextField) jDateChooser[1].getDateEditor().getUiComponent();
                 dateTextField[1].setFont(new Font("Lexend", Font.BOLD, 14));
 
-                jDateChooser[1].setDate(leaveOfAbsenceForm.getStart_date());
+                jDateChooser[1].setDate(leaveOfAbsenceForm.getDate_off());
                 jDateChooser[1].setEnabled(false);
 
                 center.add(jDateChooser[1], "wrap");
                 continue;
             }
-            if (string.equals("Đến ngày")) {
-                jTextFieldDate[2] = new JTextField();
-                jTextFieldDate[2].setFont(new Font("Times New Roman", Font.BOLD, 15));
-                jTextFieldDate[2].setPreferredSize(new Dimension(1000, 50));
-                jTextFieldDate[2].setAutoscrolls(true);
-
-                jDateChooser[2] = new JDateChooser();
-                jDateChooser[2].setDateFormatString("dd/MM/yyyy");
-                jDateChooser[2].setPreferredSize(new Dimension(1000, 50));
-                jDateChooser[2].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
-
-                dateTextField[2] = (JTextField) jDateChooser[2].getDateEditor().getUiComponent();
-                dateTextField[2].setFont(new Font("Lexend", Font.BOLD, 14));
-
-                jDateChooser[2].setDate(leaveOfAbsenceForm.getEnd_date());
-                jDateChooser[2].setEnabled(false);
-
-                center.add(jDateChooser[2], "wrap");
-                continue;
+            if (string.equals("Ca")) {
+                textField.setText(leaveOfAbsenceForm.getShifts());
+                textField.setPreferredSize(new Dimension(1000, 50));
+                textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+                textField.setBackground(Color.white);
             }
             if (string.equals("Lý do")) {
                 jTextArea.setBackground(new Color(255, 255, 255));

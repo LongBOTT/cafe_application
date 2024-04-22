@@ -77,6 +77,7 @@ public class AddDeductionGUI extends DialogForm {
                 jComboBoxDeductionType.addItem("Giảm trừ đi muộn");
                 jComboBoxDeductionType.addItem("Giảm trừ về sớm");
                 jComboBoxDeductionType.addItem("Giảm trừ cố định");
+                jComboBoxDeductionType.addItem("Giảm trừ nghỉ làm");
 
                 jComboBoxDeductionType.setPreferredSize(new Dimension(1000, 30));
                 jComboBoxDeductionType.setFont((new Font("Public Sans", Font.PLAIN, 14)));

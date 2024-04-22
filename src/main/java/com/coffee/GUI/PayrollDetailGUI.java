@@ -2,6 +2,7 @@ package com.coffee.GUI;
 
 import com.coffee.BLL.PayrollBLL;
 import com.coffee.BLL.Payroll_DetailBLL;
+import com.coffee.BLL.ProductBLL;
 import com.coffee.BLL.StaffBLL;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Payroll;
@@ -118,6 +119,8 @@ public class PayrollDetailGUI extends Layout1 {
         returnPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                PayrollGUI payrollGUI = (PayrollGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModulePayrollGUI];
+                payrollGUI.refresh();
                 Cafe_Application.homeGUI.openModule(Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModulePayrollGUI]); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
             }
         });
@@ -161,6 +164,12 @@ public class PayrollDetailGUI extends Layout1 {
         roundedPanelPaid.setPreferredSize(new Dimension(150, 40));
         roundedPanelPaid.setBackground(new Color(1, 120, 220));
         roundedPanelPaid.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        roundedPanelPaid.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                paidAll();
+            }
+        });
         FunctionPanel.add(roundedPanelPaid);
 
         JLabel panelPaid = new JLabel("Trả lương tất cả");
@@ -168,6 +177,39 @@ public class PayrollDetailGUI extends Layout1 {
         panelPaid.setFont(new Font("Public Sans", Font.PLAIN, 13));
         panelPaid.setIcon(new FlatSVGIcon("icon/tick-svgrepo-com.svg"));
         roundedPanelPaid.add(panelPaid);
+
+    }
+
+    private void paidAll() {
+        String[] options = new String[]{"Huỷ", "Xác nhận"};
+        int choice = JOptionPane.showOptionDialog(null, "Xác nhận trả lương cho tất cả nhân viên?",
+                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+        if (choice == 1) {
+            boolean check = false;
+            for (Payroll_Detail payrollDetail : payrollDetailBLL.searchPayroll_Details("payroll_id = " + payroll.getId())) {
+                if (!payrollDetail.isStatus()) {
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                JOptionPane.showMessageDialog(null, "Các nhân viên đã được trả lương trước đó.",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                for (Payroll_Detail payrollDetail : payrollDetailBLL.searchPayroll_Details("payroll_id = " + payroll.getId())) {
+                    if (!payrollDetail.isStatus()) {
+                        payrollDetail.setStatus(true);
+                        payrollDetailBLL.updatePayroll_Detail(payrollDetail);
+                    }
+                }
+                payroll.setPaid(payroll.getTotal_salary());
+                payroll.setDebt(0);
+                new PayrollBLL().updatePayroll(payroll);
+                JOptionPane.showMessageDialog(null, "Trả lương cho tất cả nhân viên thành công.",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                loadDataTable(payrollDetailBLL.getData(payrollDetailBLL.searchPayroll_Details("payroll_id = " + payroll.getId())));
+            }
+        }
 
     }
 

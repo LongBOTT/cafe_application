@@ -32,10 +32,10 @@ public class Leave_Of_Absence_FormBLL extends Manager<Leave_Of_Absence_Form> {
     public Pair<Boolean, String> addLeave_Of_Absence_Form(Leave_Of_Absence_Form leave_Of_Absence_Form) {
         Pair<Boolean, String> result;
 
-        result = validateDate(leave_Of_Absence_Form.getStart_date(), leave_Of_Absence_Form.getEnd_date());
-        if (!result.getKey()) {
-            return new Pair<>(false, result.getValue());
-        }
+//        result = validateDate(leave_Of_Absence_Form.getStart_date(), leave_Of_Absence_Form.getEnd_date());
+//        if (!result.getKey()) {
+//            return new Pair<>(false, result.getValue());
+//        }
 
         if (leave_Of_Absence_FormDAL.addLeave_Of_Absence_Form(leave_Of_Absence_Form) == 0)
             return new Pair<>(false, "Thêm đơn nghỉ phép không thành công.");
@@ -46,10 +46,10 @@ public class Leave_Of_Absence_FormBLL extends Manager<Leave_Of_Absence_Form> {
     public Pair<Boolean, String> updateLeave_Of_Absence_Form(Leave_Of_Absence_Form leave_Of_Absence_Form) {
         Pair<Boolean, String> result;
 
-        result = validateDate(leave_Of_Absence_Form.getStart_date(), leave_Of_Absence_Form.getEnd_date());
-        if (!result.getKey()) {
-            return new Pair<>(false, result.getValue());
-        }
+//        result = validateDate(leave_Of_Absence_Form.getStart_date(), leave_Of_Absence_Form.getEnd_date());
+//        if (!result.getKey()) {
+//            return new Pair<>(false, result.getValue());
+//        }
 
         if (leave_Of_Absence_FormDAL.updateLeave_Of_Absence_Form(leave_Of_Absence_Form) == 0)
             return new Pair<>(false, "Cập nhật đơn nghỉ phép không thành công.");
@@ -98,8 +98,8 @@ public class Leave_Of_Absence_FormBLL extends Manager<Leave_Of_Absence_Form> {
             case "id" -> leave_Of_Absence_Form.getId();
             case "staff_id" -> leave_Of_Absence_Form.getStaff_id();
             case "date" -> leave_Of_Absence_Form.getDate();
-            case "start_date" -> leave_Of_Absence_Form.getStart_date();
-            case "end_date" -> leave_Of_Absence_Form.getEnd_date();
+            case "date_off" -> leave_Of_Absence_Form.getDate_off();
+            case "shifts" -> leave_Of_Absence_Form.getShifts();
             case "reason" -> leave_Of_Absence_Form.getReason();
             case "status" -> leave_Of_Absence_Form.getStatus();
             default -> null;
