@@ -126,6 +126,7 @@ public class Work_ScheduleBLL extends Manager<Work_Schedule> {
             case "check_in" -> work_schedule.getCheck_in();
             case "check_out" -> work_schedule.getCheck_out();
             case "shift" -> work_schedule.getShift();
+            case "notice" -> work_schedule.getNotice();
             default -> null;
         };
     }

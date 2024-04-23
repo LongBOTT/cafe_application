@@ -175,7 +175,7 @@ public class AddStaffGUI extends DialogForm {
         address = jTextFieldsStaff.get(3).getText().trim();
         email = jTextFieldsStaff.get(4).getText().trim();
 
-        Staff staff = new Staff(id, staffNo, name, gender, birthdate, phone, address, email, false);
+        Staff staff = new Staff(id, staffNo, name, gender, birthdate, phone, address, email, false, 0);
 
         result = staffBLL.addStaff(staff);
 

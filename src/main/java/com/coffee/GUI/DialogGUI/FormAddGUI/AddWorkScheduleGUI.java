@@ -237,7 +237,7 @@ public class AddWorkScheduleGUI extends DialogForm {
 
         List<Work_Schedule> newWork_scheduleList = new ArrayList<>();
         for (Integer shift : shifts) {
-            Work_Schedule workSchedule = new Work_Schedule(id, staff_id, date, checkin, checkout, shift);
+            Work_Schedule workSchedule = new Work_Schedule(id, staff_id, date, checkin, checkout, shift, "Không");
             newWork_scheduleList.add(workSchedule);
             id += 1;
         }

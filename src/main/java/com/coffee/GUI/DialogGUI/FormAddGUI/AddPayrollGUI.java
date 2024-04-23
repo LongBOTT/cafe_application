@@ -123,12 +123,12 @@ public class AddPayrollGUI extends DialogForm {
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
 
-        LocalDate start = YearMonth.of(year, month).atDay(1);
-        LocalDate end = YearMonth.of(year, month).atEndOfMonth();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
+//        LocalDate start = YearMonth.of(year, month).atDay(1);
+//        LocalDate end = YearMonth.of(year, month).atEndOfMonth();
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
 
         id = payrollBLL.getAutoID(payrollBLL.searchPayrolls()); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-        name = "Bảng lương " + formatter.format(start) + " - " + formatter.format(end);
+        name = "Bảng lương " + YearMonth.of(year, month).format(DateTimeFormatter.ofPattern("MM/YYYY"));
         entry_date = java.sql.Date.valueOf(LocalDate.now());
         total_salary = 0;
         paid = 0;

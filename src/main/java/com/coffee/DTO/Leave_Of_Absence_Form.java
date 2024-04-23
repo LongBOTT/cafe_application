@@ -1,5 +1,6 @@
 package com.coffee.DTO;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Leave_Of_Absence_Form {
@@ -85,8 +86,8 @@ public class Leave_Of_Absence_Form {
         String status1 = status == 0 ? "Chưa duyệt" : status == 1 ? "Duyệt" : "Không duyệt";
         return id + " | " +
                 staff_id + " | " +
-                date + " | " +
-                date_off + " | " +
+                new SimpleDateFormat("dd/MM/yyyy").format(date) + " | " +
+                new SimpleDateFormat("dd/MM/yyyy").format(date_off) + " | " +
                 shifts + " | " +
                 status1;
     }

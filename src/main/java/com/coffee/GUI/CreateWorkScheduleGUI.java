@@ -222,49 +222,52 @@ public class CreateWorkScheduleGUI extends Layout1 {
         roundedPaneChamCong.add(panelChamCong);
 
         bottom.setBackground(Color.white);
-        bottom.setLayout(new FlowLayout(FlowLayout.LEFT));
+        bottom.setLayout(new BorderLayout());
 
-        TitlePanelManager.setLayout(new FlowLayout(FlowLayout.LEFT));
-        TitlePanelManager.setBackground(Color.white);
-        bottom.add(TitlePanelManager);
+        WorkSchedulePanel1 workSchedulePanel1 = new WorkSchedulePanel1();
+        bottom.add(workSchedulePanel1, BorderLayout.CENTER);
 
-        jLabelTitleManager.setFont(new Font("Lexend", Font.BOLD, 15));
-        TitlePanelManager.add(jLabelTitleManager);
-
-        ContentPanelManager.setLayout(new BorderLayout());
-        ContentPanelManager.setPreferredSize(new Dimension(1160, 185));
-        ContentPanelManager.setBackground(Color.white);
-        bottom.add(ContentPanelManager);
-
-        ContentPanelManager.add(workSchedulePanelManager);
-
-        TitlePanelStaffSale.setLayout(new FlowLayout(FlowLayout.LEFT));
-        TitlePanelStaffSale.setBackground(Color.white);
-        bottom.add(TitlePanelStaffSale);
-
-        jLabelTitleSale.setFont(new Font("Lexend", Font.BOLD, 15));
-        TitlePanelStaffSale.add(jLabelTitleSale);
-
-        ContentPanelStaffSale.setLayout(new BorderLayout());
-        ContentPanelStaffSale.setPreferredSize(new Dimension(1160, 185));
-        ContentPanelStaffSale.setBackground(Color.white);
-        bottom.add(ContentPanelStaffSale);
-
-        ContentPanelStaffSale.add(workSchedulePanelStaffSale);
-
-        TitlePanelStaffWarehouse.setLayout(new FlowLayout(FlowLayout.LEFT));
-        TitlePanelStaffWarehouse.setBackground(Color.white);
-        bottom.add(TitlePanelStaffWarehouse);
-
-        jLabelTitleWarehouse.setFont(new Font("Lexend", Font.BOLD, 15));
-        TitlePanelStaffWarehouse.add(jLabelTitleWarehouse);
-
-        ContentPanelStaffWarehouse.setLayout(new BorderLayout());
-        ContentPanelStaffWarehouse.setPreferredSize(new Dimension(1160, 185));
-        ContentPanelStaffWarehouse.setBackground(Color.white);
-        bottom.add(ContentPanelStaffWarehouse);
-
-        ContentPanelStaffWarehouse.add(workSchedulePanelStaffWarehouse);
+//        TitlePanelManager.setLayout(new FlowLayout(FlowLayout.LEFT));
+//        TitlePanelManager.setBackground(Color.white);
+//        bottom.add(TitlePanelManager);
+//
+//        jLabelTitleManager.setFont(new Font("Lexend", Font.BOLD, 15));
+//        TitlePanelManager.add(jLabelTitleManager);
+//
+//        ContentPanelManager.setLayout(new BorderLayout());
+//        ContentPanelManager.setPreferredSize(new Dimension(1160, 185));
+//        ContentPanelManager.setBackground(Color.white);
+//        bottom.add(ContentPanelManager);
+//
+//        ContentPanelManager.add(workSchedulePanelManager);
+//
+//        TitlePanelStaffSale.setLayout(new FlowLayout(FlowLayout.LEFT));
+//        TitlePanelStaffSale.setBackground(Color.white);
+//        bottom.add(TitlePanelStaffSale);
+//
+//        jLabelTitleSale.setFont(new Font("Lexend", Font.BOLD, 15));
+//        TitlePanelStaffSale.add(jLabelTitleSale);
+//
+//        ContentPanelStaffSale.setLayout(new BorderLayout());
+//        ContentPanelStaffSale.setPreferredSize(new Dimension(1160, 185));
+//        ContentPanelStaffSale.setBackground(Color.white);
+//        bottom.add(ContentPanelStaffSale);
+//
+//        ContentPanelStaffSale.add(workSchedulePanelStaffSale);
+//
+//        TitlePanelStaffWarehouse.setLayout(new FlowLayout(FlowLayout.LEFT));
+//        TitlePanelStaffWarehouse.setBackground(Color.white);
+//        bottom.add(TitlePanelStaffWarehouse);
+//
+//        jLabelTitleWarehouse.setFont(new Font("Lexend", Font.BOLD, 15));
+//        TitlePanelStaffWarehouse.add(jLabelTitleWarehouse);
+//
+//        ContentPanelStaffWarehouse.setLayout(new BorderLayout());
+//        ContentPanelStaffWarehouse.setPreferredSize(new Dimension(1160, 185));
+//        ContentPanelStaffWarehouse.setBackground(Color.white);
+//        bottom.add(ContentPanelStaffWarehouse);
+//
+//        ContentPanelStaffWarehouse.add(workSchedulePanelStaffWarehouse);
 
     }
 

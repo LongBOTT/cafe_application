@@ -17,6 +17,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,7 +70,7 @@ public class DetailImportGUI extends DialogFormDetail {
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
             if (string.trim().equals("Ngày Nhập")) {
-                textField.setText(import_note.getReceived_date().toString());
+                textField.setText(new SimpleDateFormat("dd/MM/yyyy").format(import_note.getReceived_date()));
             }
             if (string.trim().equals("Mã Phiếu Nhập")) {
                 String import_noteId = Integer.toString(import_note.getId());

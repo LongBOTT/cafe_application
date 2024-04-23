@@ -32,6 +32,7 @@ public class MySQL {
                 result.add(row);
             }
             System.out.println(formattedQuery);
+            System.out.println();
         }
         Database.closeConnection(connection);
         return result;
@@ -46,6 +47,7 @@ public class MySQL {
             String formattedQuery = formatQuery(query, values);
             numOfRows = statement.executeUpdate(formattedQuery);
             System.out.println(formattedQuery);
+            System.out.println();
         }
         Database.closeConnection(connection);
         return numOfRows;
@@ -132,6 +134,7 @@ public class MySQL {
                 result.add(row);
             }
             System.out.println(query);
+            System.out.println();
         }
         Database.closeConnection(connection);
         return result;

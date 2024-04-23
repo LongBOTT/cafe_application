@@ -17,7 +17,8 @@ public class Work_ScheduleDAL extends Manager {
                         "date",
                         "check_in",
                         "check_out",
-                        "shift"));
+                        "shift",
+                        "notice"));
     }
 
     public List<Work_Schedule> convertToWork_schedules(List<List<String>> data) {
@@ -29,7 +30,8 @@ public class Work_ScheduleDAL extends Manager {
                         Date.valueOf(row.get(2)), // date
                         row.get(3), // check_in
                         row.get(4), // check_out
-                        Integer.parseInt(row.get(5)) // shift
+                        Integer.parseInt(row.get(5)), // shift
+                        row.get(6)
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in RoleDAL.convertToWork_schedule(): " + e.getMessage());
@@ -45,7 +47,8 @@ public class Work_ScheduleDAL extends Manager {
                     work_schedule.getDate(),
                     work_schedule.getCheck_in(),
                     work_schedule.getCheck_out(),
-                    work_schedule.getShift()
+                    work_schedule.getShift(),
+                    work_schedule.getNotice()
             );
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in Work_scheduleDAL.addWork_schedule(): " + e.getMessage());
@@ -62,6 +65,7 @@ public class Work_ScheduleDAL extends Manager {
             updateValues.add(work_schedule.getCheck_in());
             updateValues.add(work_schedule.getCheck_out());
             updateValues.add(work_schedule.getShift());
+            updateValues.add(work_schedule.getNotice());
             return update(updateValues, "id = " + work_schedule.getId());
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in Work_scheduleDAL.updateWork_schedule(): " + e.getMessage());

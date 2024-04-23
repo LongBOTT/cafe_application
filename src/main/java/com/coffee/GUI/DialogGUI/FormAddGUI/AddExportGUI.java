@@ -135,6 +135,7 @@ public class AddExportGUI extends DialogFormDetail {
         jTextFieldSearch.setBackground(new Color(255, 255, 255));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập nội dung tìm kiếm");
+        jTextFieldSearch.putClientProperty("JTextField.showClearButton", true);
         jTextFieldSearch.setPreferredSize(new Dimension(300, 30));
         jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override

@@ -3,6 +3,7 @@ package com.coffee.DTO;
 import com.coffee.utils.VNString;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Import_Note {
@@ -58,6 +59,6 @@ public class Import_Note {
         return id + " | " +
                 staff_id + " | " +
                 VNString.currency(Double.parseDouble(total.toString())) + " | " +
-                received_date;
+                new SimpleDateFormat("dd/MM/yyyy").format(received_date);
     }
 }

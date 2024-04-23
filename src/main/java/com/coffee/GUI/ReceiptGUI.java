@@ -94,6 +94,7 @@ public class ReceiptGUI extends Layout2 {
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập tên nhân viên cần tìm kiếm");
+        jTextFieldSearch.putClientProperty("JTextField.showClearButton", true);
         jTextFieldSearch.setPreferredSize(new Dimension(250, 30));
         jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -188,7 +189,7 @@ public class ReceiptGUI extends Layout2 {
 
     private void searchReceipts() {
         List<Receipt> receiptList = receiptBLL.searchReceipts();
-        if (jTextFieldSearch.getText().isEmpty() && datePicker.getDateSQL_Between().length == 0) {
+        if (jTextFieldSearch.getText().isEmpty() && datePicker.getDateSQL_Between() == null) {
             loadDataTable(receiptBLL.getData(receiptList));
         } else {
             if (!jTextFieldSearch.getText().isEmpty()) {
@@ -197,23 +198,15 @@ public class ReceiptGUI extends Layout2 {
                     staffIDList.add(staff.getId());
                 receiptList.removeIf(receipt -> !staffIDList.contains(receipt.getStaff_id()));
             }
-            Date startDate = datePicker.getDateSQL_Between()[0];
-            Date endDate = datePicker.getDateSQL_Between()[1];
-            if (startDate != null || endDate != null) {
-                if (startDate != null && endDate != null) {
-                    if (startDate.after(endDate)) {
-                        JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
-                                "Lỗi", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    receiptList.removeIf(receipt -> (receipt.getInvoice_date().before(startDate) || receipt.getInvoice_date().after(endDate)));
-                } else {
-                    if (startDate == null) {
-                        receiptList.removeIf(receipt -> (receipt.getInvoice_date().before(java.sql.Date.valueOf("1000-1-1")) || receipt.getInvoice_date().after(endDate)));
-                    } else {
-                        receiptList.removeIf(receipt -> (receipt.getInvoice_date().before(startDate)));
-                    }
+            if (datePicker.getDateSQL_Between() != null) {
+                Date startDate = datePicker.getDateSQL_Between()[0];
+                Date endDate = datePicker.getDateSQL_Between()[1];
+                if (startDate.after(endDate)) {
+                    JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
+                receiptList.removeIf(receipt -> (receipt.getInvoice_date().before(startDate) || receipt.getInvoice_date().after(endDate)));
             }
             loadDataTable(receiptBLL.getData(receiptList));
         }

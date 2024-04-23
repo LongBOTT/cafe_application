@@ -82,6 +82,7 @@ public class PayrollDetailGUI extends Layout1 {
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập tên nhân viên tìm kiếm");
+        jTextFieldSearch.putClientProperty("JTextField.showClearButton", true);
         jTextFieldSearch.setPreferredSize(new Dimension(280, 30));
         jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override

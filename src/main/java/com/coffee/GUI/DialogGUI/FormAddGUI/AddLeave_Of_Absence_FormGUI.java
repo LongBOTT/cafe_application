@@ -4,6 +4,8 @@ package com.coffee.GUI.DialogGUI.FormAddGUI;
 import com.coffee.BLL.Leave_Of_Absence_FormBLL;
 import com.coffee.DTO.Leave_Of_Absence_Form;
 import com.coffee.DTO.Staff;
+import com.coffee.GUI.Leave_Of_Absence_FormGUI;
+import com.coffee.GUI.MaterialGUI;
 import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.main.Cafe_Application;
@@ -16,10 +18,7 @@ import raven.datetime.component.date.DateSelectionListener;
 import javax.swing.*;
 import java.awt.*;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
@@ -37,6 +36,7 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
     private JCheckBox jCheckBox1;
     private JCheckBox jCheckBox2;
     private JCheckBox jCheckBox3;
+    private JComboBox<String> jComboBox;
 
     public AddLeave_Of_Absence_FormGUI(Staff staff) {
         super((Frame) null, "", true);
@@ -69,6 +69,7 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
         jCheckBox1 = new JCheckBox();
         jCheckBox2 = new JCheckBox();
         jCheckBox3 = new JCheckBox();
+        jComboBox = new JComboBox<>(new String[]{"Lý do", "1. Nghỉ ốm", "2. Nghỉ phép năm (12 ngày/năm)", "3. Nghỉ kết hôn (3 ngày)", "4. Nghỉ con cái kết hôn (1 ngày)", "5. Nghỉ khác"});
 
         RoundedPanel top = new RoundedPanel();
         top.setLayout(new GridBagLayout());
@@ -144,6 +145,28 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
                 continue;
             }
             if (string.equals("Lý do")) {
+                jComboBox.setPreferredSize(new Dimension(1000, 50));
+                jComboBox.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+                jComboBox.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (jComboBox.getSelectedIndex() != 5 && jComboBox.getSelectedIndex() != 0) {
+                            jTextArea.setText(Objects.requireNonNull(jComboBox.getSelectedItem()).toString().split("\\. ")[1].split(" \\(")[0]);
+                            jTextArea.setEditable(false);
+                        } else if (jComboBox.getSelectedIndex() == 0) {
+                            jTextArea.setEditable(true);
+                            jTextArea.setText("");
+                        } else {
+                            jTextArea.setEditable(true);
+                            jTextArea.setText("");
+                            jTextArea.setRequestFocusEnabled(true);
+                        }
+                    }
+                });
+                center.add(jComboBox, "wrap");
+
+                center.add(new JLabel());
+
                 jTextArea.setBackground(Color.white);
                 jTextArea.setPreferredSize(new Dimension(1000, 200));
                 center.add(jTextArea, "wrap");
@@ -153,6 +176,8 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
         buttonCreate.setPreferredSize(new Dimension(100, 30));
         buttonCreate.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonCreate.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        buttonCreate.setBackground(new Color(1, 120, 220));
+        buttonCreate.setForeground(Color.white);
         buttonCreate.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -223,6 +248,10 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             dispose();
+            if (Cafe_Application.homeGUI.indexModuleLeaveOffGUI != -1) {
+                Leave_Of_Absence_FormGUI leaveOfAbsenceFormGUI = (Leave_Of_Absence_FormGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModuleLeaveOffGUI];
+                leaveOfAbsenceFormGUI.refresh();
+            }
         } else {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);

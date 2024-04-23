@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 22, 2024 at 08:17 PM
+-- Generation Time: Apr 22, 2024 at 08:42 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -1079,10 +1079,10 @@ CREATE TABLE `salary_format_allowance` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `salary_format_detail_copy1`
+-- Table structure for table `salary_format_deduction`
 --
 
-CREATE TABLE `salary_format_detail_copy1` (
+CREATE TABLE `salary_format_deduction` (
   `salary_format_id` bigint(20) NOT NULL,
   `deduction_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -1441,9 +1441,9 @@ ALTER TABLE `salary_format_allowance`
   ADD KEY `fk_allowance` (`allowance_id`);
 
 --
--- Indexes for table `salary_format_detail_copy1`
+-- Indexes for table `salary_format_deduction`
 --
-ALTER TABLE `salary_format_detail_copy1`
+ALTER TABLE `salary_format_deduction`
   ADD PRIMARY KEY (`salary_format_id`,`deduction_id`) USING BTREE,
   ADD KEY `fk_deduction` (`deduction_id`);
 
@@ -1599,11 +1599,11 @@ ALTER TABLE `salary_format_allowance`
   ADD CONSTRAINT `fk_salary` FOREIGN KEY (`salary_format_id`) REFERENCES `salary_format` (`id`);
 
 --
--- Constraints for table `salary_format_detail_copy1`
+-- Constraints for table `salary_format_deduction`
 --
-ALTER TABLE `salary_format_detail_copy1`
-  ADD CONSTRAINT `salary_format_detail_copy1_ibfk_2` FOREIGN KEY (`deduction_id`) REFERENCES `deduction` (`id`),
-  ADD CONSTRAINT `salary_format_detail_copy1_ibfk_3` FOREIGN KEY (`salary_format_id`) REFERENCES `salary_format` (`id`);
+ALTER TABLE `salary_format_deduction`
+  ADD CONSTRAINT `salary_format_deduction_ibfk_2` FOREIGN KEY (`deduction_id`) REFERENCES `deduction` (`id`),
+  ADD CONSTRAINT `salary_format_deduction_ibfk_3` FOREIGN KEY (`salary_format_id`) REFERENCES `salary_format` (`id`);
 
 --
 -- Constraints for table `shipment`

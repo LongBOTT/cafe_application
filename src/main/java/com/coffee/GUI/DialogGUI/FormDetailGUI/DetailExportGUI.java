@@ -20,6 +20,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -71,7 +72,7 @@ public class DetailExportGUI extends DialogFormDetail {
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
             if (string.trim().equals("Ngày Tạo")) {
-                textField.setText(export.getInvoice_date().toString());
+                textField.setText(new SimpleDateFormat("dd/MM/yyyy").format(export.getInvoice_date()));
             }
             if (string.trim().equals("Mã Phiếu Xuất")) {
                 String exportId = Integer.toString(export.getId());

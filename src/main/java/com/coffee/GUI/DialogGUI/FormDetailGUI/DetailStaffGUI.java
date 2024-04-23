@@ -68,7 +68,7 @@ public class DetailStaffGUI extends DialogForm {
             textField.setBackground(new Color(245, 246, 250));
 
             if (string.trim().equals("Ngày Sinh")) {
-                textField.setText(staff.getBirthdate().toString());
+                textField.setText(new SimpleDateFormat("dd/MM/yyyy").format(staff.getBirthdate()));
                 content.add(textField, "wrap");
             } else {
                 if (string.trim().equals("Mã Nhân Viên")) {

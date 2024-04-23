@@ -33,7 +33,8 @@ import java.util.Set;
 public class DatePicker extends raven.datetime.component.date.DatePicker {
     public DatePicker() {
         super();
-        setSeparator("  Đến  ");
+        setSeparator("  ―  ");
+        setOpaque(false);
     }
 
     @Override
@@ -1860,11 +1861,6 @@ public class DatePicker extends raven.datetime.component.date.DatePicker {
         return super.clone();
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-    }
-
     public Date getDateSQL_Single() {
         LocalDate date = getSelectedDate();
         if (date != null) {
@@ -1878,6 +1874,6 @@ public class DatePicker extends raven.datetime.component.date.DatePicker {
         if (dates != null) {
             return new Date[]{java.sql.Date.valueOf(dates[0]), java.sql.Date.valueOf(dates[1])};
         }
-        return new Date[0];
+        return null;
     }
 }

@@ -15,6 +15,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -97,20 +98,16 @@ public class DetailLeave_Of_Absence_FormGUI extends JDialog {
 
             }
             if (string.equals("Ngày tạo")) {
-                textField.setText(leaveOfAbsenceForm.getDate().toString());
+                textField.setText(new SimpleDateFormat("dd/MM/yyyy").format(leaveOfAbsenceForm.getDate()));
                 textField.setPreferredSize(new Dimension(1000, 50));
                 textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
                 textField.setBackground(Color.white);
-
-                center.add(textField, "wrap");
             }
             if (string.equals("Ngày nghỉ")) {
-                textField.setText(leaveOfAbsenceForm.getDate_off().toString());
+                textField.setText(new SimpleDateFormat("dd/MM/yyyy").format(leaveOfAbsenceForm.getDate_off()));
                 textField.setPreferredSize(new Dimension(1000, 50));
                 textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
                 textField.setBackground(Color.white);
-
-                center.add(textField, "wrap");
             }
             if (string.equals("Ca")) {
                 textField.setText(leaveOfAbsenceForm.getShifts());

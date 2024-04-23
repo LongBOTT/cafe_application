@@ -180,7 +180,7 @@ public class InfoGUI extends InfoPanel {
         address = jTextFieldsStaff.get(1).getText();
         email = jTextFieldsStaff.get(2).getText();
 
-        Staff newstaff = new Staff(staff.getId(), staff.getStaffNo(), staff.getName(), staff.isGender(), staff.getBirthdate(), phone, address, email, false); // false là tồn tại, true là đã xoá
+        Staff newstaff = new Staff(staff.getId(), staff.getStaffNo(), staff.getName(), staff.isGender(), staff.getBirthdate(), phone, address, email, false, staff.getSalary_format_id()); // false là tồn tại, true là đã xoá
 
         result = new StaffBLL().updateStaff(staff, newstaff);
 

@@ -112,13 +112,13 @@ public class EditLeave_Of_Absence_FormGUI extends JDialog {
 
             }
             if (string.equals("Ngày tạo")) {
-                textField.setText(leaveOfAbsenceForm.getDate().toString());
+                textField.setText(new SimpleDateFormat("dd/MM/yyyy").format(leaveOfAbsenceForm.getDate()));
                 textField.setPreferredSize(new Dimension(1000, 50));
                 textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
                 textField.setBackground(Color.white);
             }
             if (string.equals("Ngày nghỉ")) {
-                textField.setText(leaveOfAbsenceForm.getDate_off().toString());
+                textField.setText(new SimpleDateFormat("dd/MM/yyyy").format(leaveOfAbsenceForm.getDate_off()));
                 textField.setPreferredSize(new Dimension(1000, 50));
                 textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
                 textField.setBackground(Color.white);

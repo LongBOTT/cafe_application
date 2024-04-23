@@ -105,6 +105,7 @@ public class StaffGUI extends Layout1 {
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập nội dung tìm kiếm");
+        jTextFieldSearch.putClientProperty("JTextField.showClearButton", true);
         jTextFieldSearch.setPreferredSize(new Dimension(300, 30));
         containerSearch.add(jTextFieldSearch);
         jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
@@ -317,7 +318,6 @@ public class StaffGUI extends Layout1 {
             }
         }
     }
-
 
 
     public void loadDataTable(Object[][] objects) {

@@ -2,9 +2,9 @@ package com.coffee.GUI;
 
 import com.coffee.BLL.*;
 import com.coffee.DTO.*;
-import com.coffee.GUI.DialogGUI.FormAddGUI.AddBonusGUI;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddAllowanceGUI;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddDeductionGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditBonusGUI;
+import com.coffee.GUI.DialogGUI.FromEditGUI.EditAllowanceGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditDeductionGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditStaffGUI;
 import com.coffee.GUI.components.EventSwitchSelected;
@@ -29,7 +29,7 @@ import java.util.*;
 import java.util.List;
 
 public class ChangeRoleGUI extends JDialog {
-    private JPanel jPanelBonus;
+    private JPanel jPanelAllowance;
     private JPanel jPanelDeduction;
     private RoundedPanel role_detail_panel;
     private RoundedPanel role_detail_bonus_panel;
@@ -38,23 +38,23 @@ public class ChangeRoleGUI extends JDialog {
     private List<JLabel> attributeRole_detail;
     private JComboBox<String> jComboBoxRole;
     private JComboBox<String> jComboBoxTypeSalary;
-    private JComboBox<String> jComboBoxBonus;
+    private JComboBox<String> jComboBoxAllowance;
     private JComboBox<String> jComboBoxDeduction;
     private JLabel jLabelTypeSalary;
     private JTextField textFieldSalary;
     private JButton buttonCancel;
     private JButton buttonSet;
-    private JButton buttonAddBonus;
+    private JButton buttonAddAllowance;
     private JButton buttonAddDeduction;
-    private SwitchButton switchButtonBonus;
+    private SwitchButton switchButtonAllowance;
     private SwitchButton switchButtonDeduction;
     private Role_DetailBLL role_detailBLL = new Role_DetailBLL();
     private Staff staff;
     private Role_Detail roleDetail;
     private RoundedPanel content = new RoundedPanel();
-    private JScrollPane scrollPaneBonus;
+    private JScrollPane scrollPaneAllowance;
     private JScrollPane scrollPaneDeduction;
-    private List<Bonus> bonusList;
+    private List<Allowance> allowanceList;
     private List<Deduction> deductionList;
 
     public ChangeRoleGUI(Staff staff) {
@@ -95,13 +95,13 @@ public class ChangeRoleGUI extends JDialog {
         textFieldSalary = new JTextField();
         buttonCancel = new JButton("Huỷ");
         buttonSet = new JButton("Thiết lập");
-        switchButtonBonus = new SwitchButton();
+        switchButtonAllowance = new SwitchButton();
         switchButtonDeduction = new SwitchButton();
-        scrollPaneBonus = new JScrollPane();
+        scrollPaneAllowance = new JScrollPane();
         scrollPaneDeduction = new JScrollPane();
-        bonusList = new ArrayList<>();
+        allowanceList = new ArrayList<>();
         deductionList = new ArrayList<>();
-        jPanelBonus = new JPanel();
+        jPanelAllowance = new JPanel();
         jPanelDeduction = new JPanel();
 
         RoundedPanel title = new RoundedPanel();
@@ -143,18 +143,18 @@ public class ChangeRoleGUI extends JDialog {
                 "15[]5[]5[]"));
         content.add(role_detail_bonus_panel);
 
-        JLabel labelBonus = new JLabel();
-        labelBonus.setText("Phụ cấp");
-        labelBonus.setFont((new Font("Public Sans", Font.PLAIN, 16)));
-        role_detail_bonus_panel.add(labelBonus);
+        JLabel labelAllowance = new JLabel();
+        labelAllowance.setText("Phụ cấp");
+        labelAllowance.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+        role_detail_bonus_panel.add(labelAllowance);
 
-        switchButtonBonus.addEventSelected(new EventSwitchSelected() {
+        switchButtonAllowance.addEventSelected(new EventSwitchSelected() {
             @Override
             public void onSelected(boolean selected) {
-                if (selected && switchButtonBonus.isEnabled()) {
-                    showBonus_DeductionPanel(true);
+                if (selected && switchButtonAllowance.isEnabled()) {
+                    showAllowance_DeductionPanel(true);
                 }
-                if (!selected && switchButtonBonus.isEnabled()) {
+                if (!selected && switchButtonAllowance.isEnabled()) {
                     role_detail_bonus_panel.setPreferredSize(new Dimension(685, 40));
                     content.setPreferredSize(new Dimension(700, content.getHeight() - 130));
                     content.repaint();
@@ -164,31 +164,31 @@ public class ChangeRoleGUI extends JDialog {
                     revalidate();
                     setLocationRelativeTo(Cafe_Application.homeGUI);
                 }
-                if (!switchButtonBonus.isEnabled()) {
+                if (!switchButtonAllowance.isEnabled()) {
                     JOptionPane.showMessageDialog(null, "Nhân viên chưa có chức vụ!",
                             "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
-        role_detail_bonus_panel.add(switchButtonBonus, "wrap");
+        role_detail_bonus_panel.add(switchButtonAllowance, "wrap");
 
-        scrollPaneBonus.setPreferredSize(new Dimension(685, 150));
-        scrollPaneBonus.setBackground(Color.white);
-        role_detail_bonus_panel.add(scrollPaneBonus, "span, wrap");
+        scrollPaneAllowance.setPreferredSize(new Dimension(685, 150));
+        scrollPaneAllowance.setBackground(Color.white);
+        role_detail_bonus_panel.add(scrollPaneAllowance, "span, wrap");
 
-        buttonAddBonus = new JButton("+ Thêm phụ cấp");
-        buttonAddBonus.addActionListener(new ActionListener() {
+        buttonAddAllowance = new JButton("+ Thêm phụ cấp");
+        buttonAddAllowance.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new AddBonusGUI();
-                List<Bonus> bonusList = new BonusBLL().searchBonuss();
-                Bonus bonus = bonusList.get(bonusList.size() - 1);
-                jComboBoxBonus.addItem(bonus.getName());
+                new AddAllowanceGUI();
+                List<Allowance> allowanceList = new AllowanceBLL().searchAllowances();
+                Allowance allowance = allowanceList.get(allowanceList.size() - 1);
+                jComboBoxAllowance.addItem(allowance.getName());
                 setVisible(true);
             }
         });
-        role_detail_bonus_panel.add(buttonAddBonus, "span, wrap");
+        role_detail_bonus_panel.add(buttonAddAllowance, "span, wrap");
 
         role_detail_deduction_panel.setBackground(new Color(242, 245, 250));
         role_detail_deduction_panel.setPreferredSize(new Dimension(685, 40));
@@ -206,7 +206,7 @@ public class ChangeRoleGUI extends JDialog {
             @Override
             public void onSelected(boolean selected) {
                 if (selected && switchButtonDeduction.isEnabled()) {
-                    showBonus_DeductionPanel(false);
+                    showAllowance_DeductionPanel(false);
                 }
                 if (!selected && switchButtonDeduction.isEnabled()) {
                     role_detail_deduction_panel.setPreferredSize(new Dimension(685, 40));
@@ -369,23 +369,23 @@ public class ChangeRoleGUI extends JDialog {
         if (roleDetail != null) {
             DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-            List<Role_Detail_Bonus> roleDetailBonusList = new Role_Detail_BonusBLL().searchRole_Detail_Bonuss(
-                    "role_id = " + roleDetail.getRole_id(),
-                    "staff_id = " + roleDetail.getStaff_id(),
-                    "entry_date = '" + roleDetail.getEntry_date().format(myFormatObj) + "'");
-            for (Role_Detail_Bonus roleDetailBonus : roleDetailBonusList) {
-                Bonus bonus = new BonusBLL().searchBonuss("id = " + roleDetailBonus.getBonus_id()).get(0);
-                bonusList.add(bonus);
-            }
-
-            List<Role_Detail_Deduction> roleDetailDeductionList = new Role_Detail_DeductionBLL().searchRole_Detail_Deductions(
-                    "role_id = " + roleDetail.getRole_id(),
-                    "staff_id = " + roleDetail.getStaff_id(),
-                    "entry_date = '" + roleDetail.getEntry_date().format(myFormatObj) + "'");
-            for (Role_Detail_Deduction roleDetailDeduction : roleDetailDeductionList) {
-                Deduction deduction = new DeductionBLL().searchDeductions("id = " + roleDetailDeduction.getDeduction_id()).get(0);
-                deductionList.add(deduction);
-            }
+//            List<Role_Detail_Allowance> roleDetailAllowanceList = new AllowanceBLL().searchRole_Detail_Allowances(
+//                    "role_id = " + roleDetail.getRole_id(),
+//                    "staff_id = " + roleDetail.getStaff_id(),
+//                    "entry_date = '" + roleDetail.getEntry_date().format(myFormatObj) + "'");
+//            for (Role_Detail_Allowance roleDetailAllowance : roleDetailAllowanceList) {
+//                Allowance allowance = new AllowanceBLL().searchAllowances("id = " + roleDetailAllowance.getAllowance_id()).get(0);
+//                allowanceList.add(allowance);
+//            }
+//
+//            List<Role_Detail_Deduction> roleDetailDeductionList = new Role_Detail_DeductionBLL().searchRole_Detail_Deductions(
+//                    "role_id = " + roleDetail.getRole_id(),
+//                    "staff_id = " + roleDetail.getStaff_id(),
+//                    "entry_date = '" + roleDetail.getEntry_date().format(myFormatObj) + "'");
+//            for (Role_Detail_Deduction roleDetailDeduction : roleDetailDeductionList) {
+//                Deduction deduction = new DeductionBLL().searchDeductions("id = " + roleDetailDeduction.getDeduction_id()).get(0);
+//                deductionList.add(deduction);
+//            }
         }
     }
 
@@ -434,14 +434,14 @@ public class ChangeRoleGUI extends JDialog {
 
         if (result.getKey()) {
 
-            for (Bonus bonus : bonusList) {
-                Role_Detail_Bonus roleDetailBonus = new Role_Detail_Bonus(role_id, staff_id, entry_date, bonus.getId());
-                new Role_Detail_BonusBLL().addRole_Detail_Bonus(roleDetailBonus);
+            for (Allowance allowance : allowanceList) {
+//                Role_Detail_Allowance roleDetailAllowance = new Role_Detail_Allowance(role_id, staff_id, entry_date, allowance.getId());
+//                new AllowanceBLL().addRole_Detail_Allowance(roleDetailAllowance);
             }
 
             for (Deduction deduction : deductionList) {
-                Role_Detail_Deduction roleDetailDeduction = new Role_Detail_Deduction(role_id, staff_id, entry_date, deduction.getId());
-                new Role_Detail_DeductionBLL().addRole_Detail_Deduction(roleDetailDeduction);
+//                Role_Detail_Deduction roleDetailDeduction = new Role_Detail_Deduction(role_id, staff_id, entry_date, deduction.getId());
+//                new Role_Detail_DeductionBLL().addRole_Detail_Deduction(roleDetailDeduction);
             }
 
             JOptionPane.showMessageDialog(null, result.getValue(),
@@ -456,7 +456,7 @@ public class ChangeRoleGUI extends JDialog {
 
     }
 
-    private void showBonus_DeductionPanel(boolean flag) {
+    private void showAllowance_DeductionPanel(boolean flag) {
 
         if (flag) {
             role_detail_bonus_panel.setPreferredSize(new Dimension(685, 190));
@@ -472,10 +472,10 @@ public class ChangeRoleGUI extends JDialog {
         revalidate();
         setLocationRelativeTo(Cafe_Application.homeGUI);
 
-        loadBonus_Deduction(flag);
+        loadAllowance_Deduction(flag);
     }
 
-    private void loadBonus_Deduction(boolean flag) {
+    private void loadAllowance_Deduction(boolean flag) {
         JLabel titleName = new JLabel();
         JLabel titleAmount = new JLabel();
         JLabel titleType = new JLabel();
@@ -491,51 +491,51 @@ public class ChangeRoleGUI extends JDialog {
         titleType.setFont((new Font("Public Sans", Font.BOLD, 13)));
 
         if (flag) {
-            jPanelBonus.setBackground(new Color(255, 255, 255));
-            jPanelBonus.setLayout(new MigLayout("", "10[]10[]10[]70[]0[]0"));
-            jPanelBonus.removeAll();
+            jPanelAllowance.setBackground(new Color(255, 255, 255));
+            jPanelAllowance.setLayout(new MigLayout("", "10[]10[]10[]70[]0[]0"));
+            jPanelAllowance.removeAll();
 
             titleName.setText("Tên phụ cấp");
             titleAmount.setText("Số tiền phụ cấp");
             titleType.setText("Loại phụ cấp");
 
-            jPanelBonus.add(titleName);
-            jPanelBonus.add(titleAmount);
-            jPanelBonus.add(titleType, "span, wrap");
+            jPanelAllowance.add(titleName);
+            jPanelAllowance.add(titleAmount);
+            jPanelAllowance.add(titleType, "span, wrap");
 
-            jComboBoxBonus = new JComboBox<>();
-            jComboBoxBonus.addItem("--Chon loại phụ cấp--");
-            for (Bonus bonus : new BonusBLL().searchBonuss())
-                jComboBoxBonus.addItem(bonus.getName());
+            jComboBoxAllowance = new JComboBox<>();
+            jComboBoxAllowance.addItem("--Chon loại phụ cấp--");
+            for (Allowance allowance : new AllowanceBLL().searchAllowances())
+                jComboBoxAllowance.addItem(allowance.getName());
 
-            jComboBoxBonus.addActionListener(new ActionListener() {
+            jComboBoxAllowance.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    addRole_Detail_Bonus();
+                    addRole_Detail_Allowance();
                 }
             });
 
-            for (Bonus bonus : bonusList) {
-                jComboBoxBonus.removeItem(bonus.getName());
+            for (Allowance allowance : allowanceList) {
+                jComboBoxAllowance.removeItem(allowance.getName());
 
-                JLabel jLabelBonusName = new JLabel(bonus.getName());
-                jLabelBonusName.setPreferredSize(new Dimension(120, 30));
-                jLabelBonusName.setFont((new Font("Public Sans", Font.PLAIN, 13)));
-                jPanelBonus.add(jLabelBonusName);
+                JLabel jLabelAllowanceName = new JLabel(allowance.getName());
+                jLabelAllowanceName.setPreferredSize(new Dimension(120, 30));
+                jLabelAllowanceName.setFont((new Font("Public Sans", Font.PLAIN, 13)));
+                jPanelAllowance.add(jLabelAllowanceName);
 
-                JLabel jLabelBonusAmount = new JLabel(String.valueOf(bonus.getBonus_amount()));
-                jLabelBonusAmount.setPreferredSize(new Dimension(120, 30));
-                jLabelBonusAmount.setFont((new Font("Public Sans", Font.PLAIN, 13)));
-                jPanelBonus.add(jLabelBonusAmount);
+                JLabel jLabelAllowanceAmount = new JLabel(String.valueOf(allowance.getAllowance_amount()));
+                jLabelAllowanceAmount.setPreferredSize(new Dimension(120, 30));
+                jLabelAllowanceAmount.setFont((new Font("Public Sans", Font.PLAIN, 13)));
+                jPanelAllowance.add(jLabelAllowanceAmount);
 
-                JLabel jLabelBonusType = new JLabel();
-                if (bonus.getBonus_type() == 0)
-                    jLabelBonusType.setText("Phụ cấp theo ngày làm");
-                if (bonus.getBonus_type() == 1)
-                    jLabelBonusType.setText("Phụ cấp theo tháng làm");
-                jLabelBonusType.setPreferredSize(new Dimension(120, 30));
-                jLabelBonusType.setFont((new Font("Public Sans", Font.PLAIN, 13)));
-                jPanelBonus.add(jLabelBonusType);
+                JLabel jLabelAllowanceType = new JLabel();
+                if (allowance.getAllowance_type() == 0)
+                    jLabelAllowanceType.setText("Phụ cấp theo ngày làm");
+                if (allowance.getAllowance_type() == 1)
+                    jLabelAllowanceType.setText("Phụ cấp theo tháng làm");
+                jLabelAllowanceType.setPreferredSize(new Dimension(120, 30));
+                jLabelAllowanceType.setFont((new Font("Public Sans", Font.PLAIN, 13)));
+                jPanelAllowance.add(jLabelAllowanceType);
 
                 JLabel jLabelIconEdit = new JLabel(new FlatSVGIcon("icon/edit.svg"));
                 jLabelIconEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -543,24 +543,24 @@ public class ChangeRoleGUI extends JDialog {
                     @Override
                     public void mousePressed(MouseEvent e) {
                         setVisible(false);
-                        new EditBonusGUI(bonus);
-                        Bonus newBonus = new BonusBLL().searchBonuss("id = " + bonus.getId()).get(0);
-                        bonusList.set(bonusList.indexOf(bonus), newBonus);
-                        loadBonus_Deduction(true);
+//                        new EditAllowanceGUI(allowance);
+                        Allowance newAllowance = new AllowanceBLL().searchAllowances("id = " + allowance.getId()).get(0);
+                        allowanceList.set(allowanceList.indexOf(allowance), newAllowance);
+                        loadAllowance_Deduction(true);
                         setVisible(true);
                     }
                 });
-                jPanelBonus.add(jLabelIconEdit);
+                jPanelAllowance.add(jLabelIconEdit);
 
                 JLabel jLabelIconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
                 jLabelIconRemove.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 jLabelIconRemove.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
-                        deleteRole_Detail_Bonus(bonus);
+                        deleteRole_Detail_Allowance(allowance);
                     }
                 });
-                jPanelBonus.add(jLabelIconRemove, "wrap");
+                jPanelAllowance.add(jLabelIconRemove, "wrap");
             }
         } else {
             jPanelDeduction.setBackground(new Color(255, 255, 255));
@@ -624,7 +624,7 @@ public class ChangeRoleGUI extends JDialog {
                         new EditDeductionGUI(deduction);
                         Deduction newDeduction = new DeductionBLL().searchDeductions("id = " + deduction.getId()).get(0);
                         deductionList.set(deductionList.indexOf(deduction), newDeduction);
-                        loadBonus_Deduction(false);
+                        loadAllowance_Deduction(false);
                         setVisible(true);
                     }
                 });
@@ -643,11 +643,11 @@ public class ChangeRoleGUI extends JDialog {
         }
 
         if (flag) {
-            jComboBoxBonus.setSelectedIndex(0);
-            jPanelBonus.add(jComboBoxBonus);
-            jPanelBonus.repaint();
-            jPanelBonus.revalidate();
-            scrollPaneBonus.setViewportView(jPanelBonus);
+            jComboBoxAllowance.setSelectedIndex(0);
+            jPanelAllowance.add(jComboBoxAllowance);
+            jPanelAllowance.repaint();
+            jPanelAllowance.revalidate();
+            scrollPaneAllowance.setViewportView(jPanelAllowance);
         } else {
             jComboBoxDeduction.setSelectedIndex(0);
             jPanelDeduction.add(jComboBoxDeduction);
@@ -657,10 +657,10 @@ public class ChangeRoleGUI extends JDialog {
         }
     }
 
-    private void deleteRole_Detail_Bonus(Bonus bonus) {
-        bonusList.remove(bonus);
-        loadBonus_Deduction(true);
-//        Pair<Boolean, String> result = new Role_Detail_BonusBLL().deleteRole_Detail_Bonus(roleDetailBonus);
+    private void deleteRole_Detail_Allowance(Allowance allowance) {
+        allowanceList.remove(allowance);
+        loadAllowance_Deduction(true);
+//        Pair<Boolean, String> result = new AllowanceBLL().deleteRole_Detail_Allowance(roleDetailAllowance);
 //
 //        if (result.getKey()) {
 //            JOptionPane.showMessageDialog(null, result.getValue(),
@@ -681,7 +681,7 @@ public class ChangeRoleGUI extends JDialog {
 
     private void deleteRole_Detail_Deduction(Deduction deduction) {
         deductionList.remove(deduction);
-        loadBonus_Deduction(false);
+        loadAllowance_Deduction(false);
 //        Pair<Boolean, String> result = new Role_Detail_DeductionBLL().deleteRole_Detail_Deduction(roleDetailDeduction);
 //
 //        if (result.getKey()) {
@@ -709,12 +709,12 @@ public class ChangeRoleGUI extends JDialog {
             dispose();
     }
 
-    private void addRole_Detail_Bonus() {
-        int selectedIndex = jComboBoxBonus.getSelectedIndex();
+    private void addRole_Detail_Allowance() {
+        int selectedIndex = jComboBoxAllowance.getSelectedIndex();
         if (selectedIndex != 0) {
-            Bonus bonus = new BonusBLL().searchBonuss("name = '" + jComboBoxBonus.getSelectedItem() + "'").get(0);
-            bonusList.add(bonus);
-            loadBonus_Deduction(true);
+            Allowance allowance = new AllowanceBLL().searchAllowances("name = '" + jComboBoxAllowance.getSelectedItem() + "'").get(0);
+            allowanceList.add(allowance);
+            loadAllowance_Deduction(true);
         }
     }
 
@@ -723,7 +723,7 @@ public class ChangeRoleGUI extends JDialog {
         if (selectedIndex != 0) {
             Deduction deduction = new DeductionBLL().searchDeductions("name = '" + jComboBoxDeduction.getSelectedItem() + "'").get(0);
             deductionList.add(deduction);
-            loadBonus_Deduction(false);
+            loadAllowance_Deduction(false);
         }
     }
 }

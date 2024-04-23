@@ -118,6 +118,7 @@ public class ProductGUI extends Layout3 {
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập nội dung tìm kiếm");
+        jTextFieldSearch.putClientProperty("JTextField.showClearButton", true);
         jTextFieldSearch.setPreferredSize(new Dimension(250, 30));
 
         containerSearch.add(jTextFieldSearch);

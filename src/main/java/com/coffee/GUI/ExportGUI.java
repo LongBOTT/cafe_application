@@ -102,6 +102,7 @@ public class ExportGUI extends Layout2 {
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập tên nhân viên cần tìm kiếm");
+        jTextFieldSearch.putClientProperty("JTextField.showClearButton", true);
         jTextFieldSearch.setPreferredSize(new Dimension(250, 30));
         jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -251,7 +252,7 @@ public class ExportGUI extends Layout2 {
 
     private void searchExports() {
         List<Export_Note> import_noteList = exportNoteBLL.searchExport_Note();
-        if (jTextFieldSearch.getText().isEmpty() && datePicker.getDateSQL_Between().length == 0) {
+        if (jTextFieldSearch.getText().isEmpty() && datePicker.getDateSQL_Between() == null) {
             loadDataTable(exportNoteBLL.getData(import_noteList));
         } else {
             if (!jTextFieldSearch.getText().isEmpty()) {
@@ -260,23 +261,15 @@ public class ExportGUI extends Layout2 {
                     staffIDList.add(staff.getId());
                 import_noteList.removeIf(import_note -> !staffIDList.contains(import_note.getStaff_id()));
             }
-            Date startDate = datePicker.getDateSQL_Between()[0];
-            Date endDate = datePicker.getDateSQL_Between()[1];
-            if (startDate != null || endDate != null) {
-                if (startDate != null && endDate != null) {
-                    if (startDate.after(endDate)) {
-                        JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
-                                "Lỗi", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    import_noteList.removeIf(import_note -> (import_note.getInvoice_date().before(startDate) || import_note.getInvoice_date().after(endDate)));
-                } else {
-                    if (startDate == null) {
-                        import_noteList.removeIf(import_note -> (import_note.getInvoice_date().before(java.sql.Date.valueOf("1000-1-1")) || import_note.getInvoice_date().after(endDate)));
-                    } else {
-                        import_noteList.removeIf(import_note -> (import_note.getInvoice_date().before(startDate)));
-                    }
+            if (datePicker.getDateSQL_Between() != null) {
+                Date startDate = datePicker.getDateSQL_Between()[0];
+                Date endDate = datePicker.getDateSQL_Between()[1];
+                if (startDate.after(endDate)) {
+                    JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
+                import_noteList.removeIf(import_note -> (import_note.getInvoice_date().before(startDate) || import_note.getInvoice_date().after(endDate)));
             }
             loadDataTable(exportNoteBLL.getData(import_noteList));
         }

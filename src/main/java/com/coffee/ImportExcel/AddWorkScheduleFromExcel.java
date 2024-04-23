@@ -96,7 +96,7 @@ public class AddWorkScheduleFromExcel {
         Integer staff_id = (Integer) rowData.get("staff_id");
         Date date = (Date) rowData.get("date");
         Integer shift = (Integer) rowData.get("shift");
-        return new Work_Schedule(0, staff_id, date, null, null, shift);
+        return new Work_Schedule(0, staff_id, date, null, null, shift, "Không");
     }
 
     private Map<String, Object> readWork_ScheduleRowData(Row currentRow) {
@@ -181,9 +181,9 @@ public class AddWorkScheduleFromExcel {
     }
 
     private boolean isDuplicate(Work_Schedule work_schedule1, Work_Schedule work_schedule2) {
-        return work_schedule1.getStaff_id()==(work_schedule2.getStaff_id())
+        return work_schedule1.getStaff_id() == (work_schedule2.getStaff_id())
                 && work_schedule1.getDate().equals(work_schedule2.getDate())
-                && work_schedule1.getShift()==(work_schedule2.getShift());
+                && work_schedule1.getShift() == (work_schedule2.getShift());
     }
 
     // check xem giữa các dòng trong file excel có nhân viên bị  trùng lịch làm việc không

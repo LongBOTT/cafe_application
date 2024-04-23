@@ -133,6 +133,7 @@ public class SaleGUI extends SalePanel {
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập tên sản phẩm");
+        jTextFieldSearch.putClientProperty("JTextField.showClearButton", true);
         jTextFieldSearch.setPreferredSize(new Dimension(350, 30));
         jTextFieldSearch.addKeyListener(new KeyListener() {
             @Override

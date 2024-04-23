@@ -109,6 +109,7 @@ public class DiscountGUI extends Layout2 {
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Tìm kiếm theo tên chương trình");
+        jTextFieldSearch.putClientProperty("JTextField.showClearButton", true);
         jTextFieldSearch.setPreferredSize(new Dimension(250, 30));
         containerSearch.add(jTextFieldSearch);
 
@@ -163,6 +164,7 @@ public class DiscountGUI extends Layout2 {
 
         editor.setPreferredSize(new Dimension(280, 40));
         editor.setFont(new Font("Inter", Font.BOLD, 15));
+//        editor.putClientProperty("JComponent.roundRect", true);
         FilterDatePanel.add(editor, BorderLayout.WEST);
 
         JLabel refreshLabel = new JLabel("Làm mới");
@@ -271,40 +273,43 @@ public class DiscountGUI extends Layout2 {
 
     private void searchDiscountByName() {
         String value = jTextFieldSearch.getText();
+        datePicker.clearSelectedDate();
+        jComboBoxSearch.setSelectedIndex(0);
         if (value.isEmpty()) {
             loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0")));
         } else {
             loadDataTable(discountBLL.getData(discountBLL.findDiscounts("name", value)));
         }
-        datePicker.clearSelectedDate();
-        jComboBoxSearch.setSelectedIndex(0);
+
     }
 
     private void searchDiscountByStartDate_EndDate() {
         if (!processDateChangeEvent) {
             return;
         }
+//        jTextFieldSearch.setText("");
+//        jComboBoxSearch.setSelectedIndex(0);
         if (datePicker.getDateSQL_Between().length != 0) {
             Date startDate = datePicker.getDateSQL_Between()[0];
             Date endDate = datePicker.getDateSQL_Between()[1];
 
             loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0 AND start_date >= '" + startDate + "' AND end_date <= '" + endDate + "'")));
         }
-//        jTextFieldSearch.setText("");
-//        jComboBoxSearch.setSelectedIndex(0);
+
     }
 
     private void SelectDiscountStatus() {
         String selectedItem = Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString();
 
+        datePicker.clearSelectedDate();
+        jTextFieldSearch.setText("");
         if (selectedItem.equals("Đang áp dụng")) {
             loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("status = 0")));
         } else if (selectedItem.equals("Ngừng áp dụng")) {
             loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0 AND status = 1")));
         } else
             loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0")));
-        datePicker.clearSelectedDate();
-        jTextFieldSearch.setText("");
+
     }
 
     public void loadDataTable(Object[][] objects) {

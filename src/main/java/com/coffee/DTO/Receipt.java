@@ -2,6 +2,7 @@ package com.coffee.DTO;
 
 import com.coffee.utils.VNString;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Receipt {
@@ -107,6 +108,6 @@ public class Receipt {
         return id + " | " +
                 staff_id + " | " +
                 VNString.currency(total) + " | " +
-                invoice_date;
+                new SimpleDateFormat("dd/MM/yyyy").format(invoice_date);
     }
 }

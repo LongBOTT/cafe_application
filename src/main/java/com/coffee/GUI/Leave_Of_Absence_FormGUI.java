@@ -64,7 +64,7 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
         jButtonSearch = new JButton("Tìm kiếm");
         datePicker = new DatePicker();
         editor = new JFormattedTextField();
-        jComboBox = new JComboBox<>(new String[]{"Tất cả", "Chưa duyệt", "Duyệt", "Không duyệt"});
+        jComboBox = new JComboBox<>();
 
         columnNames = new String[]{"Mã Đơn", "Họ tên", "Ngày tạo đơn", "Ngày nghỉ", "Ca nghỉ", "Trạng thái"};
 
@@ -112,6 +112,7 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập tên nhân viên cần tìm kiếm");
+        jTextFieldSearch.putClientProperty("JTextField.showClearButton", true);
         jTextFieldSearch.setPreferredSize(new Dimension(250, 30));
         jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -137,7 +138,6 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
         jButtonSearch.addActionListener(e -> searchLeave_Of_Absence_Forms());
         SearchPanel.add(jButtonSearch);
 
-        jComboBox.setSelectedIndex(0);
         jComboBox.setBackground(new Color(1, 120, 220));
         jComboBox.setForeground(Color.white);
         jComboBox.setPreferredSize(new Dimension(200, 30));
@@ -149,6 +149,7 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
         });
         SearchPanel.add(jComboBox);
 
+        loadCombobox();
         loadDataTable(leave_Of_Absence_FormBLL.getData(leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms()));
 
         RoundedPanel refreshPanel = new RoundedPanel();
@@ -180,7 +181,7 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
 
     private void searchLeave_Of_Absence_Forms() {
         List<Leave_Of_Absence_Form> work_scheduleList = leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms();
-        if (jTextFieldSearch.getText().isEmpty() && datePicker.getDateSQL_Between().length == 0) {
+        if (jTextFieldSearch.getText().isEmpty() && datePicker.getDateSQL_Between() == null) {
             if (jComboBox.getSelectedIndex() == 1) {
                 work_scheduleList.removeIf(leaveOfAbsenceForm -> leaveOfAbsenceForm.getStatus() != 0);
             }
@@ -198,23 +199,15 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
                     staffIDList.add(staff.getId());
                 work_scheduleList.removeIf(work_schedule -> !staffIDList.contains(work_schedule.getStaff_id()));
             }
-            Date startDate = datePicker.getDateSQL_Between()[0];
-            Date endDate = datePicker.getDateSQL_Between()[1];
-            if (startDate != null || endDate != null) {
-                if (startDate != null && endDate != null) {
-                    if (startDate.after(endDate)) {
-                        JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
-                                "Lỗi", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    work_scheduleList.removeIf(work_schedule -> (work_schedule.getDate().before(startDate) || work_schedule.getDate().after(endDate)));
-                } else {
-                    if (startDate == null) {
-                        work_scheduleList.removeIf(work_schedule -> (work_schedule.getDate().before(java.sql.Date.valueOf("1000-1-1")) || work_schedule.getDate().after(endDate)));
-                    } else {
-                        work_scheduleList.removeIf(work_schedule -> (work_schedule.getDate().before(startDate)));
-                    }
+            if (datePicker.getDateSQL_Between() != null) {
+                Date startDate = datePicker.getDateSQL_Between()[0];
+                Date endDate = datePicker.getDateSQL_Between()[1];
+                if (startDate.after(endDate)) {
+                    JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
+                work_scheduleList.removeIf(work_schedule -> (work_schedule.getDate().before(startDate) || work_schedule.getDate().after(endDate)));
             }
             if (jComboBox.getSelectedIndex() == 1) {
                 work_scheduleList.removeIf(leaveOfAbsenceForm -> leaveOfAbsenceForm.getStatus() != 0);
@@ -273,11 +266,35 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
 
         if (edit && indexColumn == indexColumnEdit) {
             new EditLeave_Of_Absence_FormGUI(leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms("id = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
+            loadCombobox();
             refresh();
+
         }
 
 //        if (remove && indexColumn == indexColumnRemove)
 //            deleteWorkSchedule(leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms().get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
 
+    }
+
+    private void loadCombobox() {
+        jComboBox.removeAllItems();
+        int countStatus0 = 0;
+        int countStatus1 = 0;
+        int countStatus2 = 0;
+        int countAll = 0;
+        for (Leave_Of_Absence_Form leaveOfAbsenceForm : leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms()) {
+            if (leaveOfAbsenceForm.getStatus() == 0)
+                countStatus0 += 1;
+            if (leaveOfAbsenceForm.getStatus() == 1)
+                countStatus1 += 1;
+            if (leaveOfAbsenceForm.getStatus() == 2)
+                countStatus2 += 1;
+            countAll += 1;
+        }
+        jComboBox.addItem("Tất cả (" + countAll + ")");
+        jComboBox.addItem("Chưa duyệt (" + countStatus0 + ")");
+        jComboBox.addItem("Duyệt (" + countStatus1 + ")");
+        jComboBox.addItem("Không duyệt (" + countStatus2 + ")");
+        jComboBox.setSelectedIndex(0);
     }
 }

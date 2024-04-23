@@ -98,7 +98,7 @@ public class Timekeeping {
         Integer shift = (Integer) rowData.get("shift");
         String check_in = rowData.get("check_in").toString();
         String check_out = rowData.get("check_out").toString();
-        return new Work_Schedule(0, staff_id, date, check_in, check_out, shift);
+        return new Work_Schedule(0, staff_id, date, check_in, check_out, shift, "Không");
     }
 
     private Map<String, Object> readWork_ScheduleRowData(Row currentRow) {

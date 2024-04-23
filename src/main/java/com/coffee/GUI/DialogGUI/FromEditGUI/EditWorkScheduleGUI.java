@@ -390,9 +390,9 @@ public class EditWorkScheduleGUI extends DialogForm {
         }
 
 
-        Work_Schedule workSchedule = new Work_Schedule(id, staff_id, date, checkin, checkout, shift);
+        Work_Schedule workSchedule1 = new Work_Schedule(id, staff_id, date, checkin, checkout, shift, workSchedule.getNotice());
 
-        result = workScheduleBLL.updateWork_schedule(workSchedule);
+        result = workScheduleBLL.updateWork_schedule(workSchedule1);
 
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),

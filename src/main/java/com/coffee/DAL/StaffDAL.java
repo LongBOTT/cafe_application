@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StaffDAL extends Manager{
+public class StaffDAL extends Manager {
     public StaffDAL() {
         super("staff",
                 List.of("id",
@@ -21,7 +21,8 @@ public class StaffDAL extends Manager{
                         "phone",
                         "address",
                         "email",
-                        "deleted"));
+                        "deleted",
+                        "salary_format_id"));
     }
 
     public List<Staff> convertToStaffs(List<List<String>> data) {
@@ -36,7 +37,8 @@ public class StaffDAL extends Manager{
                         row.get(5), // phone
                         row.get(6), // address
                         row.get(7), // email
-                        Boolean.parseBoolean(row.get(8)) // deleted
+                        Boolean.parseBoolean(row.get(8)), // deleted
+                        Integer.parseInt(row.get(9))
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in StaffDAL.convertToStaffs(): " + e.getMessage());
@@ -55,7 +57,8 @@ public class StaffDAL extends Manager{
                     staff.getPhone(),
                     staff.getAddress(),
                     staff.getEmail(),
-                    false
+                    false,
+                    staff.getSalary_format_id()
             ); // staff khi tạo mặc định deleted = 0
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in StaffDAL.addStaff(): " + e.getMessage());
@@ -75,13 +78,13 @@ public class StaffDAL extends Manager{
             updateValues.add(staff.getAddress());
             updateValues.add(staff.getEmail());
             updateValues.add(staff.isDeleted());
+            updateValues.add(staff.getSalary_format_id());
             return update(updateValues, "id = " + staff.getId());
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in StaffDAL.updateStaff(): " + e.getMessage());
         }
         return 0;
     }
-
 
 
     public int deleteStaff(String... conditions) {

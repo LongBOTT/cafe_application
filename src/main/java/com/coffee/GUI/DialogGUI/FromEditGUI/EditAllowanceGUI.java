@@ -1,10 +1,9 @@
-package com.coffee.GUI.DialogGUI.FormAddGUI;
+package com.coffee.GUI.DialogGUI.FromEditGUI;
 
-import com.coffee.BLL.BonusBLL;
-import com.coffee.DTO.Bonus;
+import com.coffee.BLL.AllowanceBLL;
+import com.coffee.DTO.Allowance;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
-import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -18,52 +17,59 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddBonusGUI extends DialogForm {
+public class EditAllowanceGUI extends DialogForm {
     private JLabel titleName;
-    private List<JLabel> attributeBonus;
-    private List<JTextField> jTextFieldBonus;
-    private JComboBox<String> jComboBoxBonusType;
-    private JButton buttonCancel;
-    private JButton buttonAdd;
-    private BonusBLL bonusBLL = new BonusBLL();
+    private java.util.List<JLabel> attributeAllowance;
+    private List<JTextField> jTextFieldAllowance;
+    private JComboBox<String> jComboBoxAllowanceType;
 
-    public AddBonusGUI() {
+    private JButton buttonCancel;
+    private JButton buttonEdit;
+    private AllowanceBLL bonusBLL = new AllowanceBLL();
+    private Allowance allowance;
+
+    public EditAllowanceGUI(Allowance allowance) {
         super();
-        super.setTitle("Thêm phụ cấp");
+        super.setTitle("Cập nhật thông tin phụ cấp");
         super.setSize(new Dimension(600, 320));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
-        init();
+        this.allowance = allowance;
+        init(allowance);
         setVisible(true);
     }
 
-    private void init() {
+    private void init(Allowance allowance) {
         titleName = new JLabel();
-        attributeBonus = new ArrayList<>();
-        jTextFieldBonus = new ArrayList<>();
-        jComboBoxBonusType = new JComboBox<>();
+        attributeAllowance = new ArrayList<>();
+        jTextFieldAllowance = new ArrayList<>();
+        jComboBoxAllowanceType = new JComboBox<>();
         buttonCancel = new JButton("Huỷ");
-        buttonAdd = new JButton("Thêm");
+        buttonEdit = new JButton("Cập nhật");
         content.setLayout(new MigLayout("",
                 "50[]20[]50",
                 "20[]20[]20"));
 
-        titleName.setText("Thêm phụ cấp");
+        titleName.setText("Cập nhật thông tin phụ cấp");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
         titleName.setHorizontalAlignment(JLabel.CENTER);
         titleName.setVerticalAlignment(JLabel.CENTER);
         title.add(titleName, BorderLayout.CENTER);
-
 
         for (String string : new String[]{"Tên phụ cấp", "Số tiền phụ cấp", "Loại phụ cấp"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
             label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
-            attributeBonus.add(label);
+            attributeAllowance.add(label);
             content.add(label);
 
             JTextField textField = new MyTextFieldUnderLine();
+
+            if (string.equals("Tên phụ cấp")) {
+                textField.setText(allowance.getName());
+            }
             if (string.equals("Số tiền phụ cấp")) {
+                textField.setText(String.valueOf(allowance.getAllowance_amount()));
                 textField.addKeyListener(new KeyAdapter() {
                     @Override
                     public void keyTyped(KeyEvent e) {
@@ -74,13 +80,15 @@ public class AddBonusGUI extends DialogForm {
                 });
             }
             if (string.equals("Loại phụ cấp")) {
-                jComboBoxBonusType.addItem("Phụ cấp theo ngày làm");
-                jComboBoxBonusType.addItem("Phụ cấp theo tháng làm");
+                jComboBoxAllowanceType.addItem("Phụ cấp theo ngày làm");
+                jComboBoxAllowanceType.addItem("Phụ cấp theo tháng làm");
 
-                jComboBoxBonusType.setPreferredSize(new Dimension(1000, 30));
-                jComboBoxBonusType.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-                jComboBoxBonusType.setBackground(new Color(245, 246, 250));
-                content.add(jComboBoxBonusType, "wrap");
+                jComboBoxAllowanceType.setSelectedIndex(allowance.getAllowance_type());
+
+                jComboBoxAllowanceType.setPreferredSize(new Dimension(1000, 30));
+                jComboBoxAllowanceType.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+                jComboBoxAllowanceType.setBackground(new Color(245, 246, 250));
+                content.add(jComboBoxAllowanceType, "wrap");
 
                 continue;
             }
@@ -88,11 +96,10 @@ public class AddBonusGUI extends DialogForm {
             textField.setPreferredSize(new Dimension(1000, 30));
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
-            jTextFieldBonus.add(textField);
+            jTextFieldAllowance.add(textField);
             content.add(textField, "wrap");
 
         }
-
         buttonCancel.setPreferredSize(new Dimension(100, 30));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -113,39 +120,39 @@ public class AddBonusGUI extends DialogForm {
         });
         containerButton.add(buttonCancel);
 
-        buttonAdd.setPreferredSize(new Dimension(100, 30));
-        buttonAdd.setBackground(new Color(1, 120, 220));
-        buttonAdd.setForeground(Color.white);
-        buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
-        buttonAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        buttonAdd.addMouseListener(new MouseAdapter() {
+        buttonEdit.setPreferredSize(new Dimension(100, 30));
+        buttonEdit.setBackground(new Color(1, 120, 220));
+        buttonEdit.setForeground(Color.white);
+        buttonEdit.setFont(new Font("Public Sans", Font.BOLD, 15));
+        buttonEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        buttonEdit.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                addBonus();
+                editAllowance();
             }
         });
-        containerButton.add(buttonAdd);
+        containerButton.add(buttonEdit);
     }
 
-    private void addBonus() {
+    private void editAllowance() {
         Pair<Boolean, String> result;
         int id, bonus_type;
         String name;
         double bonus_amount;
 
-        id = bonusBLL.getAutoID(bonusBLL.searchBonuss()); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-        name = jTextFieldBonus.get(0).getText();
-        if (jTextFieldBonus.get(1).getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền phụ cấp!",
+        id = this.allowance.getId();
+        name = jTextFieldAllowance.get(0).getText();
+        if (jTextFieldAllowance.get(1).getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng nhập số phụ cấp!",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        bonus_amount = Double.parseDouble(jTextFieldBonus.get(1).getText());
-        bonus_type = jComboBoxBonusType.getSelectedIndex();
+        bonus_amount = Double.parseDouble(jTextFieldAllowance.get(1).getText());
+        bonus_type = jComboBoxAllowanceType.getSelectedIndex();
 
-        Bonus bonus = new Bonus(id, name, bonus_amount, bonus_type); // false là tồn tại, true là đã xoá
+        Allowance allowance = new Allowance(id, name, bonus_amount, bonus_type); // false là tồn tại, true là đã xoá
 
-        result = bonusBLL.addBonus(bonus);
+        result = bonusBLL.updateAllowance(allowance);
 
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),
@@ -153,7 +160,7 @@ public class AddBonusGUI extends DialogForm {
             dispose();
         } else {
             JOptionPane.showMessageDialog(null, result.getValue(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

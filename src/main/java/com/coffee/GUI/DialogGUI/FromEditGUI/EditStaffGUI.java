@@ -76,7 +76,7 @@ public class EditStaffGUI extends DialogForm {
             textField.setBackground(new Color(245, 246, 250));
 
             if (string.trim().equals("Ngày Sinh")) {
-                textField.setText(staff.getBirthdate().toString());
+                textField.setText(new SimpleDateFormat("dd/MM/yyyy").format(staff.getBirthdate()));
                 textField.setEditable(false);
                 content.add(textField, "wrap");
 
@@ -111,7 +111,7 @@ public class EditStaffGUI extends DialogForm {
                     textField.setText(staff.getEmail());
                 }
                 if (string.trim().equals("Chức Vụ")) {
-                    textFieldRole = new JTextField();
+                    textFieldRole = new MyTextFieldUnderLine();
                     textFieldRole.setPreferredSize(new Dimension(280, 35));
                     textFieldRole.setFont((new Font("Public Sans", Font.PLAIN, 14)));
                     textFieldRole.setBackground(new Color(245, 246, 250));
@@ -212,7 +212,7 @@ public class EditStaffGUI extends DialogForm {
         email = jTextFieldsStaff.get(6).getText().trim();
 
 
-        Staff newStaff = new Staff(id, staffNo, name, gender, birthdate, phone, address, email, false);
+        Staff newStaff = new Staff(id, staffNo, name, gender, birthdate, phone, address, email, false, staff.getSalary_format_id());
         // false là tồn tại, true là đã xoá
 
         result = staffBLL.updateStaff(staff, newStaff);

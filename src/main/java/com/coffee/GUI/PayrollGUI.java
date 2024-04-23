@@ -60,7 +60,7 @@ public class PayrollGUI extends Layout1 {
     private void init(List<Function> functions) {
         containerSearch = new RoundedPanel();
 
-        columnNames = new String[]{"Mã", "Kỳ Hạn Bảng Lương", "Kỳ Làm Việc", "Tổng Lương", "Đã Trả", "Còn Lại"};
+        columnNames = new String[]{"Mã", "Tên Bảng Lương", "Kỳ Làm Việc", "Tổng Lương", "Đã Trả", "Còn Lại"};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
