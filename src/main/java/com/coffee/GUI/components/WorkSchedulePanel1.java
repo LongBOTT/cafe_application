@@ -31,10 +31,20 @@ public class WorkSchedulePanel1 extends JScrollPane {
 //        this.role_id = role_id;
 
         shifts = new ArrayList<>();
-        shifts.add("Shift 1: 6h - 12h");
-        shifts.add("Shift 2: 12h - 18h");
-        shifts.add("Shift 3: 18h - 23h");
-        roundedPanels = new JPanel[13][8];
+        shifts.add("Quản Lý");
+        shifts.add("Ca 1: 6h - 12h");
+        shifts.add("Ca 2: 12h - 18h");
+        shifts.add("Ca 3: 18h - 23h");
+        shifts.add("Kho");
+        shifts.add("Ca 1: 6h - 12h");
+        shifts.add("Ca 2: 12h - 18h");
+        shifts.add("Ca 3: 18h - 23h");
+        shifts.add("Bán Hàng");
+        shifts.add("Ca 1: 6h - 12h");
+        shifts.add("Ca 2: 12h - 18h");
+        shifts.add("Ca 3: 18h - 23h");
+
+        roundedPanels = new JPanel[12][7];
         initComponents();
         setVisible(true);
     }
@@ -43,46 +53,46 @@ public class WorkSchedulePanel1 extends JScrollPane {
         setBackground(Color.white);
 
 
-//        panel = new RoundedPanel();
-//        jLabelsDay = new ArrayList<>();
-//
+        panel = new RoundedPanel();
+        jLabelsDay = new ArrayList<>();
+
 //        if (role_id == 2)
-//            panel.setLayout(new GridLayout(shifts.size() + 1, 7 + 1));
+        panel.setLayout(new GridLayout(shifts.size() + 1, 7 + 1));
 //        else
 //            panel.setLayout(new GridLayout(shifts.size(), 7 + 1));
-//        panel.setBackground(Color.white);
+        panel.setBackground(Color.white);
 //
-//        int i, j;
+        int i, j;
 //        if (role_id == 2) {
-//            panel.add(new JLabel());
-//            for (i = 0; i < 7; i++) {
-//                JLabel jLabel = new JLabel();
-//                jLabel.setBackground(Color.white);
-//                jLabel.setVerticalAlignment(JLabel.CENTER);
-//                jLabel.setHorizontalAlignment(JLabel.CENTER);
-//                jLabel.setFont(new Font("Inter", Font.BOLD, 14));
-//                jLabel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
-//                panel.add(jLabel);
-//                jLabelsDay.add(jLabel);
-//            }
+        panel.add(new JLabel());
+        for (i = 0; i < 7; i++) {
+            JLabel jLabel = new JLabel();
+            jLabel.setBackground(Color.white);
+            jLabel.setVerticalAlignment(JLabel.CENTER);
+            jLabel.setHorizontalAlignment(JLabel.CENTER);
+            jLabel.setFont(new Font("Inter", Font.BOLD, 14));
+            jLabel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+            panel.add(jLabel);
+            jLabelsDay.add(jLabel);
+        }
 //        }
 //
-//        for (i = 0; i < shifts.size(); i++) {
-//            String shift = shifts.get(i);
-//            JLabel jLabel = new JLabel(shift);
-//            jLabel.setBackground(Color.white);
-//            jLabel.setVerticalAlignment(JLabel.CENTER);
-//            jLabel.setHorizontalAlignment(JLabel.CENTER);
-//            jLabel.setFont(new Font("Inter", Font.BOLD, 14));
-//            jLabel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
-//            panel.add(jLabel);
-//            for (j = 0; j < 7; j++) {
-//                roundedPanels[i][j] = new JPanel(new MigLayout("", "5[]5", ""));
-//                roundedPanels[i][j].setBackground(Color.white);
-//                roundedPanels[i][j].setBorder(BorderFactory.createLineBorder(Color.black, 1));
-//                panel.add(roundedPanels[i][j]);
-//            }
-//        }
+        for (i = 0; i < shifts.size(); i++) {
+            String shift = shifts.get(i);
+            JLabel jLabel = new JLabel(shift);
+            jLabel.setBackground(Color.white);
+            jLabel.setVerticalAlignment(JLabel.CENTER);
+            jLabel.setHorizontalAlignment(JLabel.CENTER);
+            jLabel.setFont(new Font("Inter", Font.BOLD, 14));
+            jLabel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+            panel.add(jLabel);
+            for (j = 0; j < 7; j++) {
+                roundedPanels[i][j] = new JPanel(new MigLayout("", "5[]5", ""));
+                roundedPanels[i][j].setBackground(Color.white);
+                roundedPanels[i][j].setBorder(BorderFactory.createLineBorder(Color.black, 1));
+                panel.add(roundedPanels[i][j]);
+            }
+        }
 
         List<Date> weekDates = getCurrentWeek();
 //        showWorkSchedule(weekDates.get(0), weekDates.get(6));
