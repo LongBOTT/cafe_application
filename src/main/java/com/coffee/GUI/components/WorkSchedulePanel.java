@@ -89,7 +89,7 @@ public class WorkSchedulePanel extends JScrollPane {
             for (j = 0; j < 7; j++) {
                 roundedPanels[i][j] = new JPanel(new MigLayout("", "5[]5", ""));
                 if (i == 0 || i == 4 || i == 8) {
-                    roundedPanels[i][j].setBackground(new Color(228, 231, 235));
+                    roundedPanels[i][j].setBackground(new Color(228, 231, 235, 161));
                 } else {
                     roundedPanels[i][j].setBackground(Color.white);
                     roundedPanels[i][j].setBorder(BorderFactory.createLineBorder(Color.black, 1));

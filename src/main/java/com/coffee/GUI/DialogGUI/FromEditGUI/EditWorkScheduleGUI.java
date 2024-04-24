@@ -1,24 +1,31 @@
 package com.coffee.GUI.DialogGUI.FromEditGUI;
 
-import com.coffee.BLL.StaffBLL;
-import com.coffee.BLL.Work_ScheduleBLL;
+import com.coffee.BLL.*;
 
-import com.coffee.DTO.Work_Schedule;
+import com.coffee.DTO.*;
 import com.coffee.GUI.CreateWorkScheduleGUI;
 import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddAllowanceGUI;
 import com.coffee.GUI.components.AutocompleteJComboBox;
 import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 
+import com.coffee.GUI.components.swing.DataSearch;
+import com.coffee.GUI.components.swing.EventClick;
+import com.coffee.GUI.components.swing.MyTextField;
+import com.coffee.GUI.components.swing.PanelSearch;
 import com.coffee.main.Cafe_Application;
+import com.coffee.utils.VNString;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 import raven.datetime.component.date.DateEvent;
 import raven.datetime.component.date.DateSelectionListener;
+import raven.datetime.component.time.TimePicker;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -26,7 +33,7 @@ public class EditWorkScheduleGUI extends DialogForm {
     private StaffBLL staffBLL = new StaffBLL();
     private JLabel titleName;
     private List<JLabel> attributeWork_Schedule;
-    private List<JTextField> jTextFieldWork_Schedule;
+    //    private List<JTextField> jTextFieldWork_Schedule;
     private JButton buttonCancel;
     private JButton buttonEdit;
     private ButtonGroup bgShift;
@@ -36,27 +43,64 @@ public class EditWorkScheduleGUI extends DialogForm {
     private List<String> staffList = new ArrayList<>();
     private DatePicker datePicker;
     private JFormattedTextField editor;
+    private JPanel chamCongPanel;
+    private JPanel finePanel;
+    private JPanel bonusPanel;
+    private MyTextField txtSearch;
+    private PanelSearch search;
+    private JPopupMenu menu;
+    private int staff_id = -1;
+    private List<Work_Schedule_Fine> work_schedule_fines = new ArrayList<>();
+    private List<Work_Schedule_Bonus> work_schedule_bonuses = new ArrayList<>();
+    private TimePicker timePickerCheckin;
+    private TimePicker timePickerCheckout;
 
     public EditWorkScheduleGUI(Work_Schedule workSchedule) {
         super();
         super.setTitle("Chấm công");
-        super.setSize(new Dimension(600, 450));
+        super.setSize(new Dimension(800, 600));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         this.workSchedule = workSchedule;
         init(workSchedule);
+        menu = new JPopupMenu();
+        search = new PanelSearch();
+        menu.setBorder(BorderFactory.createLineBorder(new Color(164, 164, 164)));
+        menu.add(search);
+        menu.setFocusable(false);
+        search.addEventClick(new EventClick() {
+            @Override
+            public void itemClick(DataSearch data) {
+                menu.setVisible(false);
+                txtSearch.setText(data.getText());
+                Staff staff = staffBLL.findStaffsBy(Map.of("name", data.getText().split(" - ")[0])).get(0);
+                staff_id = staff.getId();
+            }
+
+            @Override
+            public void itemRemove(Component com, DataSearch data) {
+                search.remove(com);
+                menu.setPopupSize(menu.getWidth(), (search.getItemSize() * 35) + 2);
+                if (search.getItemSize() == 0) {
+                    menu.setVisible(false);
+                }
+            }
+        });
         setVisible(true);
     }
 
     private void init(Work_Schedule workSchedule) {
+        work_schedule_fines.addAll(new Work_Schedule_FineBLL().searchWork_schedules("work_schedule_id = " + workSchedule.getId()));
+        work_schedule_bonuses.addAll(new Work_Schedule_BonusBLL().searchWork_schedules("work_schedule_id = " + workSchedule.getId()));
+
         titleName = new JLabel();
         attributeWork_Schedule = new ArrayList<>();
-        jTextFieldWork_Schedule = new ArrayList<>();
+//        jTextFieldWork_Schedule = new ArrayList<>();
         buttonCancel = new JButton("Huỷ lịch");
         buttonEdit = new JButton("Cập nhật");
         bgShift = new ButtonGroup();
         content.setLayout(new MigLayout("",
-                "50[]20[]50",
-                "20[]20[]20"));
+                "20[]20[]20",
+                "20[]20[]20[]20[]0"));
         datePicker = new DatePicker();
         editor = new JFormattedTextField();
 
@@ -67,7 +111,7 @@ public class EditWorkScheduleGUI extends DialogForm {
         titleName.setVerticalAlignment(JLabel.CENTER);
         title.add(titleName, BorderLayout.CENTER);
 
-        for (String string : new String[]{"Nhân viên", "Ngày", "Ca", "Giờ vào", "Giờ ra"}) {
+        for (String string : new String[]{"Nhân viên", "Ngày", "Ca"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
@@ -108,7 +152,7 @@ public class EditWorkScheduleGUI extends DialogForm {
                         }
                     }
                 });
-                editor.setPreferredSize(new Dimension(1000, 30));
+                editor.setPreferredSize(new Dimension(280, 30));
                 content.add(editor, "wrap");
                 continue;
             }
@@ -165,113 +209,137 @@ public class EditWorkScheduleGUI extends DialogForm {
                 continue;
             }
 
-            if (string.equals("Giờ vào")) {
-                JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-                jPanel.setPreferredSize(new Dimension(1000, 30));
-                jPanel.setBackground(Color.white);
+//            if (string.equals("Giờ vào")) {
+//                JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+//                jPanel.setPreferredSize(new Dimension(1000, 30));
+//                jPanel.setBackground(Color.white);
+//
+//                JTextField textField1 = new JTextField();
+//                JTextField textField2 = new JTextField();
+//
+//                textField1.setPreferredSize(new Dimension(40, 30));
+//                textField2.setPreferredSize(new Dimension(40, 30));
+//
+//                jPanel.add(textField1);
+//                jPanel.add(new JLabel(":"));
+//                jPanel.add(textField2);
+//
+//                if (!workSchedule.getCheck_in().equals("null")) {
+//                    if (workSchedule.getNotice().equals("Không")) {
+//                        textField1.setText(workSchedule.getCheck_in().split(":")[0]);
+//                        textField2.setText(workSchedule.getCheck_in().split(":")[1]);
+//                    } else {
+//                        textField1.setEnabled(false);
+//                        textField2.setEnabled(false);
+//                    }
+//                }
+//
+//                textField1.addKeyListener(new KeyAdapter() {
+//                    @Override
+//                    public void keyTyped(KeyEvent e) {
+//                        if (!Character.isDigit(e.getKeyChar())) {
+//                            e.consume();
+//                        }
+//                    }
+//                });
+//
+//                textField2.addKeyListener(new KeyAdapter() {
+//                    @Override
+//                    public void keyTyped(KeyEvent e) {
+//                        if (!Character.isDigit(e.getKeyChar())) {
+//                            e.consume();
+//                        }
+//                    }
+//                });
+//
+//                jTextFieldWork_Schedule.add(textField1);
+//                jTextFieldWork_Schedule.add(textField2);
+//
+//                content.add(jPanel, "wrap");
+//                continue;
+//            }
 
-                JTextField textField1 = new JTextField();
-                JTextField textField2 = new JTextField();
-
-                textField1.setPreferredSize(new Dimension(40, 30));
-                textField2.setPreferredSize(new Dimension(40, 30));
-
-                jPanel.add(textField1);
-                jPanel.add(new JLabel(":"));
-                jPanel.add(textField2);
-
-                if (!workSchedule.getCheck_in().equals("null")) {
-                    if (workSchedule.getNotice().equals("Không")) {
-                        textField1.setText(workSchedule.getCheck_in().split(":")[0]);
-                        textField2.setText(workSchedule.getCheck_in().split(":")[1]);
-                    } else {
-                        textField1.setEnabled(false);
-                        textField2.setEnabled(false);
-                    }
-                }
-
-                textField1.addKeyListener(new KeyAdapter() {
-                    @Override
-                    public void keyTyped(KeyEvent e) {
-                        if (!Character.isDigit(e.getKeyChar())) {
-                            e.consume();
-                        }
-                    }
-                });
-
-                textField2.addKeyListener(new KeyAdapter() {
-                    @Override
-                    public void keyTyped(KeyEvent e) {
-                        if (!Character.isDigit(e.getKeyChar())) {
-                            e.consume();
-                        }
-                    }
-                });
-
-                jTextFieldWork_Schedule.add(textField1);
-                jTextFieldWork_Schedule.add(textField2);
-
-                content.add(jPanel, "wrap");
-                continue;
-            }
-
-            if (string.equals("Giờ ra")) {
-                JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-                jPanel.setPreferredSize(new Dimension(1000, 30));
-                jPanel.setBackground(Color.white);
-
-                JTextField textField1 = new JTextField();
-                JTextField textField2 = new JTextField();
-
-                textField1.setPreferredSize(new Dimension(40, 30));
-                textField2.setPreferredSize(new Dimension(40, 30));
-
-                jPanel.add(textField1);
-                jPanel.add(new JLabel(":"));
-                jPanel.add(textField2);
-
-                if (!workSchedule.getCheck_in().equals("null")) {
-                    if (workSchedule.getNotice().equals("Không")) {
-                        textField1.setText(workSchedule.getCheck_out().split(":")[0]);
-                        textField2.setText(workSchedule.getCheck_out().split(":")[1]);
-                    } else {
-                        textField1.setEnabled(false);
-                        textField2.setEnabled(false);
-                    }
-                }
-
-                textField1.addKeyListener(new KeyAdapter() {
-                    @Override
-                    public void keyTyped(KeyEvent e) {
-                        if (!Character.isDigit(e.getKeyChar())) {
-                            e.consume();
-                        }
-                    }
-                });
-
-                textField2.addKeyListener(new KeyAdapter() {
-                    @Override
-                    public void keyTyped(KeyEvent e) {
-                        if (!Character.isDigit(e.getKeyChar())) {
-                            e.consume();
-                        }
-                    }
-                });
-
-                jTextFieldWork_Schedule.add(textField1);
-                jTextFieldWork_Schedule.add(textField2);
-
-                content.add(jPanel, "wrap");
-                continue;
-            }
+//            if (string.equals("Giờ ra")) {
+//                JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+//                jPanel.setPreferredSize(new Dimension(1000, 30));
+//                jPanel.setBackground(Color.white);
+//
+//                JTextField textField1 = new JTextField();
+//                JTextField textField2 = new JTextField();
+//
+//                textField1.setPreferredSize(new Dimension(40, 30));
+//                textField2.setPreferredSize(new Dimension(40, 30));
+//
+//                jPanel.add(textField1);
+//                jPanel.add(new JLabel(":"));
+//                jPanel.add(textField2);
+//
+//                if (!workSchedule.getCheck_in().equals("null")) {
+//                    if (workSchedule.getNotice().equals("Không")) {
+//                        textField1.setText(workSchedule.getCheck_out().split(":")[0]);
+//                        textField2.setText(workSchedule.getCheck_out().split(":")[1]);
+//                    } else {
+//                        textField1.setEnabled(false);
+//                        textField2.setEnabled(false);
+//                    }
+//                }
+//
+//                textField1.addKeyListener(new KeyAdapter() {
+//                    @Override
+//                    public void keyTyped(KeyEvent e) {
+//                        if (!Character.isDigit(e.getKeyChar())) {
+//                            e.consume();
+//                        }
+//                    }
+//                });
+//
+//                textField2.addKeyListener(new KeyAdapter() {
+//                    @Override
+//                    public void keyTyped(KeyEvent e) {
+//                        if (!Character.isDigit(e.getKeyChar())) {
+//                            e.consume();
+//                        }
+//                    }
+//                });
+//
+//                jTextFieldWork_Schedule.add(textField1);
+//                jTextFieldWork_Schedule.add(textField2);
+//
+//                content.add(jPanel, "wrap");
+//                continue;
+//            }
 
             textField.setPreferredSize(new Dimension(1000, 30));
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
-            jTextFieldWork_Schedule.add(textField);
+//            jTextFieldWork_Schedule.add(textField);
             content.add(textField, "wrap");
 
         }
+
+        chamCongPanel = new JPanel();
+        finePanel = new JPanel();
+        bonusPanel = new JPanel();
+
+        JTabbedPane jTabbedPane = new JTabbedPane();
+        jTabbedPane.setPreferredSize(new Dimension(800, 350));
+        jTabbedPane.setBackground(Color.white);
+        content.add(jTabbedPane, "wrap, span");
+        jTabbedPane.addTab("Chấm công", chamCongPanel);
+        jTabbedPane.addTab("Phạt vi phạm", finePanel);
+        jTabbedPane.addTab("Thưởng", bonusPanel);
+
+        chamCongPanel.setBackground(new Color(255, 255, 255));
+        chamCongPanel.setLayout(new MigLayout("", "0[]20[]", "20[]10[]10[]0"));
+        initChanCongPanel();
+
+        finePanel.setBackground(new Color(255, 255, 255));
+        finePanel.setLayout(new BorderLayout());
+        initFinePanel();
+
+        bonusPanel.setBackground(new Color(255, 255, 255));
+        bonusPanel.setLayout(new BorderLayout());
+        initBonusPanel();
 
         buttonCancel.setPreferredSize(new Dimension(100, 30));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
@@ -305,6 +373,445 @@ public class EditWorkScheduleGUI extends DialogForm {
             }
         });
         containerButton.add(buttonEdit);
+    }
+
+    private void initBonusPanel() {
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setBackground(Color.cyan);
+        scrollPane.setPreferredSize(new Dimension(630, 350));
+        bonusPanel.add(scrollPane, BorderLayout.CENTER);
+
+        loadBonusPanel(scrollPane);
+
+    }
+
+    private void loadBonusPanel(JScrollPane scrollPane) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("", "10[]10", "10[]10"));
+        panel.setBackground(new Color(255, 255, 255));
+        panel.setPreferredSize(new Dimension(630, 30));
+
+        JTextField jLabelBonusName = new MyTextFieldUnderLine();
+        jLabelBonusName.setPreferredSize(new Dimension(250, 30));
+        jLabelBonusName.setFont((new Font("Inter", Font.PLAIN, 13)));
+
+        JTextField jLabelBonusQuantity = new MyTextFieldUnderLine();
+        jLabelBonusQuantity.setPreferredSize(new Dimension(50, 30));
+        jLabelBonusQuantity.setFont((new Font("Inter", Font.PLAIN, 13)));
+
+        JTextField jLabelBonusAmount = new MyTextFieldUnderLine();
+        jLabelBonusAmount.setPreferredSize(new Dimension(150, 30));
+        jLabelBonusAmount.setFont((new Font("Inter", Font.PLAIN, 13)));
+
+        JTextField jLabelBonusTotal = new MyTextFieldUnderLine();
+        jLabelBonusTotal.setPreferredSize(new Dimension(150, 30));
+        jLabelBonusTotal.setFont((new Font("Inter", Font.PLAIN, 13)));
+        jLabelBonusTotal.setEditable(false);
+
+        jLabelBonusAmount.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    try {
+                        Integer.parseInt(jLabelBonusQuantity.getText());
+                    } catch (Exception exception) {
+                        JOptionPane.showMessageDialog(null, "Số lần không hợp lệ!",
+                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
+                    try {
+                        Double.parseDouble(jLabelBonusAmount.getText());
+                    } catch (Exception exception) {
+                        JOptionPane.showMessageDialog(null, "Mức áp dụng không hợp lệ!",
+                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
+                    double total = Integer.parseInt(jLabelBonusQuantity.getText()) * Double.parseDouble(jLabelBonusAmount.getText());
+                    jLabelBonusTotal.setText(VNString.currency(total));
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+
+        JLabel titleBonusName = new JLabel();
+        JLabel titleBonusQuantity = new JLabel();
+        JLabel titleBonusAmount = new JLabel();
+        JLabel titleBonusTotal = new JLabel();
+
+        titleBonusName.setText("Loại thưởng");
+        titleBonusQuantity.setText("Số lần");
+        titleBonusAmount.setText("Mức áp dụng");
+        titleBonusTotal.setText("Thành tiền");
+
+        titleBonusName.setPreferredSize(new Dimension(250, 30));
+        titleBonusName.setFont((new Font("Inter", Font.BOLD, 13)));
+
+        titleBonusQuantity.setPreferredSize(new Dimension(50, 30));
+        titleBonusQuantity.setFont((new Font("Inter", Font.BOLD, 13)));
+
+        titleBonusAmount.setPreferredSize(new Dimension(150, 30));
+        titleBonusAmount.setFont((new Font("Inter", Font.BOLD, 13)));
+
+        titleBonusTotal.setPreferredSize(new Dimension(150, 30));
+        titleBonusTotal.setFont((new Font("Inter", Font.BOLD, 13)));
+
+        JPanel jpanel1 = new JPanel(new MigLayout("", "0[]10[]10[]10[]0", "0[]0"));
+        jpanel1.setBackground(new Color(227, 242, 250));
+        jpanel1.setPreferredSize(new Dimension(630, 30));
+
+        jpanel1.add(titleBonusName);
+        jpanel1.add(titleBonusQuantity);
+        jpanel1.add(titleBonusAmount);
+        jpanel1.add(titleBonusTotal, "wrap");
+        panel.add(jpanel1, "wrap");
+
+        for (Work_Schedule_Bonus workScheduleBonus : work_schedule_bonuses) {
+            JPanel jPanelBonus = new JPanel(new MigLayout("", "0[]10[]10[]0", "0[]0"));
+            jPanelBonus.setBackground(new Color(255, 255, 255));
+            jPanelBonus.setPreferredSize(new Dimension(730, 50));
+
+            JTextField jLabelBonusName1 = new MyTextFieldUnderLine();
+            jLabelBonusName1.setText(workScheduleBonus.getBonus_name());
+            jLabelBonusName1.setPreferredSize(new Dimension(250, 30));
+            jLabelBonusName1.setFont((new Font("Inter", Font.PLAIN, 13)));
+            jLabelBonusName1.setEditable(false);
+
+            JTextField jLabelBonusQuantity1 = new MyTextFieldUnderLine();
+            jLabelBonusQuantity1.setText(String.valueOf(workScheduleBonus.getQuantity()));
+            jLabelBonusQuantity1.setPreferredSize(new Dimension(50, 30));
+            jLabelBonusQuantity1.setFont((new Font("Inter", Font.PLAIN, 13)));
+            jLabelBonusQuantity1.setEditable(false);
+
+            JTextField jLabelBonusAmount1 = new MyTextFieldUnderLine();
+            jLabelBonusAmount1.setText(VNString.currency(workScheduleBonus.getBonus_amount()));
+            jLabelBonusAmount1.setPreferredSize(new Dimension(150, 30));
+            jLabelBonusAmount1.setFont((new Font("Inter", Font.PLAIN, 13)));
+            jLabelBonusAmount1.setEditable(false);
+
+            JTextField jLabelBonusTotal1 = new MyTextFieldUnderLine();
+            jLabelBonusTotal1.setText(VNString.currency(workScheduleBonus.getBonus_total()));
+            jLabelBonusTotal1.setPreferredSize(new Dimension(150, 30));
+            jLabelBonusTotal1.setFont((new Font("Inter", Font.PLAIN, 13)));
+            jLabelBonusTotal1.setEditable(false);
+
+
+            jPanelBonus.add(jLabelBonusName1);
+            jPanelBonus.add(jLabelBonusQuantity1);
+            jPanelBonus.add(jLabelBonusAmount1);
+            jPanelBonus.add(jLabelBonusTotal1, "wrap");
+            panel.add(jPanelBonus, "wrap");
+
+        }
+
+        JPanel jPanelBonus = new JPanel(new MigLayout("", "0[]10[]10[]0", "0[]0"));
+        jPanelBonus.setBackground(new Color(255, 255, 255));
+        jPanelBonus.setPreferredSize(new Dimension(730, 50));
+        jPanelBonus.add(jLabelBonusName);
+        jPanelBonus.add(jLabelBonusQuantity);
+        jPanelBonus.add(jLabelBonusAmount);
+        jPanelBonus.add(jLabelBonusTotal, "wrap");
+        panel.add(jPanelBonus, "wrap");
+
+        JButton buttonAddBonus = new JButton("+ Thêm thưởng");
+        buttonAddBonus.setBackground(new Color(0, 182, 62));
+        buttonAddBonus.setForeground(Color.WHITE);
+        buttonAddBonus.setPreferredSize(new Dimension(150, 30));
+//        buttonAddBonus.setIcon(new FlatSVGIcon("icon/add.svg"));
+        buttonAddBonus.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        buttonAddBonus.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Integer.parseInt(jLabelBonusQuantity.getText());
+                } catch (Exception exception) {
+                    JOptionPane.showMessageDialog(null, "Số lần không hợp lệ!",
+                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+                try {
+                    Double.parseDouble(jLabelBonusAmount.getText());
+                } catch (Exception exception) {
+                    JOptionPane.showMessageDialog(null, "Mức áp dụng không hợp lệ!",
+                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+                Work_Schedule_Bonus workScheduleBonusLast = new Work_Schedule_Bonus();
+                workScheduleBonusLast.setWork_schedule_id(workSchedule.getId());
+                workScheduleBonusLast.setBonus_name(jLabelBonusName.getText());
+                workScheduleBonusLast.setQuantity(Integer.parseInt(jLabelBonusQuantity.getText()));
+                workScheduleBonusLast.setBonus_amount(Double.parseDouble(jLabelBonusAmount.getText()));
+                workScheduleBonusLast.setBonus_total(Double.parseDouble(jLabelBonusTotal.getText().replaceAll("\\.", "").split(" ₫")[0]));
+                work_schedule_bonuses.add(workScheduleBonusLast);
+                loadBonusPanel(scrollPane);
+                panel.repaint();
+                panel.revalidate();
+
+                System.out.println(Arrays.toString(work_schedule_bonuses.toArray()));
+            }
+        });
+        panel.add(buttonAddBonus, "span, wrap");
+
+        scrollPane.setViewportView(panel);
+    }
+
+    private void initFinePanel() {
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setBackground(Color.cyan);
+        scrollPane.setPreferredSize(new Dimension(630, 350));
+        finePanel.add(scrollPane, BorderLayout.CENTER);
+
+        loadFinePanel(scrollPane);
+    }
+
+    private void loadFinePanel(JScrollPane scrollPane) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("", "10[]10", "10[]10"));
+        panel.setBackground(new Color(255, 255, 255));
+        panel.setPreferredSize(new Dimension(630, 30));
+
+        JTextField jLabelFineName = new MyTextFieldUnderLine();
+        jLabelFineName.setPreferredSize(new Dimension(250, 30));
+        jLabelFineName.setFont((new Font("Inter", Font.PLAIN, 13)));
+
+        JTextField jLabelFineQuantity = new MyTextFieldUnderLine();
+        jLabelFineQuantity.setPreferredSize(new Dimension(50, 30));
+        jLabelFineQuantity.setFont((new Font("Inter", Font.PLAIN, 13)));
+
+        JTextField jLabelFineAmount = new MyTextFieldUnderLine();
+        jLabelFineAmount.setPreferredSize(new Dimension(150, 30));
+        jLabelFineAmount.setFont((new Font("Inter", Font.PLAIN, 13)));
+
+        JTextField jLabelFineTotal = new MyTextFieldUnderLine();
+        jLabelFineTotal.setPreferredSize(new Dimension(150, 30));
+        jLabelFineTotal.setFont((new Font("Inter", Font.PLAIN, 13)));
+        jLabelFineTotal.setEditable(false);
+
+        jLabelFineAmount.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    try {
+                        Integer.parseInt(jLabelFineQuantity.getText());
+                    } catch (Exception exception) {
+                        JOptionPane.showMessageDialog(null, "Số lần không hợp lệ!",
+                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
+                    try {
+                        Double.parseDouble(jLabelFineAmount.getText());
+                    } catch (Exception exception) {
+                        JOptionPane.showMessageDialog(null, "Mức áp dụng không hợp lệ!",
+                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
+                    double total = Integer.parseInt(jLabelFineQuantity.getText()) * Double.parseDouble(jLabelFineAmount.getText());
+                    jLabelFineTotal.setText(VNString.currency(total));
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+
+        JLabel titleFineName = new JLabel();
+        JLabel titleFineQuantity = new JLabel();
+        JLabel titleFineAmount = new JLabel();
+        JLabel titleFineTotal = new JLabel();
+
+        titleFineName.setText("Loại vi phạm");
+        titleFineQuantity.setText("Số lần");
+        titleFineAmount.setText("Mức áp dụng");
+        titleFineTotal.setText("Thành tiền");
+
+        titleFineName.setPreferredSize(new Dimension(250, 30));
+        titleFineName.setFont((new Font("Inter", Font.BOLD, 13)));
+
+        titleFineQuantity.setPreferredSize(new Dimension(50, 30));
+        titleFineQuantity.setFont((new Font("Inter", Font.BOLD, 13)));
+
+        titleFineAmount.setPreferredSize(new Dimension(150, 30));
+        titleFineAmount.setFont((new Font("Inter", Font.BOLD, 13)));
+
+        titleFineTotal.setPreferredSize(new Dimension(150, 30));
+        titleFineTotal.setFont((new Font("Inter", Font.BOLD, 13)));
+
+        JPanel jpanel1 = new JPanel(new MigLayout("", "0[]10[]10[]10[]0", "0[]0"));
+        jpanel1.setBackground(new Color(227, 242, 250));
+        jpanel1.setPreferredSize(new Dimension(630, 30));
+
+        jpanel1.add(titleFineName);
+        jpanel1.add(titleFineQuantity);
+        jpanel1.add(titleFineAmount);
+        jpanel1.add(titleFineTotal, "wrap");
+        panel.add(jpanel1, "wrap");
+
+        for (Work_Schedule_Fine workScheduleFine : work_schedule_fines) {
+            JPanel jPanelFine = new JPanel(new MigLayout("", "0[]10[]10[]0", "0[]0"));
+            jPanelFine.setBackground(new Color(255, 255, 255));
+            jPanelFine.setPreferredSize(new Dimension(730, 50));
+
+            JTextField jLabelFineName1 = new MyTextFieldUnderLine();
+            jLabelFineName1.setText(workScheduleFine.getFine_name());
+            jLabelFineName1.setPreferredSize(new Dimension(250, 30));
+            jLabelFineName1.setFont((new Font("Inter", Font.PLAIN, 13)));
+            jLabelFineName1.setEditable(false);
+
+            JTextField jLabelFineQuantity1 = new MyTextFieldUnderLine();
+            jLabelFineQuantity1.setText(String.valueOf(workScheduleFine.getQuantity()));
+            jLabelFineQuantity1.setPreferredSize(new Dimension(50, 30));
+            jLabelFineQuantity1.setFont((new Font("Inter", Font.PLAIN, 13)));
+            jLabelFineQuantity1.setEditable(false);
+
+            JTextField jLabelFineAmount1 = new MyTextFieldUnderLine();
+            jLabelFineAmount1.setText(VNString.currency(workScheduleFine.getFine_amount()));
+            jLabelFineAmount1.setPreferredSize(new Dimension(150, 30));
+            jLabelFineAmount1.setFont((new Font("Inter", Font.PLAIN, 13)));
+            jLabelFineAmount1.setEditable(false);
+
+            JTextField jLabelFineTotal1 = new MyTextFieldUnderLine();
+            jLabelFineTotal1.setText(VNString.currency(workScheduleFine.getFine_total()));
+            jLabelFineTotal1.setPreferredSize(new Dimension(150, 30));
+            jLabelFineTotal1.setFont((new Font("Inter", Font.PLAIN, 13)));
+            jLabelFineTotal1.setEditable(false);
+
+
+            jPanelFine.add(jLabelFineName1);
+            jPanelFine.add(jLabelFineQuantity1);
+            jPanelFine.add(jLabelFineAmount1);
+            jPanelFine.add(jLabelFineTotal1, "wrap");
+            panel.add(jPanelFine, "wrap");
+
+        }
+
+        JPanel jPanelFine = new JPanel(new MigLayout("", "0[]10[]10[]0", "0[]0"));
+        jPanelFine.setBackground(new Color(255, 255, 255));
+        jPanelFine.setPreferredSize(new Dimension(730, 50));
+        jPanelFine.add(jLabelFineName);
+        jPanelFine.add(jLabelFineQuantity);
+        jPanelFine.add(jLabelFineAmount);
+        jPanelFine.add(jLabelFineTotal, "wrap");
+        panel.add(jPanelFine, "wrap");
+
+        JButton buttonAddFine = new JButton("+ Thêm vi phạm");
+        buttonAddFine.setBackground(new Color(0, 182, 62));
+        buttonAddFine.setForeground(Color.WHITE);
+        buttonAddFine.setPreferredSize(new Dimension(150, 30));
+//        buttonAddFine.setIcon(new FlatSVGIcon("icon/add.svg"));
+        buttonAddFine.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        buttonAddFine.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Integer.parseInt(jLabelFineQuantity.getText());
+                } catch (Exception exception) {
+                    JOptionPane.showMessageDialog(null, "Số lần không hợp lệ!",
+                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+                try {
+                    Double.parseDouble(jLabelFineAmount.getText());
+                } catch (Exception exception) {
+                    JOptionPane.showMessageDialog(null, "Mức áp dụng không hợp lệ!",
+                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+                Work_Schedule_Fine workScheduleFineLast = new Work_Schedule_Fine();
+                workScheduleFineLast.setWork_schedule_id(workSchedule.getId());
+                workScheduleFineLast.setFine_name(jLabelFineName.getText());
+                workScheduleFineLast.setQuantity(Integer.parseInt(jLabelFineQuantity.getText()));
+                workScheduleFineLast.setFine_amount(Double.parseDouble(jLabelFineAmount.getText()));
+                workScheduleFineLast.setFine_total(Double.parseDouble(jLabelFineTotal.getText().replaceAll("\\.", "").split(" ₫")[0]));
+                work_schedule_fines.add(workScheduleFineLast);
+                loadFinePanel(scrollPane);
+                panel.repaint();
+                panel.revalidate();
+
+                System.out.println(Arrays.toString(work_schedule_fines.toArray()));
+            }
+        });
+        panel.add(buttonAddFine, "span, wrap");
+
+        scrollPane.setViewportView(panel);
+    }
+
+    private void initChanCongPanel() {
+        if (!workSchedule.getNotice().equals("Không")) {
+            JLabel jLabel = new JLabel("Nghỉ có phép");
+            jLabel.setFont((new Font("Public Sans", Font.BOLD, 15)));
+            chamCongPanel.add(jLabel, "wrap");
+
+            JLabel jLabel1 = new JLabel("Chọn nhân viên làm thay ca");
+            jLabel1.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+            chamCongPanel.add(jLabel1);
+
+            txtSearch = new MyTextField();
+            txtSearch.setPreferredSize(new Dimension(250, 30));
+            txtSearch.putClientProperty("JTextField.placeholderText", "Nhập tên nhân viên làm thay ca");
+            txtSearch.putClientProperty("JTextField.showClearButton", true);
+            txtSearch.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    txtSearchMouseClicked(evt);
+                }
+            });
+            txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyPressed(java.awt.event.KeyEvent evt) {
+                    txtSearchKeyPressed(evt);
+                }
+
+                public void keyReleased(java.awt.event.KeyEvent evt) {
+                    txtSearchKeyReleased(evt);
+                }
+            });
+            chamCongPanel.add(txtSearch, "wrap");
+        } else {
+            JLabel jLabel = new JLabel("Đi làm");
+            jLabel.setFont((new Font("Public Sans", Font.BOLD, 15)));
+            chamCongPanel.add(jLabel, "wrap");
+
+            JLabel jLabel1 = new JLabel("Giờ vào");
+            jLabel1.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+            chamCongPanel.add(jLabel1);
+
+            timePickerCheckin = new TimePicker();
+            timePickerCheckin.set24HourView(true);
+            timePickerCheckin.setOrientation(SwingConstants.HORIZONTAL);
+            JFormattedTextField editorCheckin = new JFormattedTextField();
+//            editorCheckin.setEditable(false);
+            timePickerCheckin.setEditor(editorCheckin);
+
+            editorCheckin.setPreferredSize(new Dimension(150, 30));
+            chamCongPanel.add(editorCheckin, "wrap");
+
+            JLabel jLabel2 = new JLabel("Giờ ra");
+            jLabel2.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+            chamCongPanel.add(jLabel2);
+
+            timePickerCheckout = new TimePicker();
+            timePickerCheckout.set24HourView(true);
+            timePickerCheckout.setOrientation(SwingConstants.HORIZONTAL);
+            JFormattedTextField editorCheckout = new JFormattedTextField();
+//            editorCheckout.setEditable(false);
+            timePickerCheckout.setEditor(editorCheckout);
+
+            editorCheckout.setPreferredSize(new Dimension(150, 30));
+            chamCongPanel.add(editorCheckout, "wrap");
+        }
     }
 
     private void checkExistByDate(Date date, int shift) {
@@ -378,22 +885,33 @@ public class EditWorkScheduleGUI extends DialogForm {
                     shift = 3;
             }
         }
-        if (workSchedule.getCheck_in().equals("Phép") && workSchedule.getCheck_out().equals("Phép")) {
+        if (!workSchedule.getNotice().equals("Không")) {
             checkin = workSchedule.getCheck_in();
             checkout = workSchedule.getCheck_out();
         } else {
-            checkin = jTextFieldWork_Schedule.get(1).getText().isEmpty() || jTextFieldWork_Schedule.get(2).getText().isEmpty() ?
-                    "null" : jTextFieldWork_Schedule.get(1).getText() + ":" + jTextFieldWork_Schedule.get(2).getText();
-            checkout = jTextFieldWork_Schedule.get(3).getText().isEmpty() || jTextFieldWork_Schedule.get(4).getText().isEmpty() ?
-                    "null" : jTextFieldWork_Schedule.get(3).getText() + ":" + jTextFieldWork_Schedule.get(4).getText();
+            DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm");
+            checkin = timePickerCheckin.getSelectedTime() == null ? "null" : timePickerCheckin.getSelectedTime().format(df);
+            checkout = timePickerCheckout.getSelectedTime() == null ? "null" : timePickerCheckout.getSelectedTime().format(df);
         }
-
 
         Work_Schedule workSchedule1 = new Work_Schedule(id, staff_id, date, checkin, checkout, shift, workSchedule.getNotice());
 
         result = workScheduleBLL.updateWork_schedule(workSchedule1);
 
         if (result.getKey()) {
+            if (staff_id != -1) {
+                Work_Schedule newWork_schedule = new Work_Schedule();
+                newWork_schedule.setId(workScheduleBLL.getAutoID(workScheduleBLL.searchWork_schedules()));
+                newWork_schedule.setStaff_id(staff_id);
+                newWork_schedule.setDate(workSchedule1.getDate());
+                newWork_schedule.setCheck_in("null");
+                newWork_schedule.setCheck_out("null");
+                newWork_schedule.setShift(workSchedule1.getShift());
+                newWork_schedule.setNotice("Không");
+                workScheduleBLL.addWork_schedule(List.of(newWork_schedule));
+            }
+            // them vi pham, thuong
+
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             CreateWorkScheduleGUI createWorkScheduleGUI = (CreateWorkScheduleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModuleCreateWorkScheduleGUI];
@@ -422,5 +940,51 @@ public class EditWorkScheduleGUI extends DialogForm {
                         "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+    private void txtSearchMouseClicked(java.awt.event.MouseEvent evt) {
+        if (search.getItemSize() > 0 && !txtSearch.getText().isEmpty()) {
+            menu.show(txtSearch, 0, txtSearch.getHeight());
+            search.clearSelected();
+        }
+    }
+
+    private List<DataSearch> search(String text) {
+        staff_id = -1;
+        List<DataSearch> list = new ArrayList<>();
+        List<Staff> staffs = new StaffBLL().findStaffs("name", text);
+        for (Staff m : staffs) {
+            if (list.size() == 7)
+                break;
+            list.add(new DataSearch(m.getName() + " - " + m.getId()));
+        }
+        return list;
+    }
+
+    private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {
+        if (evt.getKeyCode() != KeyEvent.VK_UP && evt.getKeyCode() != KeyEvent.VK_DOWN && evt.getKeyCode() != KeyEvent.VK_ENTER) {
+            String text = txtSearch.getText().trim().toLowerCase();
+            search.setData(search(text));
+            if (search.getItemSize() > 0 && !txtSearch.getText().isEmpty()) {
+                menu.show(txtSearch, 0, txtSearch.getHeight());
+                menu.setPopupSize(menu.getWidth(), (search.getItemSize() * 35) + 2);
+            } else {
+                menu.setVisible(false);
+            }
+        }
+    }
+
+    private void txtSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_UP) {
+            search.keyUp();
+        } else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            search.keyDown();
+        } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            String text = search.getSelectedText();
+            txtSearch.setText(text);
+
+        }
+        menu.setVisible(false);
+
     }
 }
