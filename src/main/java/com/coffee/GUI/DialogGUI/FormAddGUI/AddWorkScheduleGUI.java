@@ -108,7 +108,7 @@ public class AddWorkScheduleGUI extends DialogForm {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+            label.setFont((new Font("Public Sans", Font.BOLD, 16)));
             attributeWork_Schedule.add(label);
             content.add(label);
 
@@ -228,6 +228,11 @@ public class AddWorkScheduleGUI extends DialogForm {
 
         if (shifts.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn ca làm!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (shifts.size() == 3) {
+            JOptionPane.showMessageDialog(null, "Một nhân viên chỉ được làm tối đa 12h/ngày.\nVui lòng chọn lại ca làm việc.",
                     "Thông báo", JOptionPane.ERROR_MESSAGE);
             return;
         }

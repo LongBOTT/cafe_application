@@ -84,7 +84,7 @@ public class AllowanceBLL extends Manager<Allowance> {
     }
 
     public Pair<Boolean, String> exists(Allowance allowance) {
-        List<Allowance> modules = findAllowances("name", allowance.getName());
+        List<Allowance> modules = findAllowancesBy(Map.of("name", allowance.getName()));
 
         if (!modules.isEmpty()) {
             return new Pair<>(true, "Phụ cấp đã tồn tại.");

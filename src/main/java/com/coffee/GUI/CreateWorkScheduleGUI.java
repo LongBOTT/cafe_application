@@ -10,6 +10,7 @@ import com.coffee.utils.PDF;
 import com.coffee.ImportExcel.Timekeeping;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
+import net.miginfocom.swing.MigLayout;
 
 
 import javax.swing.*;
@@ -31,9 +32,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
     private JLabel iconNext;
     private JLabel iconPrev;
     private List<Function> functions;
-    private WorkSchedulePanel workSchedulePanelManager;
-    private WorkSchedulePanel workSchedulePanelStaffSale;
-    private WorkSchedulePanel workSchedulePanelStaffWarehouse;
+    private WorkSchedulePanel workSchedulePanel;
     private boolean edit = false;
     private boolean remove = false;
     private Date today;
@@ -52,19 +51,9 @@ public class CreateWorkScheduleGUI extends Layout1 {
         iconNext = new JLabel(new FlatSVGIcon("icon/next.svg"));
         iconPrev = new JLabel(new FlatSVGIcon("icon/previous.svg"));
         weekDates = new ArrayList<>();
-        workSchedulePanelManager = new WorkSchedulePanel(new RoleBLL().searchRoles("name = 'Quản lý'").get(0).getId());
-        workSchedulePanelStaffSale = new WorkSchedulePanel(new RoleBLL().searchRoles("name = 'Nhân viên bán hàng'").get(0).getId());
-        workSchedulePanelStaffWarehouse = new WorkSchedulePanel(new RoleBLL().searchRoles("name = 'Nhân viên kho'").get(0).getId());
-        RoundedPanel TitlePanelManager = new RoundedPanel();
-        RoundedPanel TitlePanelStaffSale = new RoundedPanel();
-        RoundedPanel TitlePanelStaffWarehouse = new RoundedPanel();
-        RoundedPanel ContentPanelManager = new RoundedPanel();
-        RoundedPanel ContentPanelStaffSale = new RoundedPanel();
-        RoundedPanel ContentPanelStaffWarehouse = new RoundedPanel();
+        workSchedulePanel = new WorkSchedulePanel();
+        JPanel ContentPanel = new JPanel();
         JPanel jPanelDate = new JPanel();
-        JLabel jLabelTitleManager = new JLabel("    Nhân Viên Quản Lý");
-        JLabel jLabelTitleSale = new JLabel("    Nhân Viên Bán Hàng");
-        JLabel jLabelTitleWarehouse = new JLabel("    Nhân Viên Kho");
 
         iconPrev.setCursor(new Cursor(Cursor.HAND_CURSOR));
         iconPrev.addMouseListener(new MouseAdapter() {
@@ -221,11 +210,13 @@ public class CreateWorkScheduleGUI extends Layout1 {
         });
         roundedPaneChamCong.add(panelChamCong);
 
-        bottom.setBackground(Color.white);
-        bottom.setLayout(new BorderLayout());
+        ContentPanel.setPreferredSize(new Dimension(1165, 680));
+        ContentPanel.setBackground(new Color(255, 255, 255));
+        ContentPanel.setLayout(new BorderLayout());
+        bottom.add(ContentPanel, BorderLayout.CENTER);
 
-        WorkSchedulePanel1 workSchedulePanel1 = new WorkSchedulePanel1();
-        bottom.add(workSchedulePanel1, BorderLayout.CENTER);
+        workSchedulePanel = new WorkSchedulePanel();
+        ContentPanel.add(workSchedulePanel, BorderLayout.CENTER);
 
 //        TitlePanelManager.setLayout(new FlowLayout(FlowLayout.LEFT));
 //        TitlePanelManager.setBackground(Color.white);
@@ -302,9 +293,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
     public void refresh() {
         today = java.sql.Date.valueOf(LocalDate.now());
         loadDate();
-        workSchedulePanelManager.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
-        workSchedulePanelStaffSale.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
-        workSchedulePanelStaffWarehouse.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
+        workSchedulePanel.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
 
     }
 
@@ -315,9 +304,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
         today = calendar.getTime();
 
         loadDate();
-        workSchedulePanelManager.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
-        workSchedulePanelStaffSale.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
-        workSchedulePanelStaffWarehouse.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
+        workSchedulePanel.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
     }
 
     private void next() {
@@ -327,9 +314,8 @@ public class CreateWorkScheduleGUI extends Layout1 {
         today = calendar.getTime();
 
         loadDate();
-        workSchedulePanelManager.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
-        workSchedulePanelStaffSale.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
-        workSchedulePanelStaffWarehouse.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
+        workSchedulePanel.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
+
     }
 
 }

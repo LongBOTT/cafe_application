@@ -10,8 +10,6 @@ import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
-import java.sql.SQLException;
 
 public class Cafe_Application {
     public static LoginGUI loginGUI;
@@ -34,15 +32,15 @@ public class Cafe_Application {
         UIManager.put("PasswordField.capsLockIcon", new FlatSVGIcon("icon/capslock.svg"));
         UIManager.put("TitlePane.iconSize", new Dimension(25, 25));
         UIManager.put("TitlePane.iconMargins", new Insets(3, 5, 0, 20));
-        UIManager.put("TabbedPane.selectedBackground", Color.white);
         UIManager.put("TabbedPane.tabAreaInsets", new Insets(0, 0, 0, 0));
         UIManager.put("TabbedPane.tabInsets", new Insets(20, 20, 20, 20));
-        UIManager.put("TabbedPane.selected", Color.RED);
-        UIManager.put("TabbedPane.contentAreaColor", Color.GRAY);
+
         Thread thread = new Thread(() -> homeGUI = new HomeGUI());
         thread.start();
         loginGUI = new LoginGUI();
         loginGUI.setVisible(true);
+
+//        new EditStaffGUI(new StaffBLL().searchStaffs("id = 2").get(0));
     }
 
     public static void exit(int status) {

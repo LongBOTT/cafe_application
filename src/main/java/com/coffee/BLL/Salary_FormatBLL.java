@@ -86,7 +86,7 @@ public class Salary_FormatBLL extends Manager<Salary_Format> {
     }
 
     public Pair<Boolean, String> exists(Salary_Format salary_format) {
-        List<Salary_Format> modules = findSalary_Formats("name", salary_format.getName());
+        List<Salary_Format> modules = findSalary_FormatsBy(Map.of("name", salary_format.getName()));
 
         if (!modules.isEmpty()) {
             return new Pair<>(true, "Mẫu lương đã tồn tại.");

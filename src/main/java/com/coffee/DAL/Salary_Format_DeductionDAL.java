@@ -10,7 +10,7 @@ import java.util.List;
 public class Salary_Format_DeductionDAL extends Manager {
     public Salary_Format_DeductionDAL() {
         super("salary_format_deduction",
-                List.of("salary_format_deduction_id",
+                List.of("salary_format_id",
                         "deduction_id"));
     }
 

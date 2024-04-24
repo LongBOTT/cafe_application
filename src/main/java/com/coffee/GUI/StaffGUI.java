@@ -7,7 +7,6 @@ import com.coffee.GUI.DialogGUI.FormDetailGUI.*;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditStaffGUI;
 import com.coffee.GUI.components.*;
 import com.coffee.ImportExcel.AddEmployeeFromExcel;
-import com.coffee.ImportExcel.AddSupplierFromExcel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -378,6 +377,7 @@ public class StaffGUI extends Layout1 {
 
         if (edit && indexColumn == indexColumnEdit) {
             new EditStaffGUI(staffBLL.searchStaffs("id = " + data[indexRow][0]).get(0));
+//            new EditStaffGUI(staffBLL.searchStaffs("id = " + data[indexRow][0]).get(0));
             refresh();
         }
         if (remove && indexColumn == indexColumnRemove)

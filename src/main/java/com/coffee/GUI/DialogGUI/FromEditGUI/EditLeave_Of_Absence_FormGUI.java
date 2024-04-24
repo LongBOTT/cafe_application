@@ -99,7 +99,7 @@ public class EditLeave_Of_Absence_FormGUI extends JDialog {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+            label.setFont((new Font("Public Sans", Font.BOLD, 16)));
             attributeLeaveOfAbsenceForm.add(label);
             center.add(label);
 
@@ -189,8 +189,9 @@ public class EditLeave_Of_Absence_FormGUI extends JDialog {
                 List<Work_Schedule> work_schedules = new Work_ScheduleBLL().searchWork_schedules("staff_id = " + leaveOfAbsenceForm.getStaff_id(), "date ='" + leaveOfAbsenceForm.getDate_off() + "'", "shift = " + s);
                 if (!work_schedules.isEmpty()) {
                     Work_Schedule work_schedule = work_schedules.get(0);
-                    work_schedule.setCheck_in("P");
-                    work_schedule.setCheck_out("P");
+                    work_schedule.setCheck_in("null");
+                    work_schedule.setCheck_out("null");
+                    work_schedule.setNotice(leaveOfAbsenceForm.getReason());
                     new Work_ScheduleBLL().updateWork_schedule(work_schedule);
                 }
             }
@@ -208,14 +209,27 @@ public class EditLeave_Of_Absence_FormGUI extends JDialog {
     private void deny() {
         Pair<Boolean, String> result;
 
+        String[] shiftsIntegers = leaveOfAbsenceForm.getShifts().split(", ");
         leaveOfAbsenceForm.setStatus(2);
 
         result = leaveOfAbsenceFormBLL.updateLeave_Of_Absence_Form(leaveOfAbsenceForm);
 
         if (result.getKey()) {
+            for (String s : shiftsIntegers) {
+                List<Work_Schedule> work_schedules = new Work_ScheduleBLL().searchWork_schedules("staff_id = " + leaveOfAbsenceForm.getStaff_id(), "date ='" + leaveOfAbsenceForm.getDate_off() + "'", "shift = " + s);
+                if (!work_schedules.isEmpty()) {
+                    Work_Schedule work_schedule = work_schedules.get(0);
+                    work_schedule.setCheck_in("null");
+                    work_schedule.setCheck_out("null");
+                    work_schedule.setNotice("Không");
+                    new Work_ScheduleBLL().updateWork_schedule(work_schedule);
+                }
+            }
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             dispose();
+            CreateWorkScheduleGUI createWorkScheduleGUI = (CreateWorkScheduleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModuleCreateWorkScheduleGUI];
+            createWorkScheduleGUI.refresh();
         } else {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);

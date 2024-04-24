@@ -10,7 +10,7 @@ import java.util.List;
 public class Salary_Format_AllowanceDAL extends Manager {
     public Salary_Format_AllowanceDAL() {
         super("salary_format_allowance",
-                List.of("salary_format_allowance_id",
+                List.of("salary_format_id",
                         "allowance_id"));
     }
 

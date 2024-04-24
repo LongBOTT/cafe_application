@@ -82,7 +82,7 @@ public class AddStaffGUI extends DialogForm {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(150, 35));
             label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 15)));
+            label.setFont((new Font("Public Sans", Font.BOLD, 15)));
             attributeStaff.add(label);
             content.add(label);
             JTextField textField = new MyTextFieldUnderLine();

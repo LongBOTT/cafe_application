@@ -61,7 +61,7 @@ public class EditDeductionGUI extends DialogForm {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+            label.setFont((new Font("Public Sans", Font.BOLD, 16)));
             attributeDeduction.add(label);
             content.add(label);
 
@@ -85,6 +85,7 @@ public class EditDeductionGUI extends DialogForm {
                 jComboBoxDeductionType.addItem("Giảm trừ đi muộn");
                 jComboBoxDeductionType.addItem("Giảm trừ về sớm");
                 jComboBoxDeductionType.addItem("Giảm trừ cố định");
+                jComboBoxDeductionType.addItem("Giảm trừ nghỉ làm");
 
                 jComboBoxDeductionType.setSelectedIndex(deduction.getDeduction_type());
 

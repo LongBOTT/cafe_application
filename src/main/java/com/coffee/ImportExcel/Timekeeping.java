@@ -168,7 +168,7 @@ public class Timekeeping {
         List<Staff> staffs;
         String name = "";
         if (!rowData.containsKey("staff_id") || rowData.get("staff_id") == null) {
-            errorRow.append("Mã nhân viên bắt buộc phải là kiểu số nguyên và  không được để trống .\n");
+            errorRow.append("Mã nhân viên bắt buộc phải là kiểu số nguyên và không được để trống .\n");
         } else {
             staffs = new StaffBLL().searchStaffs("id = '" + rowData.get("staff_id") + "'");
             if (!staffs.isEmpty())

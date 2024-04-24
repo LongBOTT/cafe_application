@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Properties;
 
 public class Resource {
@@ -130,9 +131,10 @@ public class Resource {
             System.out.println(e.getMessage());
         }
     }
+
     public static File chooseExcelFile(Component parent) {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        fileChooser.setCurrentDirectory(new File("src/main/java/com/coffee/ImportExcel/excel_ template"));
         int result = fileChooser.showOpenDialog(parent);
         if (result == JFileChooser.APPROVE_OPTION) {
             return fileChooser.getSelectedFile();

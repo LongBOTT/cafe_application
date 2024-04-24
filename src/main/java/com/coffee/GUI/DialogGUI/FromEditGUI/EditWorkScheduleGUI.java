@@ -71,7 +71,7 @@ public class EditWorkScheduleGUI extends DialogForm {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+            label.setFont((new Font("Public Sans", Font.BOLD, 16)));
             attributeWork_Schedule.add(label);
             content.add(label);
 
@@ -181,14 +181,13 @@ public class EditWorkScheduleGUI extends DialogForm {
                 jPanel.add(textField2);
 
                 if (!workSchedule.getCheck_in().equals("null")) {
-                    if (!workSchedule.getCheck_in().equals("Phép")) {
+                    if (workSchedule.getNotice().equals("Không")) {
                         textField1.setText(workSchedule.getCheck_in().split(":")[0]);
                         textField2.setText(workSchedule.getCheck_in().split(":")[1]);
                     } else {
                         textField1.setEnabled(false);
                         textField2.setEnabled(false);
                     }
-
                 }
 
                 textField1.addKeyListener(new KeyAdapter() {
@@ -231,8 +230,8 @@ public class EditWorkScheduleGUI extends DialogForm {
                 jPanel.add(new JLabel(":"));
                 jPanel.add(textField2);
 
-                if (!workSchedule.getCheck_out().equals("null")) {
-                    if (!workSchedule.getCheck_out().equals("Phép")) {
+                if (!workSchedule.getCheck_in().equals("null")) {
+                    if (workSchedule.getNotice().equals("Không")) {
                         textField1.setText(workSchedule.getCheck_out().split(":")[0]);
                         textField2.setText(workSchedule.getCheck_out().split(":")[1]);
                     } else {

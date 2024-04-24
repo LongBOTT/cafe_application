@@ -53,7 +53,7 @@ public class AddRoleGUI extends DialogForm {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+            label.setFont((new Font("Public Sans", Font.BOLD, 16)));
             attributeRole.add(label);
             content.add(label);
 

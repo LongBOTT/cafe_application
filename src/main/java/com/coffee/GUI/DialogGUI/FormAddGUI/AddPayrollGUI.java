@@ -58,7 +58,7 @@ public class AddPayrollGUI extends DialogForm {
         JLabel label = new JLabel();
         label.setPreferredSize(new Dimension(170, 30));
         label.setText("Chọn kỳ làm việc");
-        label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+        label.setFont((new Font("Public Sans", Font.BOLD, 16)));
         attributePayroll.add(label);
         content.add(label);
 

@@ -87,6 +87,12 @@ public class StaffBLL extends Manager<Staff> {
         return new Pair<>(true, "Cập nhật nhân viên thành công.");
     }
 
+    public Pair<Boolean, String> updateStaff1(Staff newStaff) {
+        if (staffDAL.updateStaff(newStaff) == 0)
+            return new Pair<>(false, "Thiết lập lương nhân viên không thành công.");
+
+        return new Pair<>(true, "Thiết lập lương nhân viên thành công.");
+    }
 
     public Pair<Boolean, String> deleteStaff(Staff staff) {
 
