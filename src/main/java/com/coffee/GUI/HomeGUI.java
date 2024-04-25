@@ -291,8 +291,8 @@ public class HomeGUI extends JFrame {
             modules[i].add(moduleNames[i]);
         }
         menu.setPreferredSize(new Dimension(250, Math.max(500, modules.length * 41)));
-        openModule(allPanelModules[0]);
-        Active(modules[0]);
+        openModule(allPanelModules[0]); // custom
+        Active(modules[0]); // custom
     }
 
     public Pair<List<Module>, List<List<Function>>> getModulesAndFunctionsFromRole(int roleID) {

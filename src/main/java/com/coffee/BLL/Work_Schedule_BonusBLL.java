@@ -1,6 +1,7 @@
 package com.coffee.BLL;
 
 import com.coffee.DAL.Work_Schedule_BonusDAL;
+import com.coffee.DTO.Work_Schedule;
 import com.coffee.DTO.Work_Schedule_Bonus;
 import javafx.util.Pair;
 
@@ -42,6 +43,13 @@ public class Work_Schedule_BonusBLL extends Manager<Work_Schedule_Bonus> {
 
     public Pair<Boolean, String> deleteWork_schedule(Work_Schedule_Bonus work_schedule_bonus) {
         if (work_schedule_bonusDAL.deleteWork_Schedule_Bonus("work_schedule_id = " + work_schedule_bonus.getWork_schedule_id(), "bonus_name = '" + work_schedule_bonus.getBonus_name() + "'") == 0)
+            return new Pair<>(false, "Xoá tiền thưởng khỏi lịch không thành công.");
+
+        return new Pair<>(true, "Xoá tiền thưởng khỏi lịch thành công.");
+    }
+
+    public Pair<Boolean, String> deleteAllWork_schedule_bonus(Work_Schedule workSchedule) {
+        if (work_schedule_bonusDAL.deleteWork_Schedule_Bonus("work_schedule_id = " + workSchedule.getId()) == 0)
             return new Pair<>(false, "Xoá tiền thưởng khỏi lịch không thành công.");
 
         return new Pair<>(true, "Xoá tiền thưởng khỏi lịch thành công.");

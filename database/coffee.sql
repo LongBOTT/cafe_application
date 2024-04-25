@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 23, 2024 at 01:57 PM
+-- Generation Time: Apr 25, 2024 at 05:05 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -107,7 +107,9 @@ INSERT INTO `allowance` (`id`, `name`, `allowance_amount`, `allowance_type`) VAL
 (2, 'Tip', 200000, 1),
 (3, 'Thưởng', 500000, 1),
 (4, 'aaaaa', 50000, 1),
-(5, 'b', 33, 1);
+(5, 'ffff', 33, 1),
+(6, 'k', 8, 0),
+(7, 'kk', 8, 0);
 
 -- --------------------------------------------------------
 
@@ -292,10 +294,9 @@ CREATE TABLE `deduction` (
 INSERT INTO `deduction` (`id`, `name`, `deduction_amount`, `deduction_type`) VALUES
 (1, 'Đi muộn', 30000, 0),
 (2, 'Về sớm', 30000, 1),
-(3, 'Làm sai đơn hàng', 50000, 2),
-(4, 'abcc', 333.02, 1),
-(5, 'b', 3, 0),
-(6, 'Nghỉ làm không phép', 30000, 3);
+(3, 'Nghỉ làm không phép', 30000, 3),
+(4, 'kk', 8, 0),
+(5, 'k', 3, 0);
 
 -- --------------------------------------------------------
 
@@ -480,10 +481,11 @@ CREATE TABLE `leave_of_absence_form` (
 
 INSERT INTO `leave_of_absence_form` (`id`, `staff_id`, `date`, `date_off`, `shifts`, `reason`, `status`) VALUES
 (1, 4, '2024-03-16', '2024-03-18', '1, 2, 3', 'bệnh', 2),
-(2, 2, '2024-04-22', '2024-04-22', '1, 2', 'sdsd', 0),
-(3, 2, '2024-04-22', '2024-04-22', '1, 2, 3', 'ádasd', 1),
+(2, 2, '2024-04-22', '2024-04-22', '1, 2', 'sdsd', 2),
+(3, 2, '2024-04-22', '2024-04-22', '1, 2, 3', 'ádasd', 2),
 (4, 3, '2024-04-22', '2024-04-23', '1, 2, 3', 'ádasasd', 2),
-(5, 2, '2024-04-23', '2024-04-23', '1, 2, 3', 'Nghỉ phép năm', 2);
+(5, 2, '2024-04-23', '2024-04-23', '1, 2, 3', 'Nghỉ phép năm', 2),
+(6, 2, '2024-04-25', '2024-04-25', '1, 2', 'Nghỉ ốm', 1);
 
 -- --------------------------------------------------------
 
@@ -1013,7 +1015,13 @@ INSERT INTO `role` (`id`, `name`) VALUES
 (1, 'Admin'),
 (2, 'Quản lý'),
 (3, 'Nhân viên kho'),
-(4, 'Nhân viên bán hàng');
+(4, 'Nhân viên bán hàng'),
+(5, 'ab'),
+(6, 'c'),
+(7, 'cc'),
+(8, 'ccc'),
+(9, 'kml'),
+(10, 's');
 
 -- --------------------------------------------------------
 
@@ -1037,11 +1045,20 @@ INSERT INTO `role_detail` (`role_id`, `staff_id`, `entry_date`, `salary`, `type_
 (1, 1, '2024-02-27 00:00:00', 0, 0),
 (2, 2, '2024-02-28 03:00:00', 7000000, 1),
 (2, 2, '2024-03-28 09:47:27', 7000000, 1),
+(2, 2, '2024-04-24 08:59:49', 70000400, 1),
+(2, 2, '2024-04-24 09:01:01', 70000400, 1),
+(2, 2, '2024-04-24 09:01:22', 70000400, 1),
+(2, 2, '2024-04-24 09:07:35', 7000040, 1),
+(2, 2, '2024-04-24 09:08:01', 7000000, 1),
+(2, 2, '2024-04-24 09:08:35', 7000030, 1),
+(2, 2, '2024-04-24 09:09:57', 7000030, 1),
+(2, 2, '2024-04-24 09:10:07', 7000040, 1),
 (2, 3, '2024-02-28 00:00:00', 7000000, 1),
 (2, 3, '2024-03-28 09:48:02', 7000000, 1),
 (3, 4, '2024-02-28 00:00:00', 25000, 2),
 (3, 4, '2024-03-28 07:49:54', 25000, 2),
 (3, 4, '2024-04-22 10:58:53', 25000, 2),
+(3, 7, '2024-04-22 10:59:47', 25000, 2),
 (4, 5, '2024-02-28 00:00:00', 25000, 2),
 (4, 5, '2024-03-28 07:50:09', 25000, 2),
 (4, 5, '2024-03-28 09:46:57', 25000, 2),
@@ -1052,8 +1069,7 @@ INSERT INTO `role_detail` (`role_id`, `staff_id`, `entry_date`, `salary`, `type_
 (4, 6, '2024-04-22 10:59:37', 25000, 2),
 (4, 7, '2024-03-12 00:00:00', 25000, 2),
 (4, 7, '2024-03-28 07:50:27', 25000, 2),
-(4, 7, '2024-03-28 09:46:31', 25000, 2),
-(4, 7, '2024-04-22 10:59:47', 25000, 2);
+(4, 7, '2024-03-28 09:46:31', 25000, 2);
 
 -- --------------------------------------------------------
 
@@ -1071,7 +1087,8 @@ CREATE TABLE `salary_format` (
 --
 
 INSERT INTO `salary_format` (`id`, `name`) VALUES
-(0, 'default');
+(0, 'default'),
+(1, 'Lương quản lý');
 
 -- --------------------------------------------------------
 
@@ -1084,6 +1101,13 @@ CREATE TABLE `salary_format_allowance` (
   `allowance_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `salary_format_allowance`
+--
+
+INSERT INTO `salary_format_allowance` (`salary_format_id`, `allowance_id`) VALUES
+(1, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -1094,6 +1118,15 @@ CREATE TABLE `salary_format_deduction` (
   `salary_format_id` bigint(20) NOT NULL,
   `deduction_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `salary_format_deduction`
+--
+
+INSERT INTO `salary_format_deduction` (`salary_format_id`, `deduction_id`) VALUES
+(1, 1),
+(1, 2),
+(1, 3);
 
 -- --------------------------------------------------------
 
@@ -1161,7 +1194,7 @@ CREATE TABLE `staff` (
 
 INSERT INTO `staff` (`id`, `no`, `name`, `gender`, `birthdate`, `phone`, `address`, `email`, `deleted`, `salary_format_id`) VALUES
 (1, '079203023641', 'Admin', b'0', '2003-08-30', '0961234942', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'admin@gmail.com', b'0', 0),
-(2, '079203023644', 'Nguyễn Hoàng Long', b'0', '2003-08-30', '0963333946', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'colong30082003@gmail.com', b'0', 0),
+(2, '079203023644', 'Nguyễn Hoàng Long', b'0', '2003-08-30', '0963333946', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'colong30082003@gmail.com', b'0', 1),
 (3, '079203023642', 'Nguyễn Minh Thuận', b'0', '2003-08-30', '0964512947', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'nguyenminhthuan@gmail.com', b'0', 0),
 (4, '079203023643', 'Vũ Minh Thuận', b'0', '2003-08-30', '0964512944', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'vmiinhthuan@gmail.com', b'0', 0),
 (5, '079203023645', 'Trần Huỳnh Đức Anh', b'0', '2003-08-30', '0964512940', '514/26 Lê Đức Thọ P17 Gò Vấp TPHCM', 'ducanh@gmail.com', b'0', 0),
@@ -1215,47 +1248,103 @@ CREATE TABLE `work_schedule` (
 --
 
 INSERT INTO `work_schedule` (`id`, `staff_id`, `date`, `check_in`, `check_out`, `shift`, `notice`) VALUES
-(1, 4, '2024-03-11', '18:00', '23:00', 3, 'không'),
-(2, 4, '2024-03-12', '12:00', '18:00', 2, 'không'),
-(3, 4, '2024-03-13', '18:00', '23:00', 3, 'không'),
-(4, 4, '2024-03-14', '12:00', '18:00', 2, 'không'),
-(5, 4, '2024-03-15', '6:00', '12:00', 1, 'không'),
-(6, 4, '2024-03-16', '12:00', '18:00', 2, 'không'),
-(7, 4, '2024-03-17', '18:00', '23:00', 3, 'không'),
-(8, 5, '2024-03-11', '6:00', '12:00', 1, 'không'),
-(9, 5, '2024-03-12', '12:00', '18:00', 2, 'không'),
-(10, 5, '2024-03-13', '18:00', '23:00', 3, 'không'),
-(11, 5, '2024-03-14', '6:00', '12:00', 1, 'không'),
-(12, 6, '2024-03-14', '12:20', '18:00', 2, 'không'),
-(13, 6, '2024-03-15', '6:00', '11:30', 1, 'không'),
-(14, 6, '2024-03-16', '12:00', '17:30', 2, 'không'),
-(15, 7, '2024-03-11', '18:00', '23:00', 3, 'không'),
-(16, 7, '2024-03-12', '12:00', '18:00', 2, 'không'),
-(18, 5, '2024-03-17', '6:00', '12:00', 1, 'không'),
-(19, 5, '2024-03-17', '18:00', '23:00', 3, 'không'),
-(20, 7, '2024-03-16', '6:00', '12:00', 1, 'không'),
-(21, 7, '2024-03-16', '12:00', '18:00', 2, 'không'),
-(22, 7, '2024-03-16', '18:00', '23:00', 3, 'không'),
-(23, 3, '2024-04-20', '22:20', '23:00', 1, 'không'),
-(24, 3, '2024-04-20', '2:3', '3:3', 2, 'không'),
-(25, 2, '2024-03-11', 'Phép', 'Phép', 1, 'không'),
-(26, 2, '2024-03-11', 'null', 'null', 2, 'không'),
-(27, 2, '2024-03-11', 'null', 'null', 3, 'không'),
-(28, 3, '2024-04-11', 'null', 'null', 1, 'không'),
-(29, 3, '2024-04-11', 'null', 'null', 2, 'không'),
-(30, 3, '2024-03-12', 'null', 'null', 2, 'không'),
-(31, 3, '2024-03-12', 'null', 'null', 3, 'không'),
-(32, 3, '2024-03-11', 'null', 'null', 1, 'không'),
-(33, 3, '2024-03-11', 'null', 'null', 2, 'không'),
-(34, 4, '2024-04-02', 'null', 'null', 1, 'không'),
-(35, 4, '2024-04-02', 'null', 'null', 2, 'không'),
-(36, 7, '2024-04-20', 'null', 'null', 2, 'không'),
-(37, 3, '2024-04-23', 'Phép', 'Phép', 1, 'không'),
-(38, 3, '2024-04-23', 'Phép', 'Phép', 2, 'không'),
-(39, 3, '2024-04-23', 'Phép', 'Phép', 3, 'không'),
-(40, 6, '2024-04-23', '9:10', 'null', 1, 'không'),
-(41, 6, '2024-04-23', 'null', 'null', 2, 'không'),
-(42, 6, '2024-04-23', 'null', 'null', 3, 'không');
+(1, 4, '2024-03-11', '18:00', '23:00', 3, 'Không'),
+(2, 4, '2024-03-12', '12:00', '18:00', 2, 'Không'),
+(3, 4, '2024-03-13', '18:00', '23:00', 3, 'Không'),
+(4, 4, '2024-03-14', '12:00', '18:00', 2, 'Không'),
+(5, 4, '2024-03-15', '6:00', '12:00', 1, 'Không'),
+(6, 4, '2024-03-16', '12:00', '18:00', 2, 'Không'),
+(7, 4, '2024-03-17', '18:00', '23:00', 3, 'Không'),
+(8, 5, '2024-03-11', '6:00', '12:00', 1, 'Không'),
+(9, 5, '2024-03-12', '12:00', '18:00', 2, 'Không'),
+(10, 5, '2024-03-13', '18:00', '23:00', 3, 'Không'),
+(11, 5, '2024-03-14', '6:00', '12:00', 1, 'Không'),
+(12, 6, '2024-03-14', '12:20', '18:00', 2, 'Không'),
+(13, 6, '2024-03-15', '6:00', '11:30', 1, 'Không'),
+(14, 6, '2024-03-16', '12:00', '17:30', 2, 'Không'),
+(15, 7, '2024-03-11', '18:00', '23:00', 3, 'Không'),
+(16, 7, '2024-03-12', '12:00', '18:00', 2, 'Không'),
+(18, 5, '2024-03-17', '6:00', '12:00', 1, 'Không'),
+(19, 5, '2024-03-17', '18:00', '23:00', 3, 'Không'),
+(20, 7, '2024-03-16', '6:00', '12:00', 1, 'Không'),
+(21, 7, '2024-03-16', '12:00', '18:00', 2, 'Không'),
+(22, 7, '2024-03-16', '18:00', '23:00', 3, 'Không'),
+(23, 3, '2024-04-20', '22:20', '23:00', 1, 'Không'),
+(24, 3, '2024-04-20', '22:20', '23:00', 2, 'Không'),
+(25, 2, '2024-03-11', 'null', 'null', 1, 'Không'),
+(26, 2, '2024-03-11', 'null', 'null', 2, 'Không'),
+(27, 2, '2024-03-11', 'null', 'null', 3, 'Không'),
+(28, 3, '2024-04-11', 'null', 'null', 1, 'Không'),
+(29, 3, '2024-04-11', 'null', 'null', 2, 'Không'),
+(30, 3, '2024-03-12', 'null', 'null', 2, 'Không'),
+(31, 3, '2024-03-12', 'null', 'null', 3, 'Không'),
+(32, 3, '2024-03-11', 'null', 'null', 1, 'Không'),
+(33, 3, '2024-03-11', 'null', 'null', 2, 'Không'),
+(34, 3, '2024-04-29', 'null', 'null', 1, 'Không'),
+(35, 3, '2024-04-29', 'null', 'null', 2, 'Không'),
+(36, 2, '2024-04-22', '10:50', '10:50', 1, 'Không'),
+(37, 2, '2024-04-22', 'null', 'null', 2, 'Không'),
+(38, 2, '2024-04-23', '10:50', '22:00', 1, 'Không'),
+(39, 2, '2024-04-23', 'null', 'null', 2, 'Không'),
+(40, 2, '2024-04-24', 'null', 'null', 1, 'Không'),
+(41, 2, '2024-04-24', 'null', 'null', 2, 'Không'),
+(42, 2, '2024-04-25', 'null', 'null', 1, 'Nghỉ ốm'),
+(43, 2, '2024-04-25', 'null', 'null', 2, 'Nghỉ ốm'),
+(44, 2, '2024-04-26', 'null', 'null', 1, 'Không'),
+(45, 2, '2024-04-26', 'null', 'null', 2, 'Không'),
+(46, 2, '2024-04-27', 'null', 'null', 1, 'Không'),
+(47, 2, '2024-04-27', 'null', 'null', 2, 'Không'),
+(48, 2, '2024-04-28', 'null', 'null', 1, 'Không'),
+(49, 2, '2024-04-28', 'null', 'null', 2, 'Không'),
+(50, 3, '2024-04-22', 'null', 'null', 3, 'Không'),
+(51, 3, '2024-04-23', 'null', 'null', 3, 'Không'),
+(52, 3, '2024-04-24', 'null', 'null', 3, 'Không'),
+(53, 3, '2024-04-25', 'null', 'null', 3, 'Không'),
+(54, 3, '2024-04-26', 'null', 'null', 3, 'Không'),
+(55, 3, '2024-04-27', 'null', 'null', 3, 'Không'),
+(56, 3, '2024-04-28', 'null', 'null', 3, 'Không'),
+(57, 4, '2024-04-22', 'null', 'null', 1, 'Không'),
+(58, 4, '2024-04-22', 'null', 'null', 2, 'Không'),
+(59, 4, '2024-04-23', 'null', 'null', 1, 'Không'),
+(60, 4, '2024-04-23', 'null', 'null', 2, 'Không'),
+(61, 4, '2024-04-24', 'null', 'null', 1, 'Không'),
+(62, 4, '2024-04-24', 'null', 'null', 2, 'Không'),
+(63, 4, '2024-04-26', 'null', 'null', 1, 'Không'),
+(64, 4, '2024-04-26', 'null', 'null', 2, 'Không'),
+(65, 4, '2024-04-25', 'null', 'null', 1, 'Không'),
+(66, 4, '2024-04-25', 'null', 'null', 2, 'Không'),
+(67, 4, '2024-04-27', 'null', 'null', 1, 'Không'),
+(68, 4, '2024-04-27', 'null', 'null', 2, 'Không'),
+(69, 4, '2024-04-28', 'null', 'null', 1, 'Không'),
+(70, 4, '2024-04-28', 'null', 'null', 2, 'Không'),
+(71, 7, '2024-04-22', 'null', 'null', 3, 'Không'),
+(72, 7, '2024-04-23', 'null', 'null', 3, 'Không'),
+(73, 7, '2024-04-24', 'null', 'null', 3, 'Không'),
+(74, 7, '2024-04-25', 'null', 'null', 3, 'Không'),
+(75, 7, '2024-04-26', 'null', 'null', 3, 'Không'),
+(76, 7, '2024-04-27', 'null', 'null', 3, 'Không'),
+(77, 7, '2024-04-28', 'null', 'null', 3, 'Không'),
+(78, 5, '2024-04-22', 'null', 'null', 1, 'Không'),
+(79, 5, '2024-04-22', 'null', 'null', 2, 'Không'),
+(80, 5, '2024-04-23', '10:50', '11:20', 1, 'Không'),
+(81, 5, '2024-04-23', 'null', 'null', 2, 'Không'),
+(82, 5, '2024-04-25', 'null', 'null', 1, 'Không'),
+(83, 5, '2024-04-25', 'null', 'null', 2, 'Không'),
+(84, 5, '2024-04-24', 'null', 'null', 1, 'Không'),
+(85, 5, '2024-04-24', 'null', 'null', 2, 'Không'),
+(86, 5, '2024-04-26', 'null', 'null', 1, 'Không'),
+(87, 5, '2024-04-26', 'null', 'null', 2, 'Không'),
+(88, 5, '2024-04-27', 'null', 'null', 1, 'Không'),
+(89, 5, '2024-04-27', 'null', 'null', 2, 'Không'),
+(90, 5, '2024-04-28', 'null', 'null', 1, 'Không'),
+(91, 5, '2024-04-28', 'null', 'null', 2, 'Không'),
+(92, 6, '2024-04-22', 'null', 'null', 3, 'Không'),
+(93, 6, '2024-04-23', 'null', 'null', 3, 'Không'),
+(94, 6, '2024-04-24', 'null', 'null', 3, 'Không'),
+(95, 6, '2024-04-25', 'null', 'null', 3, 'Không'),
+(96, 6, '2024-04-26', 'null', 'null', 3, 'Không'),
+(97, 6, '2024-04-27', 'null', 'null', 3, 'Không'),
+(98, 6, '2024-04-28', 'null', 'null', 3, 'Không');
 
 -- --------------------------------------------------------
 
@@ -1265,11 +1354,20 @@ INSERT INTO `work_schedule` (`id`, `staff_id`, `date`, `check_in`, `check_out`, 
 
 CREATE TABLE `work_schedule_bonus` (
   `work_schedule_id` bigint(20) NOT NULL,
-  `bonus_name` bigint(20) NOT NULL,
+  `bonus_name` varchar(20) NOT NULL,
   `bonus_amount` double DEFAULT NULL,
-  `quanity` int(11) DEFAULT NULL,
+  `quantity` int(11) DEFAULT NULL,
   `bonus_total` double DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `work_schedule_bonus`
+--
+
+INSERT INTO `work_schedule_bonus` (`work_schedule_id`, `bonus_name`, `bonus_amount`, `quantity`, `bonus_total`) VALUES
+(36, 'aa', 1, 1, 1),
+(36, 'bac', 4, 4, 16),
+(38, '33', 33, 333, 10989);
 
 -- --------------------------------------------------------
 
@@ -1279,11 +1377,20 @@ CREATE TABLE `work_schedule_bonus` (
 
 CREATE TABLE `work_schedule_fine` (
   `work_schedule_id` bigint(20) NOT NULL,
-  `fine_name` bigint(20) NOT NULL,
+  `fine_name` varchar(20) NOT NULL,
   `fine_amount` double DEFAULT NULL,
-  `quanity` int(11) DEFAULT NULL,
+  `quantity` int(11) DEFAULT NULL,
   `fine_total` double DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `work_schedule_fine`
+--
+
+INSERT INTO `work_schedule_fine` (`work_schedule_id`, `fine_name`, `fine_amount`, `quantity`, `fine_total`) VALUES
+(36, 'á', 5, 52, 260),
+(38, '22', 2, 22, 44),
+(38, 'a', 5, 2, 10);
 
 --
 -- Indexes for dumped tables
@@ -1604,14 +1711,14 @@ ALTER TABLE `role_detail`
 --
 ALTER TABLE `salary_format_allowance`
   ADD CONSTRAINT `fk_allowance` FOREIGN KEY (`allowance_id`) REFERENCES `allowance` (`id`),
-  ADD CONSTRAINT `fk_salary` FOREIGN KEY (`salary_format_id`) REFERENCES `salary_format` (`id`);
+  ADD CONSTRAINT `fk_salary` FOREIGN KEY (`salary_format_id`) REFERENCES `salary_format` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `salary_format_deduction`
 --
 ALTER TABLE `salary_format_deduction`
   ADD CONSTRAINT `salary_format_deduction_ibfk_2` FOREIGN KEY (`deduction_id`) REFERENCES `deduction` (`id`),
-  ADD CONSTRAINT `salary_format_deduction_ibfk_3` FOREIGN KEY (`salary_format_id`) REFERENCES `salary_format` (`id`);
+  ADD CONSTRAINT `salary_format_deduction_ibfk_3` FOREIGN KEY (`salary_format_id`) REFERENCES `salary_format` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `shipment`
@@ -1637,13 +1744,13 @@ ALTER TABLE `work_schedule`
 -- Constraints for table `work_schedule_bonus`
 --
 ALTER TABLE `work_schedule_bonus`
-  ADD CONSTRAINT `fk_workschedule1` FOREIGN KEY (`work_schedule_id`) REFERENCES `work_schedule` (`id`);
+  ADD CONSTRAINT `fk_workschedule1` FOREIGN KEY (`work_schedule_id`) REFERENCES `work_schedule` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `work_schedule_fine`
 --
 ALTER TABLE `work_schedule_fine`
-  ADD CONSTRAINT `fk_workschedule` FOREIGN KEY (`work_schedule_id`) REFERENCES `work_schedule` (`id`);
+  ADD CONSTRAINT `fk_workschedule` FOREIGN KEY (`work_schedule_id`) REFERENCES `work_schedule` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,6 +1,7 @@
 package com.coffee.BLL;
 
 import com.coffee.DAL.Work_Schedule_FineDAL;
+import com.coffee.DTO.Work_Schedule;
 import com.coffee.DTO.Work_Schedule_Fine;
 import javafx.util.Pair;
 
@@ -43,6 +44,13 @@ public class Work_Schedule_FineBLL extends Manager<Work_Schedule_Fine> {
 
     public Pair<Boolean, String> deleteWork_schedule(Work_Schedule_Fine work_schedule_fine) {
         if (work_schedule_fineDAL.deleteWork_Schedule_Fine("work_schedule_id = " + work_schedule_fine.getWork_schedule_id(), "fine_name = '" + work_schedule_fine.getFine_name() + "'") == 0)
+            return new Pair<>(false, "Xoá phạt tiền khỏi lịch không thành công.");
+
+        return new Pair<>(true, "Xoá phạt tiền khỏi lịch thành công.");
+    }
+
+    public Pair<Boolean, String> deleteAllWork_schedule_fine(Work_Schedule workSchedule) {
+        if (work_schedule_fineDAL.deleteWork_Schedule_Fine("work_schedule_id = " + workSchedule.getId()) == 0)
             return new Pair<>(false, "Xoá phạt tiền khỏi lịch không thành công.");
 
         return new Pair<>(true, "Xoá phạt tiền khỏi lịch thành công.");

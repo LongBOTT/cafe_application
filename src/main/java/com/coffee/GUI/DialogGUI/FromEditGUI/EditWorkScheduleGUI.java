@@ -16,6 +16,7 @@ import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.GUI.components.swing.PanelSearch;
 import com.coffee.main.Cafe_Application;
 import com.coffee.utils.VNString;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 import raven.datetime.component.date.DateEvent;
@@ -25,6 +26,7 @@ import raven.datetime.component.time.TimePicker;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
@@ -209,107 +211,7 @@ public class EditWorkScheduleGUI extends DialogForm {
                 continue;
             }
 
-//            if (string.equals("Giờ vào")) {
-//                JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-//                jPanel.setPreferredSize(new Dimension(1000, 30));
-//                jPanel.setBackground(Color.white);
-//
-//                JTextField textField1 = new JTextField();
-//                JTextField textField2 = new JTextField();
-//
-//                textField1.setPreferredSize(new Dimension(40, 30));
-//                textField2.setPreferredSize(new Dimension(40, 30));
-//
-//                jPanel.add(textField1);
-//                jPanel.add(new JLabel(":"));
-//                jPanel.add(textField2);
-//
-//                if (!workSchedule.getCheck_in().equals("null")) {
-//                    if (workSchedule.getNotice().equals("Không")) {
-//                        textField1.setText(workSchedule.getCheck_in().split(":")[0]);
-//                        textField2.setText(workSchedule.getCheck_in().split(":")[1]);
-//                    } else {
-//                        textField1.setEnabled(false);
-//                        textField2.setEnabled(false);
-//                    }
-//                }
-//
-//                textField1.addKeyListener(new KeyAdapter() {
-//                    @Override
-//                    public void keyTyped(KeyEvent e) {
-//                        if (!Character.isDigit(e.getKeyChar())) {
-//                            e.consume();
-//                        }
-//                    }
-//                });
-//
-//                textField2.addKeyListener(new KeyAdapter() {
-//                    @Override
-//                    public void keyTyped(KeyEvent e) {
-//                        if (!Character.isDigit(e.getKeyChar())) {
-//                            e.consume();
-//                        }
-//                    }
-//                });
-//
-//                jTextFieldWork_Schedule.add(textField1);
-//                jTextFieldWork_Schedule.add(textField2);
-//
-//                content.add(jPanel, "wrap");
-//                continue;
-//            }
-
-//            if (string.equals("Giờ ra")) {
-//                JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-//                jPanel.setPreferredSize(new Dimension(1000, 30));
-//                jPanel.setBackground(Color.white);
-//
-//                JTextField textField1 = new JTextField();
-//                JTextField textField2 = new JTextField();
-//
-//                textField1.setPreferredSize(new Dimension(40, 30));
-//                textField2.setPreferredSize(new Dimension(40, 30));
-//
-//                jPanel.add(textField1);
-//                jPanel.add(new JLabel(":"));
-//                jPanel.add(textField2);
-//
-//                if (!workSchedule.getCheck_in().equals("null")) {
-//                    if (workSchedule.getNotice().equals("Không")) {
-//                        textField1.setText(workSchedule.getCheck_out().split(":")[0]);
-//                        textField2.setText(workSchedule.getCheck_out().split(":")[1]);
-//                    } else {
-//                        textField1.setEnabled(false);
-//                        textField2.setEnabled(false);
-//                    }
-//                }
-//
-//                textField1.addKeyListener(new KeyAdapter() {
-//                    @Override
-//                    public void keyTyped(KeyEvent e) {
-//                        if (!Character.isDigit(e.getKeyChar())) {
-//                            e.consume();
-//                        }
-//                    }
-//                });
-//
-//                textField2.addKeyListener(new KeyAdapter() {
-//                    @Override
-//                    public void keyTyped(KeyEvent e) {
-//                        if (!Character.isDigit(e.getKeyChar())) {
-//                            e.consume();
-//                        }
-//                    }
-//                });
-//
-//                jTextFieldWork_Schedule.add(textField1);
-//                jTextFieldWork_Schedule.add(textField2);
-//
-//                content.add(jPanel, "wrap");
-//                continue;
-//            }
-
-            textField.setPreferredSize(new Dimension(1000, 30));
+            textField.setPreferredSize(new Dimension(280, 30));
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
 //            jTextFieldWork_Schedule.add(textField);
@@ -375,6 +277,20 @@ public class EditWorkScheduleGUI extends DialogForm {
         containerButton.add(buttonEdit);
     }
 
+    private boolean checkExistsFine(Work_Schedule_Fine workScheduleFine) {
+        for (Work_Schedule_Fine workScheduleFine1 : work_schedule_fines)
+            if (workScheduleFine1.getFine_name().equals(workScheduleFine.getFine_name()))
+                return true;
+        return false;
+    }
+
+    private boolean checkExistsBonus(Work_Schedule_Bonus workScheduleBonus) {
+        for (Work_Schedule_Bonus workScheduleBonus1 : work_schedule_bonuses)
+            if (workScheduleBonus1.getBonus_name().equals(workScheduleBonus.getBonus_name()))
+                return true;
+        return false;
+    }
+
     private void initBonusPanel() {
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setBackground(Color.cyan);
@@ -392,19 +308,19 @@ public class EditWorkScheduleGUI extends DialogForm {
         panel.setPreferredSize(new Dimension(630, 30));
 
         JTextField jLabelBonusName = new MyTextFieldUnderLine();
-        jLabelBonusName.setPreferredSize(new Dimension(250, 30));
+        jLabelBonusName.setPreferredSize(new Dimension(230, 30));
         jLabelBonusName.setFont((new Font("Inter", Font.PLAIN, 13)));
 
         JTextField jLabelBonusQuantity = new MyTextFieldUnderLine();
-        jLabelBonusQuantity.setPreferredSize(new Dimension(50, 30));
+        jLabelBonusQuantity.setPreferredSize(new Dimension(70, 30));
         jLabelBonusQuantity.setFont((new Font("Inter", Font.PLAIN, 13)));
 
         JTextField jLabelBonusAmount = new MyTextFieldUnderLine();
-        jLabelBonusAmount.setPreferredSize(new Dimension(150, 30));
+        jLabelBonusAmount.setPreferredSize(new Dimension(125, 30));
         jLabelBonusAmount.setFont((new Font("Inter", Font.PLAIN, 13)));
 
         JTextField jLabelBonusTotal = new MyTextFieldUnderLine();
-        jLabelBonusTotal.setPreferredSize(new Dimension(150, 30));
+        jLabelBonusTotal.setPreferredSize(new Dimension(125, 30));
         jLabelBonusTotal.setFont((new Font("Inter", Font.PLAIN, 13)));
         jLabelBonusTotal.setEditable(false);
 
@@ -431,8 +347,29 @@ public class EditWorkScheduleGUI extends DialogForm {
                                 "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                         return;
                     }
-                    double total = Integer.parseInt(jLabelBonusQuantity.getText()) * Double.parseDouble(jLabelBonusAmount.getText());
-                    jLabelBonusTotal.setText(VNString.currency(total));
+
+                    Work_Schedule_Bonus workScheduleBonusLast = new Work_Schedule_Bonus();
+                    workScheduleBonusLast.setWork_schedule_id(workSchedule.getId());
+                    workScheduleBonusLast.setBonus_name(jLabelBonusName.getText());
+                    workScheduleBonusLast.setQuantity(Integer.parseInt(jLabelBonusQuantity.getText()));
+                    workScheduleBonusLast.setBonus_amount(Double.parseDouble(jLabelBonusAmount.getText()));
+
+                    if (checkExistsBonus(workScheduleBonusLast)) {
+                        JOptionPane.showMessageDialog(null, "Đã tồn tại nội dung thưởng!",
+                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        double total = Integer.parseInt(jLabelBonusQuantity.getText()) * Double.parseDouble(jLabelBonusAmount.getText());
+                        jLabelBonusTotal.setText(VNString.currency(total));
+                        workScheduleBonusLast.setBonus_total(Double.parseDouble(jLabelBonusTotal.getText().replaceAll("\\.", "").split(" ₫")[0]));
+
+                        work_schedule_bonuses.add(workScheduleBonusLast);
+                        loadBonusPanel(scrollPane);
+                        panel.repaint();
+                        panel.revalidate();
+
+                        System.out.println(Arrays.toString(work_schedule_bonuses.toArray()));
+                    }
+
                 }
             }
 
@@ -452,54 +389,55 @@ public class EditWorkScheduleGUI extends DialogForm {
         titleBonusAmount.setText("Mức áp dụng");
         titleBonusTotal.setText("Thành tiền");
 
-        titleBonusName.setPreferredSize(new Dimension(250, 30));
+        titleBonusName.setPreferredSize(new Dimension(230, 30));
         titleBonusName.setFont((new Font("Inter", Font.BOLD, 13)));
 
-        titleBonusQuantity.setPreferredSize(new Dimension(50, 30));
+        titleBonusQuantity.setPreferredSize(new Dimension(70, 30));
         titleBonusQuantity.setFont((new Font("Inter", Font.BOLD, 13)));
 
-        titleBonusAmount.setPreferredSize(new Dimension(150, 30));
+        titleBonusAmount.setPreferredSize(new Dimension(125, 30));
         titleBonusAmount.setFont((new Font("Inter", Font.BOLD, 13)));
 
-        titleBonusTotal.setPreferredSize(new Dimension(150, 30));
+        titleBonusTotal.setPreferredSize(new Dimension(125, 30));
         titleBonusTotal.setFont((new Font("Inter", Font.BOLD, 13)));
 
-        JPanel jpanel1 = new JPanel(new MigLayout("", "0[]10[]10[]10[]0", "0[]0"));
+        JPanel jpanel1 = new JPanel(new MigLayout("", "0[]10[]10[]10[]0[]0", "0[]0"));
         jpanel1.setBackground(new Color(227, 242, 250));
         jpanel1.setPreferredSize(new Dimension(630, 30));
 
         jpanel1.add(titleBonusName);
         jpanel1.add(titleBonusQuantity);
         jpanel1.add(titleBonusAmount);
-        jpanel1.add(titleBonusTotal, "wrap");
+        jpanel1.add(titleBonusTotal);
+        jpanel1.add(new JLabel(), "width 50,wrap");
         panel.add(jpanel1, "wrap");
 
         for (Work_Schedule_Bonus workScheduleBonus : work_schedule_bonuses) {
-            JPanel jPanelBonus = new JPanel(new MigLayout("", "0[]10[]10[]0", "0[]0"));
+            JPanel jPanelBonus = new JPanel(new MigLayout("", "0[]10[]10[]10[]0[]0", "0[]0"));
             jPanelBonus.setBackground(new Color(255, 255, 255));
             jPanelBonus.setPreferredSize(new Dimension(730, 50));
 
             JTextField jLabelBonusName1 = new MyTextFieldUnderLine();
             jLabelBonusName1.setText(workScheduleBonus.getBonus_name());
-            jLabelBonusName1.setPreferredSize(new Dimension(250, 30));
+            jLabelBonusName1.setPreferredSize(new Dimension(230, 30));
             jLabelBonusName1.setFont((new Font("Inter", Font.PLAIN, 13)));
             jLabelBonusName1.setEditable(false);
 
             JTextField jLabelBonusQuantity1 = new MyTextFieldUnderLine();
             jLabelBonusQuantity1.setText(String.valueOf(workScheduleBonus.getQuantity()));
-            jLabelBonusQuantity1.setPreferredSize(new Dimension(50, 30));
+            jLabelBonusQuantity1.setPreferredSize(new Dimension(70, 30));
             jLabelBonusQuantity1.setFont((new Font("Inter", Font.PLAIN, 13)));
             jLabelBonusQuantity1.setEditable(false);
 
             JTextField jLabelBonusAmount1 = new MyTextFieldUnderLine();
             jLabelBonusAmount1.setText(VNString.currency(workScheduleBonus.getBonus_amount()));
-            jLabelBonusAmount1.setPreferredSize(new Dimension(150, 30));
+            jLabelBonusAmount1.setPreferredSize(new Dimension(125, 30));
             jLabelBonusAmount1.setFont((new Font("Inter", Font.PLAIN, 13)));
             jLabelBonusAmount1.setEditable(false);
 
             JTextField jLabelBonusTotal1 = new MyTextFieldUnderLine();
             jLabelBonusTotal1.setText(VNString.currency(workScheduleBonus.getBonus_total()));
-            jLabelBonusTotal1.setPreferredSize(new Dimension(150, 30));
+            jLabelBonusTotal1.setPreferredSize(new Dimension(125, 30));
             jLabelBonusTotal1.setFont((new Font("Inter", Font.PLAIN, 13)));
             jLabelBonusTotal1.setEditable(false);
 
@@ -507,18 +445,33 @@ public class EditWorkScheduleGUI extends DialogForm {
             jPanelBonus.add(jLabelBonusName1);
             jPanelBonus.add(jLabelBonusQuantity1);
             jPanelBonus.add(jLabelBonusAmount1);
-            jPanelBonus.add(jLabelBonusTotal1, "wrap");
+            jPanelBonus.add(jLabelBonusTotal1);
+
+            JLabel jLabelIconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
+            jLabelIconRemove.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            jLabelIconRemove.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    work_schedule_bonuses.remove(workScheduleBonus);
+                    loadBonusPanel(scrollPane);
+                    panel.repaint();
+                    panel.revalidate();
+                }
+            });
+
+            jPanelBonus.add(jLabelIconRemove, "width 50,wrap");
             panel.add(jPanelBonus, "wrap");
 
         }
 
-        JPanel jPanelBonus = new JPanel(new MigLayout("", "0[]10[]10[]0", "0[]0"));
+        JPanel jPanelBonus = new JPanel(new MigLayout("", "0[]10[]10[]10[]0[]0", "0[]0"));
         jPanelBonus.setBackground(new Color(255, 255, 255));
         jPanelBonus.setPreferredSize(new Dimension(730, 50));
         jPanelBonus.add(jLabelBonusName);
         jPanelBonus.add(jLabelBonusQuantity);
         jPanelBonus.add(jLabelBonusAmount);
-        jPanelBonus.add(jLabelBonusTotal, "wrap");
+        jPanelBonus.add(jLabelBonusTotal);
+        jPanelBonus.add(new JLabel(), "width 50,wrap");
         panel.add(jPanelBonus, "wrap");
 
         JButton buttonAddBonus = new JButton("+ Thêm thưởng");
@@ -549,7 +502,23 @@ public class EditWorkScheduleGUI extends DialogForm {
                 workScheduleBonusLast.setBonus_name(jLabelBonusName.getText());
                 workScheduleBonusLast.setQuantity(Integer.parseInt(jLabelBonusQuantity.getText()));
                 workScheduleBonusLast.setBonus_amount(Double.parseDouble(jLabelBonusAmount.getText()));
-                workScheduleBonusLast.setBonus_total(Double.parseDouble(jLabelBonusTotal.getText().replaceAll("\\.", "").split(" ₫")[0]));
+
+                if (checkExistsBonus(workScheduleBonusLast)) {
+                    JOptionPane.showMessageDialog(null, "Đã tồn tại nội dung thưởng!",
+                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    double total = Integer.parseInt(jLabelBonusQuantity.getText()) * Double.parseDouble(jLabelBonusAmount.getText());
+                    jLabelBonusTotal.setText(VNString.currency(total));
+                    workScheduleBonusLast.setBonus_total(Double.parseDouble(jLabelBonusTotal.getText().replaceAll("\\.", "").split(" ₫")[0]));
+
+                    work_schedule_bonuses.add(workScheduleBonusLast);
+                    loadBonusPanel(scrollPane);
+                    panel.repaint();
+                    panel.revalidate();
+
+                    System.out.println(Arrays.toString(work_schedule_bonuses.toArray()));
+                }
+
                 work_schedule_bonuses.add(workScheduleBonusLast);
                 loadBonusPanel(scrollPane);
                 panel.repaint();
@@ -579,19 +548,19 @@ public class EditWorkScheduleGUI extends DialogForm {
         panel.setPreferredSize(new Dimension(630, 30));
 
         JTextField jLabelFineName = new MyTextFieldUnderLine();
-        jLabelFineName.setPreferredSize(new Dimension(250, 30));
+        jLabelFineName.setPreferredSize(new Dimension(230, 30));
         jLabelFineName.setFont((new Font("Inter", Font.PLAIN, 13)));
 
         JTextField jLabelFineQuantity = new MyTextFieldUnderLine();
-        jLabelFineQuantity.setPreferredSize(new Dimension(50, 30));
+        jLabelFineQuantity.setPreferredSize(new Dimension(70, 30));
         jLabelFineQuantity.setFont((new Font("Inter", Font.PLAIN, 13)));
 
         JTextField jLabelFineAmount = new MyTextFieldUnderLine();
-        jLabelFineAmount.setPreferredSize(new Dimension(150, 30));
+        jLabelFineAmount.setPreferredSize(new Dimension(125, 30));
         jLabelFineAmount.setFont((new Font("Inter", Font.PLAIN, 13)));
 
         JTextField jLabelFineTotal = new MyTextFieldUnderLine();
-        jLabelFineTotal.setPreferredSize(new Dimension(150, 30));
+        jLabelFineTotal.setPreferredSize(new Dimension(125, 30));
         jLabelFineTotal.setFont((new Font("Inter", Font.PLAIN, 13)));
         jLabelFineTotal.setEditable(false);
 
@@ -618,8 +587,29 @@ public class EditWorkScheduleGUI extends DialogForm {
                                 "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                         return;
                     }
-                    double total = Integer.parseInt(jLabelFineQuantity.getText()) * Double.parseDouble(jLabelFineAmount.getText());
-                    jLabelFineTotal.setText(VNString.currency(total));
+
+                    Work_Schedule_Fine workScheduleFineLast = new Work_Schedule_Fine();
+                    workScheduleFineLast.setWork_schedule_id(workSchedule.getId());
+                    workScheduleFineLast.setFine_name(jLabelFineName.getText());
+                    workScheduleFineLast.setQuantity(Integer.parseInt(jLabelFineQuantity.getText()));
+                    workScheduleFineLast.setFine_amount(Double.parseDouble(jLabelFineAmount.getText()));
+
+                    if (checkExistsFine(workScheduleFineLast)) {
+                        JOptionPane.showMessageDialog(null, "Đã tồn tại nội dung vi phạm!",
+                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        double total = Integer.parseInt(jLabelFineQuantity.getText()) * Double.parseDouble(jLabelFineAmount.getText());
+                        jLabelFineTotal.setText(VNString.currency(total));
+                        workScheduleFineLast.setFine_total(Double.parseDouble(jLabelFineTotal.getText().replaceAll("\\.", "").split(" ₫")[0]));
+
+                        work_schedule_fines.add(workScheduleFineLast);
+                        loadFinePanel(scrollPane);
+                        panel.repaint();
+                        panel.revalidate();
+
+                        System.out.println(Arrays.toString(work_schedule_fines.toArray()));
+                    }
+
                 }
             }
 
@@ -639,54 +629,55 @@ public class EditWorkScheduleGUI extends DialogForm {
         titleFineAmount.setText("Mức áp dụng");
         titleFineTotal.setText("Thành tiền");
 
-        titleFineName.setPreferredSize(new Dimension(250, 30));
+        titleFineName.setPreferredSize(new Dimension(230, 30));
         titleFineName.setFont((new Font("Inter", Font.BOLD, 13)));
 
-        titleFineQuantity.setPreferredSize(new Dimension(50, 30));
+        titleFineQuantity.setPreferredSize(new Dimension(70, 30));
         titleFineQuantity.setFont((new Font("Inter", Font.BOLD, 13)));
 
-        titleFineAmount.setPreferredSize(new Dimension(150, 30));
+        titleFineAmount.setPreferredSize(new Dimension(125, 30));
         titleFineAmount.setFont((new Font("Inter", Font.BOLD, 13)));
 
-        titleFineTotal.setPreferredSize(new Dimension(150, 30));
+        titleFineTotal.setPreferredSize(new Dimension(125, 30));
         titleFineTotal.setFont((new Font("Inter", Font.BOLD, 13)));
 
-        JPanel jpanel1 = new JPanel(new MigLayout("", "0[]10[]10[]10[]0", "0[]0"));
+        JPanel jpanel1 = new JPanel(new MigLayout("", "0[]10[]10[]10[]0[]0", "0[]0"));
         jpanel1.setBackground(new Color(227, 242, 250));
         jpanel1.setPreferredSize(new Dimension(630, 30));
 
         jpanel1.add(titleFineName);
         jpanel1.add(titleFineQuantity);
         jpanel1.add(titleFineAmount);
-        jpanel1.add(titleFineTotal, "wrap");
+        jpanel1.add(titleFineTotal);
+        jpanel1.add(new JLabel(), "width 50,wrap");
         panel.add(jpanel1, "wrap");
 
         for (Work_Schedule_Fine workScheduleFine : work_schedule_fines) {
-            JPanel jPanelFine = new JPanel(new MigLayout("", "0[]10[]10[]0", "0[]0"));
+            JPanel jPanelFine = new JPanel(new MigLayout("", "0[]10[]10[]10[]0[]0", "0[]0"));
             jPanelFine.setBackground(new Color(255, 255, 255));
             jPanelFine.setPreferredSize(new Dimension(730, 50));
 
             JTextField jLabelFineName1 = new MyTextFieldUnderLine();
             jLabelFineName1.setText(workScheduleFine.getFine_name());
-            jLabelFineName1.setPreferredSize(new Dimension(250, 30));
+            jLabelFineName1.setPreferredSize(new Dimension(230, 30));
             jLabelFineName1.setFont((new Font("Inter", Font.PLAIN, 13)));
             jLabelFineName1.setEditable(false);
 
             JTextField jLabelFineQuantity1 = new MyTextFieldUnderLine();
             jLabelFineQuantity1.setText(String.valueOf(workScheduleFine.getQuantity()));
-            jLabelFineQuantity1.setPreferredSize(new Dimension(50, 30));
+            jLabelFineQuantity1.setPreferredSize(new Dimension(70, 30));
             jLabelFineQuantity1.setFont((new Font("Inter", Font.PLAIN, 13)));
             jLabelFineQuantity1.setEditable(false);
 
             JTextField jLabelFineAmount1 = new MyTextFieldUnderLine();
             jLabelFineAmount1.setText(VNString.currency(workScheduleFine.getFine_amount()));
-            jLabelFineAmount1.setPreferredSize(new Dimension(150, 30));
+            jLabelFineAmount1.setPreferredSize(new Dimension(125, 30));
             jLabelFineAmount1.setFont((new Font("Inter", Font.PLAIN, 13)));
             jLabelFineAmount1.setEditable(false);
 
             JTextField jLabelFineTotal1 = new MyTextFieldUnderLine();
             jLabelFineTotal1.setText(VNString.currency(workScheduleFine.getFine_total()));
-            jLabelFineTotal1.setPreferredSize(new Dimension(150, 30));
+            jLabelFineTotal1.setPreferredSize(new Dimension(125, 30));
             jLabelFineTotal1.setFont((new Font("Inter", Font.PLAIN, 13)));
             jLabelFineTotal1.setEditable(false);
 
@@ -694,18 +685,33 @@ public class EditWorkScheduleGUI extends DialogForm {
             jPanelFine.add(jLabelFineName1);
             jPanelFine.add(jLabelFineQuantity1);
             jPanelFine.add(jLabelFineAmount1);
-            jPanelFine.add(jLabelFineTotal1, "wrap");
+            jPanelFine.add(jLabelFineTotal1);
+
+            JLabel jLabelIconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
+            jLabelIconRemove.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            jLabelIconRemove.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    work_schedule_fines.remove(workScheduleFine);
+                    loadFinePanel(scrollPane);
+                    panel.repaint();
+                    panel.revalidate();
+                }
+            });
+
+            jPanelFine.add(jLabelIconRemove, "width 50,wrap");
             panel.add(jPanelFine, "wrap");
 
         }
 
-        JPanel jPanelFine = new JPanel(new MigLayout("", "0[]10[]10[]0", "0[]0"));
+        JPanel jPanelFine = new JPanel(new MigLayout("", "0[]10[]10[]10[]0[]0", "0[]0"));
         jPanelFine.setBackground(new Color(255, 255, 255));
         jPanelFine.setPreferredSize(new Dimension(730, 50));
         jPanelFine.add(jLabelFineName);
         jPanelFine.add(jLabelFineQuantity);
         jPanelFine.add(jLabelFineAmount);
-        jPanelFine.add(jLabelFineTotal, "wrap");
+        jPanelFine.add(jLabelFineTotal);
+        jPanelFine.add(new JLabel(), "width 50,wrap");
         panel.add(jPanelFine, "wrap");
 
         JButton buttonAddFine = new JButton("+ Thêm vi phạm");
@@ -736,13 +742,22 @@ public class EditWorkScheduleGUI extends DialogForm {
                 workScheduleFineLast.setFine_name(jLabelFineName.getText());
                 workScheduleFineLast.setQuantity(Integer.parseInt(jLabelFineQuantity.getText()));
                 workScheduleFineLast.setFine_amount(Double.parseDouble(jLabelFineAmount.getText()));
-                workScheduleFineLast.setFine_total(Double.parseDouble(jLabelFineTotal.getText().replaceAll("\\.", "").split(" ₫")[0]));
-                work_schedule_fines.add(workScheduleFineLast);
-                loadFinePanel(scrollPane);
-                panel.repaint();
-                panel.revalidate();
 
-                System.out.println(Arrays.toString(work_schedule_fines.toArray()));
+                if (checkExistsFine(workScheduleFineLast)) {
+                    JOptionPane.showMessageDialog(null, "Đã tồn tại nội dung vi phạm!",
+                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    double total = Integer.parseInt(jLabelFineQuantity.getText()) * Double.parseDouble(jLabelFineAmount.getText());
+                    jLabelFineTotal.setText(VNString.currency(total));
+                    workScheduleFineLast.setFine_total(Double.parseDouble(jLabelFineTotal.getText().replaceAll("\\.", "").split(" ₫")[0]));
+
+                    work_schedule_fines.add(workScheduleFineLast);
+                    loadFinePanel(scrollPane);
+                    panel.repaint();
+                    panel.revalidate();
+
+                    System.out.println(Arrays.toString(work_schedule_fines.toArray()));
+                }
             }
         });
         panel.add(buttonAddFine, "span, wrap");
@@ -811,6 +826,12 @@ public class EditWorkScheduleGUI extends DialogForm {
 
             editorCheckout.setPreferredSize(new Dimension(150, 30));
             chamCongPanel.add(editorCheckout, "wrap");
+
+
+            if (!workSchedule.getCheck_in().equals("null") && !workSchedule.getCheck_out().equals("null")) {
+                timePickerCheckin.setSelectedTime(LocalTime.of(Integer.parseInt(workSchedule.getCheck_in().split(":")[0]), Integer.parseInt(workSchedule.getCheck_in().split(":")[1])));
+                timePickerCheckout.setSelectedTime(LocalTime.of(Integer.parseInt(workSchedule.getCheck_out().split(":")[0]), Integer.parseInt(workSchedule.getCheck_out().split(":")[1])));
+            }
         }
     }
 
@@ -889,9 +910,15 @@ public class EditWorkScheduleGUI extends DialogForm {
             checkin = workSchedule.getCheck_in();
             checkout = workSchedule.getCheck_out();
         } else {
-            DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm");
-            checkin = timePickerCheckin.getSelectedTime() == null ? "null" : timePickerCheckin.getSelectedTime().format(df);
-            checkout = timePickerCheckout.getSelectedTime() == null ? "null" : timePickerCheckout.getSelectedTime().format(df);
+            if ((timePickerCheckin.getSelectedTime() == null && timePickerCheckout.getSelectedTime() != null) || (timePickerCheckin.getSelectedTime() != null && timePickerCheckout.getSelectedTime() == null)) {
+                JOptionPane.showMessageDialog(null, "Vui lòng chấm công đủ giờ vào và giờ ra!",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            } else {
+                DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm");
+                checkin = timePickerCheckin.getSelectedTime() == null ? "null" : timePickerCheckin.getSelectedTime().format(df);
+                checkout = timePickerCheckout.getSelectedTime() == null ? "null" : timePickerCheckout.getSelectedTime().format(df);
+            }
         }
 
         Work_Schedule workSchedule1 = new Work_Schedule(id, staff_id, date, checkin, checkout, shift, workSchedule.getNotice());
@@ -899,10 +926,13 @@ public class EditWorkScheduleGUI extends DialogForm {
         result = workScheduleBLL.updateWork_schedule(workSchedule1);
 
         if (result.getKey()) {
-            if (staff_id != -1) {
+            if (this.staff_id != -1) {
                 Work_Schedule newWork_schedule = new Work_Schedule();
-                newWork_schedule.setId(workScheduleBLL.getAutoID(workScheduleBLL.searchWork_schedules()));
-                newWork_schedule.setStaff_id(staff_id);
+                List<Work_Schedule> work_schedules1 = workScheduleBLL.searchWork_schedules();
+                work_schedules1.sort(Comparator.comparing(Work_Schedule::getId));
+                int newId = workScheduleBLL.getAutoID(work_schedules1);
+                newWork_schedule.setId(newId);
+                newWork_schedule.setStaff_id(this.staff_id);
                 newWork_schedule.setDate(workSchedule1.getDate());
                 newWork_schedule.setCheck_in("null");
                 newWork_schedule.setCheck_out("null");
@@ -910,7 +940,12 @@ public class EditWorkScheduleGUI extends DialogForm {
                 newWork_schedule.setNotice("Không");
                 workScheduleBLL.addWork_schedule(List.of(newWork_schedule));
             }
-            // them vi pham, thuong
+
+            new Work_Schedule_FineBLL().deleteAllWork_schedule_fine(workSchedule);
+            new Work_Schedule_BonusBLL().deleteAllWork_schedule_bonus(workSchedule);
+
+            new Work_Schedule_FineBLL().addWork_schedule(work_schedule_fines);
+            new Work_Schedule_BonusBLL().addWork_schedule(work_schedule_bonuses);
 
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
@@ -952,8 +987,27 @@ public class EditWorkScheduleGUI extends DialogForm {
     private List<DataSearch> search(String text) {
         staff_id = -1;
         List<DataSearch> list = new ArrayList<>();
+        List<Staff> staffList1 = new ArrayList<>();
+        List<Staff> staffList2 = new ArrayList<>();
         List<Staff> staffs = new StaffBLL().findStaffs("name", text);
-        for (Staff m : staffs) {
+
+        List<Role_Detail> role_detailList = new Role_DetailBLL().searchRole_detailsByStaff(workSchedule.getStaff_id());
+        Role_Detail roleDetail = role_detailList.get(0);
+        for (Staff staff : staffs) {
+            List<Role_Detail> role_detailList1 = new Role_DetailBLL().searchRole_detailsByStaff(staff.getId());
+            Role_Detail roleDetail1 = role_detailList1.get(0);
+            if (roleDetail1.getRole_id() == roleDetail.getRole_id()) {
+                staffList1.add(staff);
+            }
+        }
+
+        for (Staff staff : staffList1) {
+            if (workScheduleBLL.searchWork_schedules("date = '" + workSchedule.getDate() + "'", "shift = " + workSchedule.getShift(), "staff_id = " + staff.getId()).isEmpty()) {
+                staffList2.add(staff);
+            }
+        }
+
+        for (Staff m : staffList2) {
             if (list.size() == 7)
                 break;
             list.add(new DataSearch(m.getName() + " - " + m.getId()));

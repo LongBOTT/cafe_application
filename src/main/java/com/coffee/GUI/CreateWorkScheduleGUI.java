@@ -215,6 +215,35 @@ public class CreateWorkScheduleGUI extends Layout1 {
         ContentPanel.setLayout(new BorderLayout());
         bottom.add(ContentPanel, BorderLayout.CENTER);
 
+        JPanel jPanelNotice = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        jPanelNotice.setBackground(new Color(255, 255, 255));
+
+        JLabel jLabelAvailable = new JLabel("Chưa chấm công");
+        JPanel jPanelAvailable = new JPanel();
+        jPanelAvailable.setPreferredSize(new Dimension(10, 10));
+        jPanelAvailable.setBackground(new Color(0x88FD8F8F, true));
+
+        jPanelNotice.add(jPanelAvailable);
+        jPanelNotice.add(jLabelAvailable);
+
+        JLabel jLabelDone = new JLabel("Đã chấm công");
+        JPanel jPanelDone = new JPanel();
+        jPanelDone.setPreferredSize(new Dimension(10, 10));
+        jPanelDone.setBackground(new Color(0x9162A968, true));
+
+        jPanelNotice.add(jPanelDone);
+        jPanelNotice.add(jLabelDone);
+
+        JLabel jLabelAbsent = new JLabel("Nghỉ có phép");
+        JPanel jPanelAbsent = new JPanel();
+        jPanelAbsent.setPreferredSize(new Dimension(10, 10));
+        jPanelAbsent.setBackground(new Color(0x915D5C5C, true));
+
+        jPanelNotice.add(jPanelAbsent);
+        jPanelNotice.add(jLabelAbsent);
+
+        ContentPanel.add(jPanelNotice, BorderLayout.NORTH);
+
         workSchedulePanel = new WorkSchedulePanel();
         ContentPanel.add(workSchedulePanel, BorderLayout.CENTER);
 
