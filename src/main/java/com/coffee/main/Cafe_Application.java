@@ -1,7 +1,10 @@
 package com.coffee.main;
 
+import com.coffee.BLL.PayrollBLL;
+import com.coffee.BLL.Payroll_DetailBLL;
 import com.coffee.BLL.Work_ScheduleBLL;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddPayrollGUI;
+import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailPayroll_DetailGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditWorkScheduleGUI;
 import com.coffee.GUI.HomeGUI;
 import com.coffee.GUI.LoginGUI;
@@ -38,14 +41,15 @@ public class Cafe_Application {
         UIManager.put("TabbedPane.tabAreaInsets", new Insets(0, 0, 0, 0));
         UIManager.put("TabbedPane.tabInsets", new Insets(20, 20, 20, 20));
 
-        Thread thread = new Thread(() -> homeGUI = new HomeGUI());
-        thread.start();
-        loginGUI = new LoginGUI();
-        loginGUI.setVisible(true);
+//        Thread thread = new Thread(() -> homeGUI = new HomeGUI());
+//        thread.start();
+//        loginGUI = new LoginGUI();
+//        loginGUI.setVisible(true);
 
 //        new EditStaffGUI(new StaffBLL().searchStaffs("id = 2").get(0));
 //        new EditWorkScheduleGUI(new Work_ScheduleBLL().searchWork_schedules("id = 55").get(0));
-        new AddPayrollGUI();
+//        new AddPayrollGUI();
+        new DetailPayroll_DetailGUI(new Payroll_DetailBLL().searchPayroll_Details().get(0), new PayrollBLL().searchPayrolls().get(0));
     }
 
     public static void exit(int status) {

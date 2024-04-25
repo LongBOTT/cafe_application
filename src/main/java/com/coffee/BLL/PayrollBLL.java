@@ -237,7 +237,7 @@ public class PayrollBLL extends Manager<Payroll> {
                                 System.out.println("Tien giam nghi khong phep " + VNString.currency(deduction.getDeduction_amount() * ca_nghi_khong_phep.size()) + "\n");
                             }
                         }
-                        
+
                         // tinh tien thuong va phat cua ca
                         for (Work_Schedule work_schedule : work_scheduleList) {
                             if (!work_schedule.getCheck_in().equals("null") && !work_schedule.getCheck_out().equals("null")) {
@@ -278,21 +278,21 @@ public class PayrollBLL extends Manager<Payroll> {
                             int count = 0;
                             for (Work_Schedule work_schedule : ca_nghi_co_phep) {
                                 if (work_schedule.getNotice().equals("Nghỉ phép năm")) {
-                                    List<Leave_Of_Absence_Form> leaveOfAbsenceForms = new Leave_Of_Absence_FormBLL().searchLeave_Of_Absence_Forms("staff_id = " + staff.getId(), "reason = 'Nghỉ phép năm'", "YEAR(entnry_date) = YEAR(GETDATE())");
+                                    List<Leave_Of_Absence_Form> leaveOfAbsenceForms = new Leave_Of_Absence_FormBLL().searchLeave_Of_Absence_Forms("staff_id = " + staff.getId(), "reason = 'Nghỉ phép năm'", "YEAR(entnry_date) = YEAR(NOW())");
                                     if (leaveOfAbsenceForms.size() <= 12) {
                                         System.out.println("Ngay nghi duoc huong luong: " + work_schedule.getDate() + "\n");
                                         count += 1;
                                     }
                                 }
                                 if (work_schedule.getNotice().equals("Nghỉ kết hôn")) {
-                                    List<Leave_Of_Absence_Form> leaveOfAbsenceForms = new Leave_Of_Absence_FormBLL().searchLeave_Of_Absence_Forms("staff_id = " + staff.getId(), "reason = 'Nghỉ kết hôn'", "YEAR(entnry_date) = YEAR(GETDATE())");
+                                    List<Leave_Of_Absence_Form> leaveOfAbsenceForms = new Leave_Of_Absence_FormBLL().searchLeave_Of_Absence_Forms("staff_id = " + staff.getId(), "reason = 'Nghỉ kết hôn'", "YEAR(entnry_date) = YEAR(NOW())");
                                     if (leaveOfAbsenceForms.size() <= 3) {
                                         System.out.println("Ngay nghi duoc huong luong: " + work_schedule.getDate() + "\n");
                                         count += 1;
                                     }
                                 }
                                 if (work_schedule.getNotice().equals("Nghỉ con cái kết hôn")) {
-                                    List<Leave_Of_Absence_Form> leaveOfAbsenceForms = new Leave_Of_Absence_FormBLL().searchLeave_Of_Absence_Forms("staff_id = " + staff.getId(), "reason = 'Nghỉ con cái kết hôn'", "YEAR(entnry_date) = YEAR(GETDATE())");
+                                    List<Leave_Of_Absence_Form> leaveOfAbsenceForms = new Leave_Of_Absence_FormBLL().searchLeave_Of_Absence_Forms("staff_id = " + staff.getId(), "reason = 'Nghỉ con cái kết hôn'", "YEAR(entnry_date) = YEAR(NOW())");
                                     if (leaveOfAbsenceForms.isEmpty()) {
                                         System.out.println("Ngay nghi duoc huong luong: " + work_schedule.getDate() + "\n");
                                         count += 1;
@@ -302,6 +302,7 @@ public class PayrollBLL extends Manager<Payroll> {
                             salary_amount = (salary_amount + allowance_amount) / 26.0 * (dates.size() + count) + bonus_amount - fine_amount - deduction_amount; // lương tháng cố định = (lương thoả thuận + phụ cấp)/26 * (số ngày làm + số ngày nghỉ được hưởng lương) - phạt  + thưởng - giảm trừ
 
                             System.out.println("So tien thuc cua luong co dinh: " + VNString.currency(salary_amount));
+                            hours_amount = dates.size() + count;
                         } else {
                             salary_amount = salary_amount + allowance_amount + bonus_amount - fine_amount - deduction_amount;
                             System.out.println("So tien thuc lanh: " + VNString.currency(salary_amount));
