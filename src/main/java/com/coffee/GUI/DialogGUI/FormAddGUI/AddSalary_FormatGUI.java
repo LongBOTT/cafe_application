@@ -2,9 +2,9 @@ package com.coffee.GUI.DialogGUI.FormAddGUI;
 
 import com.coffee.BLL.*;
 import com.coffee.DTO.*;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditAllowanceGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditDeductionGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditStaffGUI;
+import com.coffee.GUI.DialogGUI.FormEditGUI.EditAllowanceGUI;
+import com.coffee.GUI.DialogGUI.FormEditGUI.EditDeductionGUI;
+import com.coffee.GUI.DialogGUI.FormEditGUI.EditStaffGUI;
 import com.coffee.GUI.components.EventSwitchSelected;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.SwitchButton;

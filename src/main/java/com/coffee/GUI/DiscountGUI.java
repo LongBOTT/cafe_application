@@ -4,7 +4,7 @@ import com.coffee.BLL.DiscountBLL;
 import com.coffee.DTO.Function;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddDiscountGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailDiscountGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditDiscountGUI;
+import com.coffee.GUI.DialogGUI.FormEditGUI.EditDiscountGUI;
 import com.coffee.GUI.components.*;
 import com.coffee.ImportExcel.AddDiscountFromExcel;
 import com.coffee.main.Cafe_Application;
@@ -126,7 +126,7 @@ public class DiscountGUI extends Layout2 {
 
         jComboBoxSearch.setBackground(new Color(1, 120, 220));
         jComboBoxSearch.setForeground(Color.white);
-        jComboBoxSearch.setPreferredSize(new Dimension(100, 30));
+        jComboBoxSearch.setPreferredSize(new Dimension(130, 30));
         jComboBoxSearch.addActionListener(e -> {
             SelectDiscountStatus();
         });
@@ -186,15 +186,6 @@ public class DiscountGUI extends Layout2 {
                 public void mousePressed(MouseEvent e) {
                     new AddDiscountGUI();
                     refresh();
-                    if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
-                        Thread thread = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI] = new SaleGUI(HomeGUI.account);
-                            }
-                        });
-                        thread.start();
-                    }
                 }
             });
             FunctionPanel.add(roundedPanel);
@@ -289,13 +280,13 @@ public class DiscountGUI extends Layout2 {
         }
 //        jTextFieldSearch.setText("");
 //        jComboBoxSearch.setSelectedIndex(0);
-        if (datePicker.getDateSQL_Between().length != 0) {
-            Date startDate = datePicker.getDateSQL_Between()[0];
-            Date endDate = datePicker.getDateSQL_Between()[1];
-
-            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0 AND start_date >= '" + startDate + "' AND end_date <= '" + endDate + "'")));
+        if (datePicker != null) {
+            if (datePicker.getDateSQL_Between().length != 0) {
+                Date startDate = datePicker.getDateSQL_Between()[0];
+                Date endDate = datePicker.getDateSQL_Between()[1];
+                loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0 AND start_date >= '" + startDate + "' AND end_date <= '" + endDate + "'")));
+            }
         }
-
     }
 
     private void SelectDiscountStatus() {

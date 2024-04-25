@@ -5,7 +5,7 @@ import com.coffee.DTO.Function;
 import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddSupplierGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailSupplierGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditSupplierGUI;
+import com.coffee.GUI.DialogGUI.FormEditGUI.EditSupplierGUI;
 import com.coffee.GUI.components.*;
 import com.coffee.ImportExcel.AddSupplierFromExcel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;

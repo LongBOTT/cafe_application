@@ -1,18 +1,15 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.MaterialBLL;
-import com.coffee.BLL.ReceiptBLL;
 import com.coffee.DTO.Function;
 import com.coffee.DTO.Material;
-import com.coffee.DTO.Receipt;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddMaterialGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailMaterialGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditMaterialGUI;
+import com.coffee.GUI.DialogGUI.FormEditGUI.EditMaterialGUI;
 import com.coffee.GUI.components.*;
 
 import com.coffee.ImportExcel.AddMaterialFromExcel;
 import com.coffee.utils.PDF;
-import com.coffee.utils.Resource;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -30,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.List;
 
 import static com.coffee.utils.Resource.chooseExcelFile;

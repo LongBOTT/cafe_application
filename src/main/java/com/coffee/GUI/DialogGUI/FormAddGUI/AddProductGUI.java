@@ -67,7 +67,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
     private final int productID = productBLL.getAutoID(productBLL.searchProducts());
 
     private int materialID;
-    private String imageProduct;
+    private String imageProduct = "productDefault";
     private final JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
 
 
@@ -744,9 +744,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         if (!result.getKey()) {
             return new Pair<>(false, result.getValue());
         }
-        if(imageProduct==null){
-            return new Pair<>(false,"Vui lòng chọn ảnh sản phẩm");
-        }
+
         for (Product product : productList) {
             product.setName(name);
             product.setCategory(category);

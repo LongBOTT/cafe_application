@@ -2,13 +2,10 @@ package com.coffee.GUI;
 
 import com.coffee.BLL.PayrollBLL;
 import com.coffee.BLL.Payroll_DetailBLL;
-import com.coffee.BLL.ProductBLL;
 import com.coffee.BLL.StaffBLL;
-import com.coffee.DTO.Function;
 import com.coffee.DTO.Payroll;
 import com.coffee.DTO.Payroll_Detail;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailPayroll_DetailGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditPayroll_DetailGUI;
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.Layout1;
 import com.coffee.GUI.components.RoundedPanel;
@@ -26,7 +23,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
-import java.util.List;
 
 public class PayrollDetailGUI extends Layout1 {
     private Payroll payroll;

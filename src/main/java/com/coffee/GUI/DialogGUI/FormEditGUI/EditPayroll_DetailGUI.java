@@ -1,4 +1,4 @@
-package com.coffee.GUI.DialogGUI.FromEditGUI;
+package com.coffee.GUI.DialogGUI.FormEditGUI;
 
 import com.coffee.BLL.Payroll_DetailBLL;
 import com.coffee.BLL.StaffBLL;
@@ -6,9 +6,7 @@ import com.coffee.DTO.Payroll_Detail;
 import com.coffee.DTO.Staff;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
-import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
-import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;

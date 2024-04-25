@@ -53,7 +53,7 @@ public class AddProductGUI1 extends DialogForm {
     private final PanelSearch search;
     private JTextField txtSearch;
 
-    private String imageProduct = null;
+    private String imageProduct ="productDefault";
 
     private final int productID = productBLL.getAutoID(productBLL.searchProducts());
 
@@ -268,9 +268,6 @@ public class AddProductGUI1 extends DialogForm {
             error += result.getValue() + "\n";
         }
 
-        if (imageProduct == null) {
-            error += " Chưa chọn hình ảnh \n";
-        }
         if (error.isEmpty()) {
             double priceDoule = Double.parseDouble(price);
             double capital_priceDouble = Double.parseDouble(capital_price);

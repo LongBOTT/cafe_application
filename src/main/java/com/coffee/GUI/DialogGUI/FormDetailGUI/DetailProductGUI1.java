@@ -41,17 +41,18 @@ public class DetailProductGUI1 extends DialogForm {
 
         containerImage.setBackground(new Color(255, 255, 255));
         containerImage.setPreferredSize(new Dimension(200, 200));
-
         JPanel PanelImage = new JPanel();
         PanelImage.setPreferredSize(new Dimension(150, 150));
+        PanelImage.setLayout(new MigLayout("", "[]", "[]"));
+        PanelImage.setBackground(new Color(255, 255, 255));
+
         JLabel lblImage = new JLabel();
+        ImageIcon iconProduct = new FlatSVGIcon("image/Product/" + product.getImage() + ".svg");
+        Image imgProduct = iconProduct.getImage();
+        Image newImgProduct = imgProduct.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
+        iconProduct = new ImageIcon(newImgProduct);
+        lblImage.setIcon(iconProduct);
         PanelImage.add(lblImage);
-        ImageIcon icon = new FlatSVGIcon("image/Product/" + product.getImage() + ".svg");
-        Image image = icon.getImage();
-        Image newImg = image.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
-        icon = new ImageIcon(newImg);
-        lblImage.setIcon(icon);
-        lblImage.scrollRectToVisible(new Rectangle());
 
         containerImage.add(PanelImage, "alignx center,wrap");
         content.add(containerAtributeProduct);

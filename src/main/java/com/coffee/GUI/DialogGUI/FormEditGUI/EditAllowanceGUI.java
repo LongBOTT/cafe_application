@@ -1,4 +1,4 @@
-package com.coffee.GUI.DialogGUI.FromEditGUI;
+package com.coffee.GUI.DialogGUI.FormEditGUI;
 
 import com.coffee.BLL.AllowanceBLL;
 import com.coffee.DTO.Allowance;
