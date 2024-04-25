@@ -110,7 +110,7 @@ public class Work_ScheduleBLL extends Manager<Work_Schedule> {
             return new Pair<>(false, " Không thể chấm công do nhân viên chưa có ca làm trong hệ thống.");
         } else {
             Work_Schedule work_schedule1 = work_schedules.get(0);
-            if (work_schedule1.getCheck_in() != null && work_schedule1.getCheck_out() != null) {
+            if (work_schedule1.getCheck_in() == null && work_schedule1.getCheck_out() == null) {
                 return new Pair<>(false, " Ca làm này đã được chấm công rồi.");
             }
             return new Pair<>(true, "");
