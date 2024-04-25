@@ -232,7 +232,9 @@ private Double UpdateCapital_Price( List<Recipe> recipes_of_product){
         if (!rowData.containsKey("price") || rowData.get("price") == null) {
             errorRow.append("Giá bán không hợp lệ.\n");
         }
-
+        if (!rowData.containsKey("image") || rowData.get("image") == null){
+            rowData.put("image","productDefault");
+        }
         //check xem sản phẩm có có tồn tại không
         if(errorRow.isEmpty()){
             String name = (String) rowData.get("name");

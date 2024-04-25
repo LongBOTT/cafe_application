@@ -1,5 +1,4 @@
-package com.coffee.GUI.DialogGUI.FormAddGUI;
-
+package com.coffee.GUI.DialogGUI.FromEditGUI;
 
 import com.coffee.BLL.MaterialBLL;
 import com.coffee.BLL.ProductBLL;
@@ -9,6 +8,7 @@ import com.coffee.DTO.Product;
 import com.coffee.DTO.Recipe;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
+import com.coffee.GUI.ProductGUI;
 import com.coffee.GUI.SaleGUI;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.swing.DataSearch;
@@ -40,7 +40,7 @@ import java.util.Map;
 
 import static java.awt.Cursor.*;
 
-public class AddProductGUI1 extends DialogForm {
+public class EditProductGUI1 extends DialogForm {
     private final MaterialBLL materialBLL = new MaterialBLL();
     private final ProductBLL productBLL = new ProductBLL();
 
@@ -57,12 +57,14 @@ public class AddProductGUI1 extends DialogForm {
 
     private final int productID = productBLL.getAutoID(productBLL.searchProducts());
 
-    public AddProductGUI1() {
+
+    public EditProductGUI1(Product product) {
         super();
-        super.setTitle("Thêm sản phẩm bán trực tiếp");
+        super.setTitle("Sửa sản phẩm bán trực tiếp");
         super.setSize(new Dimension(1000, 350));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
-        init();
+        System.out.println(product.toString());
+        init(product);
         menu = new JPopupMenu();
         search = new PanelSearch();
         menu.setBorder(BorderFactory.createLineBorder(new Color(164, 164, 164)));
@@ -92,7 +94,7 @@ public class AddProductGUI1 extends DialogForm {
 
     }
 
-    public void init() {
+    public void init(Product product) {
 
         content.setLayout(new FlowLayout());
 
@@ -110,11 +112,15 @@ public class AddProductGUI1 extends DialogForm {
 
         JPanel PanelImage = new JPanel();
         PanelImage.setPreferredSize(new Dimension(150, 150));
-
-
         lblImage = new JLabel();
+        imageProduct = product.getImage();
         PanelImage.add(lblImage);
-
+        ImageIcon icon = new FlatSVGIcon("image/Product/" + imageProduct + ".svg");
+        Image image = icon.getImage();
+        Image newImg = image.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
+        icon = new ImageIcon(newImg);
+        lblImage.setIcon(icon);
+        lblImage.scrollRectToVisible(new Rectangle());
 
         JButton btnImage = new JButton("Thêm ảnh");
         btnImage.setPreferredSize(new Dimension(100, 30));
@@ -139,12 +145,14 @@ public class AddProductGUI1 extends DialogForm {
         JLabel lblCapitalPrice = createLabel("Giá Vốn");
 
         txtSearch = new MyTextFieldUnderLine();
+        txtSearch.setText(product.getName());
         txtCategory = new MyTextFieldUnderLine();
-
+        txtCategory.setText(product.getCategory());
         txtPrice = new MyTextFieldUnderLine();
+        txtPrice.setText(product.getPrice() + "");
         txtCapitalPrice = new MyTextFieldUnderLine();
+        txtCapitalPrice.setText(product.getCapital_price() + "");
         txtCapitalPrice.setFocusable(false);
-        txtSearch = new MyTextFieldUnderLine();
         txtSearch.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 txtSearchMouseClicked(evt);
@@ -205,7 +213,7 @@ public class AddProductGUI1 extends DialogForm {
         buttonAdd.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                addProduct();
+                updateProduct();
 
             }
         });
@@ -255,7 +263,7 @@ public class AddProductGUI1 extends DialogForm {
         return label;
     }
 
-    private void addProduct() {
+    private void updateProduct() {
         String error = "";
         String product_name = txtSearch.getText();
         String category = txtCategory.getText();
@@ -268,9 +276,6 @@ public class AddProductGUI1 extends DialogForm {
             error += result.getValue() + "\n";
         }
 
-        if (imageProduct == null) {
-            error += " Chưa chọn hình ảnh \n";
-        }
         if (error.isEmpty()) {
             double priceDoule = Double.parseDouble(price);
             double capital_priceDouble = Double.parseDouble(capital_price);

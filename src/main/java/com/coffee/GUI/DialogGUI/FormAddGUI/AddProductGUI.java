@@ -7,6 +7,7 @@ import com.coffee.DTO.Material;
 import com.coffee.DTO.Product;
 import com.coffee.DTO.Recipe;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
+import com.coffee.GUI.SaleGUI;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.swing.DataSearch;
 import com.coffee.GUI.components.swing.EventClick;
@@ -14,6 +15,7 @@ import com.coffee.GUI.components.swing.PanelSearch;
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
+import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -759,6 +761,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         if (allProductsAdded) {
             JOptionPane.showMessageDialog(null, "Thêm sản phẩm thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             dispose();
+            loadSaleGUI();
         }
         return new Pair<>(true, "");
     }
@@ -840,6 +843,20 @@ public class AddProductGUI extends DialogFormDetail_1 {
         }
         menu.setVisible(false);
 
+    }
+    private void loadSaleGUI() {
+        if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
+                    saleGUI.loadCategory();
+                    saleGUI.loadProductRoundPanel();
+                    saleGUI.loadProduct(saleGUI.resultSearch);
+                }
+            });
+            thread.start();
+        }
     }
 
 }
