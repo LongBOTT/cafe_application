@@ -7,6 +7,7 @@ import com.coffee.GUI.DialogGUI.FormAddGUI.AddProductGUI;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddProductGUI1;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailProductGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditProductGUI;
+import com.coffee.GUI.DialogGUI.FromEditGUI.EditProductGUI1;
 import com.coffee.GUI.components.*;
 import com.coffee.ImportExcel.AddDiscountFromExcel;
 import com.coffee.ImportExcel.AddProductFromExcel;
@@ -226,6 +227,7 @@ public class ProductGUI extends Layout3 {
                             JOptionPane.showMessageDialog(null, "Thêm sản phẩm thành công",
                                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                             refresh();
+                            loadSaleGUI();
                         }
                     }
                 }
@@ -283,8 +285,6 @@ public class ProductGUI extends Layout3 {
             String productName = (String) productArray[1];
             ArrayList<String> sizes = (ArrayList<String>) productArray[4];
             ArrayList<Double> prices = (ArrayList<Double>) productArray[3];
-            if (productArray[5].equals("null") )
-                productArray[5] = "productDefault";
             ImageIcon icon = new FlatSVGIcon("image/Product/" + productArray[5] + ".svg");
             Image image = icon.getImage();
             Image newImg = image.getScaledInstance(columnWidth, rowHeight, java.awt.Image.SCALE_SMOOTH);
@@ -424,26 +424,47 @@ public class ProductGUI extends Layout3 {
         int indexColumn = dataTable.getSelectedColumn();
         int indexRow = dataTable.getSelectedRow();
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+
         Object selectedValue = model.getValueAt(indexRow, 1);
+        List<Product> products = productBLL.findProductsBy(Map.of("name", selectedValue.toString()));
+        Product product = products.get(0);
+        String size = product.getSize();
 
         if (indexColumn == indexColumnDetail) {
             new DetailProductGUI(productBLL.findProductsBy(Map.of("name", selectedValue.toString())));
         }
 
         if (indexColumn == indexColumnEdit) {
-            new EditProductGUI(productBLL.findProductsBy(Map.of("name", selectedValue.toString())));
-            refresh();
-            if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
-                        saleGUI.loadCategory();
-                        saleGUI.loadProductRoundPanel();
-                        saleGUI.loadProduct(saleGUI.resultSearch);
-                    }
-                });
-                thread.start();
+            if (size.equals("Không")) {
+                new EditProductGUI1(product);
+                refresh();
+                if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
+                            saleGUI.loadCategory();
+                            saleGUI.loadProductRoundPanel();
+                            saleGUI.loadProduct(saleGUI.resultSearch);
+                        }
+                    });
+                    thread.start();
+                }
+            } else {
+                new EditProductGUI(products);
+                refresh();
+                if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
+                            saleGUI.loadCategory();
+                            saleGUI.loadProductRoundPanel();
+                            saleGUI.loadProduct(saleGUI.resultSearch);
+                        }
+                    });
+                    thread.start();
+                }
             }
         }
 
@@ -481,6 +502,20 @@ public class ProductGUI extends Layout3 {
                 }
             }
         }
-    }
 
+    }
+    private void loadSaleGUI(){
+        if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
+                    saleGUI.loadCategory();
+                    saleGUI.loadProductRoundPanel();
+                    saleGUI.loadProduct(saleGUI.resultSearch);
+                }
+            });
+            thread.start();
+        }
+    }
 }

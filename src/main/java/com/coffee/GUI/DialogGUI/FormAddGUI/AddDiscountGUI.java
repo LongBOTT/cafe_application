@@ -737,29 +737,46 @@ public class AddDiscountGUI extends DialogFormDetail_1 {
                             hasError = true;
                             break;
                         }
-                        if(productName.contains("Thể loại: ")){
-                            String resultList  = removeTheloai(txtProductName.getText().trim());
-                        }
-                        List<String> resultList = convertTxtSearchToArray(productName);
-                        if(resultList.isEmpty()){
-                            JOptionPane.showMessageDialog(this, "Sản phẩm không tồn tại", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                            txtProductName.requestFocus();
-                            hasError = true;
-                            break;
-                        }
-                        String name = resultList.get(0);
-                        String size = resultList.get(1);
-                        List<Product> products = productBLL.searchProducts("name = '" + name + "'", "size = '" + size + "'");
-                        if(products.isEmpty()){
-                            JOptionPane.showMessageDialog(this, "Sản phẩm không tồn tại", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                            txtProductName.requestFocus();
-                            hasError = true;
-                            break;
-                        }
-                        else{
-                            int product_id = products.get(0).getId();
-                            Discount_Detail discount_detail = new Discount_Detail(id, product_id, size, quantity, discountPercentage, 0);
-                            discountInfoList.add(discount_detail);
+                        if (productName.contains("Thể loại: ")) {
+                            String resultList = removeTheloai(txtProductName.getText().trim());
+                            if (resultList.equals("Tất cả")) {
+                                List<Product> products = productBLL.searchProducts("deleted = 0");
+                                for (Product p : products) {
+                                    int product_id = p.getId();
+                                    String size = p.getSize();
+                                    Discount_Detail discount_detail = new Discount_Detail(id, product_id, size, quantity, discountPercentage, 0);
+                                    discountInfoList.add(discount_detail);
+                                }
+                            } else {
+                                List<Product> products = productBLL.searchProducts("category = '" + resultList + "'");
+                                for (Product p : products) {
+                                    int product_id = p.getId();
+                                    String size = p.getSize();
+                                    Discount_Detail discount_detail = new Discount_Detail(id, product_id, size, quantity, discountPercentage, 0);
+                                    discountInfoList.add(discount_detail);
+                                }
+                            }
+                        } else {
+                            List<String> resultList = convertTxtSearchToArray(productName);
+                            if (resultList.isEmpty()) {
+                                JOptionPane.showMessageDialog(this, "Sản phẩm không tồn tại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                txtProductName.requestFocus();
+                                hasError = true;
+                                break;
+                            }
+                            String name = resultList.get(0);
+                            String size = resultList.get(1);
+                            List<Product> products = productBLL.searchProducts("name = '" + name + "'", "size = '" + size + "'");
+                            if (products.isEmpty()) {
+                                JOptionPane.showMessageDialog(this, "Sản phẩm không tồn tại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                txtProductName.requestFocus();
+                                hasError = true;
+                                break;
+                            } else {
+                                int product_id = products.get(0).getId();
+                                Discount_Detail discount_detail = new Discount_Detail(id, product_id, size, quantity, discountPercentage, 0);
+                                discountInfoList.add(discount_detail);
+                            }
                         }
                     }
                 }
@@ -816,6 +833,7 @@ public class AddDiscountGUI extends DialogFormDetail_1 {
 
         return resultList;
     }
+
     private String removeTheloai(String txtSearchValue) {
         String result = txtSearchValue;
         if (txtSearchValue.startsWith("Thể loại: ")) {
