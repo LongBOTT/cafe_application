@@ -6,6 +6,7 @@ import com.coffee.DTO.Product;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddProductGUI;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddProductGUI1;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailProductGUI;
+import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailProductGUI1;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditProductGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditProductGUI1;
 import com.coffee.GUI.components.*;
@@ -167,35 +168,9 @@ public class ProductGUI extends Layout3 {
                     if (option == JOptionPane.YES_OPTION) {
                         new AddProductGUI1();
                         refresh();
-                        if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
-                            Thread thread = new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
-                                    saleGUI.loadCategory();
-                                    saleGUI.loadProductRoundPanel();
-                                    saleGUI.loadProduct(saleGUI.resultSearch);
-
-                                }
-                            });
-                            thread.start();
-                        }
-
                     } else if (option == JOptionPane.NO_OPTION) {
                         new AddProductGUI();
                         refresh();
-                        if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
-                            Thread thread = new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
-                                    saleGUI.loadCategory();
-                                    saleGUI.loadProductRoundPanel();
-                                    saleGUI.loadProduct(saleGUI.resultSearch);
-                                }
-                            });
-                            thread.start();
-                        }
                     }
 
                 }
@@ -227,7 +202,6 @@ public class ProductGUI extends Layout3 {
                             JOptionPane.showMessageDialog(null, "Thêm sản phẩm thành công",
                                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                             refresh();
-                            loadSaleGUI();
                         }
                     }
                 }
@@ -431,40 +405,22 @@ public class ProductGUI extends Layout3 {
         String size = product.getSize();
 
         if (indexColumn == indexColumnDetail) {
-            new DetailProductGUI(productBLL.findProductsBy(Map.of("name", selectedValue.toString())));
+            if (size.equals("Không")) {
+                new DetailProductGUI1(product);
+                refresh();
+            } else {
+                new DetailProductGUI(products);
+                refresh();
+            }
         }
 
         if (indexColumn == indexColumnEdit) {
             if (size.equals("Không")) {
                 new EditProductGUI1(product);
                 refresh();
-                if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
-                    Thread thread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
-                            saleGUI.loadCategory();
-                            saleGUI.loadProductRoundPanel();
-                            saleGUI.loadProduct(saleGUI.resultSearch);
-                        }
-                    });
-                    thread.start();
-                }
             } else {
                 new EditProductGUI(products);
                 refresh();
-                if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
-                    Thread thread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
-                            saleGUI.loadCategory();
-                            saleGUI.loadProductRoundPanel();
-                            saleGUI.loadProduct(saleGUI.resultSearch);
-                        }
-                    });
-                    thread.start();
-                }
             }
         }
 
@@ -484,18 +440,6 @@ public class ProductGUI extends Layout3 {
                     JOptionPane.showMessageDialog(null, result.getValue(),
                             "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                     refresh();
-                    if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
-                        Thread thread = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
-                                saleGUI.loadCategory();
-                                saleGUI.loadProductRoundPanel();
-                                saleGUI.loadProduct(saleGUI.resultSearch);
-                            }
-                        });
-                        thread.start();
-                    }
                 } else {
                     JOptionPane.showMessageDialog(null, result.getValue(),
                             "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -504,18 +448,6 @@ public class ProductGUI extends Layout3 {
         }
 
     }
-    private void loadSaleGUI(){
-        if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
-                    saleGUI.loadCategory();
-                    saleGUI.loadProductRoundPanel();
-                    saleGUI.loadProduct(saleGUI.resultSearch);
-                }
-            });
-            thread.start();
-        }
-    }
+
+
 }

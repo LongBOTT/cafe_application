@@ -9,6 +9,7 @@ import com.coffee.DTO.Recipe;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
 import com.coffee.GUI.ProductGUI;
+import com.coffee.GUI.SaleGUI;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.swing.DataSearch;
 import com.coffee.GUI.components.swing.EventClick;
@@ -285,6 +286,7 @@ public class EditProductGUI1 extends DialogForm {
             else {
                 JOptionPane.showMessageDialog(null, result.getValue(), "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 dispose();
+                loadSaleGUI();
             }
         } else {
             JOptionPane.showMessageDialog(null, error, "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -339,6 +341,19 @@ public class EditProductGUI1 extends DialogForm {
         menu.setVisible(false);
 
     }
-
+    private void loadSaleGUI() {
+        if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
+                    saleGUI.loadCategory();
+                    saleGUI.loadProductRoundPanel();
+                    saleGUI.loadProduct(saleGUI.resultSearch);
+                }
+            });
+            thread.start();
+        }
+    }
 }
 
