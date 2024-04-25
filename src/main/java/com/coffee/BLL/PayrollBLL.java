@@ -2,6 +2,7 @@ package com.coffee.BLL;
 
 import com.coffee.DAL.PayrollDAL;
 import com.coffee.DTO.*;
+import com.coffee.utils.VNString;
 import javafx.util.Pair;
 
 import java.time.LocalTime;
@@ -39,193 +40,286 @@ public class PayrollBLL extends Manager<Payroll> {
         }
 
         List<Payroll_Detail> payrollDetails = new ArrayList<>();
+        double total_salary = 0;
 
-        double totalSalary = 0;
-        for (Staff staff : new StaffBLL().searchStaffs("deleted = 0")) {
+        for (Staff staff : new StaffBLL().searchStaffs("deleted = 0", "id != 1")) {
             List<Work_Schedule> work_scheduleList = new Work_ScheduleBLL().searchWork_schedulesByStaff(staff.getId(), payroll.getYear(), payroll.getMonth());
             if (!work_scheduleList.isEmpty()) {
+                // co lich lam viec trong thang
                 List<Role_Detail> role_detailList = new Role_DetailBLL().searchRole_detailsByStaff(staff.getId());
                 if (role_detailList.isEmpty()) {
-                    return new Pair<>(false, "Vui lòng thiết lập lương nhân viên " + staff.getName());
+                    // nhan vien chua dc thiet lap chuc vu
+                    return new Pair<>(false, "Vui lòng thiết lập chức vụ nhân viên " + staff.getName());
                 } else {
-                    DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                    Role_Detail roleDetail = role_detailList.get(0);
-//                    List<Role_Detail_Allowance> roleDetailAllowanceList = new Role_Detail_AllowanceBLL().searchRole_Detail_Allowances(
-//                            "role_id = " + roleDetail.getRole_id(),
-//                            "staff_id = " + roleDetail.getStaff_id(),
-//                            "entry_date = '" + roleDetail.getEntry_date().format(myFormatObj) + "'");
-//
-//                    List<Role_Detail_Deduction> roleDetailDeductionList = new Role_Detail_DeductionBLL().searchRole_Detail_Deductions(
-//                            "role_id = " + roleDetail.getRole_id(),
-//                            "staff_id = " + roleDetail.getStaff_id(),
-//                            "entry_date = '" + roleDetail.getEntry_date().format(myFormatObj) + "'");
-                    double hours_amount = 0;
-                    double bonus_amount = 0;
-                    double deduction_amount = 0;
-                    double salary_amount = 0;
+                    if (staff.getSalary_format_id() == 0) {
+                        // nhan vien chua co mau luong
+                        return new Pair<>(false, "Vui lòng thiết lập chức mẫu nhân viên " + staff.getName());
+                    } else {
+                        Role_Detail roleDetail = role_detailList.get(0);
+                        Salary_Format salaryFormat = new Salary_FormatBLL().searchSalary_Formats("id  = " + staff.getSalary_format_id()).get(0);
+                        List<Salary_Format_Allowance> salaryFormatAllowances = new Salary_Format_AllowanceBLL().searchSalary_Format_Allowances("salary_format_id = " + salaryFormat.getId());
+                        List<Salary_Format_Deduction> salaryFormatDeductions = new Salary_Format_DeductionBLL().searchSalary_Format_Deductions("salary_format_id = " + salaryFormat.getId());
 
-                    // tinh luương theo giờ làm
-                    if (roleDetail.getType_salary() == 1) {
+                        double hours_amount = 0;
+                        double allowance_amount = 0;
+                        double deduction_amount = 0;
+                        double bonus_amount = 0;
+                        double fine_amount = 0;
+                        double salary_amount = 0;
+
+                        List<Work_Schedule> ca_nghi_co_phep = new ArrayList<>();
+                        List<Work_Schedule> ca_nghi_khong_phep = new ArrayList<>();
+
+                        int lateShifts = 0;
+                        int earlyShifts = 0;
+
+                        System.out.println(staff.getName() + "\n");
+                        // tinh ca nghi co phep va khong phep
                         for (Work_Schedule work_schedule : work_scheduleList) {
+                            if (work_schedule.getCheck_in().equals("null") && work_schedule.getCheck_out().equals("null")) {
+                                if (work_schedule.getNotice().equals("Không")) {
+                                    ca_nghi_khong_phep.add(work_schedule);
+                                } else {
+                                    ca_nghi_co_phep.add(work_schedule);
+                                }
+                            }
+                        }
 
-                            System.out.println(work_schedule.getDate());/////////////////////////////
+                        // tinh luong ngay cong
+                        if (roleDetail.getType_salary() == 1) {
+                            // tinh luong co dinh
+                            salary_amount = roleDetail.getSalary();
 
-                            if (Objects.equals(work_schedule.getCheck_in(), "null") || Objects.equals(work_schedule.getCheck_out(), "null"))
-                                return new Pair<>(false, "Vui lòng chấm công nhân viên " + staff.getName() + " ca " + work_schedule.getShift() + " vào ngày: " + work_schedule.getDate());
+                            System.out.println("Luong ngay cong " + VNString.currency(salary_amount));
+                        } else {
+                            // tinh luong theo gio
+                            for (Work_Schedule work_schedule : work_scheduleList) {
+                                if (!work_schedule.getCheck_in().equals("null") && !work_schedule.getCheck_out().equals("null")) {
+                                    // ca co di lam
+                                    System.out.println("Ngay :" + work_schedule.getDate() + "\n");
+
+                                    String[] checkinArr, checkoutArr;
+                                    double checkin, checkout;
+
+                                    checkinArr = work_schedule.getCheck_in().split(":");
+                                    double v = Double.parseDouble(checkinArr[1]) / 60;
+                                    checkin = Double.parseDouble(checkinArr[0]) + v;
+
+                                    checkoutArr = work_schedule.getCheck_out().split(":");
+                                    v = Double.parseDouble(checkoutArr[1]) / 60;
+                                    checkout = Double.parseDouble(checkoutArr[0]) + v;
+
+                                    hours_amount += Math.abs(checkout - checkin);
+
+                                    System.out.println("Gio lam :" + Math.abs(checkout - checkin) + "\n");
+                                }
+                            }
+                            salary_amount = hours_amount * roleDetail.getSalary();
+
+                            System.out.println("Luong ngay cong " + VNString.currency(salary_amount));
+                        }
+
+                        // tinh phu cap
+                        for (Salary_Format_Allowance salaryFormatAllowance : salaryFormatAllowances) {
+                            Allowance allowance = new AllowanceBLL().searchAllowances("id = " + salaryFormatAllowance.getAllowance_id()).get(0);
+                            // tinh phu cap theo ngay
+                            if (allowance.getAllowance_type() == 0) {
+                                List<Date> dates = new ArrayList<>();
+                                for (Work_Schedule work_schedule : work_scheduleList) {
+                                    if (!work_schedule.getCheck_in().equals("null") && !work_schedule.getCheck_out().equals("null")) {
+                                        if (!dates.contains(work_schedule.getDate()))
+                                            dates.add(work_schedule.getDate());
+                                    }
+
+                                }
+                                allowance_amount = allowance_amount + (dates.size() * allowance.getAllowance_amount());
+
+                                System.out.println(allowance.getName() + "\n");
+                                System.out.println("So ngay :" + dates.size() + "\n");
+                                System.out.println("Tien phu cap :" + VNString.currency(dates.size() * allowance.getAllowance_amount()) + "\n");
+                            }
+                            // tinh phu cap theo thang
+                            if (allowance.getAllowance_type() == 1) {
+                                allowance_amount = allowance_amount + allowance.getAllowance_amount();
+
+                                System.out.println(allowance.getName() + "\n");
+                                System.out.println("Tien phu cap thang " + VNString.currency(allowance.getAllowance_amount()) + "\n");
+                            }
+                        }
+
+                        System.out.println("Tong tien phu cap :" + allowance_amount + "\n");
+
+                        // tinh tien giam tru
+                        for (Salary_Format_Deduction salaryFormatDeduction : salaryFormatDeductions) {
+                            Deduction deduction = new DeductionBLL().searchDeductions("id = " + salaryFormatDeduction.getDeduction_id()).get(0);
+                            // tinh giam tru di muon
+                            if (deduction.getDeduction_type() == 0) {
+                                for (Work_Schedule work_schedule : work_scheduleList) {
+                                    if (!work_schedule.getCheck_in().equals("null") && !work_schedule.getCheck_out().equals("null")) {
+                                        int hour = Integer.parseInt(work_schedule.getCheck_in().split(":")[0]);
+                                        int minute = Integer.parseInt(work_schedule.getCheck_in().split(":")[1]);
+                                        LocalTime checkin = LocalTime.of(hour, minute);
+                                        LocalTime timeShiftStart = null;
+
+                                        if (work_schedule.getShift() == 1)
+                                            timeShiftStart = LocalTime.of(6, 0);
+
+                                        if (work_schedule.getShift() == 2)
+                                            timeShiftStart = LocalTime.of(12, 0);
+
+                                        if (work_schedule.getShift() == 3)
+                                            timeShiftStart = LocalTime.of(18, 0);
+
+                                        assert timeShiftStart != null;
+                                        long minutesLate = ChronoUnit.MINUTES.between(timeShiftStart, checkin);
+
+                                        if (minutesLate >= maxMinutesCheckInLate) {
+                                            System.out.println("Ngay di muon " + work_schedule.getDate() + "\n");
+                                            System.out.println("Thoi gian di muon " + minutesLate + "\n");
+                                            lateShifts += 1;
+                                        }
+                                    }
+                                }
+
+                                deduction_amount = deduction_amount + (lateShifts * deduction.getDeduction_amount());
+
+                                System.out.println(deduction.getName() + "\n");
+                                System.out.println("So ca di muon " + lateShifts + "\n");
+                                System.out.println("Tien giam tru di muon " + VNString.currency(lateShifts * deduction.getDeduction_amount()) + "\n");
+                            }
+                            // tinh giam tru ve som
+                            if (deduction.getDeduction_type() == 1) {
+                                for (Work_Schedule work_schedule : work_scheduleList) {
+                                    if (!work_schedule.getCheck_in().equals("null") && !work_schedule.getCheck_out().equals("null")) {
+                                        int hour = Integer.parseInt(work_schedule.getCheck_out().split(":")[0]);
+                                        int minute = Integer.parseInt(work_schedule.getCheck_out().split(":")[1]);
+                                        LocalTime checkout = LocalTime.of(hour, minute);
+                                        LocalTime timeShiftEnd = null;
+
+                                        if (work_schedule.getShift() == 1)
+                                            timeShiftEnd = LocalTime.of(12, 0);
+
+                                        if (work_schedule.getShift() == 2)
+                                            timeShiftEnd = LocalTime.of(18, 0);
+
+                                        if (work_schedule.getShift() == 3)
+                                            timeShiftEnd = LocalTime.of(23, 0);
+
+                                        assert timeShiftEnd != null;
+                                        long minutesEarly = ChronoUnit.MINUTES.between(checkout, timeShiftEnd);
+
+                                        if (minutesEarly >= maxMinutesCheckOutEarly) {
+                                            System.out.println("Ngay ve som " + work_schedule.getDate() + "\n");
+                                            System.out.println("Thoi gian ve som " + minutesEarly + "\n");
+                                            earlyShifts += 1;
+                                        }
+                                    }
+                                }
+                                deduction_amount = deduction_amount + (earlyShifts * deduction.getDeduction_amount());
+
+                                System.out.println(deduction.getName() + "\n");
+                                System.out.println("So ca ve som " + lateShifts + "\n");
+                                System.out.println("Tien giam tru ve som " + VNString.currency(earlyShifts * deduction.getDeduction_amount()) + "\n");
+                            }
+                            // tinh giam tru co dinh
+                            if (deduction.getDeduction_type() == 2) {
+                                deduction_amount = deduction_amount + (deduction.getDeduction_amount());
+
+                                System.out.println(deduction.getName() + "\n");
+                                System.out.println("Tien giam tru co dinh " + VNString.currency(deduction.getDeduction_amount()) + "\n");
+                            }
+                            // tinh giam tru nghi khong phep
+                            if (deduction.getDeduction_type() == 3) {
+                                deduction_amount = deduction_amount + (deduction.getDeduction_amount() * ca_nghi_khong_phep.size());
+
+                                System.out.println(deduction.getName() + "\n");
+                                System.out.println("So ca nghi khong phep " + ca_nghi_khong_phep.size() + "\n");
+                                System.out.println("Tien giam nghi khong phep " + VNString.currency(deduction.getDeduction_amount() * ca_nghi_khong_phep.size()) + "\n");
+                            }
+                        }
+                        
+                        // tinh tien thuong va phat cua ca
+                        for (Work_Schedule work_schedule : work_scheduleList) {
+                            if (!work_schedule.getCheck_in().equals("null") && !work_schedule.getCheck_out().equals("null")) {
+                                List<Work_Schedule_Bonus> work_schedule_bonuses = new Work_Schedule_BonusBLL().searchWork_schedules("work_schedule_id = " + work_schedule.getId());
+                                List<Work_Schedule_Fine> work_schedule_fines = new Work_Schedule_FineBLL().searchWork_schedules("work_schedule_id = " + work_schedule.getId());
+
+                                System.out.println(work_schedule.getDate() + "\n");
+                                for (Work_Schedule_Bonus workScheduleBonus : work_schedule_bonuses) {
+
+                                    System.out.println(workScheduleBonus.getBonus_name() + "\n");
+                                    System.out.println("So tien thuong: " + VNString.currency(workScheduleBonus.getBonus_total()) + "\n");
+                                    bonus_amount += workScheduleBonus.getBonus_total();
+                                }
+                                for (Work_Schedule_Fine workScheduleFine : work_schedule_fines) {
+
+                                    System.out.println(workScheduleFine.getFine_name() + "\n");
+                                    System.out.println("So tien phat: " + VNString.currency(workScheduleFine.getFine_total()) + "\n");
+                                    fine_amount += workScheduleFine.getFine_total();
+                                }
+                            }
 
                         }
-                        salary_amount = roleDetail.getSalary();
-                    }
 
-                    System.out.println(staff.getName());/////////////////////////////
+                        System.out.println("Tong tien thuong: " + VNString.currency(bonus_amount) + "\n");
+                        System.out.println("Tong tien phat: " + VNString.currency(fine_amount) + "\n");
 
-                    if (roleDetail.getType_salary() == 2) {
-                        for (Work_Schedule work_schedule : work_scheduleList) {
+                        System.out.println("So tien sau thuong va phat " + VNString.currency(salary_amount) + "\n");
 
-                            System.out.println(work_schedule.getDate());/////////////////////////////
+                        // tinh luong co dinh
+                        if (roleDetail.getType_salary() == 1) {
+                            List<Date> dates = new ArrayList<>();
+                            for (Work_Schedule work_schedule : work_scheduleList) {
+                                if (!work_schedule.getCheck_in().equals("null") && !work_schedule.getCheck_out().equals("null")) {
+                                    if (!dates.contains(work_schedule.getDate()))
+                                        dates.add(work_schedule.getDate());
+                                }
+                            }
+                            int count = 0;
+                            for (Work_Schedule work_schedule : ca_nghi_co_phep) {
+                                if (work_schedule.getNotice().equals("Nghỉ phép năm")) {
+                                    List<Leave_Of_Absence_Form> leaveOfAbsenceForms = new Leave_Of_Absence_FormBLL().searchLeave_Of_Absence_Forms("staff_id = " + staff.getId(), "reason = 'Nghỉ phép năm'", "YEAR(entnry_date) = YEAR(GETDATE())");
+                                    if (leaveOfAbsenceForms.size() <= 12) {
+                                        System.out.println("Ngay nghi duoc huong luong: " + work_schedule.getDate() + "\n");
+                                        count += 1;
+                                    }
+                                }
+                                if (work_schedule.getNotice().equals("Nghỉ kết hôn")) {
+                                    List<Leave_Of_Absence_Form> leaveOfAbsenceForms = new Leave_Of_Absence_FormBLL().searchLeave_Of_Absence_Forms("staff_id = " + staff.getId(), "reason = 'Nghỉ kết hôn'", "YEAR(entnry_date) = YEAR(GETDATE())");
+                                    if (leaveOfAbsenceForms.size() <= 3) {
+                                        System.out.println("Ngay nghi duoc huong luong: " + work_schedule.getDate() + "\n");
+                                        count += 1;
+                                    }
+                                }
+                                if (work_schedule.getNotice().equals("Nghỉ con cái kết hôn")) {
+                                    List<Leave_Of_Absence_Form> leaveOfAbsenceForms = new Leave_Of_Absence_FormBLL().searchLeave_Of_Absence_Forms("staff_id = " + staff.getId(), "reason = 'Nghỉ con cái kết hôn'", "YEAR(entnry_date) = YEAR(GETDATE())");
+                                    if (leaveOfAbsenceForms.isEmpty()) {
+                                        System.out.println("Ngay nghi duoc huong luong: " + work_schedule.getDate() + "\n");
+                                        count += 1;
+                                    }
+                                }
+                            }
+                            salary_amount = (salary_amount + allowance_amount) / 26.0 * (dates.size() + count) + bonus_amount - fine_amount - deduction_amount; // lương tháng cố định = (lương thoả thuận + phụ cấp)/26 * (số ngày làm + số ngày nghỉ được hưởng lương) - phạt  + thưởng - giảm trừ
 
-                            if (Objects.equals(work_schedule.getCheck_in(), "null") || Objects.equals(work_schedule.getCheck_out(), "null"))
-                                return new Pair<>(false, "Vui lòng chấm công nhân viên " + staff.getName() + " ca " + work_schedule.getShift() + " vào ngày: " + work_schedule.getDate());
-                            String[] checkinArr, checkoutArr;
-                            double checkin, checkout;
-
-                            checkinArr = work_schedule.getCheck_in().split(":");
-                            double v = Double.parseDouble(checkinArr[1]) / 60;
-                            checkin = Double.parseDouble(checkinArr[0]) + v;
-
-                            checkoutArr = work_schedule.getCheck_out().split(":");
-                            v = Double.parseDouble(checkoutArr[1]) / 60;
-                            checkout = Double.parseDouble(checkoutArr[0]) + v;
-
-                            hours_amount += Math.abs(checkout - checkin);
-
-                            System.out.println("Gio lam " + Math.abs(checkout - checkin));/////////////////////////////
-
+                            System.out.println("So tien thuc cua luong co dinh: " + VNString.currency(salary_amount));
+                        } else {
+                            salary_amount = salary_amount + allowance_amount + bonus_amount - fine_amount - deduction_amount;
+                            System.out.println("So tien thuc lanh: " + VNString.currency(salary_amount));
                         }
-                        salary_amount = hours_amount * roleDetail.getSalary();
+                        Payroll_Detail payrollDetail = new Payroll_Detail(payroll.getId(), staff.getId(), hours_amount, allowance_amount, deduction_amount, bonus_amount, fine_amount, salary_amount, false);
+                        payrollDetails.add(payrollDetail);
+                        total_salary += salary_amount;
                     }
-                    // tính tiền phụ cấp
-
-//                    for (Role_Detail_Allowance roleDetailAllowance : roleDetailAllowanceList) {
-//                        Allowance allowance = new AllowanceBLL().searchAllowances("id = " + roleDetailAllowance.getAllowance_id()).get(0);
-//
-//                        if (allowance.getAllowance_type() == 0) {
-//                            List<Date> dates = new ArrayList<>();
-//                            for (Work_Schedule work_schedule : work_scheduleList) {
-//                                if (!dates.contains(work_schedule.getDate()))
-//                                    dates.add(work_schedule.getDate());
-//                            }
-//                            bonus_amount = bonus_amount + (dates.size() * allowance.getAllowance_amount());
-//
-//                            System.out.println("So ngay lam " + dates.size());/////////////////////////////
-//                            System.out.println("Tien phu cap " + dates.size() * allowance.getAllowance_amount());/////////////////////////////
-//                        }
-//
-//                        if (allowance.getAllowance_type() == 1) {
-//                            bonus_amount = bonus_amount + allowance.getAllowance_amount();
-//                            System.out.println("Tien phu cap thang " + allowance.getAllowance_amount());/////////////////////////////
-//                        }
-//                    }
-                    System.out.println("Tien phu cap tong cong " + bonus_amount);/////////////////////////////
-
-                    // tính tiền giảm trừ
-
-//                    for (Role_Detail_Deduction roleDetailDeduction : roleDetailDeductionList) {
-//                        Deduction deduction = new DeductionBLL().searchDeductions("id = " + roleDetailDeduction.getDeduction_id()).get(0);
-//
-//                        if (deduction.getDeduction_type() == 0) {
-//                            int shifts = 0;
-//                            for (Work_Schedule work_schedule : work_scheduleList) {
-//                                int hour = Integer.parseInt(work_schedule.getCheck_in().split(":")[0]);
-//                                int minute = Integer.parseInt(work_schedule.getCheck_in().split(":")[1]);
-//                                LocalTime checkin = LocalTime.of(hour, minute);
-//                                LocalTime timeShiftStart = null;
-//
-//                                if (work_schedule.getShift() == 1)
-//                                    timeShiftStart = LocalTime.of(6, 0);
-//
-//                                if (work_schedule.getShift() == 2)
-//                                    timeShiftStart = LocalTime.of(12, 0);
-//
-//                                if (work_schedule.getShift() == 3)
-//                                    timeShiftStart = LocalTime.of(18, 0);
-//
-//                                assert timeShiftStart != null;
-//                                long minutesLate = ChronoUnit.MINUTES.between(timeShiftStart, checkin);
-//
-//                                if (minutesLate >= maxMinutesCheckInLate) {
-//                                    System.out.println("Ngay di muon " + work_schedule.getDate());/////////////////////////////
-//                                    System.out.println("Thoi gian di muon " + minutesLate);/////////////////////////////
-//                                    shifts += 1;
-//                                }
-//                            }
-//                            deduction_amount = deduction_amount + (shifts * deduction.getDeduction_amount());
-//                            System.out.println("So ca di muon " + shifts);/////////////////////////////
-//                            System.out.println("Tien giam tru di muon " + shifts * deduction.getDeduction_amount());/////////////////////////////
-//
-//                        }
-//
-//                        if (deduction.getDeduction_type() == 1) {
-//                            int shifts = 0;
-//                            for (Work_Schedule work_schedule : work_scheduleList) {
-//                                int hour = Integer.parseInt(work_schedule.getCheck_out().split(":")[0]);
-//                                int minute = Integer.parseInt(work_schedule.getCheck_out().split(":")[1]);
-//                                LocalTime checkout = LocalTime.of(hour, minute);
-//                                LocalTime timeShiftEnd = null;
-//
-//                                if (work_schedule.getShift() == 1)
-//                                    timeShiftEnd = LocalTime.of(12, 0);
-//
-//                                if (work_schedule.getShift() == 2)
-//                                    timeShiftEnd = LocalTime.of(18, 0);
-//
-//                                if (work_schedule.getShift() == 3)
-//                                    timeShiftEnd = LocalTime.of(23, 0);
-//
-//                                assert timeShiftEnd != null;
-//                                long minutesEarly = ChronoUnit.MINUTES.between(checkout, timeShiftEnd);
-//
-//                                if (minutesEarly >= maxMinutesCheckOutEarly) {
-//                                    System.out.println("Ngay ve som " + work_schedule.getDate());/////////////////////////////
-//                                    System.out.println("Thoi gian ve som " + minutesEarly);
-//                                    shifts += 1;
-//                                }
-//                            }
-//                            deduction_amount = deduction_amount + (shifts * deduction.getDeduction_amount());
-//                            System.out.println("So ca ve som " + shifts);/////////////////////////////
-//                            System.out.println("Tien giam tru ve som " + shifts * deduction.getDeduction_amount());/////////////////////////////
-//                        }
-//
-//                        if (deduction.getDeduction_type() == 2) {
-//                            deduction_amount = deduction_amount + (deduction.getDeduction_amount());
-//                            System.out.println("Tien giam tru co dinh " + deduction.getDeduction_amount());/////////////////////////////
-//                        }
-//                    }
-
-                    System.out.println("Tien giam tru tong cong " + deduction_amount);
-
-                    salary_amount = salary_amount + bonus_amount;
-                    salary_amount = salary_amount - deduction_amount;
-
-                    if (roleDetail.getType_salary() == 1) {
-                        List<Date> dates = new ArrayList<>();
-                        for (Work_Schedule work_schedule : work_scheduleList) {
-                            if (!dates.contains(work_schedule.getDate()))
-                                dates.add(work_schedule.getDate());
-                        }
-                        salary_amount = salary_amount / 26.0 * dates.size(); // lương tháng cố định = (lương thoả thuận + phụ cấp - giảm trừ)/26 * số ngày làm thực tế
-                    }
-
-//                    Payroll_Detail payrollDetail = new Payroll_Detail(payroll.getId(), staff.getId(), hours_amount, bonus_amount, deduction_amount, salary_amount, false, roleDetail.getRole_id(), roleDetail.getEntry_date());
-//                    payrollDetails.add(payrollDetail);
-                    totalSalary = totalSalary + salary_amount;
                 }
+            } else {
+                Payroll_Detail payrollDetail = new Payroll_Detail(payroll.getId(), staff.getId(), 0, 0, 0, 0, 0, 0, false);
+                payrollDetails.add(payrollDetail);
             }
         }
-
-        payroll.setTotal_salary(totalSalary);
-        payroll.setDebt(totalSalary);
+        payroll.setTotal_salary(total_salary);
+        payroll.setDebt(total_salary);
         Payroll_DetailBLL payrollDetailBLL = new Payroll_DetailBLL();
+
         if (payrollDAL.addPayroll(payroll) == 0) {
             return new Pair<>(false, "Thêm bảng lương không thành công.");
         }

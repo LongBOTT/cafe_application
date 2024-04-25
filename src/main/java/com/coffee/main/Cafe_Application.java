@@ -1,6 +1,7 @@
 package com.coffee.main;
 
 import com.coffee.BLL.Work_ScheduleBLL;
+import com.coffee.GUI.DialogGUI.FormAddGUI.AddPayrollGUI;
 import com.coffee.GUI.DialogGUI.FromEditGUI.EditWorkScheduleGUI;
 import com.coffee.GUI.HomeGUI;
 import com.coffee.GUI.LoginGUI;
@@ -44,6 +45,7 @@ public class Cafe_Application {
 
 //        new EditStaffGUI(new StaffBLL().searchStaffs("id = 2").get(0));
 //        new EditWorkScheduleGUI(new Work_ScheduleBLL().searchWork_schedules("id = 55").get(0));
+        new AddPayrollGUI();
     }
 
     public static void exit(int status) {

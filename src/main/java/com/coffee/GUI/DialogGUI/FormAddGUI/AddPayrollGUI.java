@@ -20,11 +20,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class AddPayrollGUI extends DialogForm {
     private JLabel titleName;
-    private JMonthChooser jMonthChooser;
-    private JYearChooser jYearChooser;
+    private JComboBox<String> jComboBox;
     private List<JLabel> attributePayroll;
     private JButton buttonCancel;
     private JButton buttonAdd;
@@ -62,17 +62,43 @@ public class AddPayrollGUI extends DialogForm {
         attributePayroll.add(label);
         content.add(label);
 
-        jMonthChooser = new JMonthChooser();
-        jMonthChooser.setPreferredSize(new Dimension(1000, 30));
-//        jMonthChooser.setBackground(new Color(245, 246, 250));
-        jMonthChooser.setMonth(LocalDate.now().getMonth().getValue() - 1);
-        content.add(jMonthChooser);
+//        jMonthChooser = new JMonthChooser();
+//        jMonthChooser.setPreferredSize(new Dimension(1000, 30));
+////        jMonthChooser.setBackground(new Color(245, 246, 250));
+//        jMonthChooser.setMonth(LocalDate.now().getMonth().getValue() - 1);
+//        content.add(jMonthChooser);
+//
+//        jYearChooser = new JYearChooser();
+//        jYearChooser.setPreferredSize(new Dimension(1000, 30));
+////        jYearChooser.setBackground(new Color(245, 246, 250));
+//        jYearChooser.setYear(LocalDate.now().getYear());
+//        content.add(jYearChooser);
 
-        jYearChooser = new JYearChooser();
-        jYearChooser.setPreferredSize(new Dimension(1000, 30));
-//        jYearChooser.setBackground(new Color(245, 246, 250));
-        jYearChooser.setYear(LocalDate.now().getYear());
-        content.add(jYearChooser);
+        jComboBox = new JComboBox<>();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        LocalDate currentDate = LocalDate.now();
+        int currentMonth = currentDate.getMonthValue();
+        int currentYear = currentDate.getYear();
+        int index = 0, i = 0;
+        // Lặp qua từ năm 2021 đến năm 2025
+        for (int year = 2021; year <= 2025; year++) {
+            for (int month = 1; month <= 12; month++) {
+                if (year == currentYear && month == currentMonth)
+                    index = i;
+                LocalDate startDate = LocalDate.of(year, month, 1);
+                LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+                // In ra dữ liệu theo mẫu "01/04/yyyy - 30/04/yyyy"
+                String dateRange = startDate.format(dateFormatter) + " - " + endDate.format(dateFormatter);
+                jComboBox.addItem(dateRange);
+                i += 1;
+            }
+        }
+
+        jComboBox.setSelectedIndex(index);
+        jComboBox.setPreferredSize(new Dimension(300, 35));
+        content.add(jComboBox);
 
         buttonCancel.setPreferredSize(new Dimension(100, 30));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
@@ -115,20 +141,27 @@ public class AddPayrollGUI extends DialogForm {
         Date entry_date;
         double total_salary, paid, debt;
 
-        month = jMonthChooser.getMonth() + 1;
-        year = jYearChooser.getYear();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        // Phân tích cú pháp chuỗi
+        String[] parts = Objects.requireNonNull(jComboBox.getSelectedItem()).toString().split(" - ");
+
+        // Lấy tháng và năm từ phần bắt đầu và kết thúc của chuỗi
+        LocalDate startDate = LocalDate.parse(parts[0], dateFormatter);
+
+        month = startDate.getMonthValue();
+        year = startDate.getYear();
 
         if (month > LocalDate.now().getMonthValue() || year > LocalDate.now().getYear()) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn thời gian hiện tại hoặc trước đó!",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
-//        LocalDate start = YearMonth.of(year, month).atDay(1);
-//        LocalDate end = YearMonth.of(year, month).atEndOfMonth();
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
-
         id = payrollBLL.getAutoID(payrollBLL.searchPayrolls()); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-        name = "Bảng lương " + YearMonth.of(year, month).format(DateTimeFormatter.ofPattern("MM/YYYY"));
+        YearMonth yearMonth = YearMonth.of(year, month);
+
+        name = "Bảng lương " + yearMonth.format(DateTimeFormatter.ofPattern("MM/yyyy"));
         entry_date = java.sql.Date.valueOf(LocalDate.now());
         total_salary = 0;
         paid = 0;

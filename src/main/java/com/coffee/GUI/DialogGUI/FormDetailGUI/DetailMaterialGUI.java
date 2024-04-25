@@ -96,12 +96,12 @@ public class DetailMaterialGUI extends DialogFormDetail {
                 continue;
             }
             if (string.trim().equals("Tồn Quầy")) {
-                textField.setText(String.valueOf(material.getRemain()));
+                textField.setText(String.format("%.2f", material.getRemain()));
                 contenttop.add(textField);
                 continue;
             }
             if (string.trim().equals("Tồn Kho")) {
-                textField.setText(String.valueOf(material.getRemain_wearhouse()));
+                textField.setText(String.format("%.2f", material.getRemain_wearhouse()));
                 contenttop.add(textField, "wrap");
                 continue;
             }

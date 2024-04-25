@@ -302,8 +302,8 @@ public class MaterialGUI extends Layout2 {
         for (int i = 0; i < objects.length; i++) {
             data[i][0] = objects[i][0];
             data[i][1] = objects[i][1];
-            data[i][2] = objects[i][2];
-            data[i][3] = objects[i][3];
+            data[i][2] = String.format("%.2f", Double.parseDouble(objects[i][2].toString()));
+            data[i][3] = String.format("%.2f", Double.parseDouble(objects[i][3].toString()));
             data[i][4] = objects[i][4];
             data[i][5] = objects[i][5];
 

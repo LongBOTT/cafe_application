@@ -576,24 +576,25 @@ public class PDF {
     public static void exportWorkSchedulePDF(Date from, Date to, String path) {
         List<Date> dates = getDaysBetween(from, to);
         DateTimeFormatter dtfInput = DateTimeFormatter.ofPattern("u-M-d", Locale.ENGLISH);
-        DateTimeFormatter dtfOutput = DateTimeFormatter.ofPattern("EEEE", Locale.ENGLISH);
+        DateTimeFormatter dtfOutput = DateTimeFormatter.ofPattern("EEEE", new Locale("vi", "VN"));
+        DateTimeFormatter dtfDayMonth = DateTimeFormatter.ofPattern("d/M", new Locale("vi", "VN"));
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String[] columns = new String[]{"       ",
                 LocalDate.parse(dateFormat.format(dates.get(0)), dtfInput).format(dtfOutput) +
-                        " (" + LocalDate.parse(dateFormat.format(dates.get(0)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
+                        " (" + LocalDate.parse(dateFormat.format(dates.get(0)), dtfInput).format(dtfDayMonth) + ")",
                 LocalDate.parse(dateFormat.format(dates.get(1)), dtfInput).format(dtfOutput) +
-                        " (" + LocalDate.parse(dateFormat.format(dates.get(1)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
+                        " (" + LocalDate.parse(dateFormat.format(dates.get(1)), dtfInput).format(dtfDayMonth) + ")",
                 LocalDate.parse(dateFormat.format(dates.get(2)), dtfInput).format(dtfOutput) +
-                        " (" + LocalDate.parse(dateFormat.format(dates.get(2)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
+                        " (" + LocalDate.parse(dateFormat.format(dates.get(2)), dtfInput).format(dtfDayMonth) + ")",
                 LocalDate.parse(dateFormat.format(dates.get(3)), dtfInput).format(dtfOutput) +
-                        " (" + LocalDate.parse(dateFormat.format(dates.get(3)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
+                        " (" + LocalDate.parse(dateFormat.format(dates.get(3)), dtfInput).format(dtfDayMonth) + ")",
                 LocalDate.parse(dateFormat.format(dates.get(4)), dtfInput).format(dtfOutput) +
-                        " (" + LocalDate.parse(dateFormat.format(dates.get(4)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
+                        " (" + LocalDate.parse(dateFormat.format(dates.get(4)), dtfInput).format(dtfDayMonth) + ")",
                 LocalDate.parse(dateFormat.format(dates.get(5)), dtfInput).format(dtfOutput) +
-                        " (" + LocalDate.parse(dateFormat.format(dates.get(5)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")",
+                        " (" + LocalDate.parse(dateFormat.format(dates.get(5)), dtfInput).format(dtfDayMonth) + ")",
                 LocalDate.parse(dateFormat.format(dates.get(6)), dtfInput).format(dtfOutput) +
-                        " (" + LocalDate.parse(dateFormat.format(dates.get(6)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")"};
+                        " (" + LocalDate.parse(dateFormat.format(dates.get(6)), dtfInput).format(dtfDayMonth) + ")"};
 
         DataTable dataTable = new DataTable(new Object[0][0], columns);
         Object[][] data = new Object[12][8];
@@ -738,7 +739,7 @@ public class PDF {
         for (Object[] object : data) {
             model.addRow(object);
         }
-        PDF.createWorkSchedulePDF("Lịch Làm Việc", dataTable, "src/main/resources/ExportPDF", java.sql.Date.valueOf("2024-03-11"), java.sql.Date.valueOf("2024-03-17"));
+        PDF.createWorkSchedulePDF("Lịch Làm Việc", dataTable, "src/main/resources/ExportPDF", from, to);
     }
 
     public static void createWorkSchedulePDF(String title, JTable table, String dest, Date from, Date to) {
