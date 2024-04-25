@@ -737,14 +737,30 @@ public class AddDiscountGUI extends DialogFormDetail_1 {
                             hasError = true;
                             break;
                         }
-
+                        if(productName.contains("Thể loại: ")){
+                            String resultList  = removeTheloai(txtProductName.getText().trim());
+                        }
                         List<String> resultList = convertTxtSearchToArray(productName);
+                        if(resultList.isEmpty()){
+                            JOptionPane.showMessageDialog(this, "Sản phẩm không tồn tại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            txtProductName.requestFocus();
+                            hasError = true;
+                            break;
+                        }
                         String name = resultList.get(0);
                         String size = resultList.get(1);
-                        int product_id = productBLL.searchProducts("name = '" + name + "'", "size = '" + size + "'").get(0).getId();
-                        Discount_Detail discount_detail = new Discount_Detail(id, product_id, size, quantity, discountPercentage, 0);
-                        discountInfoList.add(discount_detail);
-
+                        List<Product> products = productBLL.searchProducts("name = '" + name + "'", "size = '" + size + "'");
+                        if(products.isEmpty()){
+                            JOptionPane.showMessageDialog(this, "Sản phẩm không tồn tại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            txtProductName.requestFocus();
+                            hasError = true;
+                            break;
+                        }
+                        else{
+                            int product_id = products.get(0).getId();
+                            Discount_Detail discount_detail = new Discount_Detail(id, product_id, size, quantity, discountPercentage, 0);
+                            discountInfoList.add(discount_detail);
+                        }
                     }
                 }
             }
@@ -799,6 +815,13 @@ public class AddDiscountGUI extends DialogFormDetail_1 {
         }
 
         return resultList;
+    }
+    private String removeTheloai(String txtSearchValue) {
+        String result = txtSearchValue;
+        if (txtSearchValue.startsWith("Thể loại: ")) {
+            result = txtSearchValue.substring("Thể loại: ".length()).trim();
+        }
+        return result;
     }
 
     private void txtSearchMouseClicked(java.awt.event.MouseEvent evt) {

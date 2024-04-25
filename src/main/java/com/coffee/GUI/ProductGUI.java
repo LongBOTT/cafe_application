@@ -67,7 +67,7 @@ public class ProductGUI extends Layout3 {
         jButtonSearch = new JButton("Tìm kiếm");
         categoriesName = new ArrayList<>();
 
-        columnNames = new String[]{"Ảnh", "Tên sản phẩm", "Size", "giá bán"};
+        columnNames = new String[]{"Ảnh", "Tên sản phẩm", "Size", "Giá bán"};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
@@ -283,14 +283,14 @@ public class ProductGUI extends Layout3 {
             String productName = (String) productArray[1];
             ArrayList<String> sizes = (ArrayList<String>) productArray[4];
             ArrayList<Double> prices = (ArrayList<Double>) productArray[3];
-
+            if (productArray[5].equals("null") )
+                productArray[5] = "productDefault";
             ImageIcon icon = new FlatSVGIcon("image/Product/" + productArray[5] + ".svg");
             Image image = icon.getImage();
             Image newImg = image.getScaledInstance(columnWidth, rowHeight, java.awt.Image.SCALE_SMOOTH);
             icon = new ImageIcon(newImg);
             JLabel productImage = new JLabel(icon);
             productImage.scrollRectToVisible(new Rectangle());
-
             CustomPopupMenu popupMenuSize = new CustomPopupMenu();
             CustomPopupMenu popupMenuPrice = new CustomPopupMenu();
             for (String size : sizes) {

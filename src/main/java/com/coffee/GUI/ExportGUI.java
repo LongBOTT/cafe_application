@@ -64,7 +64,7 @@ public class ExportGUI extends Layout2 {
         editor = new JFormattedTextField();
 
 
-        columnNames = new String[]{"Mã Phiếu Nhập", "Nhân Viên", "Tổng Tiền", "Ngày Xuất"};
+        columnNames = new String[]{"Mã Phiếu Xuất", "Nhân Viên", "Tổng Tiền", "Ngày Xuất"};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
