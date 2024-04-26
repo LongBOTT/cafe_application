@@ -93,6 +93,8 @@ public class PayrollBLL extends Manager<Payroll> {
 
                             System.out.println("Luong ngay cong " + VNString.currency(salary_amount));
                         } else {
+                            List<Date> dateList = new ArrayList<>();
+                            List<Double> hoursList = new ArrayList<>();
                             // tinh luong theo gio
                             for (Work_Schedule work_schedule : work_scheduleList) {
                                 if (!work_schedule.getCheck_in().equals("null") && !work_schedule.getCheck_out().equals("null")) {
@@ -110,11 +112,23 @@ public class PayrollBLL extends Manager<Payroll> {
                                     v = Double.parseDouble(checkoutArr[1]) / 60;
                                     checkout = Double.parseDouble(checkoutArr[0]) + v;
 
-                                    hours_amount += Math.abs(checkout - checkin);
-
+                                    if (dateList.contains(work_schedule.getDate())) {
+                                        int index = dateList.indexOf(work_schedule.getDate());
+                                        hoursList.set(index, hoursList.get(index) + Math.abs(checkout - checkin));
+                                    } else {
+                                        dateList.add(work_schedule.getDate());
+                                        hoursList.add(Math.abs(checkout - checkin));
+                                    }
                                     System.out.println("Gio lam :" + Math.abs(checkout - checkin) + "\n");
                                 }
                             }
+                            for (Double aDouble : hoursList) {
+                                if (aDouble > 12)
+                                    hours_amount += 12;
+                                else
+                                    hours_amount += aDouble;
+                            }
+
                             salary_amount = hours_amount * roleDetail.getSalary();
 
                             System.out.println("Luong ngay cong " + VNString.currency(salary_amount));

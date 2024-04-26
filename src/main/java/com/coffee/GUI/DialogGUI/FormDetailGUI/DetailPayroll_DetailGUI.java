@@ -29,6 +29,7 @@ public class DetailPayroll_DetailGUI extends DialogForm {
     private final int maxMinutesCheckOutEarly = 15;
     private Payroll_Detail payrollDetail;
     private Payroll payroll;
+    private List<List<String>> hoursObjectList = new ArrayList<>();
     private List<List<String>> allowanceObjectList = new ArrayList<>();
     private List<List<String>> lateObjectList = new ArrayList<>();
     private List<List<String>> earlyObjectList = new ArrayList<>();
@@ -65,7 +66,9 @@ public class DetailPayroll_DetailGUI extends DialogForm {
         jTabbedPane.setPreferredSize(new Dimension(1000, 600));
         content.add(jTabbedPane);
 
+        Role_Detail roleDetail = new Role_DetailBLL().searchRole_detailsByStaff(payrollDetail.getStaff_id()).get(0);
         JPanel infoPanel = new JPanel();
+        JScrollPane hoursPanel = new JScrollPane();
         JScrollPane allowancePanel = new JScrollPane();
         JScrollPane latePanel = new JScrollPane();
         JScrollPane earlyPanel = new JScrollPane();
@@ -76,17 +79,18 @@ public class DetailPayroll_DetailGUI extends DialogForm {
         JScrollPane finePanel = new JScrollPane();
 
         jTabbedPane.add("Thông Tin", infoPanel);
+        if (roleDetail.getType_salary() == 2)
+            jTabbedPane.add("Giờ làm", infoPanel);
         jTabbedPane.add("Phụ Cấp", allowancePanel);
         jTabbedPane.add("Đi Trễ", latePanel);
         jTabbedPane.add("Về Sớm", earlyPanel);
         jTabbedPane.add("Giảm trừ cố định", defaultDeductionPanel);
-        jTabbedPane.add("Nghỉ Có Phép", absentPanel1);
         jTabbedPane.add("Nghỉ Không Phép", absentPanel2);
+        jTabbedPane.add("Nghỉ Có Phép", absentPanel1);
         jTabbedPane.add("Thưởng", bonusPanel);
         jTabbedPane.add("Phạt Vi Phạm", finePanel);
 
         List<Work_Schedule> work_scheduleList = new Work_ScheduleBLL().searchWork_schedulesByStaff(payrollDetail.getStaff_id(), payroll.getYear(), payroll.getMonth());
-        Role_Detail roleDetail = new Role_DetailBLL().searchRole_detailsByStaff(payrollDetail.getStaff_id()).get(0);
         Staff staff = new StaffBLL().searchStaffs("id = " + payrollDetail.getStaff_id()).get(0);
         Salary_Format salaryFormat = new Salary_FormatBLL().searchSalary_Formats("id  = " + staff.getSalary_format_id()).get(0);
         List<Salary_Format_Allowance> salaryFormatAllowances = new Salary_Format_AllowanceBLL().searchSalary_Format_Allowances("salary_format_id = " + salaryFormat.getId());
@@ -306,6 +310,7 @@ public class DetailPayroll_DetailGUI extends DialogForm {
 
         }
 
+        System.out.println("tro cap" + Arrays.toString(hoursObjectList.toArray()));
         System.out.println("tro cap" + Arrays.toString(allowanceObjectList.toArray()));
         System.out.println("di tre" + Arrays.toString(lateObjectList.toArray()));
         System.out.println("ve som" + Arrays.toString(earlyObjectList.toArray()));
@@ -316,6 +321,7 @@ public class DetailPayroll_DetailGUI extends DialogForm {
         System.out.println("phat" + Arrays.toString(fineObjectList.toArray()));
 
         initInfoPanel(infoPanel);
+        initHoursPanel(hoursPanel);
         initAllowancePanel(allowancePanel);
         initLatePanel(latePanel);
         initEarlyPanel(earlyPanel);
@@ -324,6 +330,9 @@ public class DetailPayroll_DetailGUI extends DialogForm {
         initAbsent2Panel(absentPanel2);
         initBonusPanel(bonusPanel);
         initFinePanel(finePanel);
+    }
+
+    private void initHoursPanel(JScrollPane hoursPanel) {
     }
 
     private void initDefaultDeductionPanel(JScrollPane defaultDeductionPanel) {
