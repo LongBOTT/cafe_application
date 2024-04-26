@@ -1,9 +1,10 @@
 package com.coffee.GUI.components;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class Layout1 extends RoundedPanel {
-    public RoundedPanel top;
+    public JPanel top;
     public RoundedPanel bottom;
     public RoundedPanel SearchPanel;
     public RoundedPanel FunctionPanel;
@@ -18,14 +19,14 @@ public class Layout1 extends RoundedPanel {
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(1165, 733));
 
-        top = new RoundedPanel();
+        top = new JPanel();
         bottom = new RoundedPanel();
         SearchPanel = new RoundedPanel();
         FunctionPanel = new RoundedPanel();
 
         top.setLayout(new BorderLayout());
         top.setPreferredSize(new Dimension(1165, 50));
-        top.setBackground(Color.white);
+        top.setBackground(new Color(191, 198, 208));
         add(top, BorderLayout.NORTH);
 
         bottom.setLayout(new BorderLayout());
@@ -33,14 +34,14 @@ public class Layout1 extends RoundedPanel {
         bottom.setBackground(Color.white);
         add(bottom, BorderLayout.SOUTH);
 
-        SearchPanel.setLayout(new GridBagLayout());
-        SearchPanel.setBackground(Color.white);
-        SearchPanel.setPreferredSize(new Dimension(530, 50));
+        SearchPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        SearchPanel.setBackground(new Color(191, 198, 208));
+        SearchPanel.setPreferredSize(new Dimension(560, 50));
         top.add(SearchPanel, BorderLayout.WEST);
 
-        FunctionPanel.setLayout(new FlowLayout());
-        FunctionPanel.setBackground(Color.white);
-        FunctionPanel.setPreferredSize(new Dimension(620, 50));
+        FunctionPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        FunctionPanel.setBackground(new Color(191, 198, 208));
+        FunctionPanel.setPreferredSize(new Dimension(590, 50));
         top.add(FunctionPanel, BorderLayout.EAST);
 
     }

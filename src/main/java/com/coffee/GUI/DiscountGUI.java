@@ -3,19 +3,33 @@ package com.coffee.GUI;
 import com.coffee.BLL.DiscountBLL;
 import com.coffee.DTO.Function;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddDiscountGUI;
+import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailDiscountGUI;
+import com.coffee.GUI.DialogGUI.FormEditGUI.EditDiscountGUI;
 import com.coffee.GUI.components.*;
+import com.coffee.ImportExcel.AddDiscountFromExcel;
+import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JDateChooser;
-import com.toedter.calendar.JTextFieldDateEditor;
+import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
+import raven.datetime.component.date.DateEvent;
+import raven.datetime.component.date.DateSelectionListener;
+
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+
+import static com.coffee.utils.Resource.chooseExcelFile;
 
 
 public class DiscountGUI extends Layout2 {
@@ -25,7 +39,6 @@ public class DiscountGUI extends Layout2 {
     private JButton jButtonSearch;
     private JComboBox<String> jComboBoxSearch;
     private List<Function> functions;
-
     private DiscountBLL discountBLL = new DiscountBLL();
     private DataTable dataTable;
     private RoundedScrollPane scrollPane;
@@ -36,15 +49,10 @@ public class DiscountGUI extends Layout2 {
     private boolean edit = false;
     private boolean remove = false;
     private String[] columnNames;
-
-    private JLabel[] jLabels = new JLabel[0];
-
-    private JDateChooser[] jDateChooser = new JDateChooser[0];
-
-    private JTextField[] dateTextField = new JTextField[0];
-
-    private JTextField[] jTextFieldDate = new JTextFieldDateEditor[0];
-
+    private DatePicker datePicker;
+    private JFormattedTextField editor;
+    private boolean processDateChangeEvent = true;
+    private Object[][] data = new Object[0][0];
 
     public DiscountGUI(List<Function> functions) {
         super();
@@ -63,9 +71,10 @@ public class DiscountGUI extends Layout2 {
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
-        jComboBoxSearch = new JComboBox<>(new String[]{"Bộ Lọc", "Ngừng áp dụng", "Đang áp dụng"});
-
-        columnNames = new String[]{"Mã Giảm Giá", "Ngày Bắt Đầu", "Ngày Kết Thúc", "Trạng Thái"};
+        jComboBoxSearch = new JComboBox<>(new String[]{"Tất cả", "Đang áp dụng", "Ngừng áp dụng"});
+        JLabel lbFilter = new JLabel("Trạng thái");
+        lbFilter.setFont((new Font("Public Sans", Font.BOLD, 14)));
+        columnNames = new String[]{"Mã Giảm Giá", "Tên chương trình", "Ngày Bắt Đầu", "Ngày Kết Thúc", "Hình thức", "Trạng Thái"};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
@@ -85,128 +94,93 @@ public class DiscountGUI extends Layout2 {
         }
 
         dataTable = new DataTable(new Object[0][0], columnNames, e -> selectFunction(),
-                detail, edit, remove, 4); // table hiển thị các thuộc tính "Mã NCC", "Tên NCC", "SĐT", "Email" nên điền 4
+                detail, edit, remove, 6);
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
         containerSearch.setBackground(new Color(245, 246, 250));
-        containerSearch.setPreferredSize(new Dimension(320, 40));
+        containerSearch.setPreferredSize(new Dimension(280, 40));
         SearchPanel.add(containerSearch);
-
         iconSearch.setIcon(new FlatSVGIcon("icon/search.svg"));
         containerSearch.add(iconSearch);
 
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
-        jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập nội dung tìm kiếm");
-        jTextFieldSearch.setPreferredSize(new Dimension(220, 30));
+        jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Tìm kiếm theo tên chương trình");
+        jTextFieldSearch.putClientProperty("JTextField.showClearButton", true);
+        jTextFieldSearch.setPreferredSize(new Dimension(250, 30));
         containerSearch.add(jTextFieldSearch);
 
-//        jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
-//            @Override
-//            public void insertUpdate(DocumentEvent e) {
-//                searchDiscount();
-//            }
-//
-//            @Override
-//            public void removeUpdate(DocumentEvent e) {
-//                searchDiscount();
-//            }
-//
-//            @Override
-//            public void changedUpdate(DocumentEvent e) {
-//                searchDiscount();
-//            }
-//        });
-
-
-        containerSearch.add(jTextFieldSearch);
-
-        jButtonSearch.setBackground(new Color(29, 78, 216));
+        jButtonSearch.setBackground(new Color(1, 120, 220));
         jButtonSearch.setForeground(Color.white);
-        jButtonSearch.setPreferredSize(new Dimension(100, 40));
-//      jButtonSearch.addActionListener(e -> searchDiscount());
+        jButtonSearch.setPreferredSize(new Dimension(100, 30));
         jButtonSearch.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                searchDiscount();
+                searchDiscountByName();
             }
         });
         SearchPanel.add(jButtonSearch);
 
-        jComboBoxSearch.setBackground(new Color(29, 78, 216));
+        jComboBoxSearch.setBackground(new Color(1, 120, 220));
         jComboBoxSearch.setForeground(Color.white);
-        jComboBoxSearch.setPreferredSize(new Dimension(150, 40));
-        jComboBoxSearch.addActionListener(e -> selectSearchFilter());
+        jComboBoxSearch.setPreferredSize(new Dimension(130, 30));
+        jComboBoxSearch.addActionListener(e -> {
+            SelectDiscountStatus();
+        });
+        SearchPanel.add(lbFilter);
         SearchPanel.add(jComboBoxSearch);
 
-        loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));
+        loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0")));
 
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
-        refreshPanel.setPreferredSize(new Dimension(120, 40));
-        refreshPanel.setBackground(new Color(217, 217, 217));
+        refreshPanel.setPreferredSize(new Dimension(130, 40));
+        refreshPanel.setBackground(new Color(1, 120, 220));
         refreshPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                selectSearchFilter();
                 refresh();
             }
         });
         FunctionPanel.add(refreshPanel);
 
-        jTextFieldDate = new JTextField[2];
-        jDateChooser = new JDateChooser[2];
-        dateTextField = new JTextField[2];
+        datePicker = new DatePicker();
+        editor = new JFormattedTextField();
 
-        for (int i = 0; i < 2; i++) {
-            jTextFieldDate[i] = new JTextField();
-            jTextFieldDate[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
-            jTextFieldDate[i].setPreferredSize(new Dimension(200, 30));
-            jTextFieldDate[i].setAutoscrolls(true);
 
-            jDateChooser[i] = new JDateChooser();
-            jDateChooser[i].setDateFormatString("dd/MM/yyyy");
-            jDateChooser[i].setPreferredSize(new Dimension(150, 30));
-            jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
-
-            dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
-            dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
-            dateTextField[i].setBackground(new Color(245, 246, 250));
-
-            if (i == 0) {
-                JLabel jLabel = new JLabel("Từ Ngày");
-                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
-                FilterDatePanel.add(jLabel);
-                JLabel jLabel1 = new JLabel("         ");
-                FilterDatePanel.add(jLabel1);
-            } else {
-                JLabel jLabel = new JLabel("Đến Ngày");
-                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
-                FilterDatePanel.add(jLabel);
-                JLabel jLabel1 = new JLabel("         ");
-                FilterDatePanel.add(jLabel1);
+        datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
+        datePicker.setEditor(editor);
+        datePicker.setCloseAfterSelected(true);
+        datePicker.addDateSelectionListener(new DateSelectionListener() {
+            @Override
+            public void dateSelected(DateEvent dateEvent) {
+                searchDiscountByStartDate_EndDate();
             }
-            FilterDatePanel.add(jDateChooser[i]);
-            JLabel jLabel1 = new JLabel("      ");
-            FilterDatePanel.add(jLabel1);
-        }
+        });
 
+        editor.setPreferredSize(new Dimension(280, 40));
+        editor.setFont(new Font("Inter", Font.BOLD, 15));
+//        editor.putClientProperty("JComponent.roundRect", true);
+        FilterDatePanel.add(editor, BorderLayout.WEST);
 
         JLabel refreshLabel = new JLabel("Làm mới");
         refreshLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        refreshLabel.setForeground(Color.white);
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
         refreshPanel.add(refreshLabel);
 
+        refreshPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                refresh();
+            }
+        });
         if (functions.stream().anyMatch(f -> f.getName().equals("add"))) {
-            RoundedPanel roundedPanel = new RoundedPanel();
-            roundedPanel.setLayout(new GridBagLayout());
-            roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
-            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            RoundedPanel roundedPanel = getRoundedPanel();
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -214,90 +188,119 @@ public class DiscountGUI extends Layout2 {
                     refresh();
                 }
             });
-
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Thêm mới");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+            panel.setForeground(Color.white);
             panel.setIcon(new FlatSVGIcon("icon/add.svg"));
             roundedPanel.add(panel);
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("excel"))) {
-            RoundedPanel roundedPanel = new RoundedPanel();
-            roundedPanel.setLayout(new GridBagLayout());
-            roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
-            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            RoundedPanel roundedPanel = getRoundedPanel();
+            roundedPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    File file = chooseExcelFile(null);
+                    if (file != null) {
+                        Pair<Boolean, String> result;
+                        try {
+                            result = new AddDiscountFromExcel().addDiscountsFromExcel(file);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        if (!result.getKey()) {
+                            JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Thêm chương trình giảm giá thành công",
+                                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            refresh();
+                        }
+                    }
+                }
+            });
+
             FunctionPanel.add(roundedPanel);
 
-            JLabel panel = new JLabel("Xuất Excel");
+            JLabel panel = new JLabel("Nhập Excel");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-            panel.setIcon(new FlatSVGIcon("icon/excel.svg"));
+            panel.setForeground(Color.white);
+            panel.setIcon(new FlatSVGIcon("icon/import.svg"));
             roundedPanel.add(panel);
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("pdf"))) {
-            RoundedPanel roundedPanel = new RoundedPanel();
-            roundedPanel.setLayout(new GridBagLayout());
-            roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
-            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            RoundedPanel roundedPanel = getRoundedPanel();
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Xuất PDF");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-            panel.setIcon(new FlatSVGIcon("icon/pdf.svg"));
+            panel.setForeground(Color.white);
+            panel.setIcon(new FlatSVGIcon("icon/export.svg"));
             roundedPanel.add(panel);
         }
+    }
+
+    private RoundedPanel getRoundedPanel() {
+        RoundedPanel roundedPanel = new RoundedPanel();
+        roundedPanel.setLayout(new GridBagLayout());
+        roundedPanel.setPreferredSize(new Dimension(130, 40));
+        roundedPanel.setBackground(new Color(1, 120, 220));
+        roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        return roundedPanel;
     }
 
     public void refresh() {
         jTextFieldSearch.setText("");
         jComboBoxSearch.setSelectedIndex(0);
 
-        loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));
+        processDateChangeEvent = false;
+        datePicker.clearSelectedDate();
+
+        processDateChangeEvent = true;
+        loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0")));
+
     }
 
-    private void searchDiscount() {
-        if (jTextFieldSearch.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Nhập Thông Tin Cần Tìm Kiếm");
-            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts()));
+    private void searchDiscountByName() {
+        String value = jTextFieldSearch.getText();
+        datePicker.clearSelectedDate();
+        jComboBoxSearch.setSelectedIndex(0);
+        if (value.isEmpty()) {
+            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0")));
         } else {
-            selectSearchFilter();
+            loadDataTable(discountBLL.getData(discountBLL.findDiscounts("name", value)));
         }
 
     }
 
-    private void selectSearchFilter() {
-        if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Trạng Thái")) {
-            loadDataTable(discountBLL.getData(discountBLL.findDiscounts("id", jTextFieldSearch.getText())));
-        } else if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Đang áp dụng")) {
-            searchDiscountByStatus();
-        } else {
-            searchDiscountByDisStatus();
+    private void searchDiscountByStartDate_EndDate() {
+        if (!processDateChangeEvent) {
+            return;
         }
-
-    }
-
-    private void searchDiscountByDisStatus() {
-        if (jTextFieldSearch.getText().isEmpty()) {
-            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("status = 1")));
-
-        } else {
-            if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Ngừng áp dụng")) {
-                loadDataTable(discountBLL.getData(discountBLL.findDiscounts("id", jTextFieldSearch.getText())));
+//        jTextFieldSearch.setText("");
+//        jComboBoxSearch.setSelectedIndex(0);
+        if (datePicker != null) {
+            if (datePicker.getDateSQL_Between().length != 0) {
+                Date startDate = datePicker.getDateSQL_Between()[0];
+                Date endDate = datePicker.getDateSQL_Between()[1];
+                loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0 AND start_date >= '" + startDate + "' AND end_date <= '" + endDate + "'")));
             }
         }
     }
 
-    private void searchDiscountByStatus() {
-        if (jTextFieldSearch.getText().isEmpty()) {
+    private void SelectDiscountStatus() {
+        String selectedItem = Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString();
+
+        datePicker.clearSelectedDate();
+        jTextFieldSearch.setText("");
+        if (selectedItem.equals("Đang áp dụng")) {
             loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("status = 0")));
+        } else if (selectedItem.equals("Ngừng áp dụng")) {
+            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0 AND status = 1")));
+        } else
+            loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0")));
 
-        } else {
-            if (Objects.requireNonNull(jComboBoxSearch.getSelectedItem()).toString().contains("Đang áp dụng")) {
-                loadDataTable(discountBLL.getData(discountBLL.findDiscounts("id", jTextFieldSearch.getText())));
-            }
-        }
     }
 
     public void loadDataTable(Object[][] objects) {
@@ -308,10 +311,13 @@ public class DiscountGUI extends Layout2 {
             return;
         }
 
-        Object[][] data = new Object[objects.length][objects[0].length];
+        data = new Object[objects.length][objects[0].length];
 
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
+
+            data[i][2] = convertDateString(objects[i][2].toString());
+            data[i][3] = convertDateString(objects[i][3].toString());
 
             if (detail) {
                 JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
@@ -323,35 +329,45 @@ public class DiscountGUI extends Layout2 {
                 data[i] = Arrays.copyOf(data[i], data[i].length + 1);
                 data[i][data[i].length - 1] = iconEdit;
             }
-            if (remove) {
-                JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
-                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
-                data[i][data[i].length - 1] = iconRemove;
-            }
         }
 
         for (Object[] object : data) {
             model.addRow(object);
         }
+    }
 
+    private String convertDateString(String dateString) {
+        try {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Date date = inputFormat.parse(dateString);
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 
     private void selectFunction() {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
-
-        if (detail && indexColumn == indexColumnDetail)
-            //   new DetailDiscountGUI(discountBLL.searchDiscounts("deleted = 0").get(indexRow));
-            // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-
-            if (detail && indexColumn == indexColumnEdit) {
-                //   new EditDiscountGUI(discountBLL.searchDiscounts("deleted = 0").get(indexRow));
-                // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-                refresh();
-            }
-
+        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+        Object selectedValue = model.getValueAt(indexRow, 0);
+        if (indexColumn == indexColumnDetail) {
+            new DetailDiscountGUI(discountBLL.searchDiscounts("id = " + data[indexRow][0]).get(0));
+        }
+        if (indexColumn == indexColumnEdit) {
+            new EditDiscountGUI(discountBLL.searchDiscounts("id = " + data[indexRow][0]).get(0));
+            refresh();
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI] = new SaleGUI(HomeGUI.account);
+                }
+            });
+            thread.start();
+        }
     }
-
 
 }

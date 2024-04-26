@@ -35,6 +35,7 @@ public class Import_NoteBLL extends Manager<Import_Note> {
         if (importNoteDAL.addImport_Note(import_Note) == 0)
             return new Pair<>(false, "Thêm phiếu nhập không thành công.");
 
+
         return new Pair<>(true, "Thêm phiếu nhập thành công.");
     }
 

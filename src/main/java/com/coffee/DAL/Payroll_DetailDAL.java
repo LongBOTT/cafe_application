@@ -15,12 +15,12 @@ public class Payroll_DetailDAL extends Manager {
                 List.of("payroll_id",
                         "staff_id",
                         "hours_amount",
-                        "bonus_amount",
+                        "allowance_amount",
                         "deduction_amount",
+                        "bonus_amount",
+                        "fine_amount",
                         "salary_amount",
-                        "status",
-                        "role_id",
-                        "entry_date"));
+                        "status"));
     }
 
     public List<Payroll_Detail> convertToPayroll_Details(List<List<String>> data) {
@@ -30,12 +30,12 @@ public class Payroll_DetailDAL extends Manager {
                         Integer.parseInt(row.get(0)), // payroll_id
                         Integer.parseInt(row.get(1)), // staff_id
                         Double.parseDouble(row.get(2)), // hours_amount
-                        new BigDecimal(row.get(3)), // bonus_amount
-                        new BigDecimal(row.get(4)), // deduction_amount
-                        new BigDecimal(row.get(5)), // salary_amount
-                        Boolean.parseBoolean(row.get(6)), // status
-                        Integer.parseInt(row.get(7)), // role_id
-                        LocalDateTime.parse(row.get(8)) // entry_date
+                        Double.parseDouble(row.get(3)), // allowance_amount
+                        Double.parseDouble(row.get(4)), // deduction_amount
+                        Double.parseDouble(row.get(5)), // bonus_amount
+                        Double.parseDouble(row.get(6)), // fine_amount
+                        Double.parseDouble(row.get(7)), // salary_amount
+                        Boolean.parseBoolean(row.get(8)) // status
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in RoleDAL.convertToPayroll(): " + e.getMessage());
@@ -49,12 +49,12 @@ public class Payroll_DetailDAL extends Manager {
             return create(payroll_Detail.getPayroll_id(),
                     payroll_Detail.getStaff_id(),
                     payroll_Detail.getHours_amount(),
-                    payroll_Detail.getBonus_amount(),
+                    payroll_Detail.getAllowance_amount(),
                     payroll_Detail.getDeduction_amount(),
+                    payroll_Detail.getBonus_amount(),
+                    payroll_Detail.getFine_amount(),
                     payroll_Detail.getSalary_amount(),
-                    false,
-                    payroll_Detail.getRole_id(),
-                    payroll_Detail.getEntry_date()
+                    false
             );
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in PayrollDAL.addPayroll_Detail(): " + e.getMessage());
@@ -68,12 +68,12 @@ public class Payroll_DetailDAL extends Manager {
             updateValues.add(payroll_Detail.getPayroll_id());
             updateValues.add(payroll_Detail.getStaff_id());
             updateValues.add(payroll_Detail.getHours_amount());
-            updateValues.add(payroll_Detail.getBonus_amount());
+            updateValues.add(payroll_Detail.getAllowance_amount());
             updateValues.add(payroll_Detail.getDeduction_amount());
+            updateValues.add(payroll_Detail.getBonus_amount());
+            updateValues.add(payroll_Detail.getFine_amount());
             updateValues.add(payroll_Detail.getSalary_amount());
             updateValues.add(payroll_Detail.isStatus());
-            updateValues.add(payroll_Detail.getRole_id());
-            updateValues.add(payroll_Detail.getEntry_date());
             return update(updateValues, "payroll_id = " + payroll_Detail.getPayroll_id(), "staff_id = " + payroll_Detail.getStaff_id());
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in PayrollDAL.updatePayroll_Detail(): " + e.getMessage());

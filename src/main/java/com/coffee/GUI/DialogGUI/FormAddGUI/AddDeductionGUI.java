@@ -3,6 +3,8 @@ package com.coffee.GUI.DialogGUI.FormAddGUI;
 import com.coffee.BLL.DeductionBLL;
 import com.coffee.DTO.Deduction;
 import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
+import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -56,11 +58,11 @@ public class AddDeductionGUI extends DialogForm {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+            label.setFont((new Font("Public Sans", Font.BOLD, 16)));
             attributeDeduction.add(label);
             content.add(label);
 
-            JTextField textField = new JTextField();
+            JTextField textField = new MyTextFieldUnderLine();
             if (string.equals("Số tiền giảm trừ")) {
                 textField.addKeyListener(new KeyAdapter() {
                     @Override
@@ -75,6 +77,7 @@ public class AddDeductionGUI extends DialogForm {
                 jComboBoxDeductionType.addItem("Giảm trừ đi muộn");
                 jComboBoxDeductionType.addItem("Giảm trừ về sớm");
                 jComboBoxDeductionType.addItem("Giảm trừ cố định");
+                jComboBoxDeductionType.addItem("Giảm trừ nghỉ làm");
 
                 jComboBoxDeductionType.setPreferredSize(new Dimension(1000, 30));
                 jComboBoxDeductionType.setFont((new Font("Public Sans", Font.PLAIN, 14)));
@@ -113,6 +116,8 @@ public class AddDeductionGUI extends DialogForm {
         containerButton.add(buttonCancel);
 
         buttonAdd.setPreferredSize(new Dimension(100, 30));
+        buttonAdd.setBackground(new Color(1, 120, 220));
+        buttonAdd.setForeground(Color.white);
         buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonAdd.addMouseListener(new MouseAdapter() {
@@ -148,6 +153,7 @@ public class AddDeductionGUI extends DialogForm {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             dispose();
+            AddSalary_FormatGUI.addDeduction = true;
         } else {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);

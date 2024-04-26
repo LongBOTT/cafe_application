@@ -7,8 +7,10 @@ import com.coffee.DTO.Role;
 import com.coffee.DTO.Role_Detail;
 import com.coffee.DTO.Staff;
 import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.GUI.components.DatePicker;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
+import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
-import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -27,7 +29,6 @@ public class DetailStaffGUI extends DialogForm {
 
     private StaffBLL staffBLL = new StaffBLL();
     private Staff staff = new Staff();
-    private JDateChooser jDateChooser = new JDateChooser();
 
     public DetailStaffGUI(Staff staff) {
         super();
@@ -57,30 +58,18 @@ public class DetailStaffGUI extends DialogForm {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(150, 35));
             label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 15)));
+            label.setFont((new Font("Public Sans", Font.BOLD, 15)));
             attributeStaff.add(label);
             content.add(label);
-            JTextField textField = new JTextField();
+            JTextField textField = new MyTextFieldUnderLine();
             textField.setEditable(false);
             textField.setPreferredSize(new Dimension(280, 35));
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
 
             if (string.trim().equals("Ngày Sinh")) {
-                Date birthDate = staff.getBirthdate();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
-                jDateChooser = new JDateChooser();
-
-                jDateChooser.setDateFormatString("dd/MM/yyyy");
-                jDateChooser.setDate(birthDate);
-                jDateChooser.setPreferredSize(new Dimension(180, 35));
-                jDateChooser.setMinSelectableDate(java.sql.Date.valueOf("1000-01-01"));
-                jDateChooser.setEnabled(false);
-                textField = (JTextField) jDateChooser.getDateEditor().getUiComponent();
-
-                textField.setText(dateFormat.format(birthDate));
-                content.add(jDateChooser, "wrap");
+                textField.setText(new SimpleDateFormat("dd/MM/yyyy").format(staff.getBirthdate()));
+                content.add(textField, "wrap");
             } else {
                 if (string.trim().equals("Mã Nhân Viên")) {
                     String staffId = Integer.toString(staff.getId());

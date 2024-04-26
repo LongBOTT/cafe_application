@@ -32,9 +32,9 @@ public class PayrollDAL extends Manager {
                         Date.valueOf(row.get(2)), //entry_date
                         Integer.parseInt(row.get(3)), // month
                         Integer.parseInt(row.get(4)), // year
-                        new BigDecimal(row.get(5)), // total_salary
-                        new BigDecimal(row.get(6)), // paid
-                        new BigDecimal(row.get(7)) // debt
+                        Double.parseDouble(row.get(5)), // total_salary
+                        Double.parseDouble(row.get(6)), // paid
+                        Double.parseDouble(row.get(7)) // debt
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in RoleDAL.convertToPayroll(): " + e.getMessage());
@@ -74,6 +74,15 @@ public class PayrollDAL extends Manager {
             return update(updateValues, "id = " + payroll.getId());
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in PayrollDAL.updatePayroll(): " + e.getMessage());
+        }
+        return 0;
+    }
+
+    public int deletePayroll(String... conditions) {
+        try {
+            return delete(conditions);
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in RoleDAL.deleteRole(): " + e.getMessage());
         }
         return 0;
     }

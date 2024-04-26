@@ -6,18 +6,18 @@ public class Staff {
     private int id;
     private String staffNo;
     private String name;
-    private boolean gender;
+    private Boolean gender;
     private Date birthdate;
     private String phone;
     private String address;
     private String email;
     private boolean deleted;
-    private String role ;
+    private int salary_format_id;
+
     public Staff() {
     }
 
-    public Staff(int id, String staffNo, String name, boolean gender, Date birthdate, String phone,
-                 String address, String email, boolean deleted) {
+    public Staff(int id, String staffNo, String name, boolean gender, Date birthdate, String phone, String address, String email, boolean deleted, int salary_format_id) {
         this.id = id;
         this.staffNo = staffNo;
         this.name = name;
@@ -27,8 +27,8 @@ public class Staff {
         this.address = address;
         this.email = email;
         this.deleted = deleted;
+        this.salary_format_id = salary_format_id;
     }
-
 
     public int getId() {
         return id;
@@ -54,11 +54,11 @@ public class Staff {
         this.name = name;
     }
 
-    public boolean isGender() {
+    public Boolean isGender() {
         return gender;
     }
 
-    public void setGender(boolean gender) {
+    public void setGender(Boolean gender) {
         this.gender = gender;
     }
 
@@ -102,21 +102,31 @@ public class Staff {
         this.deleted = deleted;
     }
 
+    public Boolean getGender() {
+        return gender;
+    }
+
+    public int getSalary_format_id() {
+        return salary_format_id;
+    }
+
+    public void setSalary_format_id(int salary_format_id) {
+        this.salary_format_id = salary_format_id;
+    }
+
     @Override
     public String toString() {
-        String gender1 = gender? "Nữ" : "Nam";
+        String gender1 = gender ? "Nữ" : "Nam";
         return id + " | " + // stt nv
                 staffNo + " | " +  // mã nv
                 name + " | " + // tên
 //                gender1 + " | " ; // giới tính
 //                birthdate + " | " + // ngày sinh
-                phone + " | " ;// số điện thoại
+                phone + " | ";// số điện thoại
 //                address + " | " + // địa chỉ
 //                email + " | " ; // email
 //              deleted; // trạng thái
     }
-
-
 
 
 }

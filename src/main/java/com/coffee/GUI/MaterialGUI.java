@@ -5,8 +5,11 @@ import com.coffee.DTO.Function;
 import com.coffee.DTO.Material;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddMaterialGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailMaterialGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditMaterialGUI;
+import com.coffee.GUI.DialogGUI.FormEditGUI.EditMaterialGUI;
 import com.coffee.GUI.components.*;
+
+import com.coffee.ImportExcel.AddMaterialFromExcel;
+import com.coffee.utils.PDF;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -20,10 +23,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.List;
+
+import static com.coffee.utils.Resource.chooseExcelFile;
 
 public class MaterialGUI extends Layout2 {
     private final MaterialBLL materialBLL = new MaterialBLL();
@@ -32,7 +38,6 @@ public class MaterialGUI extends Layout2 {
     private JLabel iconSearch;
     private JTextField jTextFieldSearch;
     private JButton jButtonSearch;
-    private ButtonGroup btgroup;
     private boolean detail = false;
     private boolean edit = false;
     private boolean remove = false;
@@ -42,6 +47,8 @@ public class MaterialGUI extends Layout2 {
     private int indexColumnEdit = -1;
     private int indexColumnRemove = -1;
     private String[] columnNames;
+    private Object[][] data = new Object[0][0];
+    private JComboBox<String> jComboBox;
 
     public MaterialGUI(List<Function> functions) {
         super();
@@ -60,8 +67,9 @@ public class MaterialGUI extends Layout2 {
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
+        jComboBox = new JComboBox<>(new String[]{"Tất cả", "Tồn quầy dưới định mức", "Tồn kho dưới định mức", "Tồn kho vượt định mức", "Hết hàng trong quầy", "Hết hàng trong kho"});
 
-        columnNames = new String[]{"ID", "Tên nguyên liệu", "Tồn kho", "Đơn vị", "Giá vốn"};
+        columnNames = new String[]{"Mã NL", "Tên nguyên liệu", "Tồn quầy", "Tồn kho", "Đơn vị", "Giá vốn"};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
@@ -82,69 +90,36 @@ public class MaterialGUI extends Layout2 {
 
         dataTable = new DataTable(new Object[0][0], columnNames,
                 e -> selectFunction(),
-                detail, edit, remove, 5);
-
+                detail, edit, remove, 6);
+        dataTable.getColumnModel().getColumn(0).setMinWidth(130);
+        dataTable.getColumnModel().getColumn(1).setMinWidth(350);
+        dataTable.getColumnModel().getColumn(2).setMinWidth(130);
+        dataTable.getColumnModel().getColumn(3).setMinWidth(130);
+        dataTable.getColumnModel().getColumn(4).setMinWidth(100);
+        dataTable.getColumnModel().getColumn(0).setMaxWidth(130);
+        dataTable.getColumnModel().getColumn(1).setMaxWidth(350);
+        dataTable.getColumnModel().getColumn(2).setMaxWidth(130);
+        dataTable.getColumnModel().getColumn(3).setMaxWidth(130);
+        dataTable.getColumnModel().getColumn(4).setMaxWidth(100);
 
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
 
-        JLabel jLabelStatus = new JLabel("Tồn kho: ");
+        JLabel jLabelStatus = new JLabel("Tồn nguyên liệu: ");
         jLabelStatus.setFont(new Font("Lexend", Font.BOLD, 14));
-        FilterDatePanel.add(jLabelStatus);
+        FilterDatePanel.add(jLabelStatus, BorderLayout.WEST);
 
-        JRadioButton radio1 = new JRadioButton("Tất cả");
-        radio1.setSelected(true);
-        radio1.addActionListener(new ActionListener() {
+        jComboBox.setBackground(new Color(1, 120, 220));
+        jComboBox.setForeground(Color.white);
+        jComboBox.setPreferredSize(new Dimension(200, 30));
+        jComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 searchMaterials();
             }
         });
-        FilterDatePanel.add(radio1);
-
-        JRadioButton radio2 = new JRadioButton("Dưới định mức tồn");
-        radio2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                searchMaterials();
-            }
-        });
-        FilterDatePanel.add(radio2);
-
-        JRadioButton radio3 = new JRadioButton("Vượt định mức tồn");
-        radio3.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                searchMaterials();
-            }
-        });
-        FilterDatePanel.add(radio3);
-
-        JRadioButton radio4 = new JRadioButton("Còn hàng");
-        radio4.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                searchMaterials();
-            }
-        });
-        FilterDatePanel.add(radio4);
-
-        JRadioButton radio5 = new JRadioButton("Hết hàng");
-        radio5.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                searchMaterials();
-            }
-        });
-        FilterDatePanel.add(radio5);
-
-        btgroup = new ButtonGroup();
-        btgroup.add(radio1);
-        btgroup.add(radio2);
-        btgroup.add(radio3);
-        btgroup.add(radio4);
-        btgroup.add(radio5);
+        FilterDatePanel.add(jComboBox, BorderLayout.WEST);
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
         containerSearch.setBackground(new Color(245, 246, 250));
@@ -172,12 +147,13 @@ public class MaterialGUI extends Layout2 {
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập nội dung tìm kiếm");
+        jTextFieldSearch.putClientProperty("JTextField.showClearButton", true);
         jTextFieldSearch.setPreferredSize(new Dimension(250, 30));
 
 
         containerSearch.add(jTextFieldSearch);
 
-        jButtonSearch.setBackground(new Color(29, 78, 216));
+        jButtonSearch.setBackground(new Color(1, 120, 220));
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(100, 30));
         jButtonSearch.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -204,7 +180,7 @@ public class MaterialGUI extends Layout2 {
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
         refreshPanel.setPreferredSize(new Dimension(130, 40));
-        refreshPanel.setBackground(new Color(217, 217, 217));
+        refreshPanel.setBackground(new Color(1, 120, 220));
         refreshPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
@@ -215,6 +191,7 @@ public class MaterialGUI extends Layout2 {
         FunctionPanel.add(refreshPanel);
         JLabel refreshLabel = new JLabel("Làm mới");
         refreshLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        refreshLabel.setForeground(Color.white);
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
         refreshPanel.add(refreshLabel);
 
@@ -222,7 +199,7 @@ public class MaterialGUI extends Layout2 {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new GridBagLayout());
             roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
+            roundedPanel.setBackground(new Color(1, 120, 220));
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
@@ -235,6 +212,7 @@ public class MaterialGUI extends Layout2 {
 
             JLabel panel = new JLabel("Thêm mới");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+            panel.setForeground(Color.white);
             panel.setIcon(new FlatSVGIcon("icon/add.svg"));
             roundedPanel.add(panel);
         }
@@ -242,26 +220,59 @@ public class MaterialGUI extends Layout2 {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new GridBagLayout());
             roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
+            roundedPanel.setBackground(new Color(1, 120, 220));
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             FunctionPanel.add(roundedPanel);
 
-            JLabel panel = new JLabel("Xuất Excel");
+            JLabel panel = new JLabel("Nhập Excel");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-            panel.setIcon(new FlatSVGIcon("icon/excel.svg"));
+            panel.setForeground(Color.white);
+            panel.setIcon(new FlatSVGIcon("icon/import.svg"));
             roundedPanel.add(panel);
+            roundedPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    File file = chooseExcelFile(null);
+                    if (file != null) {
+                        Pair<Boolean, String> result;
+                        try {
+                            result = new AddMaterialFromExcel().addMaterialFromExcel(file);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        if (!result.getKey()) {
+                            JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(null, result.getValue(),
+                                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            refresh();
+                        }
+                    }
+                    refresh();
+                }
+            });
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("pdf"))) {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new GridBagLayout());
             roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(217, 217, 217));
+            roundedPanel.setBackground(new Color(1, 120, 220));
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             FunctionPanel.add(roundedPanel);
 
             JLabel panel = new JLabel("Xuất PDF");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-            panel.setIcon(new FlatSVGIcon("icon/pdf.svg"));
+            panel.setForeground(Color.white);
+            panel.setIcon(new FlatSVGIcon("icon/export.svg"));
+            roundedPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+
+                    PDF.exportMaterialPDF(data, "src/main/resources/ExportPDF");
+                    JOptionPane.showMessageDialog(null, "Xuất PDF danh sách nguyên liệu thành công.",
+                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                }
+            });
             roundedPanel.add(panel);
         }
 
@@ -269,13 +280,7 @@ public class MaterialGUI extends Layout2 {
     }
 
     public void refresh() {
-        for (Enumeration<AbstractButton> buttons = btgroup.getElements(); buttons.hasMoreElements(); ) {
-            AbstractButton button = buttons.nextElement();
-            if (button.getText().equals("Tất cả")) {
-                button.setSelected(true);
-                break;
-            }
-        }
+        jComboBox.setSelectedIndex(0);
         jTextFieldSearch.setText("");
         loadDataTable(materialBLL.getData(materialBLL.searchMaterials("deleted = 0")));
     }
@@ -288,14 +293,15 @@ public class MaterialGUI extends Layout2 {
             return;
         }
 
-        Object[][] data = new Object[objects.length][5];
+        data = new Object[objects.length][6];
 
         for (int i = 0; i < objects.length; i++) {
             data[i][0] = objects[i][0];
             data[i][1] = objects[i][1];
-            data[i][2] = objects[i][2];
-            data[i][3] = objects[i][3];
+            data[i][2] = String.format("%.2f", Double.parseDouble(objects[i][2].toString()));
+            data[i][3] = String.format("%.2f", Double.parseDouble(objects[i][3].toString()));
             data[i][4] = objects[i][4];
+            data[i][5] = objects[i][5];
 
             if (detail) {
                 JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
@@ -324,16 +330,15 @@ public class MaterialGUI extends Layout2 {
         int indexColumn = dataTable.getSelectedColumn();
 
         if (indexColumn == indexColumnDetail)
-            new DetailMaterialGUI(materialBLL.searchMaterials("deleted = 0").get(indexRow));
+            new DetailMaterialGUI(materialBLL.searchMaterials("id = " + data[indexRow][0]).get(0));
 
         if (edit && indexColumn == indexColumnEdit) {
-            new EditMaterialGUI(materialBLL.searchMaterials("deleted = 0").get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            new EditMaterialGUI(materialBLL.searchMaterials("id = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
             refresh();
         }
 
         if (indexColumn == indexColumnRemove) {
-            deleteMaterial(materialBLL.searchMaterials("deleted = 0").get(indexRow));
-            refresh();
+            deleteMaterial(materialBLL.searchMaterials("id = " + data[indexRow][0]).get(0));
         }
     }
 
@@ -343,7 +348,7 @@ public class MaterialGUI extends Layout2 {
             return;
         }
         String[] options = new String[]{"Huỷ", "Xác nhận"};
-        int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nguyên liệu?", "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+        int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nguyên liệu?", "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
         if (choice == 1) {
             Pair<Boolean, String> result = materialBLL.deleteMaterial(material);
             if (result.getKey()) {
@@ -357,28 +362,23 @@ public class MaterialGUI extends Layout2 {
 
     private void searchMaterials() {
         List<Material> materialList = materialBLL.searchMaterials();
-        String status = "";
-        for (Enumeration<AbstractButton> buttons = btgroup.getElements(); buttons.hasMoreElements(); ) {
-            AbstractButton button = buttons.nextElement();
-            if (button.isSelected()) {
-                status = button.getText();
-                break;
-            }
-        }
-        if (status.equals("Tất cả")) {
+        if (jComboBox.getSelectedIndex() == 0) {
             materialList = materialBLL.searchMaterials();
         }
-        if (status.equals("Dưới định mức tồn")) {
+        if (jComboBox.getSelectedIndex() == 1) {
             materialList = materialBLL.searchMaterials("remain < min_remain");
         }
-        if (status.equals("Vượt định mức tồn")) {
-            materialList = materialBLL.searchMaterials("remain > max_remain ");
+        if (jComboBox.getSelectedIndex() == 2) {
+            materialList = materialBLL.searchMaterials("remain_wearhouse < min_remain");
         }
-        if (status.equals("Còn hàng")) {
-            materialList = materialBLL.searchMaterials("remain > 0");
+        if (jComboBox.getSelectedIndex() == 3) {
+            materialList = materialBLL.searchMaterials("remain_wearhouse > max_remain");
         }
-        if (status.equals("Hết hàng")) {
+        if (jComboBox.getSelectedIndex() == 4) {
             materialList = materialBLL.searchMaterials("remain = 0");
+        }
+        if (jComboBox.getSelectedIndex() == 5) {
+            materialList = materialBLL.searchMaterials("remain_wearhouse = 0");
         }
         if (jTextFieldSearch.getText().isEmpty()) {
             loadDataTable(materialBLL.getData(materialList));

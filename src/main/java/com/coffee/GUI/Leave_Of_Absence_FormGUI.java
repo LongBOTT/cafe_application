@@ -1,26 +1,24 @@
 package com.coffee.GUI;
 
-import com.coffee.BLL.RoleBLL;
-import com.coffee.BLL.Role_DetailBLL;
 import com.coffee.BLL.StaffBLL;
 import com.coffee.BLL.Leave_Of_Absence_FormBLL;
 import com.coffee.DTO.*;
 
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailLeave_Of_Absence_FormGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditLeave_Of_Absence_FormGUI;
-import com.coffee.GUI.components.DataTable;
-import com.coffee.GUI.components.Layout2;
-import com.coffee.GUI.components.RoundedPanel;
-import com.coffee.GUI.components.RoundedScrollPane;
+import com.coffee.GUI.DialogGUI.FormEditGUI.EditLeave_Of_Absence_FormGUI;
+import com.coffee.GUI.components.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
+import raven.datetime.component.date.DateEvent;
+import raven.datetime.component.date.DateSelectionListener;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -30,9 +28,8 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
     private RoundedPanel containerSearch;
     private JLabel iconSearch;
     private JTextField jTextFieldSearch;
-    private JTextField[] jTextFieldDate;
-    private JTextField[] dateTextField;
-    private JDateChooser[] jDateChooser;
+    private DatePicker datePicker;
+    private JFormattedTextField editor;
     private JButton jButtonSearch;
     private List<Function> functions;
     private Leave_Of_Absence_FormBLL leave_Of_Absence_FormBLL = new Leave_Of_Absence_FormBLL();
@@ -45,6 +42,8 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
     private String[] columnNames;
     private StaffBLL staffBLL = new StaffBLL();
     private Date date;
+    private Object[][] data = new Object[0][0];
+    private JComboBox<String> jComboBox;
 
     public Leave_Of_Absence_FormGUI(List<Function> functions) {
         super();
@@ -62,11 +61,11 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
-        jDateChooser = new JDateChooser[2];
-        dateTextField = new JTextField[2];
-        jTextFieldDate = new JTextField[2];
+        datePicker = new DatePicker();
+        editor = new JFormattedTextField();
+        jComboBox = new JComboBox<>();
 
-        columnNames = new String[]{"Chức vụ", "Họ tên", "Ngày tạo đơn", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"};
+        columnNames = new String[]{"Mã Đơn", "Họ tên", "Ngày tạo đơn", "Ngày nghỉ", "Ca nghỉ", "Trạng thái"};
 
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
@@ -87,32 +86,19 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
 
-        for (int i = 0; i < 2; i++) {
-            jTextFieldDate[i] = new JTextField();
-            jTextFieldDate[i].setFont(new Font("Times New Roman", Font.BOLD, 15));
-            jTextFieldDate[i].setPreferredSize(new Dimension(200, 30));
-            jTextFieldDate[i].setAutoscrolls(true);
-
-            jDateChooser[i] = new JDateChooser();
-            jDateChooser[i].setDateFormatString("dd/MM/yyyy");
-            jDateChooser[i].setPreferredSize(new Dimension(200, 30));
-            jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
-
-            dateTextField[i] = (JTextField) jDateChooser[i].getDateEditor().getUiComponent();
-            dateTextField[i].setFont(new Font("Lexend", Font.BOLD, 14));
-            dateTextField[i].setBackground(new Color(245, 246, 250));
-            
-            if (i == 0) {
-                JLabel jLabel = new JLabel("Từ Ngày");
-                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
-                FilterDatePanel.add(jLabel);
-            } else {
-                JLabel jLabel = new JLabel("Đến Ngày");
-                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
-                FilterDatePanel.add(jLabel);
+        datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
+        datePicker.setEditor(editor);
+        datePicker.setCloseAfterSelected(true);
+        datePicker.addDateSelectionListener(new DateSelectionListener() {
+            @Override
+            public void dateSelected(DateEvent dateEvent) {
+                searchLeave_Of_Absence_Forms();
             }
-            FilterDatePanel.add(jDateChooser[i]);
-        }
+        });
+
+        editor.setPreferredSize(new Dimension(280, 40));
+        editor.setFont(new Font("Inter", Font.BOLD, 15));
+        FilterDatePanel.add(editor, BorderLayout.WEST);
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
         containerSearch.setBackground(new Color(245, 246, 250));
@@ -125,6 +111,7 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập tên nhân viên cần tìm kiếm");
+        jTextFieldSearch.putClientProperty("JTextField.showClearButton", true);
         jTextFieldSearch.setPreferredSize(new Dimension(250, 30));
         jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -144,18 +131,30 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
         });
         containerSearch.add(jTextFieldSearch);
 
-        jButtonSearch.setBackground(new Color(29, 78, 216));
+        jButtonSearch.setBackground(new Color(1, 120, 220));
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(100, 30));
         jButtonSearch.addActionListener(e -> searchLeave_Of_Absence_Forms());
         SearchPanel.add(jButtonSearch);
 
+        jComboBox.setBackground(new Color(1, 120, 220));
+        jComboBox.setForeground(Color.white);
+        jComboBox.setPreferredSize(new Dimension(200, 30));
+        jComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchLeave_Of_Absence_Forms();
+            }
+        });
+        SearchPanel.add(jComboBox);
+
+        loadCombobox();
         loadDataTable(leave_Of_Absence_FormBLL.getData(leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms()));
 
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
         refreshPanel.setPreferredSize(new Dimension(130, 40));
-        refreshPanel.setBackground(new Color(217, 217, 217));
+        refreshPanel.setBackground(new Color(1, 120, 220));
         refreshPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
@@ -167,20 +166,30 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
 
         JLabel refreshLabel = new JLabel("Làm mới");
         refreshLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        refreshLabel.setForeground(Color.white);
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
         refreshPanel.add(refreshLabel);
     }
 
     public void refresh() {
+        jComboBox.setSelectedIndex(0);
         jTextFieldSearch.setText("");
-        jDateChooser[0].getDateEditor().setDate(null);
-        jDateChooser[1].getDateEditor().setDate(null);
+        datePicker.clearSelectedDate();
         loadDataTable(leave_Of_Absence_FormBLL.getData(leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms()));
     }
 
     private void searchLeave_Of_Absence_Forms() {
         List<Leave_Of_Absence_Form> work_scheduleList = leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms();
-        if (jTextFieldSearch.getText().isEmpty() && jDateChooser[0].getDateEditor().getDate() == null && jDateChooser[1].getDateEditor().getDate() == null) {
+        if (jTextFieldSearch.getText().isEmpty() && datePicker.getDateSQL_Between() == null) {
+            if (jComboBox.getSelectedIndex() == 1) {
+                work_scheduleList.removeIf(leaveOfAbsenceForm -> leaveOfAbsenceForm.getStatus() != 0);
+            }
+            if (jComboBox.getSelectedIndex() == 2) {
+                work_scheduleList.removeIf(leaveOfAbsenceForm -> leaveOfAbsenceForm.getStatus() != 1);
+            }
+            if (jComboBox.getSelectedIndex() == 3) {
+                work_scheduleList.removeIf(leaveOfAbsenceForm -> leaveOfAbsenceForm.getStatus() != 2);
+            }
             loadDataTable(leave_Of_Absence_FormBLL.getData(work_scheduleList));
         } else {
             if (!jTextFieldSearch.getText().isEmpty()) {
@@ -189,25 +198,24 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
                     staffIDList.add(staff.getId());
                 work_scheduleList.removeIf(work_schedule -> !staffIDList.contains(work_schedule.getStaff_id()));
             }
-            if (jDateChooser[0].getDateEditor().getDate() != null || jDateChooser[1].getDateEditor().getDate() != null) {
-                if (jDateChooser[0].getDateEditor().getDate() != null && jDateChooser[1].getDateEditor().getDate() != null) {
-                    Date startDate = jDateChooser[0].getDate();
-                    Date endDate = jDateChooser[1].getDate();
-                    if (startDate.after(endDate)) {
-                        JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
-                                "Lỗi", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    work_scheduleList.removeIf(work_schedule -> (work_schedule.getDate().before(startDate) || work_schedule.getDate().after(endDate)));
-                } else {
-                    if (jDateChooser[0].getDateEditor().getDate() == null) {
-                        Date endDate = jDateChooser[1].getDate();
-                        work_scheduleList.removeIf(work_schedule -> (work_schedule.getDate().before(java.sql.Date.valueOf("1000-1-1")) || work_schedule.getDate().after(endDate)));
-                    } else {
-                        Date startDate = jDateChooser[0].getDate();
-                        work_scheduleList.removeIf(work_schedule -> (work_schedule.getDate().before(startDate)));
-                    }
+            if (datePicker.getDateSQL_Between() != null) {
+                Date startDate = datePicker.getDateSQL_Between()[0];
+                Date endDate = datePicker.getDateSQL_Between()[1];
+                if (startDate.after(endDate)) {
+                    JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
+                work_scheduleList.removeIf(work_schedule -> (work_schedule.getDate().before(startDate) || work_schedule.getDate().after(endDate)));
+            }
+            if (jComboBox.getSelectedIndex() == 1) {
+                work_scheduleList.removeIf(leaveOfAbsenceForm -> leaveOfAbsenceForm.getStatus() != 0);
+            }
+            if (jComboBox.getSelectedIndex() == 2) {
+                work_scheduleList.removeIf(leaveOfAbsenceForm -> leaveOfAbsenceForm.getStatus() != 1);
+            }
+            if (jComboBox.getSelectedIndex() == 3) {
+                work_scheduleList.removeIf(leaveOfAbsenceForm -> leaveOfAbsenceForm.getStatus() != 2);
             }
             loadDataTable(leave_Of_Absence_FormBLL.getData(work_scheduleList));
         }
@@ -221,17 +229,12 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
             return;
         }
 
-        Object[][] data = new Object[objects.length][objects[0].length];
+        data = new Object[objects.length][objects[0].length];
 
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
 
             int staffId = Integer.parseInt(data[i][1].toString());
-
-            List<Role_Detail> role_detailList = new Role_DetailBLL().searchRole_details("staff_id = " + staffId);
-            Role_Detail roleDetail = role_detailList.get(role_detailList.size() - 1);
-            Role role = new RoleBLL().searchRoles("id = " + roleDetail.getRole_id()).get(0);
-            data[i][0] = role.getName();
 
             data[i][1] = staffBLL.findStaffsBy(Map.of("id", staffId)).get(0).getName();
 
@@ -258,15 +261,39 @@ public class Leave_Of_Absence_FormGUI extends Layout2 {
         int indexColumn = dataTable.getSelectedColumn();
 
         if (detail && indexColumn == indexColumnDetail)
-            new DetailLeave_Of_Absence_FormGUI(leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms().get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            new DetailLeave_Of_Absence_FormGUI(leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms("id = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
         if (edit && indexColumn == indexColumnEdit) {
-            new EditLeave_Of_Absence_FormGUI(leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms().get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
+            new EditLeave_Of_Absence_FormGUI(leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms("id = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
+            loadCombobox();
             refresh();
+
         }
 
 //        if (remove && indexColumn == indexColumnRemove)
 //            deleteWorkSchedule(leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms().get(indexRow)); // Đối tượng nào có thuộc tính deleted thì thêm  để lấy các đối tượng còn tồn tại, chưa xoá
 
+    }
+
+    private void loadCombobox() {
+        jComboBox.removeAllItems();
+        int countStatus0 = 0;
+        int countStatus1 = 0;
+        int countStatus2 = 0;
+        int countAll = 0;
+        for (Leave_Of_Absence_Form leaveOfAbsenceForm : leave_Of_Absence_FormBLL.searchLeave_Of_Absence_Forms()) {
+            if (leaveOfAbsenceForm.getStatus() == 0)
+                countStatus0 += 1;
+            if (leaveOfAbsenceForm.getStatus() == 1)
+                countStatus1 += 1;
+            if (leaveOfAbsenceForm.getStatus() == 2)
+                countStatus2 += 1;
+            countAll += 1;
+        }
+        jComboBox.addItem("Tất cả (" + countAll + ")");
+        jComboBox.addItem("Chưa duyệt (" + countStatus0 + ")");
+        jComboBox.addItem("Duyệt (" + countStatus1 + ")");
+        jComboBox.addItem("Không duyệt (" + countStatus2 + ")");
+        jComboBox.setSelectedIndex(0);
     }
 }

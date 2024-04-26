@@ -43,12 +43,6 @@ public class ProductBLL extends Manager<Product> {
     }
 
     public Pair<Boolean, String> updateProduct(Product product) {
-//        Pair<Boolean, String> result;
-
-//        result = validateProductAll(product);
-//        if(!result.getKey()){
-//            return new Pair<>(false,result.getValue());
-//        }
 
         if (productDAL.updateProduct(product) == 0)
             return new Pair<>(false, "Cập nhật sản phẩm không thành công.");
@@ -86,7 +80,7 @@ public class ProductBLL extends Manager<Product> {
     }
 
     public Pair<Boolean, String> exists(Product newProduct) {
-        List<Product> products = productDAL.searchProducts("name = '" + newProduct.getName() + "'", "size = '" + newProduct.getSize() + "'", "deleted = 0");
+        List<Product> products = productDAL.searchProducts("id = '" + newProduct.getId() + "'", "size = '" + newProduct.getSize() + "'");
         if (!products.isEmpty()) {
             return new Pair<>(true, "Sản phẩm đã tồn tại.");
         }
@@ -110,7 +104,7 @@ public class ProductBLL extends Manager<Product> {
             return new Pair<>(false, result.getValue());
         }
 
-        result = validatePrice(String.valueOf(product.getPrice()));
+        result = validatePrice(String.valueOf(product.getPrice()),"Giá bán");
         if (!result.getKey()) {
             return new Pair<>(false, result.getValue());
         }
@@ -133,11 +127,11 @@ public class ProductBLL extends Manager<Product> {
         return new Pair<>(true, "");
     }
 
-    public Pair<Boolean, String> validatePrice(String price) {
+    public Pair<Boolean, String> validatePrice(String price,String title) {
         if (price.isBlank())
-            return new Pair<>(false, "Giá bán của sản phẩm không được để trống.");
+            return new Pair<>(false, title + " của sản phẩm không được để trống.");
         if (!VNString.checkUnsignedNumber(price))
-            return new Pair<>(false, "Giá bán của sản phẩm phải lớn hơn 0.");
+            return new Pair<>(false, title + " của sản phẩm phải lớn hơn 0.");
         return new Pair<>(true, price);
     }
 
@@ -157,6 +151,14 @@ public class ProductBLL extends Manager<Product> {
 
     public List<String> getCategories() {
         return productDAL.getCategories();
+    }
+
+    public List<List<String>> getBestSellers() {
+        return productDAL.getBestSellers();
+    }
+
+    public List<List<String>> getRemain(int id, String size) {
+        return productDAL.getRemain(id, size);
     }
 
     public static void main(String[] args) {

@@ -98,13 +98,34 @@ public class ProductDAL extends Manager {
     public List<String> getCategories() {
         List<String> categories = new ArrayList<>();
         try {
-            List<List<String>> result = executeQuery("SELECT DISTINCT `category` FROM `product` ");
+            List<List<String>> result = executeQuery("SELECT DISTINCT `category` FROM `product` WHERE `deleted` = 0");
             for (List<String> category : result) {
                 categories.add(category.get(0));
             }
             return categories;
         } catch (SQLException | IOException e) {
             return categories;
+        }
+    }
+
+    public List<List<String>> getBestSellers() {
+        try {
+            return executeQuery("SELECT rd.product_id\n" +
+                    "FROM receipt_detail rd\n" +
+                    "GROUP BY rd.product_id\n" +
+                    "ORDER BY COUNT(rd.receipt_id) DESC LIMIT 10");
+        } catch (SQLException | IOException e) {
+            return new ArrayList<>();
+        }
+    }
+
+    public List<List<String>> getRemain(int id, String size) {
+        try {
+            return executeQuery("SELECT MIN(ma.remain DIV (re.quantity * 0.001)) \n" +
+                    "FROM recipe re JOIN material ma ON re.material_id = ma.id\n" +
+                    "WHERE re.product_id = " + id + " AND re.size = '" + size + "'");
+        } catch (SQLException | IOException e) {
+            return new ArrayList<>();
         }
     }
 

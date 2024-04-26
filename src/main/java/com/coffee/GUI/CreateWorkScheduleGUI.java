@@ -5,7 +5,12 @@ import com.coffee.BLL.RoleBLL;
 import com.coffee.DTO.*;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddWorkScheduleGUI;
 import com.coffee.GUI.components.*;
+import com.coffee.ImportExcel.AddWorkScheduleFromExcel;
+import com.coffee.utils.PDF;
+import com.coffee.ImportExcel.Timekeeping;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import javafx.util.Pair;
+import net.miginfocom.swing.MigLayout;
 
 
 import javax.swing.*;
@@ -13,23 +18,25 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
 
+import static com.coffee.utils.Resource.chooseExcelFile;
+
 public class CreateWorkScheduleGUI extends Layout1 {
-    private static JLabel jLabelDateWork;
+    private JLabel jLabelDateWork;
     private JLabel iconNext;
     private JLabel iconPrev;
     private List<Function> functions;
-    private static WorkSchedulePanel workSchedulePanelManager;
-    private static WorkSchedulePanel workSchedulePanelStaffSale;
-    private static WorkSchedulePanel workSchedulePanelStaffWarehouse;
+    private WorkSchedulePanel workSchedulePanel;
     private boolean edit = false;
     private boolean remove = false;
-    private static Date today;
-    private static List<Date> weekDates;
+    private Date today;
+    private List<Date> weekDates;
 
     public CreateWorkScheduleGUI() {
         super();
@@ -38,23 +45,15 @@ public class CreateWorkScheduleGUI extends Layout1 {
     }
 
     private void init() {
+        SearchPanel.setPreferredSize(new Dimension(400, 50));
+        FunctionPanel.setPreferredSize(new Dimension(750, 50));
         jLabelDateWork = new JLabel();
         iconNext = new JLabel(new FlatSVGIcon("icon/next.svg"));
         iconPrev = new JLabel(new FlatSVGIcon("icon/previous.svg"));
         weekDates = new ArrayList<>();
-        workSchedulePanelManager = new WorkSchedulePanel(new RoleBLL().searchRoles("name = 'Quản lý'").get(0).getId());
-        workSchedulePanelStaffSale = new WorkSchedulePanel(new RoleBLL().searchRoles("name = 'Nhân viên bán hàng'").get(0).getId());
-        workSchedulePanelStaffWarehouse = new WorkSchedulePanel(new RoleBLL().searchRoles("name = 'Nhân viên kho'").get(0).getId());
-        RoundedPanel TitlePanelManager = new RoundedPanel();
-        RoundedPanel TitlePanelStaffSale = new RoundedPanel();
-        RoundedPanel TitlePanelStaffWarehouse = new RoundedPanel();
-        RoundedPanel ContentPanelManager = new RoundedPanel();
-        RoundedPanel ContentPanelStaffSale = new RoundedPanel();
-        RoundedPanel ContentPanelStaffWarehouse = new RoundedPanel();
+        workSchedulePanel = new WorkSchedulePanel();
+        JPanel ContentPanel = new JPanel();
         JPanel jPanelDate = new JPanel();
-        JLabel jLabelTitleManager = new JLabel("    Nhân Viên Quản Lý");
-        JLabel jLabelTitleSale = new JLabel("    Nhân Viên Bán Hàng");
-        JLabel jLabelTitleWarehouse = new JLabel("    Nhân Viên Kho");
 
         iconPrev.setCursor(new Cursor(Cursor.HAND_CURSOR));
         iconPrev.addMouseListener(new MouseAdapter() {
@@ -64,10 +63,9 @@ public class CreateWorkScheduleGUI extends Layout1 {
             }
         });
         SearchPanel.add(iconPrev);
-
         jPanelDate.setLayout(new BorderLayout());
         jPanelDate.setBackground(Color.white);
-        jPanelDate.setPreferredSize(new Dimension(350, 40));
+        jPanelDate.setPreferredSize(new Dimension(200, 40));
         SearchPanel.add(jPanelDate);
 
         jLabelDateWork.setFont(new Font("Lexend", Font.BOLD, 15));
@@ -87,7 +85,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
         refreshPanel.setPreferredSize(new Dimension(130, 40));
-        refreshPanel.setBackground(new Color(217, 217, 217));
+        refreshPanel.setBackground(new Color(1, 120, 220));
         refreshPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         refreshPanel.addMouseListener(new MouseAdapter() {
             @Override
@@ -99,13 +97,14 @@ public class CreateWorkScheduleGUI extends Layout1 {
 
         JLabel refreshLabel = new JLabel("Làm mới");
         refreshLabel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        refreshLabel.setForeground(Color.white);
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
         refreshPanel.add(refreshLabel);
 
         RoundedPanel roundedPanelAdd = new RoundedPanel();
         roundedPanelAdd.setLayout(new GridBagLayout());
         roundedPanelAdd.setPreferredSize(new Dimension(130, 40));
-        roundedPanelAdd.setBackground(new Color(217, 217, 217));
+        roundedPanelAdd.setBackground(new Color(1, 120, 220));
         roundedPanelAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         roundedPanelAdd.addMouseListener(new MouseAdapter() {
             @Override
@@ -116,6 +115,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
         });
         FunctionPanel.add(roundedPanelAdd);
         JLabel panelAdd = new JLabel("Thêm mới");
+        panelAdd.setForeground(Color.white);
         panelAdd.setFont(new Font("Public Sans", Font.PLAIN, 13));
         panelAdd.setIcon(new FlatSVGIcon("icon/add.svg"));
         roundedPanelAdd.add(panelAdd);
@@ -123,71 +123,171 @@ public class CreateWorkScheduleGUI extends Layout1 {
         RoundedPanel roundedPanelExcel = new RoundedPanel();
         roundedPanelExcel.setLayout(new GridBagLayout());
         roundedPanelExcel.setPreferredSize(new Dimension(130, 40));
-        roundedPanelExcel.setBackground(new Color(217, 217, 217));
+        roundedPanelExcel.setBackground(new Color(1, 120, 220));
         roundedPanelExcel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         FunctionPanel.add(roundedPanelExcel);
 
-        JLabel panelExcel = new JLabel("Xuất Excel");
+        JLabel panelExcel = new JLabel("Nhập Excel");
+        panelExcel.setForeground(Color.white);
         panelExcel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-        panelExcel.setIcon(new FlatSVGIcon("icon/excel.svg"));
+        panelExcel.setIcon(new FlatSVGIcon("icon/import.svg"));
         roundedPanelExcel.add(panelExcel);
+        roundedPanelExcel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                File file = chooseExcelFile(null);
+                if (file != null) {
+                    Pair<Boolean, String> result;
+                    try {
+                        result = new AddWorkScheduleFromExcel().addWorkScheduleFromExcel(file);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    if (!result.getKey()) {
+                        JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Thêm lịch làm việc thành công",
+                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        refresh();
+                    }
+                }
+            }
+        });
 
         RoundedPanel roundedPanelPDF = new RoundedPanel();
         roundedPanelPDF.setLayout(new GridBagLayout());
         roundedPanelPDF.setPreferredSize(new Dimension(130, 40));
-        roundedPanelPDF.setBackground(new Color(217, 217, 217));
+        roundedPanelPDF.setBackground(new Color(1, 120, 220));
         roundedPanelPDF.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         FunctionPanel.add(roundedPanelPDF);
 
         JLabel panelPDF = new JLabel("Xuất PDF");
+        panelPDF.setForeground(Color.white);
         panelPDF.setFont(new Font("Public Sans", Font.PLAIN, 13));
-        panelPDF.setIcon(new FlatSVGIcon("icon/pdf.svg"));
+        panelPDF.setIcon(new FlatSVGIcon("icon/export.svg"));
+        roundedPanelPDF.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                PDF.exportWorkSchedulePDF(weekDates.get(0), weekDates.get(weekDates.size() - 1), "src/main/resources/ExportPDF");
+                JOptionPane.showMessageDialog(null, "Xuất PDF lịch làm việc thành công.",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
         roundedPanelPDF.add(panelPDF);
 
-        bottom.setBackground(Color.white);
-        bottom.setLayout(new FlowLayout(FlowLayout.LEFT));
+        RoundedPanel roundedPaneChamCong = new RoundedPanel();
+        roundedPaneChamCong.setLayout(new GridBagLayout());
+        roundedPaneChamCong.setPreferredSize(new Dimension(150, 40));
+        roundedPaneChamCong.setBackground(new Color(1, 120, 220));
+        roundedPaneChamCong.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        FunctionPanel.add(roundedPaneChamCong);
 
-        TitlePanelManager.setLayout(new FlowLayout(FlowLayout.LEFT));
-        TitlePanelManager.setBackground(Color.white);
-        bottom.add(TitlePanelManager);
+        JLabel panelChamCong = new JLabel("Chấm Công Excel");
+        panelChamCong.setForeground(Color.white);
+        panelChamCong.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        panelChamCong.setIcon(new FlatSVGIcon("icon/write-svgrepo-com.svg"));
+        roundedPaneChamCong.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                File file = chooseExcelFile(null);
+                if (file != null) {
+                    Pair<Boolean, String> result;
+                    try {
+                        result = new Timekeeping().addWorkChamCongFromExcel(file);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    if (!result.getKey()) {
+                        JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Chấm công thành công",
+                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        refresh();
+                    }
+                }
+            }
+        });
+        roundedPaneChamCong.add(panelChamCong);
 
-        jLabelTitleManager.setFont(new Font("Lexend", Font.BOLD, 15));
-        TitlePanelManager.add(jLabelTitleManager);
+        ContentPanel.setPreferredSize(new Dimension(1165, 680));
+        ContentPanel.setBackground(new Color(255, 255, 255));
+        ContentPanel.setLayout(new BorderLayout());
+        bottom.add(ContentPanel, BorderLayout.CENTER);
 
-        ContentPanelManager.setLayout(new BorderLayout());
-        ContentPanelManager.setPreferredSize(new Dimension(1160, 185));
-        ContentPanelManager.setBackground(Color.white);
-        bottom.add(ContentPanelManager);
+        JPanel jPanelNotice = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        jPanelNotice.setBackground(new Color(255, 255, 255));
 
-        ContentPanelManager.add(workSchedulePanelManager);
+        JLabel jLabelAvailable = new JLabel("Chưa chấm công");
+        JPanel jPanelAvailable = new JPanel();
+        jPanelAvailable.setPreferredSize(new Dimension(10, 10));
+        jPanelAvailable.setBackground(new Color(0x88FD8F8F, true));
 
-        TitlePanelStaffSale.setLayout(new FlowLayout(FlowLayout.LEFT));
-        TitlePanelStaffSale.setBackground(Color.white);
-        bottom.add(TitlePanelStaffSale);
+        jPanelNotice.add(jPanelAvailable);
+        jPanelNotice.add(jLabelAvailable);
 
-        jLabelTitleSale.setFont(new Font("Lexend", Font.BOLD, 15));
-        TitlePanelStaffSale.add(jLabelTitleSale);
+        JLabel jLabelDone = new JLabel("Đã chấm công");
+        JPanel jPanelDone = new JPanel();
+        jPanelDone.setPreferredSize(new Dimension(10, 10));
+        jPanelDone.setBackground(new Color(0x9162A968, true));
 
-        ContentPanelStaffSale.setLayout(new BorderLayout());
-        ContentPanelStaffSale.setPreferredSize(new Dimension(1160, 185));
-        ContentPanelStaffSale.setBackground(Color.white);
-        bottom.add(ContentPanelStaffSale);
+        jPanelNotice.add(jPanelDone);
+        jPanelNotice.add(jLabelDone);
 
-        ContentPanelStaffSale.add(workSchedulePanelStaffSale);
+        JLabel jLabelAbsent = new JLabel("Nghỉ có phép");
+        JPanel jPanelAbsent = new JPanel();
+        jPanelAbsent.setPreferredSize(new Dimension(10, 10));
+        jPanelAbsent.setBackground(new Color(0x915D5C5C, true));
 
-        TitlePanelStaffWarehouse.setLayout(new FlowLayout(FlowLayout.LEFT));
-        TitlePanelStaffWarehouse.setBackground(Color.white);
-        bottom.add(TitlePanelStaffWarehouse);
+        jPanelNotice.add(jPanelAbsent);
+        jPanelNotice.add(jLabelAbsent);
 
-        jLabelTitleWarehouse.setFont(new Font("Lexend", Font.BOLD, 15));
-        TitlePanelStaffWarehouse.add(jLabelTitleWarehouse);
+        ContentPanel.add(jPanelNotice, BorderLayout.NORTH);
 
-        ContentPanelStaffWarehouse.setLayout(new BorderLayout());
-        ContentPanelStaffWarehouse.setPreferredSize(new Dimension(1160, 185));
-        ContentPanelStaffWarehouse.setBackground(Color.white);
-        bottom.add(ContentPanelStaffWarehouse);
+        workSchedulePanel = new WorkSchedulePanel();
+        ContentPanel.add(workSchedulePanel, BorderLayout.CENTER);
 
-        ContentPanelStaffWarehouse.add(workSchedulePanelStaffWarehouse);
+//        TitlePanelManager.setLayout(new FlowLayout(FlowLayout.LEFT));
+//        TitlePanelManager.setBackground(Color.white);
+//        bottom.add(TitlePanelManager);
+//
+//        jLabelTitleManager.setFont(new Font("Lexend", Font.BOLD, 15));
+//        TitlePanelManager.add(jLabelTitleManager);
+//
+//        ContentPanelManager.setLayout(new BorderLayout());
+//        ContentPanelManager.setPreferredSize(new Dimension(1160, 185));
+//        ContentPanelManager.setBackground(Color.white);
+//        bottom.add(ContentPanelManager);
+//
+//        ContentPanelManager.add(workSchedulePanelManager);
+//
+//        TitlePanelStaffSale.setLayout(new FlowLayout(FlowLayout.LEFT));
+//        TitlePanelStaffSale.setBackground(Color.white);
+//        bottom.add(TitlePanelStaffSale);
+//
+//        jLabelTitleSale.setFont(new Font("Lexend", Font.BOLD, 15));
+//        TitlePanelStaffSale.add(jLabelTitleSale);
+//
+//        ContentPanelStaffSale.setLayout(new BorderLayout());
+//        ContentPanelStaffSale.setPreferredSize(new Dimension(1160, 185));
+//        ContentPanelStaffSale.setBackground(Color.white);
+//        bottom.add(ContentPanelStaffSale);
+//
+//        ContentPanelStaffSale.add(workSchedulePanelStaffSale);
+//
+//        TitlePanelStaffWarehouse.setLayout(new FlowLayout(FlowLayout.LEFT));
+//        TitlePanelStaffWarehouse.setBackground(Color.white);
+//        bottom.add(TitlePanelStaffWarehouse);
+//
+//        jLabelTitleWarehouse.setFont(new Font("Lexend", Font.BOLD, 15));
+//        TitlePanelStaffWarehouse.add(jLabelTitleWarehouse);
+//
+//        ContentPanelStaffWarehouse.setLayout(new BorderLayout());
+//        ContentPanelStaffWarehouse.setPreferredSize(new Dimension(1160, 185));
+//        ContentPanelStaffWarehouse.setBackground(Color.white);
+//        bottom.add(ContentPanelStaffWarehouse);
+//
+//        ContentPanelStaffWarehouse.add(workSchedulePanelStaffWarehouse);
 
     }
 
@@ -211,7 +311,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
         return weekDates;
     }
 
-    private static void loadDate() {
+    public void loadDate() {
         weekDates = getWeekDatesContaining(today);
         String date = new SimpleDateFormat("dd/MM/yyyy").format(weekDates.get(0)) +
                 " - " +
@@ -219,12 +319,10 @@ public class CreateWorkScheduleGUI extends Layout1 {
         jLabelDateWork.setText(date);
     }
 
-    public static void refresh() {
+    public void refresh() {
         today = java.sql.Date.valueOf(LocalDate.now());
         loadDate();
-        workSchedulePanelManager.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
-        workSchedulePanelStaffSale.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
-        workSchedulePanelStaffWarehouse.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
+        workSchedulePanel.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
 
     }
 
@@ -235,9 +333,7 @@ public class CreateWorkScheduleGUI extends Layout1 {
         today = calendar.getTime();
 
         loadDate();
-        workSchedulePanelManager.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
-        workSchedulePanelStaffSale.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
-        workSchedulePanelStaffWarehouse.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
+        workSchedulePanel.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
     }
 
     private void next() {
@@ -247,9 +343,8 @@ public class CreateWorkScheduleGUI extends Layout1 {
         today = calendar.getTime();
 
         loadDate();
-        workSchedulePanelManager.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
-        workSchedulePanelStaffSale.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
-        workSchedulePanelStaffWarehouse.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
+        workSchedulePanel.showWorkSchedule(weekDates.get(0), weekDates.get(weekDates.size() - 1));
+
     }
 
 }

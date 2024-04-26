@@ -1,5 +1,7 @@
 package com.coffee.DTO;
 
+import com.coffee.utils.VNString;
+
 public class Material {
     private int id;
     private String name;
@@ -7,13 +9,15 @@ public class Material {
     private double minRemain;
     private double maxRemain;
     private String unit;
+    private Boolean sell;
     private double unit_price;
     private boolean deleted;
+    private double remain_wearhouse;
 
     public Material() {
     }
 
-    public Material(int id, String name, double remain, double minRemain, double maxRemain, String unit, double unit_price, boolean deleted) {
+    public Material(int id, String name, double remain, double minRemain, double maxRemain, String unit, double unit_price, Boolean sell, boolean deleted, double remain_wearhouse) {
         this.id = id;
         this.name = name;
         this.remain = remain;
@@ -21,7 +25,9 @@ public class Material {
         this.maxRemain = maxRemain;
         this.unit = unit;
         this.unit_price = unit_price;
+        this.sell = sell;
         this.deleted = deleted;
+        this.remain_wearhouse = remain_wearhouse;
     }
 
     public int getId() {
@@ -48,7 +54,7 @@ public class Material {
         this.remain = remain;
     }
 
-    public double getMinRemain() {
+    public Double getMinRemain() {
         return minRemain;
     }
 
@@ -56,7 +62,7 @@ public class Material {
         this.minRemain = minRemain;
     }
 
-    public double getMaxRemain() {
+    public Double getMaxRemain() {
         return maxRemain;
     }
 
@@ -72,12 +78,20 @@ public class Material {
         this.unit = unit;
     }
 
-    public double getUnit_price() {
+    public Double getUnit_price() {
         return unit_price;
     }
 
     public void setUnit_price(double unit_price) {
         this.unit_price = unit_price;
+    }
+
+    public Boolean isSell() {
+        return sell;
+    }
+
+    public void setSell(Boolean sell) {
+        this.sell = sell;
     }
 
     public boolean isDeleted() {
@@ -88,13 +102,22 @@ public class Material {
         this.deleted = deleted;
     }
 
+    public double getRemain_wearhouse() {
+        return remain_wearhouse;
+    }
+
+    public void setRemain_wearhouse(double remain_wearhouse) {
+        this.remain_wearhouse = remain_wearhouse;
+    }
+
     @Override
     public String toString() {
         return id + " | " +
                 name + " | " +
                 remain + " | " +
+                remain_wearhouse + " | " +
                 unit + " | " +
-                unit_price + " | " +
+                VNString.currency(unit_price) + " | " +
                 deleted;
     }
 }

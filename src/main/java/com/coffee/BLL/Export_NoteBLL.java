@@ -33,8 +33,7 @@ public class Export_NoteBLL extends Manager<Export_Note> {
         if (exportDAL.addExport_Note(export) == 0)
             return new Pair<>(false, "Thêm phiếu xuất không thành công.");
 
-        return new Pair<>(true, "Thêm phiếu xuất thành công.\n" +
-                "Vui lòng làm mới lại giao diện kho hàng để cập nhập số lượng mới nhất.");
+        return new Pair<>(true, "Thêm phiếu xuất thành công.");
     }
 
     public List<Export_Note> searchExport_Note(String... conditions) {

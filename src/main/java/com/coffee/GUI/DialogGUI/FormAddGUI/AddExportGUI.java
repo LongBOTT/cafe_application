@@ -4,6 +4,7 @@ import com.coffee.BLL.*;
 import com.coffee.DTO.*;
 import com.coffee.GUI.DialogGUI.DialogFormDetail;
 import com.coffee.GUI.HomeGUI;
+import com.coffee.GUI.MaterialGUI;
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
@@ -14,7 +15,6 @@ import com.coffee.GUI.components.swing.PanelSearch;
 import com.coffee.main.Cafe_Application;
 import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
@@ -51,48 +51,16 @@ public class AddExportGUI extends DialogFormDetail {
     private Export_Note export_note = new Export_Note();
     private List<Integer> shipmentList = new ArrayList<>();
     private List<Export_Detail> exportDetailList = new ArrayList<>();
-    private JTextField jTextFieldQuantity = new JTextField();
-    private JComboBox<String> jComboBoxSupplier = new JComboBox<>();
-    private MyTextField txtSearch;
-    private PanelSearch search;
-    private JPopupMenu menu;
-    private JTextField[] jTextFieldDate;
-    private JTextField[] dateTextField;
-    private JDateChooser[] jDateChooser;
-    private int materialID;
     private int export_id;
     private BigDecimal total = BigDecimal.valueOf(0);
 
     public AddExportGUI() {
         super();
-        super.setTitle("Tạo phiếu xuất");
+        super.setTitle("Tạo Phiếu Xuất");
         super.setSize(new Dimension(1400, 700));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         export_id = export_NoteBLL.getAutoID(export_NoteBLL.searchExport_Note());
         init();
-        menu = new JPopupMenu();
-        search = new PanelSearch();
-        menu.setBorder(BorderFactory.createLineBorder(new Color(164, 164, 164)));
-        menu.add(search);
-        menu.setFocusable(false);
-        search.addEventClick(new EventClick() {
-            @Override
-            public void itemClick(DataSearch data) {
-                menu.setVisible(false);
-                txtSearch.setText(data.getText());
-                Material material = new MaterialBLL().findMaterialsBy(Map.of("name", data.getText())).get(0);
-                materialID = material.getId();
-            }
-
-            @Override
-            public void itemRemove(Component com, DataSearch data) {
-                search.remove(com);
-                menu.setPopupSize(menu.getWidth(), (search.getItemSize() * 35) + 2);
-                if (search.getItemSize() == 0) {
-                    menu.setVisible(false);
-                }
-            }
-        });
         setVisible(true);
     }
 
@@ -105,7 +73,7 @@ public class AddExportGUI extends DialogFormDetail {
         jComboBoxSearchStatus = new JComboBox<>(new String[]{"Tất cả", "Sắp hết hạn", "Đã hết hạn", "Đã chọn"});
         jComboBoxSearchImport = new JComboBox<>();
         titleName = new JLabel();
-        buttonAdd = new JButton("Tạo phiếu xuất");
+        buttonAdd = new JButton("Tạo Phiếu Xuất");
         attributeExport_Note = new ArrayList<>();
         contenttop.setLayout(new MigLayout("",
                 "50[]20[]20[]20[]20[]20[]20[]20[]20",
@@ -113,9 +81,6 @@ public class AddExportGUI extends DialogFormDetail {
         contentbot.setLayout(new MigLayout("",
                 "50[]20[]50",
                 "10[]10[]10"));
-        jDateChooser = new JDateChooser[2];
-        dateTextField = new JTextField[2];
-        jTextFieldDate = new JTextField[2];
 
         titleName.setText("Tạo Phiếu Xuất");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
@@ -157,19 +122,20 @@ public class AddExportGUI extends DialogFormDetail {
 
         JPanel jPanel = new JPanel(new FlowLayout());
         jPanel.setPreferredSize(new Dimension(1400, 100));
-        jPanel.setBackground(new Color(217, 217, 217));
+        jPanel.setBackground(new Color(245, 246, 250));
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
-        containerSearch.setBackground(new Color(245, 246, 250));
+        containerSearch.setBackground(new Color(255, 255, 255));
         containerSearch.setPreferredSize(new Dimension(280, 40));
         jPanel.add(containerSearch);
 
         iconSearch.setIcon(new FlatSVGIcon("icon/search.svg"));
         containerSearch.add(iconSearch);
 
-        jTextFieldSearch.setBackground(new Color(245, 246, 250));
+        jTextFieldSearch.setBackground(new Color(255, 255, 255));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập nội dung tìm kiếm");
+        jTextFieldSearch.putClientProperty("JTextField.showClearButton", true);
         jTextFieldSearch.setPreferredSize(new Dimension(300, 30));
         jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -189,13 +155,13 @@ public class AddExportGUI extends DialogFormDetail {
         });
         containerSearch.add(jTextFieldSearch);
 
-        jButtonSearch.setBackground(new Color(29, 78, 216));
+        jButtonSearch.setBackground(new Color(1, 120, 220));
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(100, 30));
         jButtonSearch.addActionListener(e -> searchShipments());
         jPanel.add(jButtonSearch);
 
-        jComboBoxSearch.setBackground(new Color(29, 78, 216));
+        jComboBoxSearch.setBackground(new Color(1, 120, 220));
         jComboBoxSearch.setForeground(Color.white);
         jComboBoxSearch.setPreferredSize(new Dimension(120, 30));
         jComboBoxSearch.addActionListener(e -> searchShipments());
@@ -209,7 +175,7 @@ public class AddExportGUI extends DialogFormDetail {
         for (Import_Note importNote : new Import_NoteBLL().searchImport())
             jComboBoxSearchImport.addItem(String.valueOf(importNote.getId()));
 
-        jComboBoxSearchImport.setBackground(new Color(29, 78, 216));
+        jComboBoxSearchImport.setBackground(new Color(1, 120, 220));
         jComboBoxSearchImport.setForeground(Color.white);
         jComboBoxSearchImport.setPreferredSize(new Dimension(120, 30));
         jComboBoxSearchImport.addActionListener(e -> searchShipments());
@@ -219,7 +185,7 @@ public class AddExportGUI extends DialogFormDetail {
         jLabel1.setFont((new Font("Public Sans", Font.BOLD, 12)));
         jPanel.add(jLabel1);
 
-        jComboBoxSearchStatus.setBackground(new Color(29, 78, 216));
+        jComboBoxSearchStatus.setBackground(new Color(1, 120, 220));
         jComboBoxSearchStatus.setForeground(Color.white);
         jComboBoxSearchStatus.setPreferredSize(new Dimension(120, 30));
         jComboBoxSearchStatus.addActionListener(e -> searchShipments());
@@ -249,6 +215,7 @@ public class AddExportGUI extends DialogFormDetail {
         dataTable.getColumnModel().getColumn(7).setMaxWidth(100);
         dataTable.getColumnModel().getColumn(8).setMaxWidth(50);
         dataTable.getColumnModel().getColumn(9).setMaxWidth(100);
+        dataTable.setRowHeight(25);
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1400, 680));
         contentmid.add(scrollPane, BorderLayout.CENTER);
@@ -262,13 +229,15 @@ public class AddExportGUI extends DialogFormDetail {
         contentbot.add(label);
 
         jLabelTotal = new JLabel();
-        jLabelTotal.setText("0.0");
+        jLabelTotal.setText(VNString.currency(0));
         jLabelTotal.setPreferredSize(new Dimension(1000, 30));
         jLabelTotal.setFont((new Font("Public Sans", Font.PLAIN, 14)));
         jLabelTotal.setBackground(new Color(245, 246, 250));
         contentbot.add(jLabelTotal, "wrap");
 
         buttonAdd.setPreferredSize(new Dimension(200, 30));
+        buttonAdd.setBackground(new Color(1, 120, 220));
+        buttonAdd.setForeground(Color.white);
         buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonAdd.addMouseListener(new MouseAdapter() {
@@ -342,12 +311,15 @@ public class AddExportGUI extends DialogFormDetail {
 
         if (result.getKey()) {
             for (Export_Detail exportDetail : exportDetailList) {
-                new Export_DetailBLL().addExport_Detail(exportDetail);
+                new Export_DetailBLL().addExport_Detail(exportDetail); // cập nhập tồn kho của nguyên liệu trong lớp Export_DetailBLL().addExport_Detail
             }
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-
             dispose();
+            if (Cafe_Application.homeGUI.indexModuleMaterialGUI != -1) {
+                MaterialGUI materialGUI = (MaterialGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModuleMaterialGUI];
+                materialGUI.refresh();
+            }
         } else {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -419,7 +391,7 @@ public class AddExportGUI extends DialogFormDetail {
             double unit_price = new MaterialBLL().findMaterialsBy(Map.of("id", material_id)).get(0).getUnit_price();
             total = total.add(BigDecimal.valueOf(unit_price * exportDetail.getQuantity()));
         }
-        jLabelTotal.setText(String.valueOf(total));
+        jLabelTotal.setText(VNString.currency(Double.parseDouble(total.toString())));
     }
 
     public void loadDataTable(Object[][] objects) {
@@ -427,7 +399,7 @@ public class AddExportGUI extends DialogFormDetail {
         model.setRowCount(0);
 
         if (objects.length == 0) {
-            jLabelTotal.setText("0.0");
+            jLabelTotal.setText(VNString.currency(0));
             return;
         }
 
@@ -473,50 +445,5 @@ public class AddExportGUI extends DialogFormDetail {
             object = Arrays.copyOfRange(object, 0, 10);
             model.addRow(object);
         }
-    }
-
-    private void txtSearchMouseClicked(MouseEvent evt) {
-        if (search.getItemSize() > 0 && !txtSearch.getText().isEmpty()) {
-            menu.show(txtSearch, 0, txtSearch.getHeight());
-            search.clearSelected();
-        }
-    }
-
-    private List<DataSearch> search(String text) {
-        List<DataSearch> list = new ArrayList<>();
-        List<Material> materials = new MaterialBLL().findMaterials("name", text);
-        for (Material m : materials) {
-            if (list.size() == 7)
-                break;
-            list.add(new DataSearch(m.getName()));
-        }
-        return list;
-    }
-
-    private void txtSearchKeyReleased(KeyEvent evt) {
-        if (evt.getKeyCode() != KeyEvent.VK_UP && evt.getKeyCode() != KeyEvent.VK_DOWN && evt.getKeyCode() != KeyEvent.VK_ENTER) {
-            String text = txtSearch.getText().trim().toLowerCase();
-            search.setData(search(text));
-            if (search.getItemSize() > 0 && !txtSearch.getText().isEmpty()) {
-                menu.show(txtSearch, 0, txtSearch.getHeight());
-                menu.setPopupSize(menu.getWidth(), (search.getItemSize() * 35) + 2);
-            } else {
-                menu.setVisible(false);
-            }
-        }
-    }
-
-    private void txtSearchKeyPressed(KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_UP) {
-            search.keyUp();
-        } else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
-            search.keyDown();
-        } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            String text = search.getSelectedText();
-            txtSearch.setText(text);
-
-        }
-        menu.setVisible(false);
-
     }
 }

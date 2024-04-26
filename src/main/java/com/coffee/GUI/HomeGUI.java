@@ -32,25 +32,31 @@ public class HomeGUI extends JFrame {
     private JPanel jPanelLogo;
     private JPanel staffInfo;
     private RoundedPanel infor;
-    private RoundedPanel menu;
+    private JPanel menu;
     private RoundedPanel center;
     private RoundedPanel content;
-    private RoundedPanel[] modules;
-    private RoundedPanel currentModule;
+    private JPanel[] modules;
+    private JPanel currentModule;
     private RoundedPanel logout;
-    private RoundedScrollPane scrollPane;
+    private JScrollPane scrollPane;
     private JLabel name = new JLabel();
     private JLabel roleName = new JLabel();
     private JLabel iconLogo;
     private JLabel iconInfo;
     private JLabel iconLogout;
     private JLabel[] moduleNames;
-    private JPanel[] allPanelModules;
+    public JPanel[] allPanelModules;
     private Color color;
     private Color colorOver;
     private int currentPanel = 0;
     private boolean pressover;
     private boolean over = false;
+    public int indexSaleGUI = -1;
+    public int indexModuleReceiptGUI = -1;
+    public int indexModulePayrollGUI = -1;
+    public int indexModuleLeaveOffGUI = -1;
+    public int indexModuleCreateWorkScheduleGUI = -1;
+    public int indexModuleMaterialGUI = -1;
 
     public HomeGUI() {
         initComponents();
@@ -69,7 +75,6 @@ public class HomeGUI extends JFrame {
     public void getUser() {
         staff = staffBLL.findStaffsBy(Map.of("id", account.getStaff_id())).get(0);
 
-        Role_DetailBLL roleDetailBLL = new Role_DetailBLL();
         List<Role_Detail> role_detailList = new Role_DetailBLL().searchRole_detailsByStaff(staff.getId());
         Role_Detail roleDetail = role_detailList.get(0);
         role = roleBLL.findRolesBy(Map.of("id", roleDetail.getRole_id())).get(0);
@@ -80,7 +85,7 @@ public class HomeGUI extends JFrame {
 
     public void initComponents() {
         setIconImage(new FlatSVGIcon("image/coffee_logo.svg").getImage());
-        setTitle("Hệ thống quản lý cửa hàng coffee");
+        setTitle("Hệ Thống Quản Lý Cửa Hàng Coffee");
         setResizable(false);
         setPreferredSize(new Dimension(1440, 800));
         setMinimumSize(new Dimension());
@@ -100,65 +105,81 @@ public class HomeGUI extends JFrame {
         jPanelLogo = new JPanel();
         staffInfo = new JPanel();
         infor = new RoundedPanel();
-        menu = new RoundedPanel();
+        menu = new JPanel();
         center = new RoundedPanel();
         content = new RoundedPanel();
         logout = new RoundedPanel();
-        scrollPane = new RoundedScrollPane(menu, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane = new JScrollPane(menu, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         iconInfo = new JLabel();
         iconLogo = new JLabel();
         iconLogout = new JLabel();
-        color = new Color(0xFFFFFF);
-        colorOver = new Color(185, 184, 184);
+//        color = new Color(228, 231, 235);
+//        colorOver = new Color(185, 184, 184);
+        color = new Color(255, 255, 255);
+        colorOver = new Color(228, 231, 235);
 
         contentPanel.setLayout(new BorderLayout());
-        contentPanel.setBackground(Color.white);
+        contentPanel.setBackground(new Color(191, 198, 208));
         setContentPane(contentPanel);
 
         left.setLayout(new MigLayout("", "10[]10", "10[]10[]"));
-        left.setBackground(Color.white);
+        left.setBackground(new Color(191, 198, 208));
         left.setPreferredSize(new Dimension(250, 800));
         contentPanel.add(left, BorderLayout.WEST);
 
         right.setLayout(new BorderLayout());
+        right.setBackground(new Color(191, 198, 208));
         contentPanel.add(right, BorderLayout.CENTER);
 
         infor.setLayout(new MigLayout());
-        infor.setBackground(new Color(232, 206, 180));
+        infor.setBackground(new Color(255, 255, 255));
         infor.setPreferredSize(new Dimension(250, 150));
         left.add(infor, "span, wrap");
 
-        jPanelLogo.setBackground(new Color(232, 206, 180));
-        jPanelLogo.setPreferredSize(new Dimension(40, 120));
-        infor.add(jPanelLogo);
+        JPanel Panel1 = new JPanel();
+        Panel1.setBackground(new Color(255, 255, 255));
+        Panel1.setPreferredSize(new Dimension(30, 120));
+        infor.add(Panel1, "center");
 
-        roleName.setFont(new Font("FlatLaf.style", Font.PLAIN, 15));
+        Panel1.add(new JLabel(new FlatSVGIcon("icon/ACB.svg")));
+
+        JLabel jLabelBranch = new JLabel("Cửa Hàng Coffee");
+        jLabelBranch.setFont(new Font("Inter", Font.BOLD, 15));
+        infor.add(jLabelBranch, "wrap");
+
+        jPanelLogo.setBackground(new Color(255, 255, 255));
+        jPanelLogo.setPreferredSize(new Dimension(30, 120));
+        infor.add(jPanelLogo, "span 1 2");
+
+        roleName.setFont(new Font("Inter", Font.PLAIN, 15));
         infor.add(roleName, "wrap");
 
-        staffInfo.setBackground(new Color(232, 206, 180));
-        staffInfo.setPreferredSize(new Dimension(40, 80));
-        infor.add(staffInfo);
+//        staffInfo.setBackground(new Color(255, 255, 255));
+//        staffInfo.setPreferredSize(new Dimension(30, 80));
+//        infor.add(staffInfo);
 
         iconLogo.setIcon(new FlatSVGIcon("icon/avatar.svg"));
         jPanelLogo.add(iconLogo);
 
-        iconInfo.setIcon(new FlatSVGIcon("icon/profile.svg"));
-        staffInfo.add(iconInfo);
+//        iconInfo.setIcon(new FlatSVGIcon("icon/profile.svg"));
+//        staffInfo.add(iconInfo);
 
-        name.setFont(new Font("FlatLaf.style", Font.BOLD, 15));
+        name.setFont(new Font("Inter", Font.BOLD, 15));
         infor.add(name, "wrap");
 
-        menu.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 10));
-        menu.setBackground(new Color(217, 217, 217));
-        menu.setPreferredSize(new Dimension(200, 500));
+        menu.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        menu.setBackground(new Color(255, 255, 255));
+        menu.setPreferredSize(new Dimension(250, 500));
         menu.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         scrollPane.setPreferredSize(new Dimension(250, 550));
-//        scrollPane.setViewportBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, new Color(217,217,217)));
+        scrollPane.getVerticalScrollBar().setUnitIncrement(20);
+//        scrollPane.getViewport().setBackground(new Color(191, 198, 208));
+//        scrollPane.getViewport().setBackground(new Color(255, 255, 255));
         left.add(scrollPane, "span, wrap");
 
         logout.setLayout(new FlowLayout(FlowLayout.CENTER));
-        logout.setBackground(new Color(232, 206, 180));
+        logout.setBackground(new Color(255, 255, 255));
         logout.setPreferredSize(new Dimension(160, 40));
         logout.setCursor(new Cursor(Cursor.HAND_CURSOR));
         logout.addMouseListener(new MouseAdapter() {
@@ -184,12 +205,12 @@ public class HomeGUI extends JFrame {
         logout.add(iconLogout);
 
         center.setLayout(new BorderLayout());
-        center.setBackground(Color.white);
-        center.setBorder(BorderFactory.createMatteBorder(10, 0, 15, 10, Color.white));
+        center.setBackground(new Color(191, 198, 208));
+        center.setBorder(BorderFactory.createMatteBorder(10, 0, 15, 10, new Color(191, 198, 208)));
         right.add(center, BorderLayout.CENTER);
 
         content.setLayout(new BorderLayout());
-        content.setBackground(new Color(232, 206, 180));
+        content.setBackground(new Color(191, 198, 208));
         center.add(content, BorderLayout.CENTER);
     }
 
@@ -199,19 +220,32 @@ public class HomeGUI extends JFrame {
         List<Module> moduleList = result.getKey();
         List<List<Function>> function2D = result.getValue();
 
-        allPanelModules = new RoundedPanel[moduleList.size()];
-        modules = new RoundedPanel[moduleList.size()];
+        allPanelModules = new JPanel[moduleList.size()];
+        modules = new JPanel[moduleList.size()];
         moduleNames = new JLabel[moduleList.size()];
         for (int i = 0; i < modules.length; i++) {
-            modules[i] = new RoundedPanel();
-            modules[i].setLayout(new FlowLayout());
-            modules[i].setPreferredSize(new Dimension(200, 41));
-            modules[i].setBackground(new Color(0xFFFFFF));
+            modules[i] = new JPanel();
+            modules[i].setLayout(new FlowLayout(FlowLayout.CENTER));
+            modules[i].setPreferredSize(new Dimension(250, 41));
+            modules[i].setBackground(new Color(255, 255, 255));
+//            modules[i].setBackground(new Color(228, 231, 235));
             modules[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
             Module module = moduleList.get(i);
             List<Function> functions = function2D.get(i);
             allPanelModules[i] = getPanelModule(module.getId(), functions);
             int index = i;
+            if (module.getId() == 1)
+                indexSaleGUI = index;
+            if (module.getId() == 2)
+                indexModuleMaterialGUI = index;
+            if (module.getId() == 7)
+                indexModuleReceiptGUI = index;
+            if (module.getId() == 13)
+                indexModuleLeaveOffGUI = index;
+            if (module.getId() == 18)
+                indexModuleCreateWorkScheduleGUI = index;
+            if (module.getId() == 19)
+                indexModulePayrollGUI = index;
             modules[i].addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
@@ -248,17 +282,17 @@ public class HomeGUI extends JFrame {
 
             moduleNames[i] = new JLabel(module.getName());
             moduleNames[i].setIcon(new FlatSVGIcon("icon/icon_module.svg"));
-            moduleNames[i].setPreferredSize(new Dimension(190, 35));
+            moduleNames[i].setPreferredSize(new Dimension(230, 35));
             moduleNames[i].setHorizontalAlignment(SwingConstants.LEFT);
-            moduleNames[i].setVerticalAlignment(SwingConstants.CENTER);
+//            moduleNames[i].setVerticalAlignment(SwingConstants.CENTER);
             moduleNames[i].setFont((new Font("FlatLaf.style", Font.PLAIN, 14)));
-            moduleNames[i].setIconTextGap(30);
+            moduleNames[i].setIconTextGap(15);
             moduleNames[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
             modules[i].add(moduleNames[i]);
         }
-        menu.setPreferredSize(new Dimension(200, Math.max(500, modules.length * 52)));
-        openModule(allPanelModules[0]);
-        Active(modules[0]);
+        menu.setPreferredSize(new Dimension(250, Math.max(500, modules.length * 41)));
+        openModule(allPanelModules[0]); // custom
+        Active(modules[0]); // custom
     }
 
     public Pair<List<Module>, List<List<Function>>> getModulesAndFunctionsFromRole(int roleID) {
@@ -305,14 +339,14 @@ public class HomeGUI extends JFrame {
             case 9 -> new ImportGUI(functions);
             case 10 -> new ProductGUI(functions);
             case 11 -> new SupplierGUI(functions);
-            case 12 -> new StaffGUI(functions, this);
+            case 12 -> new StaffGUI(functions);
             case 13 -> new Leave_Of_Absence_FormGUI(functions);
             case 14 -> new AccountGUI(functions);
             case 15 -> new DecentralizationGUI(functions);
             case 16 -> new InfoGUI(account, staff);
             case 17 -> new MyWorkScheduleGUI(staff);
             case 18 -> new CreateWorkScheduleGUI();
-            case 19 -> new PayrollGUI(functions, this);
+            case 19 -> new PayrollGUI(functions);
             default -> new RoundedPanel();
         };
     }
@@ -331,10 +365,12 @@ public class HomeGUI extends JFrame {
         }
     }
 
-    private void Active(RoundedPanel module) {
+    private void Active(JPanel module) {
         Disable();
         currentModule = module;
         module.setBackground(colorOver);
+        menu.repaint();
+        menu.revalidate();
     }
 
     public void exit() {

@@ -5,6 +5,8 @@ import com.coffee.DTO.Account;
 import com.coffee.DTO.Staff;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddLeave_Of_Absence_FormGUI;
 import com.coffee.GUI.components.InfoPanel;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
+import com.coffee.GUI.components.swing.MyTextField;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 
@@ -87,7 +89,7 @@ public class InfoGUI extends InfoPanel {
             label.setFont(new Font("Lexend", Font.BOLD, 16));
             InfoStaffPanel.add(label);
 
-            JTextField textField = new JTextField();
+            JTextField textField = new MyTextFieldUnderLine();
             if (string.equals("Tên Nhân Viên")) {
                 JLabel jLabel = new JLabel(staff.getName());
                 jLabel.setFont(new Font("Lexend", Font.PLAIN, 14));
@@ -144,6 +146,8 @@ public class InfoGUI extends InfoPanel {
         InfoStaffPanel.add(buttonCancel);
 
         buttonEdit.setPreferredSize(new Dimension(150, 30));
+        buttonEdit.setBackground(new Color(1, 120, 220));
+        buttonEdit.setForeground(Color.white);
         buttonEdit.setFont(new Font("Lexend", Font.BOLD, 15));
         buttonEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonEdit.addMouseListener(new MouseAdapter() {
@@ -155,6 +159,8 @@ public class InfoGUI extends InfoPanel {
         InfoStaffPanel.add(buttonEdit, "span, wrap");
 
         buttonOffDay.setPreferredSize(new Dimension(150, 30));
+        buttonOffDay.setBackground(new Color(1, 120, 220));
+        buttonOffDay.setForeground(Color.white);
         buttonOffDay.setFont(new Font("Lexend", Font.BOLD, 15));
         buttonOffDay.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonOffDay.addMouseListener(new MouseAdapter() {
@@ -174,7 +180,7 @@ public class InfoGUI extends InfoPanel {
         address = jTextFieldsStaff.get(1).getText();
         email = jTextFieldsStaff.get(2).getText();
 
-        Staff newstaff = new Staff(staff.getId(), staff.getStaffNo(), staff.getName(), staff.isGender(), staff.getBirthdate(), phone, address, email, false); // false là tồn tại, true là đã xoá
+        Staff newstaff = new Staff(staff.getId(), staff.getStaffNo(), staff.getName(), staff.isGender(), staff.getBirthdate(), phone, address, email, false, staff.getSalary_format_id()); // false là tồn tại, true là đã xoá
 
         result = new StaffBLL().updateStaff(staff, newstaff);
 

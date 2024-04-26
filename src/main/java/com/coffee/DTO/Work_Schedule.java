@@ -9,17 +9,19 @@ public class Work_Schedule {
     private String check_in;
     private String check_out;
     private int shift;
+    private String notice;
 
     public Work_Schedule() {
     }
 
-    public Work_Schedule(int id, int staff_id, Date date, String check_in, String check_out, int shift) {
+    public Work_Schedule(int id, int staff_id, Date date, String check_in, String check_out, int shift, String notice) {
         this.id = id;
         this.staff_id = staff_id;
         this.date = date;
         this.check_in = check_in;
         this.check_out = check_out;
         this.shift = shift;
+        this.notice = notice;
     }
 
     public int getId() {
@@ -69,7 +71,15 @@ public class Work_Schedule {
     public void setShift(int shift) {
         this.shift = shift;
     }
-    
+
+    public String getNotice() {
+        return notice;
+    }
+
+    public void setNotice(String notice) {
+        this.notice = notice;
+    }
+
     @Override
     public String toString() {
         return id + " | " +

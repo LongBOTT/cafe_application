@@ -82,9 +82,20 @@ public class MyWorkSchedulePanel extends JScrollPane {
         List<Date> dates = getDaysBetween(date1, date2);
         for (int i = 0; i < dates.size(); i++) {
             DateTimeFormatter dtfInput = DateTimeFormatter.ofPattern("u-M-d", Locale.ENGLISH);
-            DateTimeFormatter dtfOutput = DateTimeFormatter.ofPattern("EEEE", Locale.ENGLISH);
-            String date = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(dates.get(i)), dtfInput).format(dtfOutput) +
-                    " (" + LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(dates.get(i)), dtfInput).format(DateTimeFormatter.ofPattern("d/M", Locale.ENGLISH)) + ")";
+            DateTimeFormatter dtfOutput = DateTimeFormatter.ofPattern("EEEE", new Locale("vi", "VN"));
+            DateTimeFormatter dtfDayMonth = DateTimeFormatter.ofPattern("d/M", new Locale("vi", "VN"));
+
+            String date = LocalDate.parse(
+                            new SimpleDateFormat("yyyy-MM-dd").format(dates.get(i)),
+                            dtfInput
+                    )
+                    .format(dtfOutput) +
+                    " (" +
+                    LocalDate.parse(
+                                    new SimpleDateFormat("yyyy-MM-dd").format(dates.get(i)),
+                                    dtfInput
+                            )
+                            .format(dtfDayMonth) + ")";
             jLabelsDay.get(i).setText(date);
         }
 

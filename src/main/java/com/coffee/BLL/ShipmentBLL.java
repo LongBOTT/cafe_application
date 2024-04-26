@@ -1,10 +1,8 @@
 package com.coffee.BLL;
 
 import com.coffee.DAL.ShipmentDAL;
+import com.coffee.DTO.*;
 import com.coffee.DTO.Module;
-import com.coffee.DTO.Role;
-import com.coffee.DTO.Shipment;
-import com.coffee.DTO.Supplier;
 import com.coffee.utils.VNString;
 import javafx.util.Pair;
 
@@ -34,27 +32,28 @@ public class ShipmentBLL extends Manager<Shipment> {
     }
 
     public Pair<Boolean, String> addShipment(Shipment shipment) {
-        Pair<Boolean, String> result;
-        result = validateQuantity(String.valueOf(shipment.getQuantity()));
-        if (!result.getKey())
-            return new Pair<>(false, result.getValue());
+//        Pair<Boolean, String> result;
+//        result = validateQuantity(String.valueOf(shipment.getQuantity()));
+//        if (!result.getKey())
+//            return new Pair<>(false, result.getValue());
+//
+//        result = exists(shipment);
+//        if (result.getKey()) {
+//            return new Pair<>(false, result.getValue());
+//        }
 
-        if (!result.getKey())
-            return new Pair<>(false, result.getValue());
-
-        result = exists(shipment);
-        if (result.getKey()) {
-            return new Pair<>(false, result.getValue());
-        }
-
-        result = validateDate(shipment.getMfg(), shipment.getExp());
-        if (!result.getKey()) {
-            return new Pair<>(false, result.getValue());
-        }
-
+//        result = validateDate(shipment.getMfg(), shipment.getExp());
+//        if (!result.getKey()) {
+//            return new Pair<>(false, result.getValue());
+//        }
         if (shipmentDAL.addShipment(shipment) == 0)
             return new Pair<>(false, "Thêm lô hàng không thành công.");
 
+        MaterialBLL materialBLL = new MaterialBLL();
+        Material newMaterial = materialBLL.findMaterialsBy(Map.of("id", shipment.getMaterial_id())).get(0);
+        newMaterial.setRemain_wearhouse(newMaterial.getRemain_wearhouse() + shipment.getQuantity());
+        Material oldMaterial = materialBLL.findMaterialsBy(Map.of("id", shipment.getMaterial_id())).get(0);
+        materialBLL.updateMaterial(newMaterial, oldMaterial);
         return new Pair<>(true, "Thêm lô hàng thành công.");
     }
 

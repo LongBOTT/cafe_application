@@ -17,7 +17,9 @@ public class MaterialDAL extends Manager {
                         "max_remain",
                         "unit",
                         "unit_price",
-                        "deleted"));
+                        "sell",
+                        "deleted",
+                        "remain_wearhouse"));
     }
 
     public List<Material> convertToMaterials(List<List<String>> data) {
@@ -31,7 +33,9 @@ public class MaterialDAL extends Manager {
                         Double.parseDouble(row.get(4)), // remain
                         row.get(5), // unit
                         Double.parseDouble(row.get(6)), // unit_price
-                        Boolean.parseBoolean(row.get(7)) // deleted
+                        Boolean.parseBoolean(row.get(7)),// sell
+                        Boolean.parseBoolean(row.get(8)), // deleted
+                        Double.parseDouble(row.get(9)) // remain_wearhouse
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in MaterialDAL.convertToMaterials(): " + e.getMessage());
@@ -49,7 +53,9 @@ public class MaterialDAL extends Manager {
                     material.getMaxRemain(),
                     material.getUnit(),
                     material.getUnit_price(),
-                    false
+                    material.isSell(),
+                    false,
+                    0
             );
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in MaterialDAL.addMaterial(): " + e.getMessage());
@@ -67,7 +73,9 @@ public class MaterialDAL extends Manager {
             updateValues.add(material.getMaxRemain());
             updateValues.add(material.getUnit());
             updateValues.add(material.getUnit_price());
+            updateValues.add(material.isSell());
             updateValues.add(material.isDeleted());
+            updateValues.add(material.getRemain_wearhouse());
             return update(updateValues, "id = " + material.getId());
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in MaterialDAL.updateMaterial(): " + e.getMessage());
@@ -93,5 +101,47 @@ public class MaterialDAL extends Manager {
             System.out.println("Error occurred in MaterialDAL.searchMaterials(): " + e.getMessage());
         }
         return new ArrayList<>();
+    }
+
+    public int sub(int id, String size, int quantity) {
+        try {
+            return executeUpdate("DROP TABLE IF EXISTS TempTable;\n" +
+                    "CREATE TEMPORARY TABLE TempTable (\n" +
+                    "    id INT,\n" +
+                    "    quantity DOUBLE\n" +
+                    ");\n" +
+                    "\n" +
+                    "INSERT INTO TempTable\n" +
+                    "SELECT ma.id, re.quantity\n" +
+                    "FROM recipe re JOIN material ma ON re.material_id = ma.id\n" +
+                    "WHERE re.product_id = " + id + " AND re.size = '" + size + "';\n" +
+                    "\n" +
+                    "UPDATE material\n" +
+                    "SET remain = remain - (SELECT quantity FROM TempTable WHERE id = material.id) * " + quantity + " * 0.001\n" +
+                    "WHERE material.id IN (SELECT id FROM TempTable)");
+        } catch (SQLException | IOException e) {
+            return 0;
+        }
+    }
+
+    public int plus(int id, String size, int quantity) {
+        try {
+            return executeUpdate("DROP TABLE IF EXISTS TempTable; " +
+                    "CREATE TEMPORARY TABLE TempTable (\n" +
+                    "    id INT,\n" +
+                    "    quantity DOUBLE\n" +
+                    ");\n" +
+                    "\n" +
+                    "INSERT INTO TempTable\n" +
+                    "SELECT ma.id, re.quantity\n" +
+                    "FROM recipe re JOIN material ma ON re.material_id = ma.id\n" +
+                    "WHERE re.product_id = " + id + " AND re.size = '" + size + "';\n" +
+                    "\n" +
+                    "UPDATE material\n" +
+                    "SET remain = remain + (SELECT quantity FROM TempTable WHERE id = material.id) * " + quantity + " * 0.001\n" +
+                    "WHERE material.id IN (SELECT id FROM TempTable)");
+        } catch (SQLException | IOException e) {
+            return 0;
+        }
     }
 }

@@ -1,25 +1,34 @@
 package com.coffee.DTO;
 
+import com.coffee.utils.VNString;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Receipt {
     private int id;
     private int staff_id;
-    private double total;
     private Date invoice_date;
+    private double total_price;
+    private double total_discount;
+    private double total;
     private double received;
     private double excess;
+    private int discount_id;
 
     public Receipt() {
     }
 
-    public Receipt(int id, int staff_id, double total, Date invoice_date, double received, double excess) {
+    public Receipt(int id, int staff_id, Date invoice_date, double total_price, double total_discount, double total, double received, double excess, int discount_id) {
         this.id = id;
         this.staff_id = staff_id;
-        this.total = total;
         this.invoice_date = invoice_date;
+        this.total_price = total_price;
+        this.total_discount = total_discount;
+        this.total = total;
         this.received = received;
         this.excess = excess;
+        this.discount_id = discount_id;
     }
 
     public int getId() {
@@ -70,11 +79,35 @@ public class Receipt {
         this.excess = excess;
     }
 
+    public int getDiscount_id() {
+        return discount_id;
+    }
+
+    public void setDiscount_id(int discount_id) {
+        this.discount_id = discount_id;
+    }
+
+    public double getTotal_price() {
+        return total_price;
+    }
+
+    public void setTotal_price(double total_price) {
+        this.total_price = total_price;
+    }
+
+    public double getTotal_discount() {
+        return total_discount;
+    }
+
+    public void setTotal_discount(double total_discount) {
+        this.total_discount = total_discount;
+    }
+
     @Override
     public String toString() {
         return id + " | " +
                 staff_id + " | " +
-                total + " | " +
-                invoice_date;
+                VNString.currency(total) + " | " +
+                new SimpleDateFormat("dd/MM/yyyy").format(invoice_date);
     }
 }

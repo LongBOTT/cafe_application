@@ -1,9 +1,10 @@
 package com.coffee.GUI.components;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class Layout2 extends RoundedPanel {
-    public RoundedPanel top;
+    public JPanel top;
     public RoundedPanel bottom;
     public RoundedPanel containerSearchPanel;
     public RoundedPanel FunctionPanel;
@@ -20,7 +21,7 @@ public class Layout2 extends RoundedPanel {
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(1165, 733));
 
-        top = new RoundedPanel();
+        top = new JPanel();
         bottom = new RoundedPanel();
         containerSearchPanel = new RoundedPanel();
         SearchPanel = new RoundedPanel();
@@ -29,7 +30,7 @@ public class Layout2 extends RoundedPanel {
 
         top.setLayout(new BorderLayout());
         top.setPreferredSize(new Dimension(1165, 100));
-        top.setBackground(Color.white);
+        top.setBackground(new Color(191, 198, 208));
         add(top, BorderLayout.NORTH);
 
         bottom.setLayout(new BorderLayout());
@@ -37,25 +38,24 @@ public class Layout2 extends RoundedPanel {
         bottom.setBackground(Color.white);
         add(bottom, BorderLayout.SOUTH);
 
-        containerSearchPanel.setLayout(new FlowLayout());
-        containerSearchPanel.setBackground(Color.white);
-        containerSearchPanel.setPreferredSize(new Dimension(800, 100));
-        top.add(containerSearchPanel, BorderLayout.WEST);
+        containerSearchPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        containerSearchPanel.setBackground(new Color(191, 198, 208));
+        containerSearchPanel.setPreferredSize(new Dimension(1165, 100));
+        top.add(containerSearchPanel, BorderLayout.CENTER);
 
-        FunctionPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        FunctionPanel.setBackground(Color.white);
-        FunctionPanel.setPreferredSize(new Dimension(300, 50));
-        top.add(FunctionPanel, BorderLayout.EAST);
-
-        FilterDatePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        FilterDatePanel.setBackground(Color.white);
-        FilterDatePanel.setPreferredSize(new Dimension(800, 40));
+        FilterDatePanel.setLayout(new BorderLayout());
+        FilterDatePanel.setBackground(new Color(191, 198, 208));
+        FilterDatePanel.setPreferredSize(new Dimension(1165, 40));
         containerSearchPanel.add(FilterDatePanel);
 
         SearchPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-        SearchPanel.setBackground(Color.white);
-        SearchPanel.setPreferredSize(new Dimension(800, 50));
+        SearchPanel.setBackground(new Color(191, 198, 208));
+        SearchPanel.setPreferredSize(new Dimension(600, 50));
         containerSearchPanel.add(SearchPanel);
+
+        FunctionPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+        FunctionPanel.setBackground(new Color(191, 198, 208));
+        FunctionPanel.setPreferredSize(new Dimension(650, 40));
+        FilterDatePanel.add(FunctionPanel, BorderLayout.EAST);
     }
 }

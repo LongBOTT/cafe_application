@@ -1,11 +1,13 @@
 package com.coffee.GUI.DialogGUI.FormDetailGUI;
 
+import com.coffee.BLL.MaterialBLL;
 import com.coffee.BLL.RecipeBLL;
 import com.coffee.DTO.Material;
 import com.coffee.DTO.Product;
 import com.coffee.DTO.Recipe;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
 import com.coffee.GUI.components.DataTable;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -18,39 +20,25 @@ import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class DetailProductGUI extends DialogFormDetail_1 {
+    private final List<Product> Products ;
+    private final int product_id;
+    private final RecipeBLL recipeBLL = new RecipeBLL();
+    private List<Recipe> recipes ;
+    private final MaterialBLL materialBLL = new MaterialBLL();
+    private final String imageProduct;
 
-    private JLabel titleName;
-    private RoundedPanel containerAtributeProduct;
-    private RoundedPanel containerImage;
-
-    private JLabel lblListMaterial;
-    private JLabel material;
     private DataTable dataTable;
 
-    private RoundedPanel containerInforMaterial;
-    private RoundedScrollPane scrollPane;
-    private RoundedPanel containerDataTable;
-    private JComboBox<String> CbListMaterial;
-    private RecipeBLL recipeBLL = new RecipeBLL();
-    private List<String> AtributeProduct = new ArrayList<>();
-    private String[] columnNames;
-    private JPanel panelSize;
     private JTextField txtNameProduct;
     private JTextField txtPrice ;
     private JTextField txtCategory;
-    private JLabel lblName;
-    private JLabel lblCategory ;
-    private JLabel lblSize ;
-    private JLabel lblPrice ;
+    private JTextField txtCapitalPrice;
     private JLabel selectedLabel;
-    private List<Product> Products;
-    private int product_id;
-    private String imageProduct;
+
     public DetailProductGUI(List<Product> Products) {
         super();
         super.setTitle("Chi tiết sản phẩm");
@@ -59,31 +47,29 @@ public class DetailProductGUI extends DialogFormDetail_1 {
         this.imageProduct = Products.get(0).getImage();
         init(Products);
         setVisible(true);
-
     }
 
     public void init( List<Product> Products) {
+        recipes=  recipeBLL.searchRecipes("product_id = " + product_id);
 
-        titleName = new JLabel("Chi tiết sản phẩm");
-        title.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
-        titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
-        title.add(titleName);
-
+        content.setPreferredSize(new Dimension(1000,700));
+        bottom.setPreferredSize(new Dimension(1000,500));
+        containerButton.setPreferredSize(new Dimension(0,0));
         top.setLayout(new FlowLayout());
 
-        containerAtributeProduct = new RoundedPanel();
-        containerAtributeProduct.setLayout(new MigLayout("", "[]60[]200", "15[]15[]15[]15"));
-        containerAtributeProduct.setBackground(new Color(217, 217, 217));
+        RoundedPanel containerAtributeProduct = new RoundedPanel();
+        containerAtributeProduct.setLayout(new MigLayout("", "[]40[][][]100", "10[]10[]10[]10"));
+        containerAtributeProduct.setBackground(new Color(255, 255, 255));
         containerAtributeProduct.setPreferredSize(new Dimension(600, 200));
 
-        containerImage = new RoundedPanel();
+        RoundedPanel containerImage = new RoundedPanel();
         containerImage.setLayout(new MigLayout("", "[]", "[][]"));
-        containerImage.setBackground(new Color(217, 217, 217));
+        containerImage.setBackground(new Color(255, 255, 255));
         containerImage.setPreferredSize(new Dimension(200, 200));
 
         JPanel PanelImage = new JPanel();
         PanelImage.setPreferredSize(new Dimension(150, 150));
-        PanelImage.setBackground(new Color(217, 217, 217));
+        PanelImage.setBackground(new Color(255, 255, 255));
 
         JLabel lblImage = new JLabel();
         ImageIcon icon = new FlatSVGIcon("image/Product/" +imageProduct + ".svg");
@@ -94,49 +80,53 @@ public class DetailProductGUI extends DialogFormDetail_1 {
 
         PanelImage.add(lblImage);
 
-
-
         containerImage.add(PanelImage, "alignx center,wrap");
         top.add(containerAtributeProduct);
         top.add(containerImage);
         EmptyBorder emptyBorder = new EmptyBorder(0, 30, 0, 0);
         top.setBorder(emptyBorder);
 
-        columnNames = new String[]{"ID nguyên liệu", "Tên nguyên liệu", "Số lượng", "Đơn vị"};
+        String[] columnNames = new String[]{"ID", "Tên nguyên liệu", "Đơn vị", "Giá vốn", "SL", "T.Tiền"};
         dataTable = new DataTable(new Object[0][0], columnNames,
                 null,
-                false, false, false, 4);
-        int[] columnWidths = {50, 300, 50, 50};
+                false, false, false, 6);
+        int[] columnWidths = {50, 300, 50, 50, 50, 50};
 
         for (int i = 0; i < columnWidths.length; i++) {
             dataTable.getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
         }
-        scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        containerDataTable = new RoundedPanel();
+        RoundedScrollPane scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        RoundedPanel containerDataTable = new RoundedPanel();
         containerDataTable.setLayout(new BorderLayout());
-        containerDataTable.setBackground(new Color(217, 217, 217));
+        containerDataTable.setBackground(new Color(255, 255, 255));
         EmptyBorder emptyBorderTop = new EmptyBorder(20, 0, 0, 0);
         containerDataTable.setBorder(emptyBorderTop);
         containerDataTable.add(scrollPane, BorderLayout.CENTER);
         bottom.add(containerDataTable, BorderLayout.CENTER);
 
         JTableHeader jTableHeader = dataTable.getTableHeader();
-        jTableHeader.setBackground(new Color(232, 206, 180));
+        jTableHeader.setBackground(new Color(120, 123, 125));
 
+        JLabel lblName = createLabel("Tên sản phẩm");
+        JLabel lblCategory = createLabel("Thể loại");
+        JLabel lblSize = createLabel("Size");
+        JLabel lblPrice = createLabel("Giá bán");
+        JLabel lblCapitalPrice = createLabel("Giá Vốn");
 
+        txtNameProduct = new MyTextFieldUnderLine();
+        txtCategory = new MyTextFieldUnderLine();
+        txtPrice = new MyTextFieldUnderLine();
+        txtCapitalPrice = new MyTextFieldUnderLine();
 
-        lblName = createLabel("Tên sản phẩm");
-        lblCategory = createLabel("Thể loại");
-        lblSize = createLabel("Size");
-        lblPrice = createLabel("Giá bán");
+        txtNameProduct.setFocusable(false);
+        txtCategory.setFocusable(false);
+        txtPrice.setFocusable(false);
+        txtCapitalPrice.setFocusable(false);
 
-        txtNameProduct = createTextField();
-        txtCategory = createTextField();
-        txtPrice = createTextField();
-
-        panelSize = new JPanel();
+        new JPanel();
+        JPanel panelSize;
         panelSize = new JPanel(new FlowLayout(FlowLayout.LEFT,20,0));
-        panelSize.setBackground(new Color(217, 217, 217));
+        panelSize.setBackground(new Color(255, 255, 255));
         panelSize.setPreferredSize(new Dimension(350, 40));
 
         txtNameProduct.setText(Products.get(0).getName());
@@ -163,8 +153,7 @@ public class DetailProductGUI extends DialogFormDetail_1 {
                 selectedLabel = label;
                 label.setBackground(new Color(59, 130, 198));
                 label.setForeground(Color.WHITE);
-                loadPriceBySize(size);
-                loadRecipeBySize(size);
+                loadProductBySize(size);
             }
 
             label.addMouseListener(new MouseAdapter() {
@@ -177,8 +166,7 @@ public class DetailProductGUI extends DialogFormDetail_1 {
                     label.setBackground(new Color(59, 130, 198));
                     label.setForeground(Color.WHITE);
                     selectedLabel = label;
-                    loadPriceBySize(size);
-                    loadRecipeBySize(size);
+                    loadProductBySize(size);
                 }
             });
 
@@ -199,22 +187,15 @@ public class DetailProductGUI extends DialogFormDetail_1 {
         containerAtributeProduct.add(lblPrice);
         containerAtributeProduct.add(txtPrice,"wrap");
 
-        lblListMaterial = new JLabel("Danh sách nguyên liệu");
+        containerAtributeProduct.add(lblCapitalPrice);
+        containerAtributeProduct.add(txtCapitalPrice,"wrap");
 
-        lblListMaterial.setFont(new Font("Public Sans", Font.BOLD, 16));
+        JLabel lblListMaterial = new JLabel("Danh sách nguyên liệu");
+
+        lblListMaterial.setFont(new Font("Public Sans", Font.BOLD, 18));
 
         center.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
         center.add(lblListMaterial);
-
-        containerInforMaterial = new RoundedPanel();
-        containerInforMaterial.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
-        containerInforMaterial.setBackground(new Color(217, 217, 217));
-
-        EmptyBorder emptyBorder1 = new EmptyBorder(0, 30, 0, 0);
-        containerInforMaterial.setBorder(emptyBorder1);
-        bottom.add(containerInforMaterial, BorderLayout.NORTH);
-
-
 
     }
     private JLabel createLabel(String text) {
@@ -224,33 +205,35 @@ public class DetailProductGUI extends DialogFormDetail_1 {
         return label;
     }
 
-    private JTextField createTextField() {
-        JTextField textField = new JTextField();
-        textField.setPreferredSize(new Dimension(350, 30));
-        textField.setFont(new Font("Public Sans", Font.PLAIN, 14));
-        textField.setBackground(new Color(245, 246, 250));
-//        textField.setEditable(false);
-        textField.setFocusable(false);
-        return textField;
-    }
-    private void loadPriceBySize(String size){
+
+    private void loadProductBySize(String size){
         for(Product product: Products){
             if(product.getSize().equals(size)){
-                String price = product.getPrice().toString();
-                txtPrice.setText(price);
-                return;
+                String name = product.getName();
+                String category = product.getCategory();
+                double price = product.getPrice();
+                double capital_price = product.getCapital_price();
+                txtNameProduct.setText(name);
+                txtCategory.setText(category);
+                txtPrice.setText(Double.toString(price));
+                txtCapitalPrice.setText(Double.toString(capital_price));
+                loadRecipeBySize(size);
             }
         }
-        txtPrice.setText("0");
     }
     private void loadRecipeBySize(String size) {
-        System.out.println(size);
-        System.out.println(product_id);
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
-//        List<List<Object>> searchResults = recipeBLL.searchRecipesByProduct(product_id, size);
-//        for (List<Object> row : searchResults) {
-//            model.addRow(row.toArray());
-//        }
+        for (Recipe recipe : recipes) {
+            if (recipe.getSize().equals(size)) {
+                Material material = materialBLL.findMaterialsBy(Map.of("id", recipe.getMaterial_id())).get(0);
+                String materialName = material.getName();
+                String materialPrice = String.valueOf(material.getUnit_price());
+                double materialPriceD = material.getUnit_price();
+                double totalAmount = materialPriceD * recipe.getQuantity();
+                Object[] rowData = {recipe.getMaterial_id(), materialName, recipe.getUnit(), materialPrice, recipe.getQuantity(), totalAmount};
+                model.addRow(rowData);
+            }
+        }
     }
 }

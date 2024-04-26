@@ -1,19 +1,26 @@
 package com.coffee.GUI.DialogGUI.FormAddGUI;
 
+import com.coffee.BLL.MaterialBLL;
 import com.coffee.BLL.Work_ScheduleBLL;
 import com.coffee.BLL.StaffBLL;
+import com.coffee.DTO.Material;
 import com.coffee.DTO.Work_Schedule;
 import com.coffee.DTO.Staff;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.components.AutocompleteJComboBox;
+import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.StringSearchable;
+import com.coffee.GUI.components.swing.DataSearch;
+import com.coffee.GUI.components.swing.EventClick;
+import com.coffee.GUI.components.swing.MyTextField;
+import com.coffee.GUI.components.swing.PanelSearch;
 import com.coffee.main.Cafe_Application;
-import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
@@ -24,19 +31,22 @@ public class AddWorkScheduleGUI extends DialogForm {
     private JLabel titleName;
     private List<JLabel> attributeWork_Schedule;
     private List<JTextField> jTextFieldWork_Schedule;
-    private AutocompleteJComboBox combo;
     private JTextField jTextFieldDate;
     private JTextField dateTextField;
-    private JDateChooser jDateChooser;
+    private DatePicker datePicker;
+    private JFormattedTextField editor;
     private JButton buttonCancel;
     private JButton buttonAdd;
     private JCheckBox jCheckBox1;
     private JCheckBox jCheckBox2;
     private JCheckBox jCheckBox3;
-
+    private MyTextField txtSearch;
+    private PanelSearch search;
+    private JPopupMenu menu;
     private StaffBLL staffBLL = new StaffBLL();
     private Work_ScheduleBLL work_ScheduleBLL = new Work_ScheduleBLL();
     private List<String> staffList;
+    private int staff_id = -1;
 
     public AddWorkScheduleGUI() {
         super();
@@ -44,13 +54,37 @@ public class AddWorkScheduleGUI extends DialogForm {
         super.setSize(new Dimension(600, 400));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init();
+        menu = new JPopupMenu();
+        search = new PanelSearch();
+        menu.setBorder(BorderFactory.createLineBorder(new Color(164, 164, 164)));
+        menu.add(search);
+        menu.setFocusable(false);
+        search.addEventClick(new EventClick() {
+            @Override
+            public void itemClick(DataSearch data) {
+                menu.setVisible(false);
+                txtSearch.setText(data.getText());
+                Staff staff = staffBLL.findStaffsBy(Map.of("name", data.getText().split(" - ")[0])).get(0);
+                staff_id = staff.getId();
+            }
+
+            @Override
+            public void itemRemove(Component com, DataSearch data) {
+                search.remove(com);
+                menu.setPopupSize(menu.getWidth(), (search.getItemSize() * 35) + 2);
+                if (search.getItemSize() == 0) {
+                    menu.setVisible(false);
+                }
+            }
+        });
         setVisible(true);
     }
 
     private void init() {
         titleName = new JLabel();
         jTextFieldDate = new JTextField();
-        jDateChooser = new JDateChooser();
+        datePicker = new DatePicker();
+        editor = new JFormattedTextField();
         dateTextField = new JTextField();
         attributeWork_Schedule = new ArrayList<>();
         jTextFieldWork_Schedule = new ArrayList<>();
@@ -74,41 +108,39 @@ public class AddWorkScheduleGUI extends DialogForm {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+            label.setFont((new Font("Public Sans", Font.BOLD, 16)));
             attributeWork_Schedule.add(label);
             content.add(label);
 
 
             if (string.equals("Nhân viên")) {
-                for (Staff staff : staffBLL.searchStaffs("deleted = 0")) {
-                    staffList.add(String.valueOf(staff.getId()));
-                }
+                txtSearch = new MyTextField();
+                txtSearch.setPreferredSize(new Dimension(200, 30));
 
-                staffList.replaceAll(s -> staffBLL.findStaffsBy(Map.of("id", Integer.valueOf(s))).get(0).getName() + " - " + s);
-                StringSearchable searchable = new StringSearchable(staffList);
+                txtSearch.addMouseListener(new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(java.awt.event.MouseEvent evt) {
+                        txtSearchMouseClicked(evt);
+                    }
+                });
+                txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+                    public void keyPressed(java.awt.event.KeyEvent evt) {
+                        txtSearchKeyPressed(evt);
+                    }
 
-                combo = new AutocompleteJComboBox(searchable);
-                combo.setPreferredSize(new Dimension(1000, 30));
-                combo.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-                combo.setBackground(new Color(245, 246, 250));
-                content.add(combo, "wrap");
+                    public void keyReleased(java.awt.event.KeyEvent evt) {
+                        txtSearchKeyReleased(evt);
+                    }
+                });
+                content.add(txtSearch, "wrap");
                 continue;
             }
             if (string.equals("Ngày")) {
-                jTextFieldDate = new JTextField();
-                jTextFieldDate.setFont(new Font("Times New Roman", Font.BOLD, 15));
-                jTextFieldDate.setPreferredSize(new Dimension(1000, 30));
-                jTextFieldDate.setAutoscrolls(true);
-
-                jDateChooser = new JDateChooser();
-                jDateChooser.setDateFormatString("dd/MM/yyyy");
-                jDateChooser.setPreferredSize(new Dimension(1000, 30));
-                jDateChooser.setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
-
-                dateTextField = (JTextField) jDateChooser.getDateEditor().getUiComponent();
-                dateTextField.setFont(new Font("Lexend", Font.BOLD, 14));
-
-                content.add(jDateChooser, "wrap");
+                datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.SINGLE_DATE_SELECTED);
+                datePicker.setEditor(editor);
+                datePicker.setCloseAfterSelected(true);
+                editor.setPreferredSize(new Dimension(200, 30));
+                editor.setFont(new Font("Inter", Font.BOLD, 15));
+                content.add(editor, "wrap");
                 continue;
             }
             if (string.equals("Ca")) {
@@ -148,6 +180,8 @@ public class AddWorkScheduleGUI extends DialogForm {
         containerButton.add(buttonCancel);
 
         buttonAdd.setPreferredSize(new Dimension(100, 30));
+        buttonAdd.setBackground(new Color(1, 120, 220));
+        buttonAdd.setForeground(Color.white);
         buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonAdd.addMouseListener(new MouseAdapter() {
@@ -162,19 +196,13 @@ public class AddWorkScheduleGUI extends DialogForm {
     private void addWork_Schedule() {
         Pair<Boolean, String> result;
 
-        int id, staff_id;
+        int id;
         List<Integer> shifts = new ArrayList<>();
         Date date;
         String checkin, checkout;
 
-        if (combo.getSelectedItem() == null) {
+        if (staff_id == -1) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên!",
-                    "Thông báo", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        if (!staffList.contains(combo.getSelectedItem())) {
-            JOptionPane.showMessageDialog(null, "Nhân viên không hợp lệ!",
                     "Thông báo", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -183,9 +211,12 @@ public class AddWorkScheduleGUI extends DialogForm {
         work_schedules.sort(Comparator.comparing(Work_Schedule::getId));
         id = work_ScheduleBLL.getAutoID(work_schedules);
 
-        staff_id = Integer.parseInt(Objects.requireNonNull(combo.getSelectedItem()).toString().split(" - ")[1]);
-        date = java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser.getDate()));
-
+        date = datePicker.getDateSQL_Single();
+        if (date == null) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn ngày làm!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         if (jCheckBox1.isSelected())
             shifts.add(1);
 
@@ -200,13 +231,18 @@ public class AddWorkScheduleGUI extends DialogForm {
                     "Thông báo", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        if (shifts.size() == 3) {
+            JOptionPane.showMessageDialog(null, "Một nhân viên chỉ được làm tối đa 12h/ngày.\nVui lòng chọn lại ca làm việc.",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         checkin = "null";
         checkout = "null";
 
         List<Work_Schedule> newWork_scheduleList = new ArrayList<>();
         for (Integer shift : shifts) {
-            Work_Schedule workSchedule = new Work_Schedule(id, staff_id, date, checkin, checkout, shift);
+            Work_Schedule workSchedule = new Work_Schedule(id, staff_id, date, checkin, checkout, shift, "Không");
             newWork_scheduleList.add(workSchedule);
             id += 1;
         }
@@ -220,5 +256,51 @@ public class AddWorkScheduleGUI extends DialogForm {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void txtSearchMouseClicked(java.awt.event.MouseEvent evt) {
+        if (search.getItemSize() > 0 && !txtSearch.getText().isEmpty()) {
+            menu.show(txtSearch, 0, txtSearch.getHeight());
+            search.clearSelected();
+        }
+    }
+
+    private List<DataSearch> search(String text) {
+        staff_id = -1;
+        List<DataSearch> list = new ArrayList<>();
+        List<Staff> staffs = new StaffBLL().findStaffs("name", text);
+        for (Staff m : staffs) {
+            if (list.size() == 7)
+                break;
+            list.add(new DataSearch(m.getName() + " - " + m.getId()));
+        }
+        return list;
+    }
+
+    private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {
+        if (evt.getKeyCode() != KeyEvent.VK_UP && evt.getKeyCode() != KeyEvent.VK_DOWN && evt.getKeyCode() != KeyEvent.VK_ENTER) {
+            String text = txtSearch.getText().trim().toLowerCase();
+            search.setData(search(text));
+            if (search.getItemSize() > 0 && !txtSearch.getText().isEmpty()) {
+                menu.show(txtSearch, 0, txtSearch.getHeight());
+                menu.setPopupSize(menu.getWidth(), (search.getItemSize() * 35) + 2);
+            } else {
+                menu.setVisible(false);
+            }
+        }
+    }
+
+    private void txtSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_UP) {
+            search.keyUp();
+        } else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            search.keyDown();
+        } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            String text = search.getSelectedText();
+            txtSearch.setText(text);
+
+        }
+        menu.setVisible(false);
+
     }
 }

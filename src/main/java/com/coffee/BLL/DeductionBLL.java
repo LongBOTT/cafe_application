@@ -84,7 +84,7 @@ public class DeductionBLL extends Manager<Deduction> {
     }
 
     public Pair<Boolean, String> exists(Deduction deduction) {
-        List<Deduction> modules = findDeductions("name", deduction.getName());
+        List<Deduction> modules = findDeductionsBy(Map.of("name", deduction.getName()));
 
         if (!modules.isEmpty()) {
             return new Pair<>(true, "Giảm trừ đã tồn tại.");

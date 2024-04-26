@@ -88,8 +88,10 @@ public class Payroll_DetailBLL extends Manager<Payroll_Detail> {
             case "payroll_id" -> payroll_Detail.getPayroll_id();
             case "staff_id" -> payroll_Detail.getStaff_id();
             case "hours_amount" -> payroll_Detail.getHours_amount();
-            case "bonus_amount" -> payroll_Detail.getBonus_amount();
+            case "allowance_amount" -> payroll_Detail.getAllowance_amount();
             case "deduction_amount" -> payroll_Detail.getDeduction_amount();
+            case "bonus_amount" -> payroll_Detail.getBonus_amount();
+            case "fine_amount" -> payroll_Detail.getFine_amount();
             case "salary_amount" -> payroll_Detail.getSalary_amount();
             case "status" -> payroll_Detail.isStatus();
             default -> null;

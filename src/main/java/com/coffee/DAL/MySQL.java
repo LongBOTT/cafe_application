@@ -32,6 +32,7 @@ public class MySQL {
                 result.add(row);
             }
             System.out.println(formattedQuery);
+            System.out.println();
         }
         Database.closeConnection(connection);
         return result;
@@ -46,9 +47,48 @@ public class MySQL {
             String formattedQuery = formatQuery(query, values);
             numOfRows = statement.executeUpdate(formattedQuery);
             System.out.println(formattedQuery);
+            System.out.println();
         }
         Database.closeConnection(connection);
         return numOfRows;
+    }
+
+    public void executeProcedureAddMaterial(int id, String size, int quantity) throws SQLException, IOException {
+        Connection connection = Database.getConnection();
+        if (connection == null)
+            return;
+        int numOfRows;
+        try (Statement statement = connection.createStatement()) {
+            CallableStatement cstmt = connection.prepareCall("{CALL addMaterial(?, ?, ?)}");
+
+            // Thiết lập tham số
+            cstmt.setLong(1, id);
+            cstmt.setString(2, size);
+            cstmt.setInt(3, quantity);
+
+            // Thực thi thủ tục lưu trữ và kiểm tra kết quả
+            boolean hasResultSet = cstmt.execute();
+        }
+        Database.closeConnection(connection);
+    }
+
+    public void executeProcedureSubMaterial(int id, String size, int quantity) throws SQLException, IOException {
+        Connection connection = Database.getConnection();
+        if (connection == null)
+            return;
+        int numOfRows;
+        try (Statement statement = connection.createStatement()) {
+            CallableStatement cstmt = connection.prepareCall("{CALL subMaterial(?, ?, ?)}");
+
+            // Thiết lập tham số
+            cstmt.setLong(1, id);
+            cstmt.setString(2, size);
+            cstmt.setInt(3, quantity);
+
+            // Thực thi thủ tục lưu trữ và kiểm tra kết quả
+            boolean hasResultSet = cstmt.execute();
+        }
+        Database.closeConnection(connection);
     }
 
     public String formatQuery(String query, Object... values) {
@@ -94,6 +134,7 @@ public class MySQL {
                 result.add(row);
             }
             System.out.println(query);
+            System.out.println();
         }
         Database.closeConnection(connection);
         return result;

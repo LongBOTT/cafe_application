@@ -3,20 +3,17 @@ package com.coffee.GUI.DialogGUI.FormAddGUI;
 import com.coffee.BLL.MaterialBLL;
 import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Material;
-import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.DialogForm;
-import com.coffee.GUI.SupplierGUI;
+import com.coffee.GUI.components.MyTextFieldUnderLine;
+import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
-import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,7 +26,7 @@ public class AddMaterialGUI extends DialogForm {
     private JComboBox<String> listUnit;
 
     private MaterialBLL materialBLL = new MaterialBLL();
-    private SupplierBLL supplierBLL = new SupplierBLL();
+    private JCheckBox saleCheckbox;
 
     public AddMaterialGUI() {
         super();
@@ -60,7 +57,7 @@ public class AddMaterialGUI extends DialogForm {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+            label.setFont((new Font("Public Sans", Font.BOLD, 16)));
             attributeMaterial.add(label);
             content.add(label);
 
@@ -78,7 +75,7 @@ public class AddMaterialGUI extends DialogForm {
                 content.add(listUnit, "wrap");
                 continue;
             }
-            JTextField textField = new JTextField();
+            JTextField textField = new MyTextFieldUnderLine();
             if (string.equals("Tồn Kho Tối Thiểu") || string.equals("Tồn Kho Tối Đa") || string.equals("Giá Vốn")) {
                 textField.addKeyListener(new KeyAdapter() {
                     public void keyTyped(KeyEvent e) {
@@ -96,7 +93,8 @@ public class AddMaterialGUI extends DialogForm {
             content.add(textField, "wrap");
 
         }
-
+        saleCheckbox = new JCheckBox("Bán trực tiếp");
+        content.add(saleCheckbox);
 
         buttonCancel.setPreferredSize(new Dimension(100, 30));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
@@ -119,6 +117,8 @@ public class AddMaterialGUI extends DialogForm {
         containerButton.add(buttonCancel);
 
         buttonAdd.setPreferredSize(new Dimension(100, 30));
+        buttonAdd.setBackground(new Color(1, 120, 220));
+        buttonAdd.setForeground(Color.white);
         buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonAdd.addMouseListener(new MouseAdapter() {
@@ -168,8 +168,8 @@ public class AddMaterialGUI extends DialogForm {
             return;
         }
         unit_price = Double.parseDouble(jTextFieldMaterial.get(3).getText());
-
-        Material material = new Material(id, name, 0, min_remain, max_remain, unit, unit_price, false);
+        boolean sell = saleCheckbox.isSelected();
+        Material material = new Material(id, name, 0, min_remain, max_remain, unit, unit_price, sell, false, 0);
         result = materialBLL.addMaterial(material);
         if (result.getKey()) {
             JOptionPane.showMessageDialog(null, result.getValue(),

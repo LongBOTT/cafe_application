@@ -8,12 +8,19 @@ import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.coffee.main.Cafe_Application;
+
+import com.coffee.utils.PDF;
+import com.coffee.utils.Resource;
+import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +37,7 @@ public class DetailExportGUI extends DialogFormDetail {
 
     public DetailExportGUI(Export_Note export) {
         super();
-        super.setTitle("Thông tin phiếu xuất");
+        super.setTitle("Thông Tin Phiếu Xuất");
         super.setSize(new Dimension(700, 700));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         init(export);
@@ -47,7 +54,7 @@ public class DetailExportGUI extends DialogFormDetail {
                 "50[]20[]50",
                 "10[]10[]10"));
 
-        titleName.setText("Thông tin Phiếu Xuất");
+        titleName.setText("Thông Tin Phiếu Xuất");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
         titleName.setHorizontalAlignment(JLabel.CENTER);
         titleName.setVerticalAlignment(JLabel.CENTER);
@@ -65,7 +72,7 @@ public class DetailExportGUI extends DialogFormDetail {
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
             if (string.trim().equals("Ngày Tạo")) {
-                textField.setText(export.getInvoice_date().toString());
+                textField.setText(new SimpleDateFormat("dd/MM/yyyy").format(export.getInvoice_date()));
             }
             if (string.trim().equals("Mã Phiếu Xuất")) {
                 String exportId = Integer.toString(export.getId());
@@ -85,6 +92,7 @@ public class DetailExportGUI extends DialogFormDetail {
         dataTable.getColumnModel().getColumn(1).setMaxWidth(500);
         dataTable.getColumnModel().getColumn(2).setMaxWidth(50);
         dataTable.getColumnModel().getColumn(3).setMaxWidth(200);
+        dataTable.setRowHeight(25);
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         contentmid.add(scrollPane, BorderLayout.CENTER);
@@ -98,7 +106,7 @@ public class DetailExportGUI extends DialogFormDetail {
         contentbot.add(label);
 
         JLabel textField = new JLabel();
-        String total = "" + export.getTotal();
+        String total = VNString.currency(Double.parseDouble(export.getTotal().toString()));
         textField.setText(total);
         textField.setPreferredSize(new Dimension(1000, 30));
         textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
@@ -108,13 +116,24 @@ public class DetailExportGUI extends DialogFormDetail {
         RoundedPanel roundedPanel = new RoundedPanel();
         roundedPanel.setLayout(new GridBagLayout());
         roundedPanel.setPreferredSize(new Dimension(150, 40));
-        roundedPanel.setBackground(new Color(255, 255, 255));
+        roundedPanel.setBackground(new Color(1, 120, 220));
         roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         containerButton.add(roundedPanel);
 
         JLabel panel = new JLabel("In phiếu xuất");
         panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        panel.setForeground(Color.white);
         panel.setIcon(new FlatSVGIcon("icon/print.svg"));
+        roundedPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+                PDF.exportBillDetailsPDF(export, "src/main/resources/ExportPDF");
+                JOptionPane.showMessageDialog(null, "In phiếu xuất thành công.",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+
+            }
+        });
         roundedPanel.add(panel);
     }
 

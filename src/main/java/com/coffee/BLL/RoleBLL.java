@@ -94,7 +94,7 @@ public class RoleBLL extends Manager<Role> {
     }
 
     public Pair<Boolean, String> exists(Role role) {
-        List<Role> modules = findRoles("name", role.getName());
+        List<Role> modules = findRolesBy(Map.of("name", role.getName()));
 
         if (!modules.isEmpty()) {
             return new Pair<>(true, "Chức vụ đã tồn tại.");
