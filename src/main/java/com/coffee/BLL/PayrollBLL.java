@@ -5,6 +5,7 @@ import com.coffee.DTO.*;
 import com.coffee.utils.VNString;
 import javafx.util.Pair;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -258,7 +259,6 @@ public class PayrollBLL extends Manager<Payroll> {
                                     fine_amount += workScheduleFine.getFine_total();
                                 }
                             }
-
                         }
 
                         System.out.println("Tong tien thuong: " + VNString.currency(bonus_amount) + "\n");
@@ -276,25 +276,26 @@ public class PayrollBLL extends Manager<Payroll> {
                                 }
                             }
                             int count = 0;
-                            for (Work_Schedule work_schedule : ca_nghi_co_phep) {
-                                if (work_schedule.getNotice().equals("Nghỉ phép năm")) {
-                                    List<Leave_Of_Absence_Form> leaveOfAbsenceForms = new Leave_Of_Absence_FormBLL().searchLeave_Of_Absence_Forms("staff_id = " + staff.getId(), "reason = 'Nghỉ phép năm'", "YEAR(entnry_date) = YEAR(NOW())");
-                                    if (leaveOfAbsenceForms.size() <= 12) {
-                                        System.out.println("Ngay nghi duoc huong luong: " + work_schedule.getDate() + "\n");
+                            List<Leave_Of_Absence_Form> leaveOfAbsenceForms1 = new Leave_Of_Absence_FormBLL().searchLeave_Of_Absence_Forms("staff_id = " + staff.getId(), "reason = 'Nghỉ phép năm'", "YEAR(date_off) = " + payroll.getYear());
+                            List<Leave_Of_Absence_Form> leaveOfAbsenceForms2 = new Leave_Of_Absence_FormBLL().searchLeave_Of_Absence_Forms("staff_id = " + staff.getId(), "reason = 'Nghỉ kết hôn'", "YEAR(date_off) = " + payroll.getYear());
+                            List<Leave_Of_Absence_Form> leaveOfAbsenceForms3 = new Leave_Of_Absence_FormBLL().searchLeave_Of_Absence_Forms("staff_id = " + staff.getId(), "reason = 'Nghỉ con cái kết hôn'", "YEAR(date_off) = " + payroll.getYear());
+
+                            for (Leave_Of_Absence_Form leaveOfAbsenceForm : new Leave_Of_Absence_FormBLL().searchLeave_Of_Absence_Forms("staff_id = " + staff.getId(), "MONTH(date_off) = " + payroll.getMonth(), "YEAR(date_off) = " + payroll.getYear())) {
+                                if (leaveOfAbsenceForm.getReason().equals("Nghỉ phép năm")) {
+                                    if (leaveOfAbsenceForms1.size() <= 12) {
+                                        leaveOfAbsenceForms1.add(new Leave_Of_Absence_Form());
                                         count += 1;
                                     }
                                 }
-                                if (work_schedule.getNotice().equals("Nghỉ kết hôn")) {
-                                    List<Leave_Of_Absence_Form> leaveOfAbsenceForms = new Leave_Of_Absence_FormBLL().searchLeave_Of_Absence_Forms("staff_id = " + staff.getId(), "reason = 'Nghỉ kết hôn'", "YEAR(entnry_date) = YEAR(NOW())");
-                                    if (leaveOfAbsenceForms.size() <= 3) {
-                                        System.out.println("Ngay nghi duoc huong luong: " + work_schedule.getDate() + "\n");
+                                if (leaveOfAbsenceForm.getReason().equals("Nghỉ kết hôn")) {
+                                    if (leaveOfAbsenceForms2.size() <= 3) {
+                                        leaveOfAbsenceForms2.add(new Leave_Of_Absence_Form());
                                         count += 1;
                                     }
                                 }
-                                if (work_schedule.getNotice().equals("Nghỉ con cái kết hôn")) {
-                                    List<Leave_Of_Absence_Form> leaveOfAbsenceForms = new Leave_Of_Absence_FormBLL().searchLeave_Of_Absence_Forms("staff_id = " + staff.getId(), "reason = 'Nghỉ con cái kết hôn'", "YEAR(entnry_date) = YEAR(NOW())");
-                                    if (leaveOfAbsenceForms.isEmpty()) {
-                                        System.out.println("Ngay nghi duoc huong luong: " + work_schedule.getDate() + "\n");
+                                if (leaveOfAbsenceForm.getReason().equals("Nghỉ con cái kết hôn")) {
+                                    if (leaveOfAbsenceForms3.isEmpty()) {
+                                        leaveOfAbsenceForms3.add(new Leave_Of_Absence_Form());
                                         count += 1;
                                     }
                                 }

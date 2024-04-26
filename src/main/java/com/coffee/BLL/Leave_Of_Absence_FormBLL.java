@@ -2,6 +2,7 @@ package com.coffee.BLL;
 
 import com.coffee.DAL.Leave_Of_Absence_FormDAL;
 import com.coffee.DTO.Leave_Of_Absence_Form;
+import com.coffee.DTO.Payroll;
 import javafx.util.Pair;
 
 import java.time.LocalDate;
@@ -32,10 +33,10 @@ public class Leave_Of_Absence_FormBLL extends Manager<Leave_Of_Absence_Form> {
     public Pair<Boolean, String> addLeave_Of_Absence_Form(Leave_Of_Absence_Form leave_Of_Absence_Form) {
         Pair<Boolean, String> result;
 
-//        result = validateDate(leave_Of_Absence_Form.getStart_date(), leave_Of_Absence_Form.getEnd_date());
-//        if (!result.getKey()) {
-//            return new Pair<>(false, result.getValue());
-//        }
+        result = exists(leave_Of_Absence_Form);
+        if (result.getKey()) {
+            return new Pair<>(false, result.getValue());
+        }
 
         if (leave_Of_Absence_FormDAL.addLeave_Of_Absence_Form(leave_Of_Absence_Form) == 0)
             return new Pair<>(false, "Thêm đơn nghỉ phép không thành công.");
@@ -90,6 +91,14 @@ public class Leave_Of_Absence_FormBLL extends Manager<Leave_Of_Absence_Form> {
         if (start_date.after(end_date))
             return new Pair<>(false, "Ngày bắt đầu phải trước ngày kết thúc.");
         return new Pair<>(true, "Thời gian nghỉ phép hợp lệ.");
+    }
+
+    public Pair<Boolean, String> exists(Leave_Of_Absence_Form leaveOfAbsenceForm) {
+        List<Leave_Of_Absence_Form> payrolls = searchLeave_Of_Absence_Forms("staff_id = " + leaveOfAbsenceForm.getStaff_id(), "date_off = '" + leaveOfAbsenceForm.getDate_off() + "'");
+        if (!payrolls.isEmpty()) {
+            return new Pair<>(true, "Đã tồn tại đơn nghỉ phép cho ngày này.");
+        }
+        return new Pair<>(false, "");
     }
 
     @Override
