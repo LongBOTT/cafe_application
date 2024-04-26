@@ -3,6 +3,7 @@ package com.coffee.main;
 import com.coffee.GUI.HomeGUI;
 import com.coffee.GUI.LoginGUI;
 
+import com.coffee.GUI.StatisticSalesGUI;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -44,6 +45,8 @@ public class Cafe_Application {
 //        new EditWorkScheduleGUI(new Work_ScheduleBLL().searchWork_schedules("id = 55").get(0));
 //        new AddPayrollGUI();
 //        new DetailPayroll_DetailGUI(new Payroll_DetailBLL().searchPayroll_Details().get(0), new PayrollBLL().searchPayrolls().get(0));
+
+
     }
 
     public static void exit(int status) {
