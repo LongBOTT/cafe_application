@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 25, 2024 at 01:22 PM
+-- Generation Time: Apr 26, 2024 at 07:50 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -295,8 +295,7 @@ INSERT INTO `deduction` (`id`, `name`, `deduction_amount`, `deduction_type`) VAL
 (1, 'Đi muộn', 30000, 0),
 (2, 'Về sớm', 30000, 1),
 (3, 'Nghỉ làm không phép', 30000, 3),
-(4, 'kk', 8, 0),
-(5, 'k', 3, 0);
+(4, 'Tiền mặc định', 20000, 2);
 
 -- --------------------------------------------------------
 
@@ -609,7 +608,7 @@ CREATE TABLE `payroll` (
 --
 
 INSERT INTO `payroll` (`id`, `name`, `entry_date`, `month`, `year`, `total_salary`, `paid`, `debt`) VALUES
-(1, 'Bảng lương 03/2024', '2024-04-25', 3, 2024, 43611538.461538464, 0, 43611538.461538464);
+(1, 'Bảng lương 03/2024', '2024-04-26', 3, 2024, 43156730.76923077, 43156730.76923077, 0);
 
 -- --------------------------------------------------------
 
@@ -634,12 +633,12 @@ CREATE TABLE `payroll_detail` (
 --
 
 INSERT INTO `payroll_detail` (`payroll_id`, `staff_id`, `hours_amount`, `allowance_amount`, `deduction_amount`, `bonus_amount`, `fine_amount`, `salary_amount`, `status`) VALUES
-(1, 2, 31, 145000, 0, 0, 0, 8519038.461538462, b'0'),
-(1, 3, 30, 150000, 30000, 0, 0, 8220000, b'0'),
-(1, 4, 370.5, 155000, 60000, 0, 0, 9357500, b'0'),
-(1, 5, 372, 155000, 0, 0, 0, 9455000, b'0'),
-(1, 6, 155, 155000, 0, 0, 0, 4030000, b'0'),
-(1, 7, 155, 155000, 0, 0, 0, 4030000, b'0');
+(1, 2, 30, 145000, 110000, 50000, 20000, 8164230.769230769, b'1'),
+(1, 3, 30, 150000, 50000, 0, 0, 8200000, b'1'),
+(1, 4, 370.5, 155000, 80000, 0, 0, 9337500, b'1'),
+(1, 5, 372, 155000, 20000, 0, 0, 9435000, b'1'),
+(1, 6, 155, 155000, 20000, 0, 0, 4010000, b'1'),
+(1, 7, 155, 155000, 20000, 0, 0, 4010000, b'1');
 
 -- --------------------------------------------------------
 
@@ -1103,7 +1102,8 @@ CREATE TABLE `salary_format_deduction` (
 INSERT INTO `salary_format_deduction` (`salary_format_id`, `deduction_id`) VALUES
 (1, 1),
 (1, 2),
-(1, 3);
+(1, 3),
+(1, 4);
 
 -- --------------------------------------------------------
 
@@ -1438,7 +1438,7 @@ INSERT INTO `work_schedule` (`id`, `staff_id`, `date`, `check_in`, `check_out`, 
 (211, 2, '2024-03-25', 'null', 'null', 1, 'Nghỉ ốm'),
 (212, 2, '2024-03-25', 'null', 'null', 2, 'Nghỉ ốm'),
 (213, 3, '2024-03-25', '18:00', '23:00', 3, 'Không'),
-(214, 2, '2024-03-26', '6:00', '12:00', 1, 'Không'),
+(214, 2, '2024-03-26', 'null', 'null', 1, 'Không'),
 (215, 2, '2024-03-26', '12:00', '18:00', 2, 'Không'),
 (216, 3, '2024-03-26', 'null', 'null', 3, 'Không'),
 (217, 4, '2024-03-24', '6:00', '12:00', 1, 'Không'),
@@ -1459,7 +1459,7 @@ INSERT INTO `work_schedule` (`id`, `staff_id`, `date`, `check_in`, `check_out`, 
 (232, 5, '2024-03-26', '6:00', '12:00', 1, 'Không'),
 (233, 5, '2024-03-26', '12:00', '18:00', 2, 'Không'),
 (234, 6, '2024-03-26', '18:00', '23:00', 3, 'Không'),
-(235, 2, '2024-03-27', '6:00', '12:00', 1, 'Không'),
+(235, 2, '2024-03-27', '06:50', '12:00', 1, 'Không'),
 (236, 2, '2024-03-27', '12:00', '18:00', 2, 'Không'),
 (237, 3, '2024-03-27', '18:00', '23:00', 3, 'Không'),
 (238, 2, '2024-03-28', '6:00', '12:00', 1, 'Không'),
@@ -1478,7 +1478,7 @@ INSERT INTO `work_schedule` (`id`, `staff_id`, `date`, `check_in`, `check_out`, 
 (251, 5, '2024-03-28', '12:00', '18:00', 2, 'Không'),
 (252, 6, '2024-03-28', '18:00', '23:00', 3, 'Không'),
 (253, 2, '2024-03-29', '6:00', '12:00', 1, 'Không'),
-(254, 2, '2024-03-29', '12:00', '18:00', 2, 'Không'),
+(254, 2, '2024-03-29', '12:00', '17:00', 2, 'Không'),
 (255, 3, '2024-03-29', '18:00', '23:00', 3, 'Không'),
 (256, 2, '2024-03-30', '6:00', '12:00', 1, 'Không'),
 (257, 2, '2024-03-30', '12:00', '18:00', 2, 'Không'),
@@ -1519,6 +1519,13 @@ CREATE TABLE `work_schedule_bonus` (
   `bonus_total` double DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `work_schedule_bonus`
+--
+
+INSERT INTO `work_schedule_bonus` (`work_schedule_id`, `bonus_name`, `bonus_amount`, `quantity`, `bonus_total`) VALUES
+(239, 'xyz', 50000, 1, 50000);
+
 -- --------------------------------------------------------
 
 --
@@ -1532,6 +1539,13 @@ CREATE TABLE `work_schedule_fine` (
   `quantity` int(11) DEFAULT NULL,
   `fine_total` double DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `work_schedule_fine`
+--
+
+INSERT INTO `work_schedule_fine` (`work_schedule_id`, `fine_name`, `fine_amount`, `quantity`, `fine_total`) VALUES
+(215, 'abc', 10000, 2, 20000);
 
 --
 -- Indexes for dumped tables
