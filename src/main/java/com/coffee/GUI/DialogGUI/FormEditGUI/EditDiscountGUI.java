@@ -1,17 +1,15 @@
-package com.coffee.GUI.DialogGUI.FromEditGUI;
+package com.coffee.GUI.DialogGUI.FormEditGUI;
 
 import com.coffee.BLL.DiscountBLL;
 import com.coffee.BLL.Discount_DetailBLL;
 import com.coffee.BLL.ProductBLL;
 import com.coffee.DTO.Discount;
 import com.coffee.DTO.Discount_Detail;
-import com.coffee.DTO.Product;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
+import com.coffee.GUI.SaleGUI;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedPanel;
-import com.coffee.GUI.components.swing.DataSearch;
-import com.coffee.GUI.components.swing.EventClick;
-import com.coffee.GUI.components.swing.PanelSearch;
+import com.coffee.main.Cafe_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -251,6 +249,7 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
                 if (result.getKey()) {
                     JOptionPane.showMessageDialog(null, "Sửa chương trình giảm giá thành công");
                     dispose();
+                    loadSaleGUI();
                 } else {
                     JOptionPane.showMessageDialog(null, result.getValue());
                 }
@@ -561,7 +560,20 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
     }
-
+    private void loadSaleGUI() {
+        if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
+                    saleGUI.loadCategory();
+                    saleGUI.loadProductRoundPanel();
+                    saleGUI.loadProduct(saleGUI.resultSearch);
+                }
+            });
+            thread.start();
+        }
+    }
 }
 
 

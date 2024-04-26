@@ -7,7 +7,7 @@ import com.coffee.BLL.Work_ScheduleBLL;
 import com.coffee.DTO.Role_Detail;
 import com.coffee.DTO.Staff;
 import com.coffee.DTO.Work_Schedule;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditWorkScheduleGUI;
+import com.coffee.GUI.DialogGUI.FormEditGUI.EditWorkScheduleGUI;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;

@@ -1,11 +1,5 @@
 package com.coffee.main;
 
-import com.coffee.BLL.PayrollBLL;
-import com.coffee.BLL.Payroll_DetailBLL;
-import com.coffee.BLL.Work_ScheduleBLL;
-import com.coffee.GUI.DialogGUI.FormAddGUI.AddPayrollGUI;
-import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailPayroll_DetailGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditWorkScheduleGUI;
 import com.coffee.GUI.HomeGUI;
 import com.coffee.GUI.LoginGUI;
 

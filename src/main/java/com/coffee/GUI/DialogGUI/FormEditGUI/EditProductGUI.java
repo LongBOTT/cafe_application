@@ -1,4 +1,4 @@
-package com.coffee.GUI.DialogGUI.FromEditGUI;
+package com.coffee.GUI.DialogGUI.FormEditGUI;
 
 import com.coffee.BLL.MaterialBLL;
 import com.coffee.BLL.ProductBLL;
@@ -810,10 +810,8 @@ public class EditProductGUI extends DialogFormDetail_1 {
             if (!check1) { // Nếu size không tồn tại trong productListDefault thì thực hiện thêm sản phẩm
                 // Kiểm tra nếu sản phẩm đã được xóa trước đó
                 List<Product> productsDeleted = productBLL.searchProducts("id = '" + product_id + "'", "deleted = 1");
-                System.out.println("Danh sách sản phẩm đã xóa: " + productsDeleted.toString());
                 boolean check2 = false;
                 for (Product productDeleted : productsDeleted) {
-                    System.out.println("Đã zo for");
                     if (productDeleted.getSize().equals(product.getSize())) {
                         Pair<Boolean, String> result = productBLL.updateProduct(product);
                         check2 = true;
@@ -822,10 +820,8 @@ public class EditProductGUI extends DialogFormDetail_1 {
                         break;
                     }
                 }
-                System.out.println("Check2: " + check2);
                 // Nếu sản phẩm không tồn tại trong danh sách sản phẩm đã bị xóa, thực hiện thêm mới
                 if (!check2) {
-                    System.out.println("Đã zo if");
                     Pair<Boolean, String> result = productBLL.addProduct(product);
                     if (!result.getKey())
                         return false;
@@ -873,6 +869,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
         }
         return true;
     }
+
     private Pair<Boolean, String> checkSizeRecipeEmpty() {
         StringBuilder error = new StringBuilder();
         for (Product product : productList) {
@@ -895,6 +892,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
         }
         return new Pair<>(true, "");
     }
+
     private void updateQuantity() {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
@@ -998,6 +996,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
         label.setFont(new Font("Public Sans", Font.BOLD, 16));
         return label;
     }
+
     private void loadSaleGUI() {
         if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
             Thread thread = new Thread(new Runnable() {

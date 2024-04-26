@@ -1,10 +1,9 @@
-package com.coffee.GUI.DialogGUI.FromEditGUI;
+package com.coffee.GUI.DialogGUI.FormEditGUI;
 
 import com.coffee.BLL.SupplierBLL;
 import com.coffee.DTO.Supplier;
 import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
-import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.main.Cafe_Application;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;

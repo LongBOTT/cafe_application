@@ -4,7 +4,7 @@ import com.coffee.BLL.*;
 import com.coffee.DTO.*;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddStaffGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.*;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditStaffGUI;
+import com.coffee.GUI.DialogGUI.FormEditGUI.EditStaffGUI;
 import com.coffee.GUI.components.*;
 import com.coffee.ImportExcel.AddEmployeeFromExcel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;

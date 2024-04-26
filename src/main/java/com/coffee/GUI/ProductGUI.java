@@ -7,12 +7,10 @@ import com.coffee.GUI.DialogGUI.FormAddGUI.AddProductGUI;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddProductGUI1;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailProductGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailProductGUI1;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditProductGUI;
-import com.coffee.GUI.DialogGUI.FromEditGUI.EditProductGUI1;
+import com.coffee.GUI.DialogGUI.FormEditGUI.EditProductGUI;
+import com.coffee.GUI.DialogGUI.FormEditGUI.EditProductGUI1;
 import com.coffee.GUI.components.*;
-import com.coffee.ImportExcel.AddDiscountFromExcel;
 import com.coffee.ImportExcel.AddProductFromExcel;
-import com.coffee.main.Cafe_Application;
 import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
@@ -345,10 +343,13 @@ public class ProductGUI extends Layout3 {
         categoriesName.removeAll(categoriesName);
         categoriesName.add("TẤT CẢ");
         categoriesName.addAll(productBLL.getCategories());
+
+        Color defaultColor = new Color(236, 185, 188); // Màu mặc định
+        Color clickedColor = new Color(253, 143, 143); // Màu khi nhấp vào
         for (String category : categoriesName) {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new FlowLayout());
-            roundedPanel.setBackground(new Color(253, 143, 143));
+            roundedPanel.setBackground(defaultColor);
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
@@ -358,7 +359,14 @@ public class ProductGUI extends Layout3 {
                     if (!categoryName.equals(jLabel.getText())) {
                         categoryName = jLabel.getText();
                         searchCategory();
-
+                    }
+                    // Đổi màu khi nhấp vào
+                    roundedPanel.setBackground(clickedColor);
+                    // Đổi màu các panel khác trở lại màu mặc định
+                    for (Component comp : Category.getComponents()) {
+                        if (comp != roundedPanel && comp instanceof RoundedPanel) {
+                            ((RoundedPanel) comp).setBackground(defaultColor);
+                        }
                     }
                 }
             });
@@ -371,7 +379,6 @@ public class ProductGUI extends Layout3 {
             roundedPanel.add(jLabel);
 
             roundedPanel.setPreferredSize(new Dimension(Math.max(jLabel.getPreferredSize().width + 10, 100), 31));
-
         }
         Category.repaint();
         Category.revalidate();

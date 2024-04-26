@@ -1,14 +1,10 @@
-package com.coffee.GUI.DialogGUI.FromEditGUI;
+package com.coffee.GUI.DialogGUI.FormEditGUI;
 
 import com.coffee.BLL.MaterialBLL;
 import com.coffee.BLL.ProductBLL;
-import com.coffee.BLL.RecipeBLL;
 import com.coffee.DTO.Material;
 import com.coffee.DTO.Product;
-import com.coffee.DTO.Recipe;
 import com.coffee.GUI.DialogGUI.DialogForm;
-import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
-import com.coffee.GUI.ProductGUI;
 import com.coffee.GUI.SaleGUI;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.swing.DataSearch;
@@ -34,7 +30,6 @@ import java.nio.file.StandardCopyOption;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,10 +48,8 @@ public class EditProductGUI1 extends DialogForm {
     private final PanelSearch search;
     private JTextField txtSearch;
 
-    private String imageProduct = null;
-
-    private final int productID = productBLL.getAutoID(productBLL.searchProducts());
-
+    private String imageProduct;
+    private final int product_id;
 
     public EditProductGUI1(Product product) {
         super();
@@ -64,6 +57,8 @@ public class EditProductGUI1 extends DialogForm {
         super.setSize(new Dimension(1000, 350));
         super.setLocationRelativeTo(Cafe_Application.homeGUI);
         System.out.println(product.toString());
+        this.product_id = product.getId();
+        this.imageProduct = product.getImage();
         init(product);
         menu = new JPopupMenu();
         search = new PanelSearch();
@@ -112,15 +107,16 @@ public class EditProductGUI1 extends DialogForm {
 
         JPanel PanelImage = new JPanel();
         PanelImage.setPreferredSize(new Dimension(150, 150));
+        PanelImage.setLayout(new MigLayout("", "[]", "[]"));
+        PanelImage.setBackground(new Color(255, 255, 255));
+
         lblImage = new JLabel();
-        imageProduct = product.getImage();
+        ImageIcon iconProduct = new FlatSVGIcon("image/Product/" + imageProduct + ".svg");
+        Image imgProduct = iconProduct.getImage();
+        Image newImgProduct = imgProduct.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
+        iconProduct = new ImageIcon(newImgProduct);
+        lblImage.setIcon(iconProduct);
         PanelImage.add(lblImage);
-        ImageIcon icon = new FlatSVGIcon("image/Product/" + imageProduct + ".svg");
-        Image image = icon.getImage();
-        Image newImg = image.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
-        icon = new ImageIcon(newImg);
-        lblImage.setIcon(icon);
-        lblImage.scrollRectToVisible(new Rectangle());
 
         JButton btnImage = new JButton("Thêm ảnh");
         btnImage.setPreferredSize(new Dimension(100, 30));
@@ -231,8 +227,8 @@ public class EditProductGUI1 extends DialogForm {
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
 
-            String imageFile = "SP" + productID + ".svg";
-            String imageName = "SP" + productID;
+            String imageFile = "SP" + product_id + ".svg";
+            String imageName = "SP" + product_id;
             java.nio.file.Path destinationPath = Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "image", "Product", imageFile);
             java.nio.file.Path destinationPathTarget = Paths.get(System.getProperty("user.dir"), "target", "classes", "image", "Product", imageFile);
             try {
@@ -279,8 +275,8 @@ public class EditProductGUI1 extends DialogForm {
         if (error.isEmpty()) {
             double priceDoule = Double.parseDouble(price);
             double capital_priceDouble = Double.parseDouble(capital_price);
-            Product product = new Product(productID, product_name, "Không", category, priceDoule, capital_priceDouble, imageProduct, false);
-            result = productBLL.addProduct(product);
+            Product product = new Product(product_id, product_name, "Không", category, priceDoule, capital_priceDouble, imageProduct, false);
+            result = productBLL.updateProduct(product);
             if (!result.getKey())
                 JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             else {

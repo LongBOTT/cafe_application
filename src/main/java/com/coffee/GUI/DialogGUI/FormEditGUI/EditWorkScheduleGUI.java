@@ -1,11 +1,10 @@
-package com.coffee.GUI.DialogGUI.FromEditGUI;
+package com.coffee.GUI.DialogGUI.FormEditGUI;
 
 import com.coffee.BLL.*;
 
 import com.coffee.DTO.*;
 import com.coffee.GUI.CreateWorkScheduleGUI;
 import com.coffee.GUI.DialogGUI.DialogForm;
-import com.coffee.GUI.DialogGUI.FormAddGUI.AddAllowanceGUI;
 import com.coffee.GUI.components.AutocompleteJComboBox;
 import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
