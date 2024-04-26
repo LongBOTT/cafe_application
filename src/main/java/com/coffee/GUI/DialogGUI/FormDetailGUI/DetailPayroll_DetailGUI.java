@@ -80,11 +80,11 @@ public class DetailPayroll_DetailGUI extends DialogForm {
 
         jTabbedPane.add("Thông Tin", infoPanel);
         if (roleDetail.getType_salary() == 2)
-            jTabbedPane.add("Giờ làm", infoPanel);
+            jTabbedPane.add("Giờ Công", hoursPanel);
         jTabbedPane.add("Phụ Cấp", allowancePanel);
         jTabbedPane.add("Đi Trễ", latePanel);
         jTabbedPane.add("Về Sớm", earlyPanel);
-        jTabbedPane.add("Giảm trừ cố định", defaultDeductionPanel);
+        jTabbedPane.add("Giảm Trừ Cố định", defaultDeductionPanel);
         jTabbedPane.add("Nghỉ Không Phép", absentPanel2);
         jTabbedPane.add("Nghỉ Có Phép", absentPanel1);
         jTabbedPane.add("Thưởng", bonusPanel);
@@ -97,6 +97,42 @@ public class DetailPayroll_DetailGUI extends DialogForm {
         List<Salary_Format_Deduction> salaryFormatDeductions = new Salary_Format_DeductionBLL().searchSalary_Format_Deductions("salary_format_id = " + salaryFormat.getId());
 
         List<Work_Schedule> ca_nghi_co_phep = new ArrayList<>();
+
+        if (roleDetail.getType_salary() == 2) {
+            // tinh luong theo gio
+            for (Work_Schedule work_schedule : work_scheduleList) {
+                if (!work_schedule.getCheck_in().equals("null") && !work_schedule.getCheck_out().equals("null")) {
+                    // ca co di lam
+                    String[] checkinArr, checkoutArr;
+                    double checkin, checkout;
+
+                    checkinArr = work_schedule.getCheck_in().split(":");
+                    double v = Double.parseDouble(checkinArr[1]) / 60;
+                    checkin = Double.parseDouble(checkinArr[0]) + v;
+
+                    checkoutArr = work_schedule.getCheck_out().split(":");
+                    v = Double.parseDouble(checkoutArr[1]) / 60;
+                    checkout = Double.parseDouble(checkoutArr[0]) + v;
+
+                    List<String> hoursList = new ArrayList<>();
+                    hoursList.add(new SimpleDateFormat("dd/MM/yyyy").format(work_schedule.getDate()));
+                    if (work_schedule.getShift() == 1)
+                        hoursList.add("Ca 1: 6:00 - 12:00");
+
+                    if (work_schedule.getShift() == 2)
+                        hoursList.add("Ca 2: 12:00 - 18:00");
+
+                    if (work_schedule.getShift() == 3)
+                        hoursList.add("Ca 3: 18:00 - 23:00");
+                    hoursList.add(work_schedule.getCheck_in());
+                    hoursList.add(work_schedule.getCheck_out());
+                    hoursList.add(String.format("%.2f", (Math.abs(checkout - checkin))));
+
+                    hoursObjectList.add(hoursList);
+                }
+            }
+        }
+
 
         for (Salary_Format_Allowance salaryFormatAllowance : salaryFormatAllowances) {
             Allowance allowance = new AllowanceBLL().searchAllowances("id = " + salaryFormatAllowance.getAllowance_id()).get(0);
@@ -310,7 +346,7 @@ public class DetailPayroll_DetailGUI extends DialogForm {
 
         }
 
-        System.out.println("tro cap" + Arrays.toString(hoursObjectList.toArray()));
+        System.out.println("gio cong" + Arrays.toString(hoursObjectList.toArray()));
         System.out.println("tro cap" + Arrays.toString(allowanceObjectList.toArray()));
         System.out.println("di tre" + Arrays.toString(lateObjectList.toArray()));
         System.out.println("ve som" + Arrays.toString(earlyObjectList.toArray()));
@@ -321,7 +357,8 @@ public class DetailPayroll_DetailGUI extends DialogForm {
         System.out.println("phat" + Arrays.toString(fineObjectList.toArray()));
 
         initInfoPanel(infoPanel);
-        initHoursPanel(hoursPanel);
+        if (roleDetail.getType_salary() == 2)
+            initHoursPanel(hoursPanel);
         initAllowancePanel(allowancePanel);
         initLatePanel(latePanel);
         initEarlyPanel(earlyPanel);
@@ -333,6 +370,95 @@ public class DetailPayroll_DetailGUI extends DialogForm {
     }
 
     private void initHoursPanel(JScrollPane hoursPanel) {
+        hoursPanel.setPreferredSize(new Dimension(1000, 600));
+        hoursPanel.setBackground(Color.gray);
+
+        JPanel panel = new JPanel();
+        panel.setBackground(Color.white);
+        panel.setLayout(new MigLayout("", "10[]10", "10[]10"));
+
+        JPanel jpanel1 = new JPanel(new MigLayout("", "0[]10[]10[]10[]10[]0", "0[]0"));
+        jpanel1.setBackground(new Color(227, 242, 250));
+        jpanel1.setPreferredSize(new Dimension(860, 30));
+
+        JLabel titleHoursDate = new JLabel();
+        JLabel titleHoursShift = new JLabel();
+        JLabel titleHoursCheckin = new JLabel();
+        JLabel titleHoursCheckout = new JLabel();
+        JLabel titleHoursTotal = new JLabel();
+
+        titleHoursDate.setText("Ngày");
+        titleHoursShift.setText("Ca làm");
+        titleHoursCheckin.setText("Giờ vào ca");
+        titleHoursCheckout.setText("Giờ ra ca");
+        titleHoursTotal.setText("Tổng giờ công");
+
+        titleHoursDate.setPreferredSize(new Dimension(200, 30));
+        titleHoursDate.setFont((new Font("Inter", Font.BOLD, 13)));
+
+        titleHoursShift.setPreferredSize(new Dimension(200, 30));
+        titleHoursShift.setFont((new Font("Inter", Font.BOLD, 13)));
+
+        titleHoursCheckin.setPreferredSize(new Dimension(200, 30));
+        titleHoursCheckin.setFont((new Font("Inter", Font.BOLD, 13)));
+
+        titleHoursCheckout.setPreferredSize(new Dimension(200, 30));
+        titleHoursCheckout.setFont((new Font("Inter", Font.BOLD, 13)));
+
+        titleHoursTotal.setPreferredSize(new Dimension(200, 30));
+        titleHoursTotal.setFont((new Font("Inter", Font.BOLD, 13)));
+
+        jpanel1.add(titleHoursDate);
+        jpanel1.add(titleHoursShift);
+        jpanel1.add(titleHoursCheckin);
+        jpanel1.add(titleHoursCheckout);
+        jpanel1.add(titleHoursTotal, "wrap");
+        panel.add(jpanel1, "wrap");
+
+        for (List<String> list : hoursObjectList) {
+            JPanel jPanelHours = new JPanel(new MigLayout("", "0[]10[]10[]10[]10[]0", "0[]0"));
+            jPanelHours.setBackground(new Color(255, 255, 255));
+            jPanelHours.setPreferredSize(new Dimension(860, 50));
+
+            JTextField jLabelHoursDate = new MyTextFieldUnderLine();
+            jLabelHoursDate.setText(list.get(0));
+            jLabelHoursDate.setPreferredSize(new Dimension(200, 30));
+            jLabelHoursDate.setFont((new Font("Inter", Font.PLAIN, 13)));
+            jLabelHoursDate.setEditable(false);
+            jPanelHours.add(jLabelHoursDate);
+
+            JTextField jLabelHoursShift = new MyTextFieldUnderLine();
+            jLabelHoursShift.setText(list.get(1));
+            jLabelHoursShift.setPreferredSize(new Dimension(200, 30));
+            jLabelHoursShift.setFont((new Font("Inter", Font.PLAIN, 13)));
+            jLabelHoursShift.setEditable(false);
+            jPanelHours.add(jLabelHoursShift);
+
+            JTextField jLabelHoursCheckin = new MyTextFieldUnderLine();
+            jLabelHoursCheckin.setText(list.get(2));
+            jLabelHoursCheckin.setPreferredSize(new Dimension(200, 30));
+            jLabelHoursCheckin.setFont((new Font("Inter", Font.PLAIN, 13)));
+            jLabelHoursCheckin.setEditable(false);
+            jPanelHours.add(jLabelHoursCheckin);
+
+            JTextField jLabelHoursCheckout = new MyTextFieldUnderLine();
+            jLabelHoursCheckout.setText(list.get(3));
+            jLabelHoursCheckout.setPreferredSize(new Dimension(200, 30));
+            jLabelHoursCheckout.setFont((new Font("Inter", Font.PLAIN, 13)));
+            jLabelHoursCheckout.setEditable(false);
+            jPanelHours.add(jLabelHoursCheckout);
+
+            JTextField jLabelHoursTotal = new MyTextFieldUnderLine();
+            jLabelHoursTotal.setText(list.get(4));
+            jLabelHoursTotal.setPreferredSize(new Dimension(200, 30));
+            jLabelHoursTotal.setFont((new Font("Inter", Font.PLAIN, 13)));
+            jLabelHoursTotal.setEditable(false);
+            jPanelHours.add(jLabelHoursTotal);
+
+            panel.add(jPanelHours, "wrap");
+        }
+
+        hoursPanel.setViewportView(panel);
     }
 
     private void initDefaultDeductionPanel(JScrollPane defaultDeductionPanel) {
@@ -1035,7 +1161,7 @@ public class DetailPayroll_DetailGUI extends DialogForm {
             }
             if (string.equals("Giờ công thực tế")) {
                 if (role_detail.getType_salary() == 2)
-                    textField.setText(String.valueOf(payrollDetail.getHours_amount()) + " giờ");
+                    textField.setText(String.format("%.2f", payrollDetail.getHours_amount()) + " giờ");
                 else
                     textField.setText(String.valueOf(payrollDetail.getHours_amount()).split("\\.")[0] + " ngày");
                 infoPanel.add(textField);

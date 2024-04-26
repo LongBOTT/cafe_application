@@ -5,6 +5,7 @@ import com.coffee.DTO.Receipt;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class ReceiptDAL extends Manager {
                 return new Receipt(
                         Integer.parseInt(row.get(0)), // id
                         Integer.parseInt(row.get(1)), // staff_id
-                        Date.valueOf(row.get(2)), // invoice_date
+                        LocalDateTime.parse(row.get(2)), // invoice_date
                         Double.parseDouble(row.get(3)), // total_price
                         Double.parseDouble(row.get(4)), // total_discount
                         Double.parseDouble(row.get(5)), // total

@@ -17,6 +17,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -199,6 +201,7 @@ public class ReceiptGUI extends Layout2 {
                 receiptList.removeIf(receipt -> !staffIDList.contains(receipt.getStaff_id()));
             }
             if (datePicker.getDateSQL_Between() != null) {
+                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
                 Date startDate = datePicker.getDateSQL_Between()[0];
                 Date endDate = datePicker.getDateSQL_Between()[1];
                 if (startDate.after(endDate)) {
@@ -206,7 +209,7 @@ public class ReceiptGUI extends Layout2 {
                             "Lỗi", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                receiptList.removeIf(receipt -> (receipt.getInvoice_date().before(startDate) || receipt.getInvoice_date().after(endDate)));
+                receiptList.removeIf(receipt -> (receipt.getInvoice_date().isBefore(LocalDateTime.parse(startDate.toString(), myFormatObj)) || receipt.getInvoice_date().isAfter(LocalDateTime.parse(endDate.toString(), myFormatObj))));
             }
             loadDataTable(receiptBLL.getData(receiptList));
         }

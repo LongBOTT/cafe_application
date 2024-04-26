@@ -111,7 +111,8 @@ public class ProductDAL extends Manager {
     public List<List<String>> getBestSellers() {
         try {
             return executeQuery("SELECT rd.product_id\n" +
-                    "FROM receipt_detail rd\n" +
+                    "FROM receipt_detail rd JOIN receipt rp\n" +
+                    "WHERE YEAR(rp.invoice_date) = YEAR(NOW())\n" +
                     "GROUP BY rd.product_id\n" +
                     "ORDER BY COUNT(rd.receipt_id) DESC LIMIT 10");
         } catch (SQLException | IOException e) {

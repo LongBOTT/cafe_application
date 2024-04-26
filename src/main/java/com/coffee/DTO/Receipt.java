@@ -3,12 +3,14 @@ package com.coffee.DTO;
 import com.coffee.utils.VNString;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class Receipt {
     private int id;
     private int staff_id;
-    private Date invoice_date;
+    private LocalDateTime invoice_date;
     private double total_price;
     private double total_discount;
     private double total;
@@ -19,7 +21,7 @@ public class Receipt {
     public Receipt() {
     }
 
-    public Receipt(int id, int staff_id, Date invoice_date, double total_price, double total_discount, double total, double received, double excess, int discount_id) {
+    public Receipt(int id, int staff_id, LocalDateTime invoice_date, double total_price, double total_discount, double total, double received, double excess, int discount_id) {
         this.id = id;
         this.staff_id = staff_id;
         this.invoice_date = invoice_date;
@@ -55,11 +57,11 @@ public class Receipt {
         this.total = total;
     }
 
-    public Date getInvoice_date() {
+    public LocalDateTime getInvoice_date() {
         return invoice_date;
     }
 
-    public void setInvoice_date(Date invoice_date) {
+    public void setInvoice_date(LocalDateTime invoice_date) {
         this.invoice_date = invoice_date;
     }
 
@@ -108,6 +110,7 @@ public class Receipt {
         return id + " | " +
                 staff_id + " | " +
                 VNString.currency(total) + " | " +
-                new SimpleDateFormat("dd/MM/yyyy").format(invoice_date);
+                invoice_date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm::ss"));
     }
+
 }

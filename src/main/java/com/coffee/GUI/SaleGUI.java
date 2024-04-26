@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 
@@ -318,7 +319,7 @@ public class SaleGUI extends SalePanel {
         else
             discount_id = discountActive.getId();
 
-        Receipt receipt = new Receipt(id, HomeGUI.staff.getId(), Date.valueOf(LocalDate.now()), totalPrice, totalDiscount, total, cash, excess, discount_id);
+        Receipt receipt = new Receipt(id, HomeGUI.staff.getId(), LocalDateTime.now(), totalPrice, totalDiscount, total, cash, excess, discount_id);
 
         Pair<Boolean, String> result = receiptBLL.addReceipt(receipt);
         if (result.getKey()) {
