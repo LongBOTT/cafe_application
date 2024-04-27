@@ -19,17 +19,16 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class StatisticProductGUI extends JPanel {
-    private RoundedPanel displayTypePanel;
-    private RoundedPanel searchPanel;
+    //    private RoundedPanel displayTypePanel;
     private DatePicker datePicker;
     private JFormattedTextField editor;
-    private ButtonGroup btnGroupDisplayType;
-    private ButtonGroup btnGroupConcerns;
     private MyTextField txtSearchProductName;
     private PanelSearch searchProductName;
     private JPopupMenu menuProductName;
@@ -42,6 +41,8 @@ public class StatisticProductGUI extends JPanel {
     private JComboBox<String> jComboBoxRemainMaterial;
     private JPanel content;
     private int concern = 0;
+    private int displayType = 0;
+    private JScrollPane scrollPane;
 
     public StatisticProductGUI() {
         setBackground(Color.WHITE);
@@ -53,114 +54,159 @@ public class StatisticProductGUI extends JPanel {
     }
 
     private void init() {
-        initTopBar();
+        scrollPane = new JScrollPane();
+        scrollPane.setPreferredSize(new Dimension(270, 700));
+        add(scrollPane, BorderLayout.EAST);
+        initRightBar();
 
         content = new JPanel();
         content.setLayout(new FlowLayout(FlowLayout.LEFT));
-        content.setPreferredSize(new Dimension(1165, 670));
-        content.setBackground(Color.white);
+        content.setPreferredSize(new Dimension(730, 700));
+        content.setBackground(new Color(238, 238, 238));
         add(content, BorderLayout.CENTER);
     }
 
-    private void initTopBar() {
-        JPanel top = new JPanel();
-        top.setLayout(new FlowLayout(FlowLayout.LEFT));
-        top.setPreferredSize(new Dimension(1165, 110));
-//        top.setBackground(new Color(191, 198, 208));
-        top.setBackground(Color.white);
-        top.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
-        add(top, BorderLayout.NORTH);
+    private void initRightBar() {
+        JPanel jPanel = new JPanel(new MigLayout("", "5[]5", "10[]10"));
+        jPanel.setBackground(new Color(238, 238, 238));
+        scrollPane.setViewportView(jPanel);
 
-        displayTypePanel = new RoundedPanel();
-        displayTypePanel.setBackground(new Color(227, 242, 250));
-        displayTypePanel.setLayout(new MigLayout("", "[]", "0[]0[]0[]0"));
-        displayTypePanel.setPreferredSize(new Dimension(200, 50));
-        top.add(displayTypePanel);
+        // chon hien thi
+        RoundedPanel displayTypePanel = new RoundedPanel();
+        displayTypePanel.setBackground(new Color(255, 255, 255));
+        displayTypePanel.setLayout(new MigLayout("", "10[]10", "10[]10"));
+        displayTypePanel.setPreferredSize(new Dimension(247, 100));
+        jPanel.add(displayTypePanel, "wrap");
 
+        ButtonGroup btnGroupDisplayType = new ButtonGroup();
+        JLabel labelDisplayType = new JLabel("Chọn hiển thị");
+        labelDisplayType.setFont(new Font("Inter", Font.BOLD, 14));
+        displayTypePanel.add(labelDisplayType, "wrap");
+
+        JRadioButton reportRadioButton = createRadioButton("Báo cáo");
+        reportRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                displayType = 1;
+                // xu ly load bieu do
+            }
+        });
+
+        if (concern == 0 || concern == 1 || concern == 3) {
+            JRadioButton chartRadioButton = createRadioButton("Biểu đồ");
+            chartRadioButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    displayType = 0;
+                    // xu ly load bieu do
+                }
+            });
+            chartRadioButton.setSelected(true);
+            btnGroupDisplayType.add(chartRadioButton);
+            displayTypePanel.add(chartRadioButton, "wrap");
+        } else {
+            reportRadioButton.setSelected(true);
+        }
+        btnGroupDisplayType.add(reportRadioButton);
+        displayTypePanel.add(reportRadioButton, "wrap");
+
+
+        // chon mau quan tam
         RoundedPanel concernsPanel = new RoundedPanel();
-        concernsPanel.setBackground(new Color(227, 242, 250));
-        concernsPanel.setLayout(new MigLayout("", "[]", "0[]0[]0[]0"));
-        concernsPanel.setPreferredSize(new Dimension(615, 50));
-        top.add(concernsPanel);
-
-        RoundedPanel timePanel = new RoundedPanel();
-        timePanel.setBackground(new Color(227, 242, 250));
-        timePanel.setLayout(new MigLayout("", "[]", "0[]0[]0[]0"));
-        timePanel.setPreferredSize(new Dimension(330, 50));
-        top.add(timePanel);
-
-        searchPanel = new RoundedPanel();
-        searchPanel.setBackground(new Color(227, 242, 250));
-        searchPanel.setLayout(new MigLayout("", "[]20[]20[]20[]", "0[]0"));
-        searchPanel.setPreferredSize(new Dimension(1155, 45));
-        top.add(searchPanel);
+        concernsPanel.setBackground(new Color(255, 255, 255));
+        concernsPanel.setLayout(new MigLayout("", "10[]10", "10[]10"));
+        concernsPanel.setPreferredSize(new Dimension(247, 220));
+        jPanel.add(concernsPanel, "wrap");
 
         JLabel labelConcerns = new JLabel("Mối quan tâm");
         labelConcerns.setFont(new Font("Inter", Font.BOLD, 14));
         concernsPanel.add(labelConcerns, "wrap");
 
         JRadioButton radio1 = createRadioButton("Bán hàng");
+        if (concern == 0)
+            radio1.setSelected(true);
         radio1.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 concern = 0;
-                loadSearchAndViewType();
+                initRightBar();
+                // xu ly load bieu do
             }
         });
 
         JRadioButton radio2 = createRadioButton("Lợi nhuận");
+        if (concern == 1)
+            radio2.setSelected(true);
         radio2.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 concern = 1;
-                loadSearchAndViewType();
+                initRightBar();
+                // xu ly load bieu do
             }
         });
 
         JRadioButton radio3 = createRadioButton("Xuất nhập tồn");
+        if (concern == 2)
+            radio3.setSelected(true);
         radio3.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 concern = 2;
-                loadSearchAndViewType();
+                initRightBar();
+                // xu ly load bieu do
             }
         });
 
         JRadioButton radio4 = createRadioButton("Xuất nhập tồn chi tiết");
+        if (concern == 3)
+            radio4.setSelected(true);
         radio4.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 concern = 3;
-                loadSearchAndViewType();
+                initRightBar();
+                // xu ly load bieu do
             }
         });
 
         JRadioButton radio5 = createRadioButton("Xuất huỷ");
+        if (concern == 4)
+            radio5.setSelected(true);
         radio5.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 concern = 4;
-                loadSearchAndViewType();
+                initRightBar();
+                // xu ly load bieu do
             }
         });
 
-        btnGroupConcerns = new ButtonGroup();
+        ButtonGroup btnGroupConcerns = new ButtonGroup();
         btnGroupConcerns.add(radio1);
         btnGroupConcerns.add(radio2);
         btnGroupConcerns.add(radio3);
         btnGroupConcerns.add(radio4);
         btnGroupConcerns.add(radio5);
 
-        concernsPanel.add(radio1);
-        concernsPanel.add(radio2);
-        concernsPanel.add(radio3);
-        concernsPanel.add(radio4);
-        concernsPanel.add(radio5);
+        concernsPanel.add(radio1, "wrap");
+        concernsPanel.add(radio2, "wrap");
+        concernsPanel.add(radio3, "wrap");
+        concernsPanel.add(radio4, "wrap");
+        concernsPanel.add(radio5, "wrap");
+
+        // thoi gian
+
+        RoundedPanel timePanel = new RoundedPanel();
+        timePanel.setBackground(new Color(255, 255, 255));
+        timePanel.setLayout(new MigLayout("", "10[]10", "10[]10"));
+        timePanel.setPreferredSize(new Dimension(247, 50));
+        jPanel.add(timePanel, "wrap");
 
         JLabel labelTime = new JLabel("Thời gian");
         labelTime.setFont(new Font("Inter", Font.BOLD, 14));
@@ -171,7 +217,7 @@ public class StatisticProductGUI extends JPanel {
         datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
         datePicker.setEditor(editor);
         datePicker.setCloseAfterSelected(true);
-        datePicker.now();
+        datePicker.setSelectedDateRange(LocalDate.now(), LocalDate.now()); // bao loi o day
         datePicker.addDateSelectionListener(new DateSelectionListener() {
             @Override
             public void dateSelected(DateEvent dateEvent) {
@@ -179,57 +225,24 @@ public class StatisticProductGUI extends JPanel {
             }
         });
 
-        editor.setPreferredSize(new Dimension(280, 30));
-        editor.setFont(new Font("Inter", Font.BOLD, 15));
+        editor.setPreferredSize(new Dimension(240, 30));
+        editor.setFont(new Font("Inter", Font.BOLD, 13));
 
         timePanel.add(labelTime, "wrap");
         timePanel.add(editor);
 
-        radio1.setSelected(true);
-        loadSearchAndViewType();
-    }
 
-    private void loadSearchAndViewType() {
+        // ten san pham
+
+        RoundedPanel searchNamePanel = new RoundedPanel();
+        searchNamePanel.setBackground(new Color(255, 255, 255));
+        searchNamePanel.setLayout(new MigLayout("", "10[]10", "10[]10"));
+        searchNamePanel.setPreferredSize(new Dimension(247, 60));
+        jPanel.add(searchNamePanel, "wrap");
         if (concern == 0 || concern == 1) {
-            displayTypePanel.removeAll();
-
-            JLabel labelDisplayType = new JLabel("Chọn hiển thị");
-            labelDisplayType.setFont(new Font("Inter", Font.BOLD, 14));
-            displayTypePanel.add(labelDisplayType, "wrap");
-
-            JRadioButton chartRadioButton = createRadioButton("Biểu đồ");
-            chartRadioButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-
-                }
-            });
-
-            JRadioButton reportRadioButton = createRadioButton("Báo cáo");
-            reportRadioButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-
-                }
-            });
-
-            chartRadioButton.setSelected(true);
-
-            btnGroupDisplayType = new ButtonGroup();
-            btnGroupDisplayType.add(chartRadioButton);
-            btnGroupDisplayType.add(reportRadioButton);
-
-            displayTypePanel.add(chartRadioButton);
-            displayTypePanel.add(reportRadioButton);
-
-            displayTypePanel.repaint();
-            displayTypePanel.revalidate();
-
-            searchPanel.removeAll();
-
             JLabel labelName = new JLabel("Tên Sản Phẩm");
             labelName.setFont(new Font("Inter", Font.BOLD, 14));
-            searchPanel.add(labelName);
+            searchNamePanel.add(labelName, "wrap");
 
             txtSearchProductName = new MyTextField();
             txtSearchProductName.setPreferredSize(new Dimension(200, 40));
@@ -248,67 +261,11 @@ public class StatisticProductGUI extends JPanel {
                     txtSearchProductNameKeyReleased(evt);
                 }
             });
-            searchPanel.add(txtSearchProductName);
-
-            JLabel labelCategory = new JLabel("Thể Loại Sản Phẩm");
-            labelCategory.setFont(new Font("Inter", Font.BOLD, 14));
-            searchPanel.add(labelCategory);
-
-            jComboBoxCategory = new JComboBox<>();
-            jComboBoxCategory.setPreferredSize(new Dimension(200, 30));
-            jComboBoxCategory.setBackground(new Color(1, 120, 220));
-            jComboBoxCategory.setForeground(Color.white);
-
-            jComboBoxCategory.addItem("Tất cả");
-            jComboBoxCategory.setSelectedIndex(0);
-            for (String category : new ProductBLL().getCategories())
-                jComboBoxCategory.addItem(category);
-            searchPanel.add(jComboBoxCategory);
-
-            searchPanel.repaint();
-            searchPanel.revalidate();
+            searchNamePanel.add(txtSearchProductName, "wrap");
         } else {
-            btnGroupDisplayType = new ButtonGroup();
-            displayTypePanel.removeAll();
-
-            JLabel labelDisplayType = new JLabel("Chọn hiển thị");
-            labelDisplayType.setFont(new Font("Inter", Font.BOLD, 14));
-            displayTypePanel.add(labelDisplayType, "wrap");
-
-            JRadioButton reportRadioButton = createRadioButton("Báo cáo");
-            reportRadioButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-
-                }
-            });
-
-            if (concern == 3) {
-                JRadioButton chartRadioButton = createRadioButton("Biểu đồ");
-                chartRadioButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-
-                    }
-                });
-                chartRadioButton.setSelected(true);
-                btnGroupDisplayType.add(chartRadioButton);
-                displayTypePanel.add(chartRadioButton);
-            } else {
-                reportRadioButton.setSelected(true);
-            }
-            btnGroupDisplayType.add(reportRadioButton);
-            displayTypePanel.add(reportRadioButton);
-
-
-            displayTypePanel.repaint();
-            displayTypePanel.revalidate();
-
-            searchPanel.removeAll();
-
             JLabel labelName = new JLabel("Tên Nguyên Liệu");
             labelName.setFont(new Font("Inter", Font.BOLD, 14));
-            searchPanel.add(labelName);
+            searchNamePanel.add(labelName, "wrap");
 
             txtSearchMaterialName = new MyTextField();
             txtSearchMaterialName.setPreferredSize(new Dimension(200, 40));
@@ -327,28 +284,52 @@ public class StatisticProductGUI extends JPanel {
                     txtSearchMaterialNameKeyReleased(evt);
                 }
             });
-            searchPanel.add(txtSearchMaterialName);
+            searchNamePanel.add(txtSearchMaterialName, "wrap");
+        }
 
-            if (concern != 4) {
-                JLabel labelRemain = new JLabel("Tồn Kho");
-                labelRemain.setFont(new Font("Inter", Font.BOLD, 14));
-                searchPanel.add(labelRemain);
+        // the loai hoac ton kho
 
-                jComboBoxRemainMaterial = new JComboBox<>();
-                jComboBoxRemainMaterial.setPreferredSize(new Dimension(200, 30));
-                jComboBoxRemainMaterial.setBackground(new Color(1, 120, 220));
-                jComboBoxRemainMaterial.setForeground(Color.white);
+        RoundedPanel searchPanel = new RoundedPanel();
+        searchPanel.setBackground(new Color(255, 255, 255));
+        searchPanel.setLayout(new MigLayout("", "10[]10", "10[]10"));
+        searchPanel.setPreferredSize(new Dimension(247, 50));
+        if (concern == 0 || concern == 1) {
+            JLabel labelCategory = new JLabel("Thể Loại Sản Phẩm");
+            labelCategory.setFont(new Font("Inter", Font.BOLD, 14));
+            searchPanel.add(labelCategory, "wrap");
 
-                jComboBoxRemainMaterial.addItem("Tất cả");
-                jComboBoxRemainMaterial.setSelectedIndex(0);
-                jComboBoxRemainMaterial.addItem("Dưới định mức tồn");
-                jComboBoxRemainMaterial.addItem("Vượt định mức tồn");
-                jComboBoxRemainMaterial.addItem("Còn hàng trong kho");
-                jComboBoxRemainMaterial.addItem("Hết hàng trong kho");
-                searchPanel.add(jComboBoxRemainMaterial);
-            }
-            searchPanel.repaint();
-            searchPanel.revalidate();
+            jComboBoxCategory = new JComboBox<>();
+            jComboBoxCategory.setPreferredSize(new Dimension(200, 30));
+            jComboBoxCategory.setBackground(new Color(1, 120, 220));
+            jComboBoxCategory.setForeground(Color.white);
+
+            jComboBoxCategory.addItem("Tất cả");
+            jComboBoxCategory.setSelectedIndex(0);
+            for (String category : new ProductBLL().getCategories())
+                jComboBoxCategory.addItem(category);
+            searchPanel.add(jComboBoxCategory, "wrap");
+
+            jPanel.add(searchPanel, "wrap");
+        }
+        if (concern == 2 || concern == 3) {
+            JLabel labelRemain = new JLabel("Tồn Kho");
+            labelRemain.setFont(new Font("Inter", Font.BOLD, 14));
+            searchPanel.add(labelRemain, "wrap");
+
+            jComboBoxRemainMaterial = new JComboBox<>();
+            jComboBoxRemainMaterial.setPreferredSize(new Dimension(200, 30));
+            jComboBoxRemainMaterial.setBackground(new Color(1, 120, 220));
+            jComboBoxRemainMaterial.setForeground(Color.white);
+
+            jComboBoxRemainMaterial.addItem("Tất cả");
+            jComboBoxRemainMaterial.setSelectedIndex(0);
+            jComboBoxRemainMaterial.addItem("Dưới định mức tồn");
+            jComboBoxRemainMaterial.addItem("Vượt định mức tồn");
+            jComboBoxRemainMaterial.addItem("Còn hàng trong kho");
+            jComboBoxRemainMaterial.addItem("Hết hàng trong kho");
+            searchPanel.add(jComboBoxRemainMaterial, "wrap");
+
+            jPanel.add(searchPanel, "wrap");
         }
     }
 
