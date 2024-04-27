@@ -330,9 +330,9 @@ public class HomeGUI extends JFrame {
         return switch (id) {
             case 1 -> new SaleGUI(account);
             case 2 -> new MaterialGUI(functions);
-            case 3 -> new StatisticSalesGUI();
-            case 4 -> new StatisticSalaryGUI();
-            case 5 -> new StatisticStaffGUI();
+            case 3 -> new StatisticGUI();
+//            case 4 -> new StatisticSalaryGUI();
+//            case 5 -> new StatisticStaffGUI();
             case 6 -> new DiscountGUI(functions);
             case 7 -> new ReceiptGUI(functions);
             case 8 -> new ExportGUI(functions);
