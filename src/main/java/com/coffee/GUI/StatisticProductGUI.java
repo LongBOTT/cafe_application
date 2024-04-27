@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 public class StatisticProductGUI extends JPanel {
-    //    private RoundedPanel displayTypePanel;
     private DatePicker datePicker;
     private JFormattedTextField editor;
     private MyTextField txtSearchProductName;
@@ -35,7 +34,7 @@ public class StatisticProductGUI extends JPanel {
     private MyTextField txtSearchMaterialName;
     private PanelSearch searchMaterialName;
     private JPopupMenu menuMaterialName;
-    private int productID = -1;
+    private String productName = "";
     private int materialID = -1;
     private JComboBox<String> jComboBoxCategory;
     private JComboBox<String> jComboBoxRemainMaterial;
@@ -344,8 +343,7 @@ public class StatisticProductGUI extends JPanel {
             public void itemClick(DataSearch data) {
                 menuProductName.setVisible(false);
                 txtSearchProductName.setText(data.getText());
-                Product product = new ProductBLL().findProductsBy(Map.of("name", data.getText())).get(0);
-                productID = product.getId();
+                productName = data.getText();
             }
 
             @Override
@@ -411,14 +409,15 @@ public class StatisticProductGUI extends JPanel {
     }
 
     private java.util.List<DataSearch> searchProductName(String text) {
-        productID = -1;
+        productName = "";
         java.util.List<DataSearch> list = new ArrayList<>();
-        java.util.List<Product> products = new ProductBLL().findProducts("name", text);
-        for (Product m : products) {
+        java.util.List<String> allName = new ProductBLL().getAllName();
+        allName.removeIf(s -> !s.toLowerCase().contains(text.toLowerCase()));
+        for (String m : allName) {
             if (list.size() == 7) {
                 break;
             }
-            list.add(new DataSearch(m.getName()));
+            list.add(new DataSearch(m));
         }
         return list;
     }

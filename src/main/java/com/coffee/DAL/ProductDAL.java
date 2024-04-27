@@ -95,6 +95,19 @@ public class ProductDAL extends Manager {
         return new ArrayList<>();
     }
 
+    public List<String> getAllName() {
+        List<String> names = new ArrayList<>();
+        try {
+            List<List<String>> result = executeQuery("SELECT DISTINCT product.`name` FROM `product` WHERE product.`deleted` = 0");
+            for (List<String> name : result) {
+                names.add(name.get(0));
+            }
+            return names;
+        } catch (SQLException | IOException e) {
+            return names;
+        }
+    }
+
     public List<String> getCategories() {
         List<String> categories = new ArrayList<>();
         try {
