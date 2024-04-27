@@ -19,21 +19,35 @@ public class StatisticSalesGUI extends LayoutStatistic {
     }
 
     private void initUIComponents() {
-        setupDisplayType();
-        setupConcerns();
-        setupTime();
+//        setupDisplayType();
+//        setupConcerns();
+//        setupTime();
 
+        initProductPanel();
+    }
+
+    private void initProductPanel() {
+        initTopBarProductPanel();
+
+    }
+
+    private void initTopBarProductPanel() {
+        top.removeAll();
+
+
+        top.repaint();
+        top.revalidate();
     }
 
     private void setupDisplayType() {
         JLabel label = new JLabel("Kiểu hiển thị");
-        label.setFont(new Font("Public Sans", Font.BOLD, 14));
+        label.setFont(new Font("Inter", Font.BOLD, 14));
         displayTypePanel.add(label, "wrap");
 
         JRadioButton chartRadioButton = createRadioButton("Biểu đồ");
         JRadioButton reportRadioButton = createRadioButton("Báo cáo");
 
-        ButtonGroup btnGroupDisplayType= new ButtonGroup();
+        ButtonGroup btnGroupDisplayType = new ButtonGroup();
         btnGroupDisplayType.add(chartRadioButton);
         btnGroupDisplayType.add(reportRadioButton);
 
@@ -43,7 +57,7 @@ public class StatisticSalesGUI extends LayoutStatistic {
 
     private void setupConcerns() {
         JLabel label = new JLabel("Mối quan tâm");
-        label.setFont(new Font("Public Sans", Font.BOLD, 14));
+        label.setFont(new Font("Inter", Font.BOLD, 14));
         concernsPanel.add(label, "wrap");
 
         JRadioButton timeRadioButton = createRadioButton("Thời gian");
@@ -65,7 +79,7 @@ public class StatisticSalesGUI extends LayoutStatistic {
 
     private void setupTime() {
         JLabel label = new JLabel("Thời gian");
-        label.setFont(new Font("Public Sans", Font.BOLD, 14));
+        label.setFont(new Font("Inter", Font.BOLD, 14));
 
         datePicker = new DatePicker();
         editor = new JFormattedTextField();
@@ -90,7 +104,7 @@ public class StatisticSalesGUI extends LayoutStatistic {
 
     private JRadioButton createRadioButton(String text) {
         JRadioButton radioButton = new JRadioButton(text);
-        radioButton.setFont(new Font("Public Sans", Font.PLAIN, 14));
+        radioButton.setFont(new Font("Inter", Font.PLAIN, 14));
         return radioButton;
     }
 
