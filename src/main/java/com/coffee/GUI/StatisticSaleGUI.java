@@ -3,9 +3,9 @@ package com.coffee.GUI;
 import javax.swing.*;
 import java.awt.*;
 
-public class StatisticStaffGUI extends JPanel {
-    public StatisticStaffGUI() {
-        setBackground(new Color(1, 120, 220));
+public class StatisticSaleGUI extends JPanel {
+    public StatisticSaleGUI() {
+        setBackground(new Color(140, 129, 152));
         setPreferredSize(new Dimension(1000, 700));
         setLayout(new BorderLayout());
         init();

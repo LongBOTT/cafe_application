@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 27, 2024 at 06:59 AM
+-- Generation Time: Apr 27, 2024 at 10:15 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -569,7 +569,7 @@ CREATE TABLE `module` (
 INSERT INTO `module` (`id`, `name`) VALUES
 (1, 'Bán hàng'),
 (2, 'Kho hàng'),
-(3, 'Doanh thu'),
+(3, 'Báo cáo'),
 (4, 'Thống kê lương'),
 (5, 'Thống kê nhân sự'),
 (6, 'Giảm giá'),
