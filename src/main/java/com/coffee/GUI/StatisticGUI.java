@@ -1,6 +1,7 @@
 package com.coffee.GUI;
 
 import com.coffee.GUI.components.RoundedPanel;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,13 +25,12 @@ public class StatisticGUI extends RoundedPanel {
         JTabbedPane jTabbedPane = new JTabbedPane();
         jTabbedPane.setBackground(Color.white);
         jTabbedPane.setPreferredSize(new Dimension(1165, 733));
-        jTabbedPane.addTab("Cuối Ngày", statisticEndOfTheDayGUI);
-        jTabbedPane.addTab("Bán Hàng", statisticSaleGUI);
-        jTabbedPane.addTab("Nhân Viên", statisticStaffGUI);
-        jTabbedPane.addTab("Sản Phẩm", statisticProductGUI);
-        jTabbedPane.addTab("Tài Chính", statisticFinanceGUI);
+        jTabbedPane.addTab("Cuối Ngày", new FlatSVGIcon("icon/pie-chart-svgrepo-com.svg"), statisticEndOfTheDayGUI);
+        jTabbedPane.addTab("Bán Hàng", new FlatSVGIcon("icon/receipt-svgrepo-com.svg"), statisticSaleGUI);
+        jTabbedPane.addTab("Nhân Viên", new FlatSVGIcon("icon/icon_module1.svg"), statisticStaffGUI);
+        jTabbedPane.addTab("Sản Phẩm", new FlatSVGIcon("icon/box-delivery-logistic-package-present-product-svgrepo-com.svg"), statisticProductGUI);
+        jTabbedPane.addTab("Tài Chính", new FlatSVGIcon("icon/statistic-graph-chart-growth-finance-svgrepo-com.svg"), statisticFinanceGUI);
         add(jTabbedPane, BorderLayout.CENTER);
-
 
     }
 
