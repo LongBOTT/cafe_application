@@ -2,10 +2,13 @@ package com.coffee.GUI;
 
 import com.coffee.BLL.MaterialBLL;
 import com.coffee.BLL.ProductBLL;
+import com.coffee.DAL.MySQL;
 import com.coffee.DTO.Material;
 import com.coffee.DTO.Product;
 import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.RoundedPanel;
+import com.coffee.GUI.components.barchart.BarChart;
+import com.coffee.GUI.components.barchart.ModelBarChart;
 import com.coffee.GUI.components.swing.DataSearch;
 import com.coffee.GUI.components.swing.EventClick;
 import com.coffee.GUI.components.swing.MyTextField;
@@ -19,11 +22,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class StatisticProductGUI extends JPanel {
     private DatePicker datePicker;
@@ -34,7 +35,7 @@ public class StatisticProductGUI extends JPanel {
     private MyTextField txtSearchMaterialName;
     private PanelSearch searchMaterialName;
     private JPopupMenu menuMaterialName;
-    private String productName = "";
+    private String productName = null;
     private int materialID = -1;
     private JComboBox<String> jComboBoxCategory;
     private JComboBox<String> jComboBoxRemainMaterial;
@@ -53,16 +54,35 @@ public class StatisticProductGUI extends JPanel {
     }
 
     private void init() {
+        datePicker = new DatePicker();
+        editor = new JFormattedTextField();
+        datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
+        datePicker.setUsePanelOption(true);
+        datePicker.setEditor(editor);
+        datePicker.setCloseAfterSelected(true);
+        datePicker.setSelectedDateRange(LocalDate.now(), LocalDate.now()); // bao loi o day
+        datePicker.addDateSelectionListener(new DateSelectionListener() {
+            @Override
+            public void dateSelected(DateEvent dateEvent) {
+                loadData();
+            }
+        });
+
+        editor.setPreferredSize(new Dimension(240, 30));
+        editor.setFont(new Font("Inter", Font.BOLD, 13));
+
         scrollPane = new JScrollPane();
         scrollPane.setPreferredSize(new Dimension(270, 700));
         add(scrollPane, BorderLayout.EAST);
         initRightBar();
 
         content = new JPanel();
-        content.setLayout(new FlowLayout(FlowLayout.LEFT));
+        content.setLayout(new MigLayout());
         content.setPreferredSize(new Dimension(730, 700));
         content.setBackground(new Color(238, 238, 238));
         add(content, BorderLayout.CENTER);
+
+        saleChart();
     }
 
     private void initRightBar() {
@@ -87,7 +107,7 @@ public class StatisticProductGUI extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 displayType = 1;
-                // xu ly load bieu do
+                loadData();
             }
         });
 
@@ -97,7 +117,7 @@ public class StatisticProductGUI extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     displayType = 0;
-                    // xu ly load bieu do
+                    loadData();
                 }
             });
             chartRadioButton.setSelected(true);
@@ -130,7 +150,7 @@ public class StatisticProductGUI extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 concern = 0;
                 initRightBar();
-                // xu ly load bieu do
+                loadData();
             }
         });
 
@@ -143,7 +163,7 @@ public class StatisticProductGUI extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 concern = 1;
                 initRightBar();
-                // xu ly load bieu do
+                loadData();
             }
         });
 
@@ -156,7 +176,7 @@ public class StatisticProductGUI extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 concern = 2;
                 initRightBar();
-                // xu ly load bieu do
+                loadData();
             }
         });
 
@@ -169,7 +189,7 @@ public class StatisticProductGUI extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 concern = 3;
                 initRightBar();
-                // xu ly load bieu do
+                loadData();
             }
         });
 
@@ -182,7 +202,7 @@ public class StatisticProductGUI extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 concern = 4;
                 initRightBar();
-                // xu ly load bieu do
+                loadData();
             }
         });
 
@@ -210,23 +230,6 @@ public class StatisticProductGUI extends JPanel {
         JLabel labelTime = new JLabel("Thời gian");
         labelTime.setFont(new Font("Inter", Font.BOLD, 14));
 
-        datePicker = new DatePicker();
-        editor = new JFormattedTextField();
-
-        datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
-        datePicker.setEditor(editor);
-        datePicker.setCloseAfterSelected(true);
-        datePicker.setSelectedDateRange(LocalDate.now(), LocalDate.now()); // bao loi o day
-        datePicker.addDateSelectionListener(new DateSelectionListener() {
-            @Override
-            public void dateSelected(DateEvent dateEvent) {
-
-            }
-        });
-
-        editor.setPreferredSize(new Dimension(240, 30));
-        editor.setFont(new Font("Inter", Font.BOLD, 13));
-
         timePanel.add(labelTime, "wrap");
         timePanel.add(editor);
 
@@ -242,6 +245,8 @@ public class StatisticProductGUI extends JPanel {
             JLabel labelName = new JLabel("Tên Sản Phẩm");
             labelName.setFont(new Font("Inter", Font.BOLD, 14));
             searchNamePanel.add(labelName, "wrap");
+
+            productName = null;
 
             txtSearchProductName = new MyTextField();
             txtSearchProductName.setPreferredSize(new Dimension(200, 40));
@@ -265,6 +270,8 @@ public class StatisticProductGUI extends JPanel {
             JLabel labelName = new JLabel("Tên Nguyên Liệu");
             labelName.setFont(new Font("Inter", Font.BOLD, 14));
             searchNamePanel.add(labelName, "wrap");
+
+            materialID = -1;
 
             txtSearchMaterialName = new MyTextField();
             txtSearchMaterialName.setPreferredSize(new Dimension(200, 40));
@@ -306,6 +313,12 @@ public class StatisticProductGUI extends JPanel {
             jComboBoxCategory.setSelectedIndex(0);
             for (String category : new ProductBLL().getCategories())
                 jComboBoxCategory.addItem(category);
+            jComboBoxCategory.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    loadData();
+                }
+            });
             searchPanel.add(jComboBoxCategory, "wrap");
 
             jPanel.add(searchPanel, "wrap");
@@ -326,10 +339,144 @@ public class StatisticProductGUI extends JPanel {
             jComboBoxRemainMaterial.addItem("Vượt định mức tồn");
             jComboBoxRemainMaterial.addItem("Còn hàng trong kho");
             jComboBoxRemainMaterial.addItem("Hết hàng trong kho");
+            jComboBoxCategory.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    loadData();
+                }
+            });
             searchPanel.add(jComboBoxRemainMaterial, "wrap");
 
             jPanel.add(searchPanel, "wrap");
         }
+    }
+
+    private void loadData() {
+        if (concern == 0) {
+            if (displayType == 0)
+                saleChart();
+            if (displayType == 1)
+                saleReport();
+        }
+        if (concern == 1) {
+            if (displayType == 0)
+                profitChart();
+            if (displayType == 1)
+                profitReport();
+        }
+    }
+
+    private void profitReport() {
+    }
+
+    private void profitChart() {
+        Date start = null;
+        Date end = null;
+        if (datePicker.getDateSQL_Between() != null) {
+            start = datePicker.getDateSQL_Between()[0];
+            end = datePicker.getDateSQL_Between()[1];
+        }
+        String product_Name = this.productName;
+        String product_Category = Objects.requireNonNull(jComboBoxCategory.getSelectedItem()).toString();
+
+        assert start != null;
+        List<List<String>> dataProfitProduct = MySQL.getTop5ProfitProduct(product_Name, product_Category, start.toString(), end.toString());
+        List<List<String>> dataPercentProduct = MySQL.getTop5ProfitProduct(product_Name, product_Category, start.toString(), end.toString());
+
+        content.removeAll();
+
+        JLabel jLabelTile1 = new JLabel("Top 5 sản phẩm lợi nhuận cao nhất");
+        jLabelTile1.setFont(new Font("Inter", Font.BOLD, 15));
+        content.add(jLabelTile1, "center, span, wrap");
+
+        BarChart barChartProfitProduct = new BarChart();
+        barChartProfitProduct.setPreferredSize(new Dimension(1000, 350));
+//        barChartProfitProduct.setFont(new java.awt.Font("sansserif", Font.BOLD, 8));
+        content.add(barChartProfitProduct, "wrap");
+
+        JLabel jLabelTile2 = new JLabel("Top 5 sản phẩm theo tỷ suất");
+        jLabelTile2.setFont(new Font("Inter", Font.BOLD, 15));
+        content.add(jLabelTile2, "center, span, wrap");
+
+        BarChart barChartPercentProduct = new BarChart();
+        barChartPercentProduct.setPreferredSize(new Dimension(1000, 350));
+//        barChartPercentProduct.setFont(new java.awt.Font("sansserif", Font.BOLD, 8));
+        content.add(barChartPercentProduct, "wrap");
+
+        barChartProfitProduct.addLegend("Lợi nhuận", new Color(245, 189, 135));
+        for (List<String> list : dataProfitProduct) {
+            barChartProfitProduct.addData(new ModelBarChart(list.get(1), new double[]{Double.parseDouble(list.get(3))}));
+        }
+        barChartProfitProduct.start();
+
+        barChartPercentProduct.addLegend("Số lượng bán", new Color(135, 189, 245));
+        for (List<String> list : dataPercentProduct) {
+            barChartPercentProduct.addData(new ModelBarChart(list.get(1), new double[]{Double.parseDouble(list.get(3))}));
+        }
+        barChartPercentProduct.start();
+
+//        System.out.println(Arrays.toString(dataProfitProduct.toArray()));
+//        System.out.println(Arrays.toString(dataPercentProduct.toArray()));
+
+        content.repaint();
+        content.revalidate();
+    }
+
+    private void saleChart() {
+        Date start = null;
+        Date end = null;
+        if (datePicker.getDateSQL_Between() != null) {
+            start = datePicker.getDateSQL_Between()[0];
+            end = datePicker.getDateSQL_Between()[1];
+        }
+        String product_Name = this.productName;
+        String product_Category = Objects.requireNonNull(jComboBoxCategory.getSelectedItem()).toString();
+
+        assert start != null;
+        List<List<String>> dataSaleProduct = MySQL.getTop5SaleProduct(product_Name, product_Category, start.toString(), end.toString());
+        List<List<String>> dataBestSeller = MySQL.getTop5BestSellers(product_Name, product_Category, start.toString(), end.toString());
+
+        content.removeAll();
+
+        JLabel jLabelTile1 = new JLabel("Top 5 sản phẩm doanh số cao nhất");
+        jLabelTile1.setFont(new Font("Inter", Font.BOLD, 15));
+        content.add(jLabelTile1, "center, span, wrap");
+
+        BarChart barChartSaleProduct = new BarChart();
+        barChartSaleProduct.setPreferredSize(new Dimension(1000, 350));
+//        barChartSaleProduct.setFont(new java.awt.Font("sansserif", Font.BOLD, 8));
+        content.add(barChartSaleProduct, "wrap");
+
+        JLabel jLabelTile2 = new JLabel("Top 5 sản phẩm bán chạy theo số lượng");
+        jLabelTile2.setFont(new Font("Inter", Font.BOLD, 15));
+        content.add(jLabelTile2, "center, span, wrap");
+
+        BarChart barChartBestSeller = new BarChart();
+        barChartBestSeller.setPreferredSize(new Dimension(1000, 350));
+//        barChartBestSeller.setFont(new java.awt.Font("sansserif", Font.BOLD, 8));
+        content.add(barChartBestSeller, "wrap");
+
+        barChartSaleProduct.addLegend("Doanh thu", new Color(135, 189, 245));
+        for (List<String> list : dataSaleProduct) {
+            barChartSaleProduct.addData(new ModelBarChart(list.get(1), new double[]{Double.parseDouble(list.get(3))}));
+        }
+        barChartSaleProduct.start();
+
+        barChartBestSeller.addLegend("Số lượng bán", new Color(135, 189, 245));
+        for (List<String> list : dataBestSeller) {
+            barChartBestSeller.addData(new ModelBarChart(list.get(1), new double[]{Double.parseDouble(list.get(3))}));
+        }
+        barChartBestSeller.start();
+
+//        System.out.println(Arrays.toString(dataSaleProduct.toArray()));
+//        System.out.println(Arrays.toString(dataBestSeller.toArray()));
+
+        content.repaint();
+        content.revalidate();
+    }
+
+    private void saleReport() {
+
     }
 
     private void initTxtSearchName() {
@@ -344,6 +491,7 @@ public class StatisticProductGUI extends JPanel {
                 menuProductName.setVisible(false);
                 txtSearchProductName.setText(data.getText());
                 productName = data.getText();
+                loadData();
             }
 
             @Override
@@ -368,6 +516,7 @@ public class StatisticProductGUI extends JPanel {
                 txtSearchMaterialName.setText(data.getText());
                 Material material = new MaterialBLL().findMaterialsBy(Map.of("name", data.getText())).get(0);
                 materialID = material.getId();
+                loadData();
             }
 
             @Override
@@ -409,7 +558,7 @@ public class StatisticProductGUI extends JPanel {
     }
 
     private java.util.List<DataSearch> searchProductName(String text) {
-        productName = "";
+        productName = null;
         java.util.List<DataSearch> list = new ArrayList<>();
         java.util.List<String> allName = new ProductBLL().getAllName();
         allName.removeIf(s -> !s.toLowerCase().contains(text.toLowerCase()));
