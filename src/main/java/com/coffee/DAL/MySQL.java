@@ -142,15 +142,15 @@ public class MySQL {
         return result;
     }
 
-    public static List<List<String>> getTop5SaleProduct(String productName, String productCategory, String... dates) {
-        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price)\n" +
+    public static List<List<String>> getTop5SaleProduct(String productName, String size, String productCategory, String... dates) {
+        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price), SUM(rd.quantity)\n" +
                 "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
                 "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
-        if (productName != null || productCategory != null || dates.length != 0) {
+        if ((productName != null && size != null) || productCategory != null || dates.length != 0) {
             String[] strings = new String[0];
-            if (productName != null) {
+            if (productName != null && size != null) {
                 strings = Arrays.copyOf(strings, strings.length + 1);
-                strings[strings.length - 1] = "pro.name = '" + productName + "'";
+                strings[strings.length - 1] = "pro.name = '" + productName + "' AND pro.size = '" + size + "'";
             }
 
             if (!Objects.equals(productCategory, "Tất cả")) {
@@ -173,15 +173,15 @@ public class MySQL {
         }
     }
 
-    public static List<List<String>> getTop5BestSellers(String productName, String productCategory, String... dates) {
+    public static List<List<String>> getTop5BestSellers(String productName, String size, String productCategory, String... dates) {
         String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.quantity)\n" +
                 "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
                 "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
-        if (productName != null || productCategory != null || dates.length != 0) {
+        if ((productName != null && size != null) || productCategory != null || dates.length != 0) {
             String[] strings = new String[0];
-            if (productName != null) {
+            if (productName != null && size != null) {
                 strings = Arrays.copyOf(strings, strings.length + 1);
-                strings[strings.length - 1] = "pro.name = '" + productName + "'";
+                strings[strings.length - 1] = "pro.name = '" + productName + "' AND pro.size = '" + size + "'";
             }
 
             if (!Objects.equals(productCategory, "Tất cả")) {
@@ -204,15 +204,15 @@ public class MySQL {
         }
     }
 
-    public static List<List<String>> getTop5ProfitProduct(String productName, String productCategory, String... dates) {
-        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price - pro.capital_price * rd.quantity)\n" +
+    public static List<List<String>> getTop5ProfitProduct(String productName, String size, String productCategory, String... dates) {
+        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price - pro.capital_price * rd.quantity), SUM(rd.quantity), SUM(rd.price), SUM(pro.capital_price * rd.quantity), SUM(rd.price - pro.capital_price * rd.quantity)/SUM(rd.price)*100\n" +
                 "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
                 "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
-        if (productName != null || productCategory != null || dates.length != 0) {
+        if ((productName != null && size != null) || productCategory != null || dates.length != 0) {
             String[] strings = new String[0];
-            if (productName != null) {
+            if (productName != null && size != null) {
                 strings = Arrays.copyOf(strings, strings.length + 1);
-                strings[strings.length - 1] = "pro.name = '" + productName + "'";
+                strings[strings.length - 1] = "pro.name = '" + productName + "' AND pro.size = '" + size + "'";
             }
 
             if (!Objects.equals(productCategory, "Tất cả")) {
@@ -235,15 +235,15 @@ public class MySQL {
         }
     }
 
-    public static List<List<String>> getTop5CapitalizationRate(String productName, String productCategory, String... dates) {
+    public static List<List<String>> getTop5CapitalizationRate(String productName, String size, String productCategory, String... dates) {
         String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price - pro.capital_price * rd.quantity)/SUM(rd.price)*100\n" +
                 "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
                 "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
-        if (productName != null || productCategory != null || dates.length != 0) {
+        if ((productName != null && size != null) || productCategory != null || dates.length != 0) {
             String[] strings = new String[0];
-            if (productName != null) {
+            if (productName != null && size != null) {
                 strings = Arrays.copyOf(strings, strings.length + 1);
-                strings[strings.length - 1] = "pro.name = '" + productName + "'";
+                strings[strings.length - 1] = "pro.name = '" + productName + "' AND pro.size = '" + size + "'";
             }
 
             if (!Objects.equals(productCategory, "Tất cả")) {

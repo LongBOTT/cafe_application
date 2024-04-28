@@ -1,11 +1,7 @@
 package com.coffee.main;
 
-import com.coffee.BLL.ProductBLL;
-import com.coffee.BLL.ReceiptBLL;
-import com.coffee.BLL.Receipt_DetailBLL;
-import com.coffee.DTO.Product;
-import com.coffee.DTO.Receipt;
-import com.coffee.DTO.Receipt_Detail;
+import com.coffee.BLL.*;
+import com.coffee.DTO.*;
 import com.coffee.GUI.HomeGUI;
 import com.coffee.GUI.LoginGUI;
 
@@ -61,12 +57,12 @@ public class Cafe_Application {
 
 //        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 //        LocalDateTime start = LocalDateTime.of(2023, 1, 1, 0, 0);
-//        LocalDateTime end = LocalDateTime.of(2024, 4, 28, 0, 0);
+//        LocalDateTime end = LocalDateTime.of(2024, 5, 7, 0, 0);
 //
 //        List<Product> productList = new ProductBLL().searchProducts("deleted = 0");
 //        int id = 1;
 //        while (!start.equals(end)) {
-//            for (int j = 0; j < 5; j++) {
+//            for (int j = 0; j < 10; j++) {
 //                Random random = new Random();
 //
 //                // Tạo thời điểm ngẫu nhiên trong ngày 1/1/2023
@@ -120,6 +116,22 @@ public class Cafe_Application {
 //            }
 //            start = start.plusDays(1);
 //        }
+
+
+        // tinh gia von
+//        for (Product product : new ProductBLL().searchProducts( "size = 'Không'","deleted = 0")) {
+//            double capitalization_price = 0;
+//            for (Recipe recipe : new RecipeBLL().searchRecipes("product_id = " + product.getId(), "size = '" + product.getSize() + "'")) {
+//                Material material = new MaterialBLL().searchMaterials("id = " + recipe.getMaterial_id()).get(0);
+//                capitalization_price += recipe.getQuantity() * material.getUnit_price() / 1000;
+//            }
+//            product.setCapital_price(capitalization_price);
+//            new ProductBLL().updateProduct(product);
+//        }
+
+        // tao du lieu nhap
+
+
     }
 
     public static void exit(int status) {

@@ -110,7 +110,7 @@ public class Receipt {
         return id + " | " +
                 staff_id + " | " +
                 VNString.currency(total) + " | " +
-                invoice_date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm::ss"));
+                invoice_date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
     }
 
 }

@@ -70,6 +70,7 @@ public class SaleGUI extends SalePanel {
     private List<Pair<Integer, RoundedPanel>> productRoundPanelList = new ArrayList<>();
     private RoundedPanel selectedCategory = null;
     public List<Product> resultSearch = new ArrayList<>();
+    public List<List<String>> bestSeller = productBLL.getBestSellers();
     private int discountType = -1;
     private Discount discountActive;
     private double totalPrice;
@@ -1229,7 +1230,7 @@ public class SaleGUI extends SalePanel {
     }
 
     private boolean checkBestSellers(int product_id) {
-        for (List<String> list : productBLL.getBestSellers()) {
+        for (List<String> list : bestSeller) {
             if (product_id == Integer.parseInt(list.get(0))) {
                 return true;
             }

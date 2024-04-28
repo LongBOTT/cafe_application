@@ -35,7 +35,7 @@ public class StatisticProductGUI extends JPanel {
     private MyTextField txtSearchMaterialName;
     private PanelSearch searchMaterialName;
     private JPopupMenu menuMaterialName;
-    private String productName = null;
+    private Product selected_product = null;
     private int materialID = -1;
     private JComboBox<String> jComboBoxCategory;
     private JComboBox<String> jComboBoxRemainMaterial;
@@ -246,7 +246,7 @@ public class StatisticProductGUI extends JPanel {
             labelName.setFont(new Font("Inter", Font.BOLD, 14));
             searchNamePanel.add(labelName, "wrap");
 
-            productName = null;
+            selected_product = null;
 
             txtSearchProductName = new MyTextField();
             txtSearchProductName.setPreferredSize(new Dimension(200, 40));
@@ -376,12 +376,13 @@ public class StatisticProductGUI extends JPanel {
             start = datePicker.getDateSQL_Between()[0];
             end = datePicker.getDateSQL_Between()[1];
         }
-        String product_Name = this.productName;
+        String product_Name = selected_product == null ? null : selected_product.getName();
+        String size = selected_product == null ? null : selected_product.getSize();
         String product_Category = Objects.requireNonNull(jComboBoxCategory.getSelectedItem()).toString();
 
         assert start != null;
-        List<List<String>> dataProfitProduct = MySQL.getTop5ProfitProduct(product_Name, product_Category, start.toString(), end.toString());
-        List<List<String>> dataCapitalizationRate = MySQL.getTop5CapitalizationRate(product_Name, product_Category, start.toString(), end.toString());
+        List<List<String>> dataProfitProduct = MySQL.getTop5ProfitProduct(product_Name, size, product_Category, start.toString(), end.toString());
+        List<List<String>> dataCapitalizationRate = MySQL.getTop5CapitalizationRate(product_Name, size, product_Category, start.toString(), end.toString());
 
         content.removeAll();
 
@@ -409,7 +410,7 @@ public class StatisticProductGUI extends JPanel {
         }
         barChartProfitProduct.start();
 
-        barChartCapitalizationRate.addLegend("Số lượng bán", new Color(135, 189, 245));
+        barChartCapitalizationRate.addLegend("Tỷ suất (%)", new Color(245, 189, 135));
         for (List<String> list : dataCapitalizationRate) {
             barChartCapitalizationRate.addData(new ModelBarChart(list.get(1), new double[]{Double.parseDouble(list.get(3))}));
         }
@@ -429,12 +430,13 @@ public class StatisticProductGUI extends JPanel {
             start = datePicker.getDateSQL_Between()[0];
             end = datePicker.getDateSQL_Between()[1];
         }
-        String product_Name = this.productName;
+        String product_Name = selected_product == null ? null : selected_product.getName();
+        String size = selected_product == null ? null : selected_product.getSize();
         String product_Category = Objects.requireNonNull(jComboBoxCategory.getSelectedItem()).toString();
 
         assert start != null;
-        List<List<String>> dataSaleProduct = MySQL.getTop5SaleProduct(product_Name, product_Category, start.toString(), end.toString());
-        List<List<String>> dataBestSeller = MySQL.getTop5BestSellers(product_Name, product_Category, start.toString(), end.toString());
+        List<List<String>> dataSaleProduct = MySQL.getTop5SaleProduct(product_Name, size, product_Category, start.toString(), end.toString());
+        List<List<String>> dataBestSeller = MySQL.getTop5BestSellers(product_Name, size, product_Category, start.toString(), end.toString());
 
         content.removeAll();
 
@@ -490,7 +492,7 @@ public class StatisticProductGUI extends JPanel {
             public void itemClick(DataSearch data) {
                 menuProductName.setVisible(false);
                 txtSearchProductName.setText(data.getText());
-                productName = data.getText();
+                selected_product = new ProductBLL().findProductsBy(Map.of("name", data.getText())).get(0);
                 loadData();
             }
 
@@ -558,7 +560,7 @@ public class StatisticProductGUI extends JPanel {
     }
 
     private java.util.List<DataSearch> searchProductName(String text) {
-        productName = null;
+        selected_product = null;
         java.util.List<DataSearch> list = new ArrayList<>();
         java.util.List<String> allName = new ProductBLL().getAllName();
         allName.removeIf(s -> !s.toLowerCase().contains(text.toLowerCase()));
