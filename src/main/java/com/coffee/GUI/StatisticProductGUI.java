@@ -381,7 +381,7 @@ public class StatisticProductGUI extends JPanel {
 
         assert start != null;
         List<List<String>> dataProfitProduct = MySQL.getTop5ProfitProduct(product_Name, product_Category, start.toString(), end.toString());
-        List<List<String>> dataPercentProduct = MySQL.getTop5ProfitProduct(product_Name, product_Category, start.toString(), end.toString());
+        List<List<String>> dataCapitalizationRate = MySQL.getTop5CapitalizationRate(product_Name, product_Category, start.toString(), end.toString());
 
         content.removeAll();
 
@@ -398,10 +398,10 @@ public class StatisticProductGUI extends JPanel {
         jLabelTile2.setFont(new Font("Inter", Font.BOLD, 15));
         content.add(jLabelTile2, "center, span, wrap");
 
-        BarChart barChartPercentProduct = new BarChart();
-        barChartPercentProduct.setPreferredSize(new Dimension(1000, 350));
-//        barChartPercentProduct.setFont(new java.awt.Font("sansserif", Font.BOLD, 8));
-        content.add(barChartPercentProduct, "wrap");
+        BarChart barChartCapitalizationRate = new BarChart();
+        barChartCapitalizationRate.setPreferredSize(new Dimension(1000, 350));
+//        barChartCapitalizationRate.setFont(new java.awt.Font("sansserif", Font.BOLD, 8));
+        content.add(barChartCapitalizationRate, "wrap");
 
         barChartProfitProduct.addLegend("Lợi nhuận", new Color(245, 189, 135));
         for (List<String> list : dataProfitProduct) {
@@ -409,14 +409,14 @@ public class StatisticProductGUI extends JPanel {
         }
         barChartProfitProduct.start();
 
-        barChartPercentProduct.addLegend("Số lượng bán", new Color(135, 189, 245));
-        for (List<String> list : dataPercentProduct) {
-            barChartPercentProduct.addData(new ModelBarChart(list.get(1), new double[]{Double.parseDouble(list.get(3))}));
+        barChartCapitalizationRate.addLegend("Số lượng bán", new Color(135, 189, 245));
+        for (List<String> list : dataCapitalizationRate) {
+            barChartCapitalizationRate.addData(new ModelBarChart(list.get(1), new double[]{Double.parseDouble(list.get(3))}));
         }
-        barChartPercentProduct.start();
+        barChartCapitalizationRate.start();
 
 //        System.out.println(Arrays.toString(dataProfitProduct.toArray()));
-//        System.out.println(Arrays.toString(dataPercentProduct.toArray()));
+//        System.out.println(Arrays.toString(dataCapitalizationRate.toArray()));
 
         content.repaint();
         content.revalidate();
