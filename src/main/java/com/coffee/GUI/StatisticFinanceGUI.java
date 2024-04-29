@@ -1,12 +1,16 @@
 package com.coffee.GUI;
 
+import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.RoundedPanel;
 import net.miginfocom.swing.MigLayout;
+import raven.datetime.component.date.DateEvent;
+import raven.datetime.component.date.DateSelectionListener;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 
 public class StatisticFinanceGUI extends JPanel {
     private JPanel content;
@@ -56,7 +60,7 @@ public class StatisticFinanceGUI extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 displayType = 0;
-                // xu ly load bieu do
+                loadData();
             }
         });
         chartRadioButton.setSelected(true);
@@ -68,7 +72,7 @@ public class StatisticFinanceGUI extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 displayType = 1;
-                // xu ly load bieu do
+                loadData();
             }
         });
         btnGroupDisplayType.add(reportRadioButton);
@@ -93,7 +97,7 @@ public class StatisticFinanceGUI extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 concern = 0;
                 initRightBar();
-                // xu ly load bieu do
+                loadData();
             }
         });
 
@@ -106,7 +110,7 @@ public class StatisticFinanceGUI extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 concern = 1;
                 initRightBar();
-                // xu ly load bieu do
+                loadData();
             }
         });
 
@@ -119,7 +123,7 @@ public class StatisticFinanceGUI extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 concern = 2;
                 initRightBar();
-                // xu ly load bieu do
+                loadData();
             }
         });
 
@@ -131,6 +135,45 @@ public class StatisticFinanceGUI extends JPanel {
         timePanel.add(radio1, "wrap");
         timePanel.add(radio2, "wrap");
         timePanel.add(radio3, "wrap");
+    }
+
+    private void loadData() {
+        if (concern == 0) {
+            if (displayType == 0)
+                byMonthChart();
+            if (displayType == 1)
+                byMonthReport();
+        }
+        if (concern == 1) {
+            if (displayType == 0)
+                byQuaterChart();
+            if (displayType == 1)
+                byQuaterReport();
+        }
+        if (concern == 2) {
+            if (displayType == 0)
+                byYearChart();
+            if (displayType == 1)
+                byYearReport();
+        }
+    }
+
+    private void byYearReport() {
+    }
+
+    private void byYearChart() {
+    }
+
+    private void byQuaterReport() {
+    }
+
+    private void byQuaterChart() {
+    }
+
+    private void byMonthReport() {
+    }
+
+    private void byMonthChart() {
     }
 
     private JRadioButton createRadioButton(String text) {

@@ -142,6 +142,36 @@ public class MySQL {
         return result;
     }
 
+    public static List<List<String>> getSaleProduct(String productName, String size, String productCategory, String... dates) {
+        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price), SUM(rd.quantity)\n" +
+                "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
+                "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
+        if ((productName != null && size != null) || productCategory != null || dates.length != 0) {
+            String[] strings = new String[0];
+            if (productName != null && size != null) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "pro.name = '" + productName + "' AND pro.size = '" + size + "'";
+            }
+
+            if (!Objects.equals(productCategory, "Tất cả")) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "pro.category = '" + productCategory + "'";
+            }
+
+            if (dates.length != 0) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "DATE(rp.invoice_date) >= '" + dates[0] + "' AND DATE(rp.invoice_date) <= '" + dates[1] + "'";
+            }
+            query += "WHERE " + String.join(" AND ", strings);
+        }
+        query += "\nGROUP BY pro.id, pro.`name`, pro.size\n";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static List<List<String>> getTop5SaleProduct(String productName, String size, String productCategory, String... dates) {
         String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price), SUM(rd.quantity)\n" +
                 "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
@@ -164,7 +194,7 @@ public class MySQL {
             }
             query += "WHERE " + String.join(" AND ", strings);
         }
-        query += "GROUP BY pro.id, pro.`name`, pro.size\n" +
+        query += "\nGROUP BY pro.id, pro.`name`, pro.size\n" +
                 "ORDER BY SUM(rd.price) DESC LIMIT 5";
         try {
             return executeQueryStatistic(query);
@@ -195,8 +225,38 @@ public class MySQL {
             }
             query += "WHERE " + String.join(" AND ", strings);
         }
-        query += "GROUP BY pro.id, pro.`name`, pro.size\n" +
+        query += "\nGROUP BY pro.id, pro.`name`, pro.size\n" +
                 "ORDER BY SUM(rd.quantity) DESC LIMIT 5";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getProfitProduct(String productName, String size, String productCategory, String... dates) {
+        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price - pro.capital_price * rd.quantity), SUM(rd.quantity), SUM(rd.price), SUM(pro.capital_price * rd.quantity), SUM(rd.price - pro.capital_price * rd.quantity)/SUM(rd.price)*100\n" +
+                "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
+                "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
+        if ((productName != null && size != null) || productCategory != null || dates.length != 0) {
+            String[] strings = new String[0];
+            if (productName != null && size != null) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "pro.name = '" + productName + "' AND pro.size = '" + size + "'";
+            }
+
+            if (!Objects.equals(productCategory, "Tất cả")) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "pro.category = '" + productCategory + "'";
+            }
+
+            if (dates.length != 0) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "DATE(rp.invoice_date) >= '" + dates[0] + "' AND DATE(rp.invoice_date) <= '" + dates[1] + "'";
+            }
+            query += "WHERE " + String.join(" AND ", strings);
+        }
+        query += "\nGROUP BY pro.id, pro.`name`, pro.size\n";
         try {
             return executeQueryStatistic(query);
         } catch (SQLException | IOException e) {
@@ -226,7 +286,7 @@ public class MySQL {
             }
             query += "WHERE " + String.join(" AND ", strings);
         }
-        query += "GROUP BY pro.id, pro.`name`, pro.size\n" +
+        query += "\nGROUP BY pro.id, pro.`name`, pro.size\n" +
                 "ORDER BY SUM(rd.price - pro.capital_price * rd.quantity) DESC LIMIT 5";
         try {
             return executeQueryStatistic(query);
@@ -257,8 +317,113 @@ public class MySQL {
             }
             query += "WHERE " + String.join(" AND ", strings);
         }
-        query += "GROUP BY pro.id, pro.`name`, pro.size\n" +
+        query += "\nGROUP BY pro.id, pro.`name`, pro.size\n" +
                 "ORDER BY SUM(rd.price - pro.capital_price * rd.quantity)/SUM(rd.price)*100 DESC LIMIT 5";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getTotalImport(String materialName, String start, String end) {
+        String query = "SELECT ma.id, ma.`name`, SUM(sm.quantity)\n" +
+                "FROM shipment sm JOIN material ma ON sm.material_id = ma.id\n" +
+                "\t\t\t\t\t\t\t\t\tJOIN import_note im on im.id = sm.import_id\n";
+        String[] strings = new String[0];
+        if (materialName != null) {
+            strings = Arrays.copyOf(strings, strings.length + 1);
+            strings[strings.length - 1] = "ma.name = '" + materialName + "'";
+        }
+        strings = Arrays.copyOf(strings, strings.length + 1);
+        strings[strings.length - 1] = "im.received_date >= '" + start + "' AND im.received_date <= '" + end + "'";
+        query += "WHERE " + String.join(" AND ", strings);
+        query += "\nGROUP BY ma.id, ma.`name`";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getTotalExport(String materialName, String start, String end) {
+        String query = "SELECT ma.id, ma.`name`, SUM(CASE WHEN ed.reason = 'Huỷ' THEN ed.quantity ELSE 0 END), SUM(CASE WHEN ed.reason = 'Bán' THEN ed.quantity ELSE 0 END), SUM(ed.quantity)\n" +
+                "FROM export_detail ed JOIN shipment sm ON ed.shipment_id = sm.id\n" +
+                "\t\t\t\t\t\t\t\t\tJOIN material ma ON sm.material_id = ma.id\n" +
+                "\t\t\t\t\t\t\t\t\tJOIN export_note ep on ep.id = ed.export_id\n";
+        String[] strings = new String[0];
+        if (materialName != null) {
+            strings = Arrays.copyOf(strings, strings.length + 1);
+            strings[strings.length - 1] = "ma.name = '" + materialName + "'";
+        }
+        strings = Arrays.copyOf(strings, strings.length + 1);
+        strings[strings.length - 1] = "ep.invoice_date >= '" + start + "' AND ep.invoice_date <= '" + end + "'";
+        query += "WHERE " + String.join(" AND ", strings);
+        query += "\nGROUP BY ma.id, ma.`name`";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getTop5MostImport(String materialName, String start, String end) {
+        String query = "SELECT ma.id, ma.`name`, SUM(sm.quantity)\n" +
+                "FROM shipment sm JOIN material ma ON sm.material_id = ma.id\n" +
+                "\t\t\t\t\t\t\t\t\tJOIN import_note im on im.id = sm.import_id\n";
+        String[] strings = new String[0];
+        if (materialName != null) {
+            strings = Arrays.copyOf(strings, strings.length + 1);
+            strings[strings.length - 1] = "ma.name = '" + materialName + "'";
+        }
+        strings = Arrays.copyOf(strings, strings.length + 1);
+        strings[strings.length - 1] = "im.received_date >= '" + start + "' AND im.received_date <= '" + end + "'";
+        query += "WHERE " + String.join(" AND ", strings);
+        query += "\nGROUP BY ma.id, ma.`name`\n";
+        query += "ORDER BY SUM(sm.quantity) DESC LIMIT 5\n";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getTop5MostExports(String materialName, String start, String end) {
+        String query = "SELECT ma.id, ma.`name`, SUM(CASE WHEN ed.reason = 'Huỷ' THEN ed.quantity ELSE 0 END), SUM(CASE WHEN ed.reason = 'Bán' THEN ed.quantity ELSE 0 END), SUM(ed.quantity)\n" +
+                "FROM export_detail ed JOIN shipment sm ON ed.shipment_id = sm.id\n" +
+                "\t\t\t\t\t\t\t\t\tJOIN material ma ON sm.material_id = ma.id\n" +
+                "\t\t\t\t\t\t\t\t\tJOIN export_note ep on ep.id = ed.export_id\n";
+        String[] strings = new String[0];
+        if (materialName != null) {
+            strings = Arrays.copyOf(strings, strings.length + 1);
+            strings[strings.length - 1] = "ma.name = '" + materialName + "'";
+        }
+        strings = Arrays.copyOf(strings, strings.length + 1);
+        strings[strings.length - 1] = "ep.invoice_date >= '" + start + "' AND ep.invoice_date <= '" + end + "'";
+        query += "WHERE " + String.join(" AND ", strings);
+        query += "\nGROUP BY ma.id, ma.`name`\n";
+        query += "ORDER BY SUM(ed.quantity) DESC LIMIT 5\n";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getDestroyExports(String materialName, String start, String end) {
+        String query = "SELECT ma.id, ma.`name`,  SUM(ed.quantity), ma.unit_price * SUM(ed.quantity)\n" +
+                "FROM export_detail ed JOIN shipment sm ON ed.shipment_id = sm.id\n" +
+                "\t\t\t\t\t\t\t\t\tJOIN material ma ON sm.material_id = ma.id\n" +
+                "\t\t\t\t\t\t\t\t\tJOIN export_note ep on ep.id = ed.export_id\n";
+        String[] strings = new String[0];
+        if (materialName != null) {
+            strings = Arrays.copyOf(strings, strings.length + 1);
+            strings[strings.length - 1] = "ma.name = '" + materialName + "'";
+        }
+        strings = Arrays.copyOf(strings, strings.length + 1);
+        strings[strings.length - 1] = "ep.invoice_date >= '" + start + "' AND ep.invoice_date <= '" + end + "'";
+        query += "WHERE " + String.join(" AND ", strings);
+        query += "\nGROUP BY ma.id, ma.`name`, ma.unit_price\n";
         try {
             return executeQueryStatistic(query);
         } catch (SQLException | IOException e) {

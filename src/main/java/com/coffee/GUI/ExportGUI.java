@@ -223,12 +223,18 @@ public class ExportGUI extends Layout2 {
         }
 
         data = new Object[objects.length][objects[0].length];
+        List<Staff> staffList = staffBLL.searchStaffs("deleted = 0");
 
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
 
             int staff_id = Integer.parseInt(data[i][1].toString());
-            data[i][1] = staffBLL.findStaffsBy(Map.of("id", staff_id)).get(0).getName();
+            for (Staff staff : staffList) {
+                if (staff.getId() == staff_id) {
+                    data[i][1] = staff.getName();
+                    break;
+                }
+            }
 
             if (detail) {
                 JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));

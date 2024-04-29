@@ -13,6 +13,7 @@ import com.coffee.GUI.components.swing.DataSearch;
 import com.coffee.GUI.components.swing.EventClick;
 import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.GUI.components.swing.PanelSearch;
+import com.coffee.utils.VNString;
 import net.miginfocom.swing.MigLayout;
 import raven.datetime.component.date.DateEvent;
 import raven.datetime.component.date.DateSelectionListener;
@@ -36,7 +37,7 @@ public class StatisticProductGUI extends JPanel {
     private PanelSearch searchMaterialName;
     private JPopupMenu menuMaterialName;
     private Product selected_product = null;
-    private int materialID = -1;
+    private String material_name = null;
     private JComboBox<String> jComboBoxCategory;
     private JComboBox<String> jComboBoxRemainMaterial;
     private JPanel content;
@@ -111,7 +112,7 @@ public class StatisticProductGUI extends JPanel {
             }
         });
 
-        if (concern == 0 || concern == 1 || concern == 3) {
+        if (concern == 0 || concern == 1 || concern == 2) {
             JRadioButton chartRadioButton = createRadioButton("Biểu đồ");
             chartRadioButton.addActionListener(new ActionListener() {
                 @Override
@@ -180,7 +181,7 @@ public class StatisticProductGUI extends JPanel {
             }
         });
 
-        JRadioButton radio4 = createRadioButton("Xuất nhập tồn chi tiết");
+        JRadioButton radio4 = createRadioButton("Xuất huỷ");
         if (concern == 3)
             radio4.setSelected(true);
         radio4.addActionListener(new ActionListener() {
@@ -193,31 +194,16 @@ public class StatisticProductGUI extends JPanel {
             }
         });
 
-        JRadioButton radio5 = createRadioButton("Xuất huỷ");
-        if (concern == 4)
-            radio5.setSelected(true);
-        radio5.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                concern = 4;
-                initRightBar();
-                loadData();
-            }
-        });
-
         ButtonGroup btnGroupConcerns = new ButtonGroup();
         btnGroupConcerns.add(radio1);
         btnGroupConcerns.add(radio2);
         btnGroupConcerns.add(radio3);
         btnGroupConcerns.add(radio4);
-        btnGroupConcerns.add(radio5);
 
         concernsPanel.add(radio1, "wrap");
         concernsPanel.add(radio2, "wrap");
         concernsPanel.add(radio3, "wrap");
         concernsPanel.add(radio4, "wrap");
-        concernsPanel.add(radio5, "wrap");
 
         // thoi gian
 
@@ -242,7 +228,7 @@ public class StatisticProductGUI extends JPanel {
         searchNamePanel.setPreferredSize(new Dimension(247, 60));
         jPanel.add(searchNamePanel, "wrap");
         if (concern == 0 || concern == 1) {
-            JLabel labelName = new JLabel("Tên Sản Phẩm");
+            JLabel labelName = new JLabel("Tên sản phẩm");
             labelName.setFont(new Font("Inter", Font.BOLD, 14));
             searchNamePanel.add(labelName, "wrap");
 
@@ -267,11 +253,11 @@ public class StatisticProductGUI extends JPanel {
             });
             searchNamePanel.add(txtSearchProductName, "wrap");
         } else {
-            JLabel labelName = new JLabel("Tên Nguyên Liệu");
+            JLabel labelName = new JLabel("Tên nguyên liệu");
             labelName.setFont(new Font("Inter", Font.BOLD, 14));
             searchNamePanel.add(labelName, "wrap");
 
-            materialID = -1;
+            material_name = null;
 
             txtSearchMaterialName = new MyTextField();
             txtSearchMaterialName.setPreferredSize(new Dimension(200, 40));
@@ -300,7 +286,7 @@ public class StatisticProductGUI extends JPanel {
         searchPanel.setLayout(new MigLayout("", "10[]10", "10[]10"));
         searchPanel.setPreferredSize(new Dimension(247, 50));
         if (concern == 0 || concern == 1) {
-            JLabel labelCategory = new JLabel("Thể Loại Sản Phẩm");
+            JLabel labelCategory = new JLabel("Thể loại sản phẩm");
             labelCategory.setFont(new Font("Inter", Font.BOLD, 14));
             searchPanel.add(labelCategory, "wrap");
 
@@ -323,32 +309,6 @@ public class StatisticProductGUI extends JPanel {
 
             jPanel.add(searchPanel, "wrap");
         }
-        if (concern == 2 || concern == 3) {
-            JLabel labelRemain = new JLabel("Tồn Kho");
-            labelRemain.setFont(new Font("Inter", Font.BOLD, 14));
-            searchPanel.add(labelRemain, "wrap");
-
-            jComboBoxRemainMaterial = new JComboBox<>();
-            jComboBoxRemainMaterial.setPreferredSize(new Dimension(200, 30));
-            jComboBoxRemainMaterial.setBackground(new Color(1, 120, 220));
-            jComboBoxRemainMaterial.setForeground(Color.white);
-
-            jComboBoxRemainMaterial.addItem("Tất cả");
-            jComboBoxRemainMaterial.setSelectedIndex(0);
-            jComboBoxRemainMaterial.addItem("Dưới định mức tồn");
-            jComboBoxRemainMaterial.addItem("Vượt định mức tồn");
-            jComboBoxRemainMaterial.addItem("Còn hàng trong kho");
-            jComboBoxRemainMaterial.addItem("Hết hàng trong kho");
-            jComboBoxCategory.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    loadData();
-                }
-            });
-            searchPanel.add(jComboBoxRemainMaterial, "wrap");
-
-            jPanel.add(searchPanel, "wrap");
-        }
     }
 
     private void loadData() {
@@ -364,9 +324,155 @@ public class StatisticProductGUI extends JPanel {
             if (displayType == 1)
                 profitReport();
         }
+        if (concern == 2) {
+            if (displayType == 0)
+                import_exportChart();
+            if (displayType == 1)
+                import_exportReport();
+        }
+        if (concern == 3) {
+            destroy_xportReport();
+        }
+    }
+
+    private void destroy_xportReport() {
+        Date start = null;
+        Date end = null;
+        if (datePicker.getDateSQL_Between() != null) {
+            start = datePicker.getDateSQL_Between()[0];
+            end = datePicker.getDateSQL_Between()[1];
+        }
+        String materialName = material_name == null ? null : material_name;
+
+        assert start != null;
+        List<List<String>> dataDestroyExport = MySQL.getDestroyExports(materialName, start.toString(), end.toString());
+
+        System.out.println(Arrays.toString(dataDestroyExport.toArray()));
+    }
+
+    private void import_exportChart() {
+        Date start = null;
+        Date end = null;
+        if (datePicker.getDateSQL_Between() != null) {
+            start = datePicker.getDateSQL_Between()[0];
+            end = datePicker.getDateSQL_Between()[1];
+        }
+        String materialName = material_name == null ? null : material_name;
+
+        assert start != null;
+        List<List<String>> dataMostImport = MySQL.getTop5MostImport(materialName, start.toString(), end.toString());
+        List<List<String>> dataMostExport = MySQL.getTop5MostExports(materialName, start.toString(), end.toString());
+
+        content.removeAll();
+
+        JLabel jLabelTile1 = new JLabel("Top 5 nguyên liệu nhập nhiều nhất");
+        jLabelTile1.setFont(new Font("Inter", Font.BOLD, 15));
+        content.add(jLabelTile1, "center, span, wrap");
+
+        BarChart barChartMostImport = new BarChart();
+        barChartMostImport.setPreferredSize(new Dimension(1000, 350));
+//        barChartMostImport.setFont(new java.awt.Font("sansserif", Font.BOLD, 8));
+        content.add(barChartMostImport, "wrap");
+
+        JLabel jLabelTile2 = new JLabel("Top 5 nguyên liệu xuất nhiều nhất");
+        jLabelTile2.setFont(new Font("Inter", Font.BOLD, 15));
+        content.add(jLabelTile2, "center, span, wrap");
+
+        BarChart barChartMostExport = new BarChart();
+        barChartMostExport.setPreferredSize(new Dimension(1000, 350));
+//        barChartMostExport.setFont(new java.awt.Font("sansserif", Font.BOLD, 8));
+        content.add(barChartMostExport, "wrap");
+
+        barChartMostImport.addLegend("Số lượng nhập ", new Color(189, 135, 245));
+        for (List<String> list : dataMostImport) {
+            barChartMostImport.addData(new ModelBarChart(list.get(1), new double[]{Double.parseDouble(list.get(2))}));
+        }
+        barChartMostImport.start();
+
+        barChartMostExport.addLegend("Số lượng xuất", new Color(189, 135, 245));
+        barChartMostExport.addLegend("Xuất huỷ", new Color(135, 189, 245));
+        barChartMostExport.addLegend("Xuất bán", new Color(139, 229, 222));
+        for (List<String> list : dataMostExport) {
+            barChartMostExport.addData(new ModelBarChart(list.get(1), new double[]{Double.parseDouble(list.get(4)), Double.parseDouble(list.get(2)), Double.parseDouble(list.get(3))}));
+        }
+        barChartMostExport.start();
+
+//        System.out.println(Arrays.toString(dataMostImport.toArray()));
+//        System.out.println(Arrays.toString(dataMostExport.toArray()));
+
+        content.repaint();
+        content.revalidate();
+    }
+
+    private void import_exportReport() {
+        Date start = null;
+        Date end = null;
+        if (datePicker.getDateSQL_Between() != null) {
+            start = datePicker.getDateSQL_Between()[0];
+            end = datePicker.getDateSQL_Between()[1];
+        }
+        String materialName = material_name == null ? null : material_name;
+
+        assert start != null;
+        List<List<String>> dataTotalImport = MySQL.getTotalImport(materialName, start.toString(), end.toString());
+        List<List<String>> dataTotalExport = MySQL.getTotalExport(materialName, start.toString(), end.toString());
+        List<List<String>> dataImportExport = new ArrayList<>();
+
+        for (Material material : new MaterialBLL().searchMaterials("deleted = 0")) {
+            List<String> data = new ArrayList<>();
+            data.add(material.getId() + "");
+            data.add(material.getName());
+            boolean check = false;
+            for (List<String> dataImport : dataTotalImport) {
+                if (dataImport.get(0).equals(material.getId() + "")) {
+                    data.add(dataImport.get(2));
+                    data.add(VNString.currency(Double.parseDouble(dataImport.get(2)) * material.getUnit_price()));
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                data.add("0");
+                data.add(VNString.currency(0));
+            }
+
+            check = false;
+            for (List<String> dataExport : dataTotalExport) {
+                if (dataExport.get(0).equals(material.getId() + "")) {
+                    data.add(dataExport.get(2));
+                    data.add(dataExport.get(3));
+                    data.add(dataExport.get(4));
+                    data.add(VNString.currency(Double.parseDouble(dataExport.get(4)) * material.getUnit_price()));
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                data.add("0");
+                data.add("0");
+                data.add("0");
+                data.add(VNString.currency(0));
+            }
+            dataImportExport.add(data);
+        }
+        System.out.println(Arrays.toString(dataImportExport.toArray()));
     }
 
     private void profitReport() {
+        Date start = null;
+        Date end = null;
+        if (datePicker.getDateSQL_Between() != null) {
+            start = datePicker.getDateSQL_Between()[0];
+            end = datePicker.getDateSQL_Between()[1];
+        }
+        String product_Name = selected_product == null ? null : selected_product.getName();
+        String size = selected_product == null ? null : selected_product.getSize();
+        String product_Category = Objects.requireNonNull(jComboBoxCategory.getSelectedItem()).toString();
+
+        assert start != null;
+        List<List<String>> dataProfitProduct = MySQL.getProfitProduct(product_Name, size, product_Category, start.toString(), end.toString());
+
+        System.out.println(dataProfitProduct);
     }
 
     private void profitChart() {
@@ -478,7 +584,20 @@ public class StatisticProductGUI extends JPanel {
     }
 
     private void saleReport() {
+        Date start = null;
+        Date end = null;
+        if (datePicker.getDateSQL_Between() != null) {
+            start = datePicker.getDateSQL_Between()[0];
+            end = datePicker.getDateSQL_Between()[1];
+        }
+        String product_Name = selected_product == null ? null : selected_product.getName();
+        String size = selected_product == null ? null : selected_product.getSize();
+        String product_Category = Objects.requireNonNull(jComboBoxCategory.getSelectedItem()).toString();
 
+        assert start != null;
+        List<List<String>> dataSaleProduct = MySQL.getSaleProduct(product_Name, size, product_Category, start.toString(), end.toString());
+
+        System.out.println(dataSaleProduct);
     }
 
     private void initTxtSearchName() {
@@ -516,8 +635,7 @@ public class StatisticProductGUI extends JPanel {
             public void itemClick(DataSearch data) {
                 menuMaterialName.setVisible(false);
                 txtSearchMaterialName.setText(data.getText());
-                Material material = new MaterialBLL().findMaterialsBy(Map.of("name", data.getText())).get(0);
-                materialID = material.getId();
+                material_name = data.getText();
                 loadData();
             }
 
@@ -608,7 +726,7 @@ public class StatisticProductGUI extends JPanel {
     }
 
     private java.util.List<DataSearch> searchMaterialName(String text) {
-        materialID = -1;
+        material_name = null;
         java.util.List<DataSearch> list = new ArrayList<>();
         List<Material> materials = new MaterialBLL().findMaterials("name", text);
         for (Material m : materials) {

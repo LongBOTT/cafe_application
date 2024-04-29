@@ -12,9 +12,12 @@ import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 
 import javax.swing.*;
 import java.awt.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -130,8 +133,114 @@ public class Cafe_Application {
 //        }
 
         // tao du lieu nhap
-
-
+//        LocalDate start = LocalDate.of(2023, 1, 7);
+//        LocalDate end = LocalDate.of(2024, 6, 7);
+//
+//        List<Material> materialList = new MaterialBLL().searchMaterials("deleted = 0");
+//        List<Supplier> supplierList = new SupplierBLL().searchSuppliers("deleted = 0");
+//        int id = 1;
+//        int idex = 1;
+//        int idship = 1;
+//        while (!start.equals(end)) {
+//            List<Integer> chosenIndices = new ArrayList<>();
+//            for (int j = 0; j < 5; j++) {
+//                Random random = new Random();
+//
+//                Date received_date = java.sql.Date.valueOf(start);
+//
+//                List<Material> randomMaterials = new ArrayList<>();
+//                for (int i = 0; i < 5; i++) {
+//                    int index;
+//                    do {
+//                        index = random.nextInt(materialList.size());
+//                    } while (chosenIndices.contains(index));
+//                    chosenIndices.add(index);
+//                    randomMaterials.add(materialList.get(index));
+//                }
+//
+//                int staffId = 4;
+//                Import_Note importNote = new Import_Note(id, staffId, new BigDecimal(0), received_date);
+//
+//                double total = 0;
+//                List<Shipment> shipmentList = new ArrayList<>();
+//                for (Material material : randomMaterials) {
+//                    Shipment shipment = new Shipment();
+//                    shipment.setId(idship);
+//                    shipment.setMaterial_id(material.getId());
+//                    int index = random.nextInt(supplierList.size());
+//                    Supplier supplier = supplierList.get(index);
+//                    shipment.setSupplier_id(supplier.getId());
+//                    int quantity = random.nextInt(20) + 1;
+//                    shipment.setQuantity(quantity);
+//                    shipment.setRemain(quantity);
+//                    shipment.setImport_id(importNote.getId());
+//                    shipment.setMfg(java.sql.Date.valueOf(start.plusMonths(-1)));
+//                    shipment.setExp(java.sql.Date.valueOf(start.plusMonths(6)));
+//
+//                    total += quantity * material.getUnit_price();
+//                    shipmentList.add(shipment);
+//                    idship += 1;
+//                }
+//
+//                importNote.setTotal(BigDecimal.valueOf(total));
+//
+//                new Import_NoteBLL().addImport(importNote);
+//
+//                for (Shipment shipment : shipmentList) {
+//                    new ShipmentBLL().addShipment(shipment);
+//                }
+//                id += 1;
+//            }
+//
+//            for (int j = 0; j < 5; j++) {
+//                Random random = new Random();
+//
+//                Date received_date = java.sql.Date.valueOf(start.plusDays(5));
+//
+//                List<Shipment> shipmentList = new ShipmentBLL().searchShipments("remain > 0");
+//                List<Shipment> randomShipments = new ArrayList<>();
+//                List<Integer> chosenIndices1 = new ArrayList<>();
+//                for (int i = 0; i < 5; i++) {
+//                    int index;
+//                    do {
+//                        index = random.nextInt(shipmentList.size());
+//                    } while (chosenIndices1.contains(index));
+//                    chosenIndices1.add(index);
+//                    randomShipments.add(shipmentList.get(index));
+//                }
+//
+//                int staffId = 7;
+//                Export_Note exportNote = new Export_Note(idex, staffId, new BigDecimal(0), received_date);
+//
+//                double total = 0;
+//                List<Export_Detail> export_details = new ArrayList<>();
+//                for (Shipment shipment : randomShipments) {
+//                    Material material = new MaterialBLL().searchMaterials("id  = " + shipment.getMaterial_id()).get(0);
+//                    Export_Detail exportDetail = new Export_Detail();
+//                    exportDetail.setExport_id(exportNote.getId());
+//                    exportDetail.setShipment_id(shipment.getId());
+//                    int quantity = random.nextInt((int) shipment.getRemain()) + 1;
+//                    exportDetail.setQuantity(quantity);
+//                    int random1 = random.nextInt(2);
+//                    exportDetail.setReason(random1 == 0 ? "Bán" : "Huỷ");
+//
+//                    total += quantity * material.getUnit_price();
+//                    export_details.add(exportDetail);
+//                }
+//
+//                exportNote.setTotal(BigDecimal.valueOf(total));
+//
+//                new Export_NoteBLL().addExport_Note(exportNote);
+//
+//                for (Export_Detail exportDetail : export_details) {
+//                    new Export_DetailBLL().addExport_Detail(exportDetail);
+//                }
+//
+//                idex += 1;
+//            }
+//
+//            start = start.plusMonths(1);
+//        }
     }
 
     public static void exit(int status) {
