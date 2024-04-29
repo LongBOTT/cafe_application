@@ -7,7 +7,9 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class MySQL {
     public MySQL() {
@@ -138,5 +140,129 @@ public class MySQL {
         }
         Database.closeConnection(connection);
         return result;
+    }
+
+    public static List<List<String>> getTop5SaleProduct(String productName, String size, String productCategory, String... dates) {
+        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price), SUM(rd.quantity)\n" +
+                "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
+                "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
+        if ((productName != null && size != null) || productCategory != null || dates.length != 0) {
+            String[] strings = new String[0];
+            if (productName != null && size != null) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "pro.name = '" + productName + "' AND pro.size = '" + size + "'";
+            }
+
+            if (!Objects.equals(productCategory, "Tất cả")) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "pro.category = '" + productCategory + "'";
+            }
+
+            if (dates.length != 0) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "DATE(rp.invoice_date) >= '" + dates[0] + "' AND DATE(rp.invoice_date) <= '" + dates[1] + "'";
+            }
+            query += "WHERE " + String.join(" AND ", strings);
+        }
+        query += "GROUP BY pro.id, pro.`name`, pro.size\n" +
+                "ORDER BY SUM(rd.price) DESC LIMIT 5";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getTop5BestSellers(String productName, String size, String productCategory, String... dates) {
+        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.quantity)\n" +
+                "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
+                "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
+        if ((productName != null && size != null) || productCategory != null || dates.length != 0) {
+            String[] strings = new String[0];
+            if (productName != null && size != null) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "pro.name = '" + productName + "' AND pro.size = '" + size + "'";
+            }
+
+            if (!Objects.equals(productCategory, "Tất cả")) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "pro.category = '" + productCategory + "'";
+            }
+
+            if (dates.length != 0) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "DATE(rp.invoice_date) >= '" + dates[0] + "' AND DATE(rp.invoice_date) <= '" + dates[1] + "'";
+            }
+            query += "WHERE " + String.join(" AND ", strings);
+        }
+        query += "GROUP BY pro.id, pro.`name`, pro.size\n" +
+                "ORDER BY SUM(rd.quantity) DESC LIMIT 5";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getTop5ProfitProduct(String productName, String size, String productCategory, String... dates) {
+        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price - pro.capital_price * rd.quantity), SUM(rd.quantity), SUM(rd.price), SUM(pro.capital_price * rd.quantity), SUM(rd.price - pro.capital_price * rd.quantity)/SUM(rd.price)*100\n" +
+                "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
+                "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
+        if ((productName != null && size != null) || productCategory != null || dates.length != 0) {
+            String[] strings = new String[0];
+            if (productName != null && size != null) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "pro.name = '" + productName + "' AND pro.size = '" + size + "'";
+            }
+
+            if (!Objects.equals(productCategory, "Tất cả")) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "pro.category = '" + productCategory + "'";
+            }
+
+            if (dates.length != 0) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "DATE(rp.invoice_date) >= '" + dates[0] + "' AND DATE(rp.invoice_date) <= '" + dates[1] + "'";
+            }
+            query += "WHERE " + String.join(" AND ", strings);
+        }
+        query += "GROUP BY pro.id, pro.`name`, pro.size\n" +
+                "ORDER BY SUM(rd.price - pro.capital_price * rd.quantity) DESC LIMIT 5";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getTop5CapitalizationRate(String productName, String size, String productCategory, String... dates) {
+        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price - pro.capital_price * rd.quantity)/SUM(rd.price)*100\n" +
+                "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
+                "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
+        if ((productName != null && size != null) || productCategory != null || dates.length != 0) {
+            String[] strings = new String[0];
+            if (productName != null && size != null) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "pro.name = '" + productName + "' AND pro.size = '" + size + "'";
+            }
+
+            if (!Objects.equals(productCategory, "Tất cả")) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "pro.category = '" + productCategory + "'";
+            }
+
+            if (dates.length != 0) {
+                strings = Arrays.copyOf(strings, strings.length + 1);
+                strings[strings.length - 1] = "DATE(rp.invoice_date) >= '" + dates[0] + "' AND DATE(rp.invoice_date) <= '" + dates[1] + "'";
+            }
+            query += "WHERE " + String.join(" AND ", strings);
+        }
+        query += "GROUP BY pro.id, pro.`name`, pro.size\n" +
+                "ORDER BY SUM(rd.price - pro.capital_price * rd.quantity)/SUM(rd.price)*100 DESC LIMIT 5";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

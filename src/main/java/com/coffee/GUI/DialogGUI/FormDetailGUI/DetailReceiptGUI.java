@@ -21,6 +21,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -70,7 +71,7 @@ public class DetailReceiptGUI extends DialogFormDetail {
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
             if (string.trim().equals("Ngày Tạo")) {
-                textField.setText(new SimpleDateFormat("dd/MM/yyyy").format(receipt.getInvoice_date()));
+                textField.setText(receipt.getInvoice_date().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
             }
             if (string.trim().equals("Mã Hóa Đơn")) {
                 String receiptId = Integer.toString(receipt.getId());
