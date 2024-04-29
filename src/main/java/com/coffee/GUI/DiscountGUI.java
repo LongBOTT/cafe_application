@@ -281,7 +281,7 @@ public class DiscountGUI extends Layout2 {
 //        jTextFieldSearch.setText("");
 //        jComboBoxSearch.setSelectedIndex(0);
         if (datePicker != null) {
-            if (datePicker.getDateSQL_Between().length != 0) {
+            if (datePicker.getDateSQL_Between() != null) {
                 Date startDate = datePicker.getDateSQL_Between()[0];
                 Date endDate = datePicker.getDateSQL_Between()[1];
                 loadDataTable(discountBLL.getData(discountBLL.searchDiscounts("id != 0 AND start_date >= '" + startDate + "' AND end_date <= '" + endDate + "'")));

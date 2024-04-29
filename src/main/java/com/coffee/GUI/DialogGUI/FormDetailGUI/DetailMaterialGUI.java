@@ -212,7 +212,7 @@ public class DetailMaterialGUI extends DialogFormDetail {
         List<Shipment> shipmentList = new ArrayList<>();
 
 
-        if (datePicker.getDateSQL_Between().length != 0) {
+        if (datePicker.getDateSQL_Between() != null) {
             Date startDate = datePicker.getDateSQL_Between()[0];
             Date endDate = datePicker.getDateSQL_Between()[1];
             for (Shipment shipment : shipmentBLL.findShipmentsBy(Map.of("material_id", material.getId()))) {

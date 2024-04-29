@@ -445,7 +445,7 @@ public class PDF {
         tableData.add(List.of(
                 "Mã Phiếu Nhập ",
                 "Nhân Viên",
-                " Tổng Tiền ",
+                "Tổng Tiền ",
                 "Ngày Xuất ").toArray(new String[0]));
 
         for (int i = 0; i < objects.length; i++) {
