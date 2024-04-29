@@ -1,498 +1,101 @@
 package com.coffee.GUI;
 
-import com.coffee.BLL.MaterialBLL;
-import com.coffee.BLL.ProductBLL;
-import com.coffee.DTO.Material;
-import com.coffee.DTO.Product;
+
+
 import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.LayoutStatistic;
 import com.coffee.GUI.components.RoundedPanel;
-import com.coffee.GUI.components.swing.DataSearch;
-import com.coffee.GUI.components.swing.EventClick;
-import com.coffee.GUI.components.swing.MyTextField;
-import com.coffee.GUI.components.swing.PanelSearch;
-import net.miginfocom.swing.MigLayout;
+
 import raven.datetime.component.date.DateEvent;
 import raven.datetime.component.date.DateSelectionListener;
 
 import javax.swing.*;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class StatisticSalesOldGUI extends LayoutStatistic {
     private DatePicker datePicker;
     private JFormattedTextField editor;
 
-    // bien dung trong productPanel
-    private DatePicker datePickerProductPanel;
-    private JFormattedTextField editorProductPanel;
-    private ButtonGroup btnGroupDisplayTypeProductPanel;
-    private ButtonGroup btnGroupConcernsProductPanel;
-    private MyTextField txtSearchProductNameProductPanel;
-    private PanelSearch searchProductNameProductPanel;
-    private JPopupMenu menuProductNameProductPanel;
-    private MyTextField txtSearchMaterialNameProductPanel;
-    private PanelSearch searchMaterialNameProductPanel;
-    private JPopupMenu menuMaterialNameProductPanel;
-    private int productID = -1;
-    private int materialID = -1;
-    private JComboBox<String> jComboBoxCategoryProductPanel;
-    private JComboBox<String> jComboBoxRemainMaterialPanel;
 
-    //
     public StatisticSalesOldGUI() {
         super();
         initUIComponents();
-        initTxtSearchNameProductPanel();
+
         setVisible(true);
     }
 
     private void initUIComponents() {
-//        setupDisplayType();
-//        setupConcerns();
-//        setupTime();
+        initTopBartEndOfDayPanel();
+        setupTime();
 
-        initProductPanel();
-    }
-
-    private void initProductPanel() {
-        initTopBarProductPanel();
 
     }
 
-    private void initTopBarProductPanel() {
-        top.removeAll();
 
-        RoundedPanel displayTypePanel = new RoundedPanel();
-        displayTypePanel.setBackground(Color.white);
-        displayTypePanel.setLayout(new MigLayout("", "[]", "0[]0[]0[]0"));
-        displayTypePanel.setPreferredSize(new Dimension(200, 50));
-        top.add(displayTypePanel);
 
-        RoundedPanel concernsPanel = new RoundedPanel();
-        concernsPanel.setBackground(Color.white);
-        concernsPanel.setLayout(new MigLayout("", "[]", "0[]0[]0[]0"));
-        concernsPanel.setPreferredSize(new Dimension(615, 50));
-        top.add(concernsPanel);
 
-        RoundedPanel timePanel = new RoundedPanel();
-        timePanel.setBackground(Color.white);
-        timePanel.setLayout(new MigLayout("", "[]", "0[]0[]0[]0"));
-        timePanel.setPreferredSize(new Dimension(300, 50));
-        top.add(timePanel);
 
-        RoundedPanel searchPanel = new RoundedPanel();
-        searchPanel.setBackground(new Color(191, 198, 208));
-        searchPanel.setLayout(new MigLayout("", "[]10[]10[]10[]10[]10[]", "0[]0"));
-        searchPanel.setPreferredSize(new Dimension(1120, 35));
-        top.add(searchPanel);
 
-        JLabel labelDisplayType = new JLabel("Chọn hiển thị");
-        labelDisplayType.setFont(new Font("Inter", Font.BOLD, 14));
-        displayTypePanel.add(labelDisplayType, "wrap");
-
-        JRadioButton chartRadioButton = createRadioButton("Biểu đồ");
-        chartRadioButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
-
-        JRadioButton reportRadioButton = createRadioButton("Báo cáo");
-        reportRadioButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
-
-        btnGroupDisplayTypeProductPanel = new ButtonGroup();
-        btnGroupDisplayTypeProductPanel.add(chartRadioButton);
-        btnGroupDisplayTypeProductPanel.add(reportRadioButton);
-
-        displayTypePanel.add(chartRadioButton);
-        displayTypePanel.add(reportRadioButton);
-
-        JLabel labelConcerns = new JLabel("Mối quan tâm");
-        labelConcerns.setFont(new Font("Inter", Font.BOLD, 14));
-        concernsPanel.add(labelConcerns, "wrap");
-
-        JRadioButton radio1 = createRadioButton("Bán hàng");
-        radio1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadSearchPanel();
-            }
-
-            private void loadSearchPanel() {
-                searchPanel.removeAll();
-
-                JLabel labelName = new JLabel("Tên Sản Phẩm");
-                labelName.setFont(new Font("Inter", Font.BOLD, 14));
-                labelName.setPreferredSize(new Dimension(150, 40));
-                searchPanel.add(labelName);
-
-                txtSearchProductNameProductPanel = new MyTextField();
-                txtSearchProductNameProductPanel.setPreferredSize(new Dimension(200, 40));
-                txtSearchProductNameProductPanel.putClientProperty("JTextField.placeholderText", "Nhập tên sản phẩm tìm kiếm");
-                txtSearchProductNameProductPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-                    public void mouseClicked(java.awt.event.MouseEvent evt) {
-                        txtSearchProductNameProductPanelMouseClicked(evt);
-                    }
-                });
-                txtSearchProductNameProductPanel.addKeyListener(new java.awt.event.KeyAdapter() {
-                    public void keyPressed(java.awt.event.KeyEvent evt) {
-                        txtSearchProductNameProductPanelKeyPressed(evt);
-                    }
-
-                    public void keyReleased(java.awt.event.KeyEvent evt) {
-                        txtSearchProductNameProductPanelKeyReleased(evt);
-                    }
-                });
-                searchPanel.add(txtSearchProductNameProductPanel);
-
-                JLabel labelCategory = new JLabel("Thể Loại Sản Phẩm");
-                labelCategory.setFont(new Font("Inter", Font.BOLD, 14));
-                labelCategory.setPreferredSize(new Dimension(150, 40));
-                searchPanel.add(labelCategory);
-
-                jComboBoxCategoryProductPanel = new JComboBox<>();
-                jComboBoxCategoryProductPanel.setPreferredSize(new Dimension(200, 30));
-                jComboBoxCategoryProductPanel.setBackground(new Color(1, 120, 220));
-                jComboBoxCategoryProductPanel.setForeground(Color.white);
-
-                jComboBoxCategoryProductPanel.addItem("Tất cả");
-                jComboBoxCategoryProductPanel.setSelectedIndex(0);
-                for (String category : new ProductBLL().getCategories())
-                    jComboBoxCategoryProductPanel.addItem(category);
-                searchPanel.add(jComboBoxCategoryProductPanel);
-
-                searchPanel.repaint();
-                searchPanel.revalidate();
-            }
-        });
-
-        JRadioButton radio2 = createRadioButton("Lợi nhuận");
-        radio2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadSearchPanel();
-            }
-
-            private void loadSearchPanel() {
-                searchPanel.removeAll();
-
-                JLabel labelName = new JLabel("Tên Sản Phẩm");
-                labelName.setFont(new Font("Inter", Font.BOLD, 14));
-                labelName.setPreferredSize(new Dimension(150, 40));
-                searchPanel.add(labelName);
-
-                txtSearchProductNameProductPanel = new MyTextField();
-                txtSearchProductNameProductPanel.setOpaque(true);
-                txtSearchProductNameProductPanel.setPreferredSize(new Dimension(200, 40));
-                txtSearchProductNameProductPanel.putClientProperty("JTextField.placeholderText", "Nhập tên sản phẩm tìm kiếm");
-                txtSearchProductNameProductPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-                    public void mouseClicked(java.awt.event.MouseEvent evt) {
-                        txtSearchProductNameProductPanelMouseClicked(evt);
-                    }
-                });
-                txtSearchProductNameProductPanel.addKeyListener(new java.awt.event.KeyAdapter() {
-                    public void keyPressed(java.awt.event.KeyEvent evt) {
-                        txtSearchProductNameProductPanelKeyPressed(evt);
-                    }
-
-                    public void keyReleased(java.awt.event.KeyEvent evt) {
-                        txtSearchProductNameProductPanelKeyReleased(evt);
-                    }
-                });
-                searchPanel.add(txtSearchProductNameProductPanel);
-
-                JLabel labelCategory = new JLabel("Thể Loại Sản Phẩm");
-                labelCategory.setFont(new Font("Inter", Font.BOLD, 14));
-                labelCategory.setPreferredSize(new Dimension(150, 40));
-                searchPanel.add(labelCategory);
-
-                jComboBoxCategoryProductPanel = new JComboBox<>();
-                jComboBoxCategoryProductPanel.setPreferredSize(new Dimension(200, 30));
-                jComboBoxCategoryProductPanel.setBackground(new Color(1, 120, 220));
-                jComboBoxCategoryProductPanel.setForeground(Color.white);
-
-                jComboBoxCategoryProductPanel.addItem("Tất cả");
-                jComboBoxCategoryProductPanel.setSelectedIndex(0);
-                for (String category : new ProductBLL().getCategories())
-                    jComboBoxCategoryProductPanel.addItem(category);
-                searchPanel.add(jComboBoxCategoryProductPanel);
-
-                searchPanel.repaint();
-                searchPanel.revalidate();
-            }
-        });
-
-        JRadioButton radio3 = createRadioButton("Xuất nhập tồn");
-        radio3.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadSearchPanel();
-            }
-
-            private void loadSearchPanel() {
-                searchPanel.removeAll();
-
-                JLabel labelName = new JLabel("Tên Nguyên liệu");
-                labelName.setFont(new Font("Inter", Font.BOLD, 14));
-                labelName.setPreferredSize(new Dimension(150, 40));
-                searchPanel.add(labelName);
-
-                txtSearchMaterialNameProductPanel = new MyTextField();
-                txtSearchMaterialNameProductPanel.setPreferredSize(new Dimension(200, 40));
-                txtSearchMaterialNameProductPanel.putClientProperty("JTextField.placeholderText", "Nhập tên nguyên liệu tìm kiếm");
-                txtSearchMaterialNameProductPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-                    public void mouseClicked(java.awt.event.MouseEvent evt) {
-                        txtSearchMaterialNameProductPanelMouseClicked(evt);
-                    }
-                });
-                txtSearchMaterialNameProductPanel.addKeyListener(new java.awt.event.KeyAdapter() {
-                    public void keyPressed(java.awt.event.KeyEvent evt) {
-                        txtSearchMaterialNameProductPanelKeyPressed(evt);
-                    }
-
-                    public void keyReleased(java.awt.event.KeyEvent evt) {
-                        txtSearchMaterialNameProductPanelKeyReleased(evt);
-                    }
-                });
-                searchPanel.add(txtSearchMaterialNameProductPanel);
-
-                JLabel labelRemain = new JLabel("Tồn Kho");
-                labelRemain.setFont(new Font("Inter", Font.BOLD, 14));
-                labelRemain.setPreferredSize(new Dimension(150, 40));
-                searchPanel.add(labelRemain);
-
-                jComboBoxRemainMaterialPanel = new JComboBox<>();
-                jComboBoxRemainMaterialPanel.setPreferredSize(new Dimension(200, 30));
-                jComboBoxRemainMaterialPanel.setBackground(new Color(1, 120, 220));
-                jComboBoxRemainMaterialPanel.setForeground(Color.white);
-
-                jComboBoxRemainMaterialPanel.addItem("Tất cả");
-                jComboBoxRemainMaterialPanel.setSelectedIndex(0);
-                jComboBoxRemainMaterialPanel.addItem("Dưới định mức tồn");
-                jComboBoxRemainMaterialPanel.addItem("Vượt định mức tồn");
-                jComboBoxRemainMaterialPanel.addItem("Còn hàng trong kho");
-                jComboBoxRemainMaterialPanel.addItem("Hết hàng trong kho");
-                searchPanel.add(jComboBoxRemainMaterialPanel);
-
-                searchPanel.repaint();
-                searchPanel.revalidate();
-            }
-        });
-
-        JRadioButton radio4 = createRadioButton("Xuất nhập tồn chi tiết");
-        radio4.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadSearchPanel();
-            }
-
-            private void loadSearchPanel() {
-                searchPanel.removeAll();
-
-                JLabel labelName = new JLabel("Tên Nguyên liệu");
-                labelName.setFont(new Font("Inter", Font.BOLD, 14));
-                labelName.setPreferredSize(new Dimension(150, 40));
-                searchPanel.add(labelName);
-
-                txtSearchMaterialNameProductPanel = new MyTextField();
-                txtSearchMaterialNameProductPanel.setPreferredSize(new Dimension(200, 40));
-                txtSearchMaterialNameProductPanel.putClientProperty("JTextField.placeholderText", "Nhập tên nguyên liệu tìm kiếm");
-                txtSearchMaterialNameProductPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-                    public void mouseClicked(java.awt.event.MouseEvent evt) {
-                        txtSearchMaterialNameProductPanelMouseClicked(evt);
-                    }
-                });
-                txtSearchMaterialNameProductPanel.addKeyListener(new java.awt.event.KeyAdapter() {
-                    public void keyPressed(java.awt.event.KeyEvent evt) {
-                        txtSearchMaterialNameProductPanelKeyPressed(evt);
-                    }
-
-                    public void keyReleased(java.awt.event.KeyEvent evt) {
-                        txtSearchMaterialNameProductPanelKeyReleased(evt);
-                    }
-                });
-                searchPanel.add(txtSearchMaterialNameProductPanel);
-
-                JLabel labelRemain = new JLabel("Tồn Kho");
-                labelRemain.setFont(new Font("Inter", Font.BOLD, 14));
-                labelRemain.setPreferredSize(new Dimension(150, 40));
-                searchPanel.add(labelRemain);
-
-                jComboBoxRemainMaterialPanel = new JComboBox<>();
-                jComboBoxRemainMaterialPanel.setPreferredSize(new Dimension(200, 30));
-                jComboBoxRemainMaterialPanel.setBackground(new Color(1, 120, 220));
-                jComboBoxRemainMaterialPanel.setForeground(Color.white);
-
-                jComboBoxRemainMaterialPanel.addItem("Tất cả");
-                jComboBoxRemainMaterialPanel.setSelectedIndex(0);
-                jComboBoxRemainMaterialPanel.addItem("Dưới định mức tồn");
-                jComboBoxRemainMaterialPanel.addItem("Vượt định mức tồn");
-                jComboBoxRemainMaterialPanel.addItem("Còn hàng trong kho");
-                jComboBoxRemainMaterialPanel.addItem("Hết hàng trong kho");
-                searchPanel.add(jComboBoxRemainMaterialPanel);
-
-                searchPanel.repaint();
-                searchPanel.revalidate();
-            }
-        });
-
-        JRadioButton radio5 = createRadioButton("Xuất huỷ");
-        radio5.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadSearchPanel();
-            }
-
-            private void loadSearchPanel() {
-                searchPanel.removeAll();
-
-                JLabel labelName = new JLabel("Tên Nguyên liệu");
-                labelName.setFont(new Font("Inter", Font.BOLD, 14));
-                labelName.setPreferredSize(new Dimension(150, 40));
-                searchPanel.add(labelName);
-
-                txtSearchMaterialNameProductPanel = new MyTextField();
-                txtSearchMaterialNameProductPanel.setPreferredSize(new Dimension(200, 40));
-                txtSearchMaterialNameProductPanel.putClientProperty("JTextField.placeholderText", "Nhập tên nguyên liệu tìm kiếm");
-                txtSearchMaterialNameProductPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-                    public void mouseClicked(java.awt.event.MouseEvent evt) {
-                        txtSearchMaterialNameProductPanelMouseClicked(evt);
-                    }
-                });
-                txtSearchMaterialNameProductPanel.addKeyListener(new java.awt.event.KeyAdapter() {
-                    public void keyPressed(java.awt.event.KeyEvent evt) {
-                        txtSearchMaterialNameProductPanelKeyPressed(evt);
-                    }
-
-                    public void keyReleased(java.awt.event.KeyEvent evt) {
-                        txtSearchMaterialNameProductPanelKeyReleased(evt);
-                    }
-                });
-                searchPanel.add(txtSearchMaterialNameProductPanel);
-
-                searchPanel.repaint();
-                searchPanel.revalidate();
-            }
-        });
-
-        btnGroupConcernsProductPanel = new ButtonGroup();
-        btnGroupConcernsProductPanel.add(radio1);
-        btnGroupConcernsProductPanel.add(radio2);
-        btnGroupConcernsProductPanel.add(radio3);
-        btnGroupConcernsProductPanel.add(radio4);
-        btnGroupConcernsProductPanel.add(radio5);
-
-        concernsPanel.add(radio1);
-        concernsPanel.add(radio2);
-        concernsPanel.add(radio3);
-        concernsPanel.add(radio4);
-        concernsPanel.add(radio5);
-
-        JLabel labelTime = new JLabel("Thời gian");
-        labelTime.setFont(new Font("Inter", Font.BOLD, 14));
-
-        datePickerProductPanel = new DatePicker();
-        editorProductPanel = new JFormattedTextField();
-
-        datePickerProductPanel.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
-        datePickerProductPanel.setEditor(editorProductPanel);
-        datePickerProductPanel.setCloseAfterSelected(true);
-        datePickerProductPanel.addDateSelectionListener(new DateSelectionListener() {
-            @Override
-            public void dateSelected(DateEvent dateEvent) {
-
-            }
-        });
-
-//        editorProductPanel.setPreferredSize(new Dimension(280, 30));
-        editorProductPanel.setFont(new Font("Inter", Font.BOLD, 15));
-
-        timePanel.add(labelTime, "wrap");
-        timePanel.add(editorProductPanel);
-
-        top.repaint();
-        top.revalidate();
-    }
-
-    private void initTxtSearchNameProductPanel() {
-        menuProductNameProductPanel = new JPopupMenu();
-        searchProductNameProductPanel = new PanelSearch();
-        menuProductNameProductPanel.setBorder(BorderFactory.createLineBorder(new Color(164, 164, 164)));
-        menuProductNameProductPanel.add(searchProductNameProductPanel);
-        menuProductNameProductPanel.setFocusable(false);
-        searchProductNameProductPanel.addEventClick(new EventClick() {
-            @Override
-            public void itemClick(DataSearch data) {
-                menuProductNameProductPanel.setVisible(false);
-                txtSearchProductNameProductPanel.setText(data.getText());
-                Product product = new ProductBLL().findProductsBy(Map.of("name", data.getText())).get(0);
-                productID = product.getId();
-            }
-
-            @Override
-            public void itemRemove(Component com, DataSearch data) {
-                searchProductNameProductPanel.remove(com);
-                menuProductNameProductPanel.setPopupSize(200, (searchProductNameProductPanel.getItemSize() * 35) + 2);
-                if (searchProductNameProductPanel.getItemSize() == 0) {
-                    menuProductNameProductPanel.setVisible(false);
-                }
-            }
-        });
-
-        menuMaterialNameProductPanel = new JPopupMenu();
-        searchMaterialNameProductPanel = new PanelSearch();
-        menuMaterialNameProductPanel.setBorder(BorderFactory.createLineBorder(new Color(164, 164, 164)));
-        menuMaterialNameProductPanel.add(searchMaterialNameProductPanel);
-        menuMaterialNameProductPanel.setFocusable(false);
-        searchMaterialNameProductPanel.addEventClick(new EventClick() {
-            @Override
-            public void itemClick(DataSearch data) {
-                menuMaterialNameProductPanel.setVisible(false);
-                txtSearchMaterialNameProductPanel.setText(data.getText());
-                Material material = new MaterialBLL().findMaterialsBy(Map.of("name", data.getText())).get(0);
-                materialID = material.getId();
-            }
-
-            @Override
-            public void itemRemove(Component com, DataSearch data) {
-                searchMaterialNameProductPanel.remove(com);
-                menuMaterialNameProductPanel.setPopupSize(200, (searchMaterialNameProductPanel.getItemSize() * 35) + 2);
-                if (searchMaterialNameProductPanel.getItemSize() == 0) {
-                    menuMaterialNameProductPanel.setVisible(false);
-                }
-            }
-        });
-    }
-
-    private void setupDisplayType() {
-        JLabel label = new JLabel("Kiểu hiển thị");
+    private void initTopBartEndOfDayPanel() {
+        concernsPanel.removeAll();
+        JLabel label = new JLabel("Mối quan tâm");
         label.setFont(new Font("Inter", Font.BOLD, 14));
-        displayTypePanel.add(label, "wrap");
+        concernsPanel.add(label, "wrap");
 
-        JRadioButton chartRadioButton = createRadioButton("Biểu đồ");
-        JRadioButton reportRadioButton = createRadioButton("Báo cáo");
+        JRadioButton sellRadioButton = createRadioButton("Bán hàng");
+        JRadioButton revenueAndExpenditureRadioButton = createRadioButton("Thu chi");
+        JRadioButton productRadioButton = createRadioButton("Hàng hóa");
 
-        ButtonGroup btnGroupDisplayType = new ButtonGroup();
-        btnGroupDisplayType.add(chartRadioButton);
-        btnGroupDisplayType.add(reportRadioButton);
+        ButtonGroup btnGroupConcerns = new ButtonGroup();
+        btnGroupConcerns.add(sellRadioButton);
+        btnGroupConcerns.add(revenueAndExpenditureRadioButton);
+        btnGroupConcerns.add(productRadioButton);
 
-        displayTypePanel.add(chartRadioButton);
-        displayTypePanel.add(reportRadioButton);
+
+        concernsPanel.add(sellRadioButton);
+        concernsPanel.add(revenueAndExpenditureRadioButton);
+        concernsPanel.add(productRadioButton);
+
+        concernsPanel.repaint();
+        concernsPanel.revalidate();
+
+        // mặc định khi chọn vào tab bán hàng sẽ chọn tiêu chí bán hàng đầu tiên là mặc định
+        sellRadioButton.setSelected(true);
+        updateDisplayType("Báo cáo");
+
+        sellRadioButton.addActionListener(e -> {
+            // Kiểm tra nếu bán hàng  được chọn
+            if (sellRadioButton.isSelected()) {
+                updateDisplayType("Báo cáo");
+            }
+        });
+        revenueAndExpenditureRadioButton.addActionListener(e -> {
+            // Kiểm tra nếu thu chi được chọn
+            if (revenueAndExpenditureRadioButton.isSelected()) {
+                updateDisplayType("Báo cáo");
+            }
+        });
+        sellRadioButton.addActionListener(e -> {
+            // Kiểm tra nếu hàng hóa được chọn
+            if (sellRadioButton.isSelected()) {
+                updateDisplayType("Báo cáo");
+            }
+        });
     }
 
-    private void setupConcerns() {
+
+    private JRadioButton createRadioButton(String text) {
+        JRadioButton radioButton = new JRadioButton(text);
+        radioButton.setFont(new Font("Inter", Font.PLAIN, 14));
+        return radioButton;
+    }
+
+    private void initTopBartSalesPanel() {
+        concernsPanel.removeAll();
+
         JLabel label = new JLabel("Mối quan tâm");
         label.setFont(new Font("Inter", Font.BOLD, 14));
         concernsPanel.add(label, "wrap");
@@ -512,6 +115,243 @@ public class StatisticSalesOldGUI extends LayoutStatistic {
         concernsPanel.add(profitRadioButton);
         concernsPanel.add(discountRadioButton);
         concernsPanel.add(categoryRadioButton);
+
+
+        concernsPanel.repaint();
+        concernsPanel.revalidate();
+
+        // mặc định khi chọn vào tab bán hàng sẽ chọn tiêu chí thời gian đầu tiên là mặc định
+        timeRadioButton.setSelected(true);
+        updateDisplayType("Báo cáo và biểu đồ");
+
+        timeRadioButton.addActionListener(e -> {
+            // Kiểm tra nếu thời gian được chọn
+            if (timeRadioButton.isSelected()) {
+                updateDisplayType("Báo cáo và biểu đồ");
+            }
+        });
+
+        profitRadioButton.addActionListener(e -> {
+            // Kiểm tra nếu lọi nhuận được chọn
+            if (profitRadioButton.isSelected()) {
+                updateDisplayType("Báo cáo và biểu đồ");
+            }
+        });
+
+        discountRadioButton.addActionListener(e -> {
+            // Kiểm tra nếu giảm HD được chọn
+            if (discountRadioButton.isSelected()) {
+                updateDisplayType("Báo cáo");
+            }
+        });
+
+        categoryRadioButton.addActionListener(e -> {
+            // Kiểm tra nếu thể loại được chọn
+            if (categoryRadioButton.isSelected()) {
+                updateDisplayType("Báo cáo");
+            }
+        });
+
+    }
+
+    private void initTopBartProductPanel() {
+        concernsPanel.removeAll();
+        JLabel label = new JLabel("Mối quan tâm");
+        label.setFont(new Font("Inter", Font.BOLD, 14));
+        concernsPanel.add(label, "wrap");
+
+        JRadioButton sellRadioButton = createRadioButton("Bán hàng");
+        JRadioButton profitRadioButton = createRadioButton("Lợi nhuận");
+        JRadioButton import_N_RadioButton = createRadioButton("Xuất nhập tồn");
+        JRadioButton detailedImportAndExportInventoryRadioButton = createRadioButton("Xuất nhập tồn chi tiết");
+        JRadioButton cancelExportRadioButton = createRadioButton("Xuất hủy");
+
+        ButtonGroup btnGroupConcerns = new ButtonGroup();
+        btnGroupConcerns.add(sellRadioButton);
+        btnGroupConcerns.add(profitRadioButton);
+        btnGroupConcerns.add(import_N_RadioButton);
+        btnGroupConcerns.add(detailedImportAndExportInventoryRadioButton);
+        btnGroupConcerns.add(cancelExportRadioButton);
+
+        concernsPanel.add(sellRadioButton);
+        concernsPanel.add(profitRadioButton);
+        concernsPanel.add(import_N_RadioButton);
+        concernsPanel.add(detailedImportAndExportInventoryRadioButton);
+        concernsPanel.add(cancelExportRadioButton);
+
+        concernsPanel.repaint();
+        concernsPanel.revalidate();
+
+        // mặc định khi chọn vào tab bán hàng sẽ chọn tiêu chí bán hàng đầu tiên là mặc định
+        sellRadioButton.setSelected(true);
+        updateDisplayType("Báo cáo và biểu đồ");
+
+        sellRadioButton.addActionListener(e -> {
+            // Kiểm tra nếu hàng được chọn
+            if (sellRadioButton.isSelected()) {
+                updateDisplayType("Báo cáo và biểu đồ");
+            }
+        });
+
+        profitRadioButton.addActionListener(e -> {
+            // Kiểm tra nếu lọi nhuận được chọn
+            if (profitRadioButton.isSelected()) {
+                updateDisplayType("Báo cáo và biểu đồ");
+            }
+        });
+
+        import_N_RadioButton.addActionListener(e -> {
+            // Kiểm tra nếu xuất nhập tồn được chọn
+            if (import_N_RadioButton.isSelected()) {
+                updateDisplayType("Báo cáo");
+            }
+        });
+
+        detailedImportAndExportInventoryRadioButton.addActionListener(e -> {
+            // Kiểm tra nếu xuất nhập tồn chi tiết được chọn
+            if (detailedImportAndExportInventoryRadioButton.isSelected()) {
+                updateDisplayType("Báo cáo và biểu đồ");
+            }
+        });
+
+        cancelExportRadioButton.addActionListener(e -> {
+            // Kiểm tra nếu xuất hủy được chọn
+            if (cancelExportRadioButton.isSelected()) {
+                updateDisplayType("Báo cáo");
+            }
+        });
+
+    }
+
+    private void initTopBartSupplierPanel() {
+        concernsPanel.removeAll();
+        JLabel label = new JLabel("Mối quan tâm");
+        label.setFont(new Font("Inter", Font.BOLD, 14));
+        concernsPanel.add(label, "wrap");
+
+        JRadioButton importRadioButton = createRadioButton("Nhập hàng");
+        JRadioButton sellRadioButton = createRadioButton("Hàng bán theoNCC");
+
+
+        ButtonGroup btnGroupConcerns = new ButtonGroup();
+        btnGroupConcerns.add(importRadioButton);
+        btnGroupConcerns.add(sellRadioButton);
+
+
+        concernsPanel.add(importRadioButton);
+        concernsPanel.add(sellRadioButton);
+
+
+        concernsPanel.repaint();
+        concernsPanel.revalidate();
+
+        // mặc định khi chọn vào tab bán hàng sẽ chọn tiêu chí nhập hàng đầu tiên là mặc định
+        importRadioButton.setSelected(true);
+        updateDisplayType("Báo cáo và biểu đồ");
+
+        importRadioButton.addActionListener(e -> {
+            // Kiểm tra nếu hàng được chọn
+            if (importRadioButton.isSelected()) {
+                updateDisplayType("Báo cáo và biểu đồ");
+            }
+        });
+
+        sellRadioButton.addActionListener(e -> {
+            // Kiểm tra nếu Hàng bán theo NCC được chọn
+            if (sellRadioButton.isSelected()) {
+                updateDisplayType("Báo cáo");
+            }
+        });
+
+
+    }
+
+    private void initTopBartFinancePanel() {
+        super.timePanel.removeAll();
+        concernsPanel.removeAll();
+        JLabel label = new JLabel("Thời gian");
+        label.setFont(new Font("Inter", Font.BOLD, 14));
+        concernsPanel.add(label, "wrap");
+
+        JRadioButton monthRadioButton = createRadioButton("Theo tháng");
+        JRadioButton preciousRadioButton = createRadioButton("Theo quý");
+        JRadioButton yearRadioButton = createRadioButton("Theo năm");
+
+
+        ButtonGroup btnGroupConcerns = new ButtonGroup();
+        btnGroupConcerns.add(monthRadioButton);
+        btnGroupConcerns.add(preciousRadioButton);
+        btnGroupConcerns.add(yearRadioButton);
+
+        concernsPanel.add(monthRadioButton);
+        concernsPanel.add(preciousRadioButton);
+        concernsPanel.add(yearRadioButton);
+
+        concernsPanel.repaint();
+        concernsPanel.revalidate();
+
+        // mặc định khi chọn vào tab tài chính sẽ chọn tiêu chí theo quý đầu tiên là mặc định
+        preciousRadioButton.setSelected(true);
+        updateDisplayType("Báo cáo và biểu đồ");
+
+        preciousRadioButton.addActionListener(e -> {
+            // Kiểm tra nếu theo quý được chọn
+            if (preciousRadioButton.isSelected()) {
+                updateDisplayType("Báo cáo và biểu đồ");
+            }
+        });
+
+        monthRadioButton.addActionListener(e -> {
+            // Kiểm tra nếu theo tháng được chọn
+            if (monthRadioButton.isSelected()) {
+                updateDisplayType("Báo cáo và biểu đồ");
+            }
+        });
+        yearRadioButton.addActionListener(e -> {
+            // Kiểm tra nếu theo năm được chọn
+            if (yearRadioButton.isSelected()) {
+                updateDisplayType("Báo cáo và biểu đồ");
+            }
+        });
+
+
+    }
+
+    private void setupDisplayTypeReportAndChart() {
+        JLabel label = new JLabel("Kiểu hiển thị");
+        label.setFont(new Font("Inter", Font.BOLD, 14));
+        displayTypePanel.add(label, "wrap");
+
+        JRadioButton chartRadioButton = createRadioButton("Biểu đồ");
+        JRadioButton reportRadioButton = createRadioButton("Báo cáo");
+
+        ButtonGroup btnGroupDisplayType = new ButtonGroup();
+        btnGroupDisplayType.add(chartRadioButton);
+        btnGroupDisplayType.add(reportRadioButton);
+
+        displayTypePanel.add(chartRadioButton);
+        displayTypePanel.add(reportRadioButton);
+    }
+
+    private void setupDisplayTypeReport() {
+        JLabel label = new JLabel("Kiểu hiển thị");
+        label.setFont(new Font("Inter", Font.BOLD, 14));
+        displayTypePanel.add(label, "wrap");
+
+        JRadioButton reportRadioButton = createRadioButton("Báo cáo");
+        displayTypePanel.add(reportRadioButton);
+    }
+
+    private void updateDisplayType(String displayType) {
+        displayTypePanel.removeAll();
+        if (displayType.equals("Báo cáo và biểu đồ"))
+            setupDisplayTypeReportAndChart();
+        else
+            setupDisplayTypeReport();
+
+        displayTypePanel.repaint();
+        displayTypePanel.revalidate();
+
     }
 
     private void setupTime() {
@@ -520,7 +360,6 @@ public class StatisticSalesOldGUI extends LayoutStatistic {
 
         datePicker = new DatePicker();
         editor = new JFormattedTextField();
-
 
         datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
         datePicker.setEditor(editor);
@@ -539,110 +378,14 @@ public class StatisticSalesOldGUI extends LayoutStatistic {
         timePanel.add(editor);
     }
 
-    private JRadioButton createRadioButton(String text) {
-        JRadioButton radioButton = new JRadioButton(text);
-        radioButton.setFont(new Font("Inter", Font.PLAIN, 14));
-        return radioButton;
-    }
 
-    private void txtSearchProductNameProductPanelMouseClicked(java.awt.event.MouseEvent evt) {
-        if (searchProductNameProductPanel.getItemSize() > 0 && !txtSearchProductNameProductPanel.getText().isEmpty()) {
-            menuProductNameProductPanel.show(txtSearchProductNameProductPanel, 0, txtSearchProductNameProductPanel.getHeight());
-            searchProductNameProductPanel.clearSelected();
-        }
-    }
-
-
-    private void txtSearchProductNameProductPanelKeyReleased(java.awt.event.KeyEvent evt) {
-        if (evt.getKeyCode() != KeyEvent.VK_UP && evt.getKeyCode() != KeyEvent.VK_DOWN && evt.getKeyCode() != KeyEvent.VK_ENTER) {
-            String text = txtSearchProductNameProductPanel.getText().trim().toLowerCase();
-            searchProductNameProductPanel.setData(searchProductNameProductPanel(text));
-            if (searchProductNameProductPanel.getItemSize() > 0 && !txtSearchProductNameProductPanel.getText().isEmpty()) {
-                menuProductNameProductPanel.show(txtSearchProductNameProductPanel, 0, txtSearchProductNameProductPanel.getHeight());
-                menuProductNameProductPanel.setPopupSize(200, (searchProductNameProductPanel.getItemSize() * 35) + 2);
-            } else {
-                menuProductNameProductPanel.setVisible(false);
-            }
-        }
-    }
-
-    private java.util.List<DataSearch> searchProductNameProductPanel(String text) {
-        productID = -1;
-        java.util.List<DataSearch> list = new ArrayList<>();
-        List<Product> products = new ProductBLL().findProducts("name", text);
-        for (Product m : products) {
-            if (list.size() == 7) {
-                break;
-            }
-            list.add(new DataSearch(m.getName()));
-        }
-        return list;
-    }
-
-    private void txtSearchProductNameProductPanelKeyPressed(java.awt.event.KeyEvent evt) {
-        if (evt.getKeyCode() == KeyEvent.VK_UP) {
-            searchProductNameProductPanel.keyUp();
-        } else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
-            searchProductNameProductPanel.keyDown();
-        } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            String text = searchProductNameProductPanel.getSelectedText();
-            txtSearchProductNameProductPanel.setText(text);
-
-        }
-        menuProductNameProductPanel.setVisible(false);
-    }
-
-    private void txtSearchMaterialNameProductPanelMouseClicked(java.awt.event.MouseEvent evt) {
-        if (searchMaterialNameProductPanel.getItemSize() > 0 && !txtSearchMaterialNameProductPanel.getText().isEmpty()) {
-            menuMaterialNameProductPanel.show(txtSearchMaterialNameProductPanel, 0, txtSearchMaterialNameProductPanel.getHeight());
-            searchMaterialNameProductPanel.clearSelected();
-        }
-    }
-
-
-    private void txtSearchMaterialNameProductPanelKeyReleased(java.awt.event.KeyEvent evt) {
-        if (evt.getKeyCode() != KeyEvent.VK_UP && evt.getKeyCode() != KeyEvent.VK_DOWN && evt.getKeyCode() != KeyEvent.VK_ENTER) {
-            String text = txtSearchMaterialNameProductPanel.getText().trim().toLowerCase();
-            searchMaterialNameProductPanel.setData(searchMaterialNameProductPanel(text));
-            if (searchMaterialNameProductPanel.getItemSize() > 0 && !txtSearchMaterialNameProductPanel.getText().isEmpty()) {
-                menuMaterialNameProductPanel.show(txtSearchMaterialNameProductPanel, 0, txtSearchMaterialNameProductPanel.getHeight());
-                menuMaterialNameProductPanel.setPopupSize(200, (searchMaterialNameProductPanel.getItemSize() * 35) + 2);
-            } else {
-                menuMaterialNameProductPanel.setVisible(false);
-            }
-        }
-    }
-
-    private java.util.List<DataSearch> searchMaterialNameProductPanel(String text) {
-        materialID = -1;
-        List<DataSearch> list = new ArrayList<>();
-        List<Material> materials = new MaterialBLL().findMaterials("name", text);
-        for (Material m : materials) {
-            if (list.size() == 7)
-                break;
-            list.add(new DataSearch(m.getName()));
-        }
-        return list;
-    }
-
-    private void txtSearchMaterialNameProductPanelKeyPressed(java.awt.event.KeyEvent evt) {
-        if (evt.getKeyCode() == KeyEvent.VK_UP) {
-            searchMaterialNameProductPanel.keyUp();
-        } else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
-            searchMaterialNameProductPanel.keyDown();
-        } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            String text = searchMaterialNameProductPanel.getSelectedText();
-            txtSearchMaterialNameProductPanel.setText(text);
-
-        }
-        menuMaterialNameProductPanel.setVisible(false);
-    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame();
             frame.setSize(1165, 733);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
             frame.add(new StatisticSalesOldGUI());
             frame.setVisible(true);
         });

@@ -12,7 +12,7 @@ public class LayoutStatistic extends RoundedPanel {
     public RoundedPanel displayTypePanel;
     public RoundedPanel concernsPanel;
     public RoundedPanel timePanel;
-    private JTabbedPane jTabbedPane;
+
 
 
     public LayoutStatistic() {
@@ -37,7 +37,8 @@ public class LayoutStatistic extends RoundedPanel {
         top.add(concernsPanel);
         top.add(timePanel);
 
-        jTabbedPane = new JTabbedPane();
+
+        JTabbedPane jTabbedPane = new JTabbedPane();
         RoundedPanel endOfDayPanel = new RoundedPanel();
         RoundedPanel salesPanel = new RoundedPanel();
         RoundedPanel productPanel = new RoundedPanel();
@@ -61,6 +62,7 @@ public class LayoutStatistic extends RoundedPanel {
         jTabbedPane.addTab("Nhân Viên", employeePanel);
         jTabbedPane.addTab("Tài Chính", financePanel);
         center.add(jTabbedPane, BorderLayout.CENTER);
+
 
     }
 
