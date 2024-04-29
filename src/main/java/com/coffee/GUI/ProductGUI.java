@@ -11,6 +11,7 @@ import com.coffee.GUI.DialogGUI.FormEditGUI.EditProductGUI;
 import com.coffee.GUI.DialogGUI.FormEditGUI.EditProductGUI1;
 import com.coffee.GUI.components.*;
 import com.coffee.ImportExcel.AddProductFromExcel;
+import com.coffee.main.Cafe_Application;
 import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
@@ -200,6 +201,7 @@ public class ProductGUI extends Layout3 {
                             JOptionPane.showMessageDialog(null, "Thêm sản phẩm thành công",
                                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                             refresh();
+                            loadSaleGUI();
                         }
                     }
                 }
@@ -454,6 +456,20 @@ public class ProductGUI extends Layout3 {
             }
         }
 
+    }
+    private void loadSaleGUI() {
+        if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
+                    saleGUI.loadCategory();
+                    saleGUI.loadProductRoundPanel();
+                    saleGUI.loadProduct(saleGUI.resultSearch);
+                }
+            });
+            thread.start();
+        }
     }
 
 

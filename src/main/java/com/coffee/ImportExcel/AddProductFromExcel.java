@@ -239,7 +239,7 @@ private Double UpdateCapital_Price( List<Recipe> recipes_of_product){
         if(errorRow.isEmpty()){
             String name = (String) rowData.get("name");
             String size = (String) rowData.get("size");
-            List<Product> products = productBLL.searchProducts("name = '" + name + "'", "size = '" + size + "'");
+            List<Product> products = productBLL.searchProducts("name = '" + name + "'", "size = '" + size + "'"+"'", "deleted = 0");
             if (!products.isEmpty()) {
                 errorRow.append("Sản phẩm đã tồn tại.");
             }
