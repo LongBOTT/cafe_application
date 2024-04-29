@@ -174,12 +174,239 @@ public class StatisticFinanceGUI extends JPanel {
     }
 
     private void byYearChart() {
+        List<List<String>> dataSale_Discount = MySQL.getSale_DiscountByYear();
+        List<List<String>> dataCapitalPrice = MySQL.getCapitalPriceByYear();
+        List<List<String>> dataSalary_Allowance_Bonus_Deduction_Fine = MySQL.getSalary_Allowance_Bonus_Deduction_FineByYear();
+
+        List<Integer> yearList = new ArrayList<>();
+
+        // Lặp qua từ tháng 1 đến tháng hiện tại
+        for (List<String> strings : dataSale_Discount) {
+            yearList.add(Integer.parseInt(strings.get(0)));
+        }
+
+        List<List<String>> data = new ArrayList<>();
+
+        for (Integer year : yearList) {
+            List<String> list = new ArrayList<>();
+            list.add(year.toString());
+
+            boolean check = false;
+            for (List<String> strings : dataSale_Discount) {
+                if (strings.get(0).equals(year.toString())) {
+                    list.add(strings.get(1));
+                    list.add(strings.get(2));
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                list.add("0");
+                list.add("0");
+            }
+
+            check = false;
+            for (List<String> strings : dataCapitalPrice) {
+                if (strings.get(0).equals(year.toString())) {
+                    list.add(strings.get(1));
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                list.add("0");
+            }
+
+            check = false;
+            for (List<String> strings : dataSalary_Allowance_Bonus_Deduction_Fine) {
+                if (strings.get(0).equals(year.toString())) {
+                    list.add(strings.get(1));
+                    list.add(strings.get(2));
+                    list.add(strings.get(3));
+                    list.add(strings.get(4));
+                    list.add(strings.get(5));
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                list.add("0");
+                list.add("0");
+                list.add("0");
+                list.add("0");
+                list.add("0");
+            }
+
+            data.add(list);
+        }
+
+        content.removeAll();
+
+        JLabel jLabelTile1 = new JLabel("Lợi nhuận theo năm");
+        jLabelTile1.setPreferredSize(new Dimension(890, 30));
+        jLabelTile1.setFont(new Font("Inter", Font.BOLD, 15));
+        jLabelTile1.setVerticalAlignment(JLabel.CENTER);
+        jLabelTile1.setHorizontalAlignment(JLabel.CENTER);
+        content.add(jLabelTile1, "wrap");
+
+        CurveLineChart chart = new CurveLineChart();
+//        chart.setTitle("Lợi nhuận theo tháng");
+        chart.addLegend("Lợi nhuận thuần", Color.decode("#7b4397"), Color.decode("#dc2430"));
+        chart.addLegend("Lợi nhuận từ hoạt động kinh doanh (Lợi nhuận bán hàng - Chi phí nhân viên)", Color.decode("#e65c00"), Color.decode("#F9D423"));
+        chart.addLegend("Thu nhập khác", Color.decode("#0099F7"), Color.decode("#F11712"));
+//        chart.addLegend("Thu nhập khác", Color.decode("#0099F5"), Color.decode("#F11710"));
+        chart.setForeground(new Color(0x919191));
+        chart.setFillColor(true);
+
+        JPanel panelShadow = new JPanel();
+        panelShadow.setPreferredSize(new Dimension(890, 650));
+        panelShadow.setBackground(new Color(255, 255, 255));
+        panelShadow.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panelShadow.setLayout(new BorderLayout());
+        panelShadow.add(chart, BorderLayout.CENTER);
+        content.add(panelShadow, "wrap");
+
+        List<ModelData> lists = new ArrayList<>();
+        for (List<String> list : data) {
+            double sale = Double.parseDouble(list.get(1)) - Double.parseDouble(list.get(2)) - Double.parseDouble(list.get(3));
+            double excess = Double.parseDouble(list.get(4)) + Double.parseDouble(list.get(5)) + Double.parseDouble(list.get(6));
+            double other = Double.parseDouble(list.get(7)) + Double.parseDouble(list.get(8));
+            double profit = sale - excess + other;
+            lists.add(new ModelData("Năm " + list.get(0), profit, sale - excess, other));
+
+        }
+
+        for (ModelData d : lists) {
+            chart.addData(new ModelLineChart(d.getMonth(), new double[]{d.getDeposit(), d.getWithdrawal(), d.getTransfer()}));
+        }
+        chart.start();
+
+        content.repaint();
+        content.revalidate();
     }
 
     private void byQuarterReport() {
     }
 
     private void byQuarterChart() {
+        List<List<String>> dataSale_Discount = MySQL.getSale_DiscountByQuarter();
+        List<List<String>> dataCapitalPrice = MySQL.getCapitalPriceByQuarter();
+        List<List<String>> dataSalary_Allowance_Bonus_Deduction_Fine = MySQL.getSalary_Allowance_Bonus_Deduction_FineByQuarter();
+
+        List<Integer> quarterList = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+
+        // Lặp qua từ tháng 1 đến tháng hiện tại
+        for (Month month : Month.values()) {
+            LocalDate monthStart = LocalDate.of(today.getYear(), month, 1);
+            int quarter = (monthStart.getMonthValue() - 1) / 3 + 1;
+
+            // Nếu tháng hiện tại hoặc trước tháng hiện tại, thêm quý vào danh sách
+            if (monthStart.isBefore(today) || monthStart.getMonth() == today.getMonth()) {
+                if (!quarterList.contains(quarter)) {
+                    quarterList.add(quarter);
+                }
+            }
+        }
+
+        List<List<String>> data = new ArrayList<>();
+
+        for (Integer quarter : quarterList) {
+            List<String> list = new ArrayList<>();
+            list.add(quarter.toString());
+
+            boolean check = false;
+            for (List<String> strings : dataSale_Discount) {
+                if (strings.get(0).equals(quarter.toString())) {
+                    list.add(strings.get(1));
+                    list.add(strings.get(2));
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                list.add("0");
+                list.add("0");
+            }
+
+            check = false;
+            for (List<String> strings : dataCapitalPrice) {
+                if (strings.get(0).equals(quarter.toString())) {
+                    list.add(strings.get(1));
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                list.add("0");
+            }
+
+            check = false;
+            for (List<String> strings : dataSalary_Allowance_Bonus_Deduction_Fine) {
+                if (strings.get(0).equals(quarter.toString())) {
+                    list.add(strings.get(1));
+                    list.add(strings.get(2));
+                    list.add(strings.get(3));
+                    list.add(strings.get(4));
+                    list.add(strings.get(5));
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                list.add("0");
+                list.add("0");
+                list.add("0");
+                list.add("0");
+                list.add("0");
+            }
+
+            data.add(list);
+        }
+
+        content.removeAll();
+
+        JLabel jLabelTile1 = new JLabel("Lợi nhuận theo quý");
+        jLabelTile1.setPreferredSize(new Dimension(890, 30));
+        jLabelTile1.setFont(new Font("Inter", Font.BOLD, 15));
+        jLabelTile1.setVerticalAlignment(JLabel.CENTER);
+        jLabelTile1.setHorizontalAlignment(JLabel.CENTER);
+        content.add(jLabelTile1, "wrap");
+
+        CurveLineChart chart = new CurveLineChart();
+//        chart.setTitle("Lợi nhuận theo tháng");
+        chart.addLegend("Lợi nhuận thuần", Color.decode("#7b4397"), Color.decode("#dc2430"));
+        chart.addLegend("Lợi nhuận từ hoạt động kinh doanh (Lợi nhuận bán hàng - Chi phí nhân viên)", Color.decode("#e65c00"), Color.decode("#F9D423"));
+        chart.addLegend("Thu nhập khác", Color.decode("#0099F7"), Color.decode("#F11712"));
+//        chart.addLegend("Thu nhập khác", Color.decode("#0099F5"), Color.decode("#F11710"));
+        chart.setForeground(new Color(0x919191));
+        chart.setFillColor(true);
+
+        JPanel panelShadow = new JPanel();
+        panelShadow.setPreferredSize(new Dimension(890, 650));
+        panelShadow.setBackground(new Color(255, 255, 255));
+        panelShadow.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panelShadow.setLayout(new BorderLayout());
+        panelShadow.add(chart, BorderLayout.CENTER);
+        content.add(panelShadow, "wrap");
+
+        List<ModelData> lists = new ArrayList<>();
+        for (List<String> list : data) {
+            double sale = Double.parseDouble(list.get(1)) - Double.parseDouble(list.get(2)) - Double.parseDouble(list.get(3));
+            double excess = Double.parseDouble(list.get(4)) + Double.parseDouble(list.get(5)) + Double.parseDouble(list.get(6));
+            double other = Double.parseDouble(list.get(7)) + Double.parseDouble(list.get(8));
+            double profit = sale - excess + other;
+            lists.add(new ModelData("Quý " + list.get(0), profit, sale - excess, other));
+
+        }
+
+        for (ModelData d : lists) {
+            chart.addData(new ModelLineChart(d.getMonth(), new double[]{d.getDeposit(), d.getWithdrawal(), d.getTransfer()}));
+        }
+        chart.start();
+
+        content.repaint();
+        content.revalidate();
     }
 
     private void byMonthReport() {
