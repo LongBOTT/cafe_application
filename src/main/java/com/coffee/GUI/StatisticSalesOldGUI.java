@@ -15,12 +15,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 
-public class StatisticSalesGUI extends LayoutStatistic {
+public class StatisticSalesOldGUI extends LayoutStatistic {
     private DatePicker datePicker;
     private JFormattedTextField editor;
-    private JTabbedPane jTabbedPane;
 
-    public StatisticSalesGUI() {
+
+    public StatisticSalesOldGUI() {
         super();
         initUIComponents();
 
@@ -30,67 +30,13 @@ public class StatisticSalesGUI extends LayoutStatistic {
     private void initUIComponents() {
         initTopBartEndOfDayPanel();
         setupTime();
-        setupTabbedPane();
-        addTabChangeListener();
+
+
     }
 
-    private void setupTabbedPane() {
-        jTabbedPane = new JTabbedPane();
 
-        // Khởi tạo giao diện cho các tab
-//        RoundedPanel endOfDayPanel = new EndOfDayReport();
-//        RoundedPanel salesPanel = new SalesReport();
-//        RoundedPanel productPanel = new ProductReport();
-//        RoundedPanel supplierPanel = new SupplierReport();
-//        RoundedPanel employeePanel = new StaffReport();
-//        RoundedPanel financePanel = new FinancialReport();
-//
-//        endOfDayPanel.setBackground(Color.WHITE);
-//        salesPanel.setBackground(Color.WHITE);
-//        productPanel.setBackground(Color.WHITE);
-//        supplierPanel.setBackground(Color.WHITE);
-//        employeePanel.setBackground(Color.WHITE);
-//        financePanel.setBackground(Color.WHITE);
-//
-//        jTabbedPane.addTab("Cuối ngày", endOfDayPanel);
-//        jTabbedPane.addTab("Bán Hàng", salesPanel);
-//        jTabbedPane.addTab("Hàng hóa", productPanel);
-//        jTabbedPane.addTab("Nhà cung cấp", supplierPanel);
-//        jTabbedPane.addTab("Nhân viên", employeePanel);
-//        jTabbedPane.addTab("Tài chính", financePanel);
-//        center.add(jTabbedPane, BorderLayout.CENTER);
-    }
 
-    private void addTabChangeListener() {
-        jTabbedPane.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                int selectedIndex = jTabbedPane.getSelectedIndex();
 
-                switch (selectedIndex) {
-                    case 0:  // Báo cáo cuối ngày
-                        initTopBartEndOfDayPanel();
-                        break;
-                    case 1:  // Báo cáo bán hàng
-                        initTopBartSalesPanel();
-                        break;
-                    case 2:  // Báo cáo sản phẩm
-                        initTopBartProductPanel();
-                        break;
-                    case 3:  // Báo cáo nhà cung cấp
-                        initTopBartSupplierPanel();
-                        break;
-                    case 4:  // Báo cáo nhân viên
-
-                        break;
-                    case 5:  // Báo cáo tài chính
-                        initTopBartFinancePanel();
-                        break;
-
-                }
-            }
-        });
-    }
 
 
     private void initTopBartEndOfDayPanel() {
@@ -415,10 +361,6 @@ public class StatisticSalesGUI extends LayoutStatistic {
         datePicker = new DatePicker();
         editor = new JFormattedTextField();
 
-
-
-
-
         datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
         datePicker.setEditor(editor);
         datePicker.setCloseAfterSelected(true);
@@ -444,7 +386,7 @@ public class StatisticSalesGUI extends LayoutStatistic {
             frame.setSize(1165, 733);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            frame.add(new StatisticSalesGUI());
+            frame.add(new StatisticSalesOldGUI());
             frame.setVisible(true);
         });
     }
