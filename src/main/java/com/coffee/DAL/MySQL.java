@@ -430,4 +430,45 @@ public class MySQL {
             throw new RuntimeException(e);
         }
     }
+
+    public static List<List<String>> getSale_DiscountByMonth() {
+        String query = "SELECT MONTH(rp.invoice_date), SUM(rp.total), SUM(rp.total_discount)\n" +
+                "FROM receipt rp\n" +
+                "WHERE YEAR(rp.invoice_date) = YEAR(NOW())\n" +
+                "GROUP BY MONTH(rp.invoice_date)\n" +
+                "ORDER BY MONTH(rp.invoice_date) ASC ";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getCapitalPriceByMonth() {
+        String query = "SELECT MONTH(rp.invoice_date), SUM(pro.capital_price * rd.quantity)\n" +
+                "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
+                "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n" +
+                "WHERE YEAR(rp.invoice_date) = YEAR(NOW())\n" +
+                "GROUP BY MONTH(rp.invoice_date)\n" +
+                "ORDER BY MONTH(rp.invoice_date) ASC";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getSalary_Allowance_Bonus_Deduction_FineByMonth() {
+        String query = "SELECT pr.`id`, pr.`month`, pr.paid, SUM(pd.allowance_amount), SUM(pd.bonus_amount), SUM(pd.deduction_amount), SUM(pd.fine_amount)\n" +
+                "FROM payroll pr JOIN payroll_detail pd ON pr.id = pd.payroll_id\n" +
+                "WHERE pr.`year` = YEAR(NOW())\n" +
+                "GROUP BY pr.`id`, pr.`month`, pr.paid\n" +
+                "ORDER BY pr.`month` ASC ";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
