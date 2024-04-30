@@ -14,6 +14,7 @@ import com.coffee.GUI.components.swing.EventClick;
 import com.coffee.GUI.components.swing.MyTextField;
 import com.coffee.GUI.components.swing.PanelSearch;
 import com.coffee.utils.VNString;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
 import raven.datetime.component.date.DateEvent;
 import raven.datetime.component.date.DateSelectionListener;
@@ -23,7 +24,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -44,6 +48,8 @@ public class StatisticProductGUI extends JPanel {
     private int concern = 0;
     private int displayType = 0;
     private JScrollPane scrollPane;
+    private static final int PANEL_WIDTH = 885;
+    private static final int PANEL_HEIGHT = 40;
 
     public StatisticProductGUI() {
         setBackground(Color.WHITE);
@@ -90,6 +96,8 @@ public class StatisticProductGUI extends JPanel {
         JPanel jPanel = new JPanel(new MigLayout("", "5[]5", "10[]10"));
         jPanel.setBackground(new Color(238, 238, 238));
         scrollPane.setViewportView(jPanel);
+
+        displayType = 0;
 
         // chon hien thi
         RoundedPanel displayTypePanel = new RoundedPanel();
@@ -331,11 +339,11 @@ public class StatisticProductGUI extends JPanel {
                 import_exportReport();
         }
         if (concern == 3) {
-            destroy_xportReport();
+            destroy_exportReport();
         }
     }
 
-    private void destroy_xportReport() {
+    private void destroy_exportReport() {
         Date start = null;
         Date end = null;
         if (datePicker.getDateSQL_Between() != null) {
@@ -347,7 +355,70 @@ public class StatisticProductGUI extends JPanel {
         assert start != null;
         List<List<String>> dataDestroyExport = MySQL.getDestroyExports(materialName, start.toString(), end.toString());
 
-        System.out.println(Arrays.toString(dataDestroyExport.toArray()));
+        content.removeAll();
+
+        initTopContent("Báo cáo xuất nhập tồn nguyên liệu", start, end);
+
+        JScrollPane jScrollPane = new JScrollPane();
+        jScrollPane.setPreferredSize(new Dimension(PANEL_WIDTH, 580));
+        content.add(jScrollPane, "wrap");
+
+        JPanel centerPanel = new JPanel(new MigLayout("", "0[]0", "0[]0"));
+        centerPanel.setBackground(Color.WHITE);
+        jScrollPane.setViewportView(centerPanel);
+
+        JPanel salesLabelPanel = createLabelPanel(new Color(178, 232, 255), new Color(202, 202, 202));
+        salesLabelPanel.setPreferredSize(new Dimension(880, 40));
+        addLabelsToPanel(salesLabelPanel, new String[]{"Mã nguyên liệu", "Tên nguyên liệu", "SL xuất huỷ", "Giá trị xuất huỷ"}, 10, 10, new Dimension(400, 30));
+        centerPanel.add(salesLabelPanel, "wrap");
+
+        double totalQuantityDestroyExport = 0;
+        double totalDestroyExport = 0;
+
+        for (List<String> list : dataDestroyExport) {
+            totalQuantityDestroyExport += Double.parseDouble(list.get(2));
+            totalDestroyExport += Double.parseDouble(list.get(3));
+        }
+        JPanel salesDataPanel = createLabelPanel(new Color(242, 238, 214), new Color(202, 202, 202));
+        salesDataPanel.setPreferredSize(new Dimension(880, 40));
+        addLabelsToPanel(salesDataPanel, new String[]{"SL nguyên liệu: " + dataDestroyExport.size(), " ", String.valueOf(totalQuantityDestroyExport), VNString.currency(totalDestroyExport)}, 10, 10, new Dimension(400, 30));
+        centerPanel.add(salesDataPanel, "wrap");
+
+        for (List<String> list : dataDestroyExport) {
+            JPanel panel = new JPanel();
+            panel.setLayout(new MigLayout("", "10[]10", ""));
+            panel.setPreferredSize(new Dimension(868, 30));
+            panel.setBackground(Color.WHITE);
+            panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(202, 202, 202)));
+
+            JLabel labelID = new JLabel(list.get(0));
+            labelID.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelID.setPreferredSize(new Dimension(410, 30));
+            panel.add(labelID);
+
+            JLabel labelName = new JLabel(list.get(1));
+            labelName.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelName.setPreferredSize(new Dimension(410, 30));
+            panel.add(labelName);
+
+            JLabel labelQuantityDestroyExport = new JLabel(list.get(2));
+            labelQuantityDestroyExport.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelQuantityDestroyExport.setPreferredSize(new Dimension(410, 30));
+//            labelQuantityDestroyExport.setHorizontalAlignment(JLabel.CENTER);
+            panel.add(labelQuantityDestroyExport);
+
+            JLabel labelTotalExport = new JLabel(VNString.currency(Double.parseDouble(list.get(3))));
+            labelTotalExport.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelTotalExport.setPreferredSize(new Dimension(370, 30));
+            panel.add(labelTotalExport);
+
+            centerPanel.add(panel, "wrap");
+        }
+
+        content.repaint();
+        content.revalidate();
+
+//        System.out.println(Arrays.toString(dataDestroyExport.toArray()));
     }
 
     private void import_exportChart() {
@@ -426,14 +497,14 @@ public class StatisticProductGUI extends JPanel {
             for (List<String> dataImport : dataTotalImport) {
                 if (dataImport.get(0).equals(material.getId() + "")) {
                     data.add(dataImport.get(2));
-                    data.add(VNString.currency(Double.parseDouble(dataImport.get(2)) * material.getUnit_price()));
+                    data.add(String.valueOf(Double.parseDouble(dataImport.get(2)) * material.getUnit_price()));
                     check = true;
                     break;
                 }
             }
             if (!check) {
                 data.add("0");
-                data.add(VNString.currency(0));
+                data.add("0");
             }
 
             check = false;
@@ -442,7 +513,7 @@ public class StatisticProductGUI extends JPanel {
                     data.add(dataExport.get(2));
                     data.add(dataExport.get(3));
                     data.add(dataExport.get(4));
-                    data.add(VNString.currency(Double.parseDouble(dataExport.get(4)) * material.getUnit_price()));
+                    data.add(String.valueOf(Double.parseDouble(dataExport.get(4)) * material.getUnit_price()));
                     check = true;
                     break;
                 }
@@ -451,11 +522,106 @@ public class StatisticProductGUI extends JPanel {
                 data.add("0");
                 data.add("0");
                 data.add("0");
-                data.add(VNString.currency(0));
+                data.add("0");
             }
             dataImportExport.add(data);
         }
-        System.out.println(Arrays.toString(dataImportExport.toArray()));
+
+        content.removeAll();
+
+        initTopContent("Báo cáo xuất nhập tồn nguyên liệu", start, end);
+
+        JScrollPane jScrollPane = new JScrollPane();
+        jScrollPane.setPreferredSize(new Dimension(PANEL_WIDTH, 580));
+        content.add(jScrollPane, "wrap");
+
+        JPanel centerPanel = new JPanel(new MigLayout("", "0[]0", "0[]0"));
+        centerPanel.setBackground(Color.WHITE);
+        jScrollPane.setViewportView(centerPanel);
+
+        JPanel salesLabelPanel = createLabelPanel(new Color(178, 232, 255), new Color(202, 202, 202));
+        salesLabelPanel.setPreferredSize(new Dimension(1100, 40));
+        addLabelsToPanel(salesLabelPanel, new String[]{"Mã NL", "Tên NL", "SL nhập", "Giá trị nhập", "SL xuất huỷ", "SL xuất bán", "Tổng SL xuất", "Giá trị xuất"}, 10, 10, new Dimension(150, 30));
+        centerPanel.add(salesLabelPanel, "wrap");
+
+        double totalQuantityImport = 0;
+        double totalImport = 0;
+        double totalQuantityDestroyExport = 0;
+        double totalQuantitySaleExport = 0;
+        double totalQuantityExport = 0;
+        double totalExport = 0;
+
+        for (List<String> list : dataImportExport) {
+            totalQuantityImport += Double.parseDouble(list.get(2));
+            totalImport += Double.parseDouble(list.get(3));
+            totalQuantityDestroyExport += Double.parseDouble(list.get(4));
+            totalQuantitySaleExport += Double.parseDouble(list.get(5));
+            totalQuantityExport += Double.parseDouble(list.get(6));
+            totalExport += Double.parseDouble(list.get(7));
+        }
+        JPanel salesDataPanel = createLabelPanel(new Color(242, 238, 214), new Color(202, 202, 202));
+        salesDataPanel.setPreferredSize(new Dimension(1100, 40));
+        addLabelsToPanel(salesDataPanel, new String[]{"SL nguyên liệu: " + dataImportExport.size(), " ", String.valueOf(totalQuantityImport), VNString.currency(totalImport), String.valueOf(totalQuantityDestroyExport), String.valueOf(totalQuantitySaleExport), String.valueOf(totalQuantityExport), VNString.currency(totalExport)}, 10, 10, new Dimension(150, 30));
+        centerPanel.add(salesDataPanel, "wrap");
+//
+        for (List<String> list : dataImportExport) {
+            JPanel panel = new JPanel();
+            panel.setLayout(new MigLayout("", "10[]10", ""));
+            panel.setPreferredSize(new Dimension(1100, 30));
+            panel.setBackground(Color.WHITE);
+            panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(202, 202, 202)));
+
+            JLabel labelID = new JLabel(list.get(0));
+            labelID.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelID.setPreferredSize(new Dimension(150, 30));
+            panel.add(labelID);
+
+            JLabel labelName = new JLabel(list.get(1));
+            labelName.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelName.setPreferredSize(new Dimension(150, 30));
+            panel.add(labelName);
+
+            JLabel labelQuantityImport = new JLabel(list.get(2));
+            labelQuantityImport.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelQuantityImport.setPreferredSize(new Dimension(150, 30));
+//            labelQuantityImport.setHorizontalAlignment(JLabel.CENTER);
+            panel.add(labelQuantityImport);
+
+            JLabel labelTotalImport = new JLabel(VNString.currency(Double.parseDouble(list.get(3))));
+            labelTotalImport.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelTotalImport.setPreferredSize(new Dimension(150, 30));
+            panel.add(labelTotalImport);
+
+            JLabel labelQuantityDestroyExport = new JLabel(list.get(4));
+            labelQuantityDestroyExport.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelQuantityDestroyExport.setPreferredSize(new Dimension(150, 30));
+//            labelQuantityDestroyExport.setHorizontalAlignment(JLabel.CENTER);
+            panel.add(labelQuantityDestroyExport);
+
+            JLabel labelQuantitySaleExport = new JLabel(list.get(5));
+            labelQuantitySaleExport.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelQuantitySaleExport.setPreferredSize(new Dimension(150, 30));
+//            labelQuantitySaleExport.setHorizontalAlignment(JLabel.CENTER);
+            panel.add(labelQuantitySaleExport);
+
+            JLabel labelQuantityExport = new JLabel(list.get(6));
+            labelQuantityExport.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelQuantityExport.setPreferredSize(new Dimension(150, 30));
+//            labelQuantityExport.setHorizontalAlignment(JLabel.CENTER);
+            panel.add(labelQuantityExport);
+
+            JLabel labelTotalExport = new JLabel(VNString.currency(Double.parseDouble(list.get(7))));
+            labelTotalExport.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelTotalExport.setPreferredSize(new Dimension(150, 30));
+            panel.add(labelTotalExport);
+
+            centerPanel.add(panel, "wrap");
+        }
+
+        content.repaint();
+        content.revalidate();
+
+//        System.out.println(Arrays.toString(dataImportExport.toArray()));
     }
 
     private void profitReport() {
@@ -472,7 +638,90 @@ public class StatisticProductGUI extends JPanel {
         assert start != null;
         List<List<String>> dataProfitProduct = MySQL.getProfitProduct(product_Name, size, product_Category, start.toString(), end.toString());
 
-        System.out.println(dataProfitProduct);
+        content.removeAll();
+
+        initTopContent("Báo cáo lợi nhuận theo sản phẩm", start, end);
+
+        JScrollPane jScrollPane = new JScrollPane();
+        jScrollPane.setPreferredSize(new Dimension(PANEL_WIDTH, 580));
+        content.add(jScrollPane, "wrap");
+
+        JPanel centerPanel = new JPanel(new MigLayout("", "0[]0", "0[]0"));
+        centerPanel.setBackground(Color.WHITE);
+        jScrollPane.setViewportView(centerPanel);
+
+        JPanel salesLabelPanel = createLabelPanel(new Color(178, 232, 255), new Color(202, 202, 202));
+        salesLabelPanel.setPreferredSize(new Dimension(900, 40));
+        addLabelsToPanel(salesLabelPanel, new String[]{"Mã sản phẩm", "Tên sản phẩm", "SL Bán", "Doanh thu", "Tổng giá vốn", "Lợi nhuận", "Tỷ suất"}, 8, 2, new Dimension(150, 30));
+        centerPanel.add(salesLabelPanel, "wrap");
+
+        double totalQuantity = 0;
+        double totalSales = 0;
+        double totalCapitalPrice = 0;
+        double totalProfit = 0;
+        double totalCapitalizationRate = 0;
+        for (List<String> list : dataProfitProduct) {
+            totalProfit += Double.parseDouble(list.get(3));
+            totalSales += Double.parseDouble(list.get(5));
+            totalQuantity += Double.parseDouble(list.get(4));
+            totalCapitalPrice += Double.parseDouble(list.get(6));
+        }
+        totalCapitalizationRate = totalProfit / totalSales * 100;
+        JPanel salesDataPanel = createLabelPanel(new Color(242, 238, 214), new Color(202, 202, 202));
+        salesDataPanel.setPreferredSize(new Dimension(900, 40));
+        addLabelsToPanel(salesDataPanel, new String[]{"SL Sản phẩm: " + dataProfitProduct.size(), " ", String.valueOf((int) totalQuantity), VNString.currency(totalSales), VNString.currency(totalCapitalPrice), VNString.currency(totalProfit), String.format("%.2f", totalCapitalizationRate) + " %"}, 8, 2, new Dimension(150, 30));
+        centerPanel.add(salesDataPanel, "wrap");
+
+        for (List<String> list : dataProfitProduct) {
+            JPanel panel = new JPanel();
+            panel.setLayout(new MigLayout("", "10[]10", ""));
+            panel.setPreferredSize(new Dimension(900, 30));
+            panel.setBackground(Color.WHITE);
+            panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(202, 202, 202)));
+
+            JLabel labelID = new JLabel(list.get(0));
+            labelID.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelID.setPreferredSize(new Dimension(150, 30));
+            panel.add(labelID);
+
+            JLabel labelName = new JLabel(list.get(1) + (Objects.equals(list.get(2), "Không") ? " " : " " + list.get(2)));
+            labelName.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelName.setPreferredSize(new Dimension(150, 30));
+            panel.add(labelName);
+
+            JLabel labelQuantity = new JLabel(list.get(4));
+            labelQuantity.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelQuantity.setPreferredSize(new Dimension(150, 30));
+            labelQuantity.setHorizontalAlignment(JLabel.CENTER);
+            panel.add(labelQuantity);
+
+            JLabel labelTotal = new JLabel(VNString.currency(Double.parseDouble(list.get(5))));
+            labelTotal.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelTotal.setPreferredSize(new Dimension(150, 30));
+            panel.add(labelTotal);
+
+            JLabel labelCapitalPrice = new JLabel(VNString.currency(Double.parseDouble(list.get(6))));
+            labelCapitalPrice.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelCapitalPrice.setPreferredSize(new Dimension(150, 30));
+            panel.add(labelCapitalPrice);
+
+            JLabel labelProfit = new JLabel(VNString.currency(Double.parseDouble(list.get(3))));
+            labelProfit.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelProfit.setPreferredSize(new Dimension(150, 30));
+            panel.add(labelProfit);
+
+            JLabel labelRate = new JLabel(String.format("%.2f", Double.parseDouble(list.get(7))) + " %");
+            labelRate.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelRate.setPreferredSize(new Dimension(150, 30));
+            panel.add(labelRate);
+
+            centerPanel.add(panel, "wrap");
+        }
+
+        content.repaint();
+        content.revalidate();
+
+//        System.out.println(dataProfitProduct);
     }
 
     private void profitChart() {
@@ -512,13 +761,13 @@ public class StatisticProductGUI extends JPanel {
 
         barChartProfitProduct.addLegend("Lợi nhuận", new Color(245, 189, 135));
         for (List<String> list : dataProfitProduct) {
-            barChartProfitProduct.addData(new ModelBarChart(list.get(1), new double[]{Double.parseDouble(list.get(3))}));
+            barChartProfitProduct.addData(new ModelBarChart(list.get(1) + (list.get(2).equals("Không") ? "" : "(" + list.get(2) + ")"), new double[]{Double.parseDouble(list.get(3))}));
         }
         barChartProfitProduct.start();
 
         barChartCapitalizationRate.addLegend("Tỷ suất (%)", new Color(245, 189, 135));
         for (List<String> list : dataCapitalizationRate) {
-            barChartCapitalizationRate.addData(new ModelBarChart(list.get(1), new double[]{Double.parseDouble(list.get(3))}));
+            barChartCapitalizationRate.addData(new ModelBarChart(list.get(1) + (list.get(2).equals("Không") ? "" : "(" + list.get(2) + ")"), new double[]{Double.parseDouble(list.get(3))}));
         }
         barChartCapitalizationRate.start();
 
@@ -566,13 +815,13 @@ public class StatisticProductGUI extends JPanel {
 
         barChartSaleProduct.addLegend("Doanh thu", new Color(135, 189, 245));
         for (List<String> list : dataSaleProduct) {
-            barChartSaleProduct.addData(new ModelBarChart(list.get(1), new double[]{Double.parseDouble(list.get(3))}));
+            barChartSaleProduct.addData(new ModelBarChart(list.get(1) + (list.get(2).equals("Không") ? "" : "(" + list.get(2) + ")"), new double[]{Double.parseDouble(list.get(3))}));
         }
         barChartSaleProduct.start();
 
         barChartBestSeller.addLegend("Số lượng bán", new Color(135, 189, 245));
         for (List<String> list : dataBestSeller) {
-            barChartBestSeller.addData(new ModelBarChart(list.get(1), new double[]{Double.parseDouble(list.get(3))}));
+            barChartBestSeller.addData(new ModelBarChart(list.get(1) + (list.get(2).equals("Không") ? "" : "(" + list.get(2) + ")"), new double[]{Double.parseDouble(list.get(3))}));
         }
         barChartBestSeller.start();
 
@@ -597,7 +846,97 @@ public class StatisticProductGUI extends JPanel {
         assert start != null;
         List<List<String>> dataSaleProduct = MySQL.getSaleProduct(product_Name, size, product_Category, start.toString(), end.toString());
 
-        System.out.println(dataSaleProduct);
+        content.removeAll();
+
+        initTopContent("Báo cáo bán hàng theo sản phẩm", start, end);
+
+        JScrollPane jScrollPane = new JScrollPane();
+        jScrollPane.setPreferredSize(new Dimension(PANEL_WIDTH, 580));
+        content.add(jScrollPane, "wrap");
+
+        JPanel centerPanel = new JPanel(new MigLayout("", "0[]0", "0[]0"));
+        centerPanel.setBackground(Color.WHITE);
+        jScrollPane.setViewportView(centerPanel);
+
+        JPanel salesLabelPanel = createLabelPanel(new Color(178, 232, 255), new Color(202, 202, 202));
+        addLabelsToPanel(salesLabelPanel, new String[]{"Mã sản phẩm", "Tên sản phẩm", "Size", "SL Bán", "Doanh thu"}, 4, 8, new Dimension(200, 30));
+        centerPanel.add(salesLabelPanel, "wrap");
+
+        double totalQuantity = 0;
+        double totalSales = 0;
+
+        for (List<String> list : dataSaleProduct) {
+            totalQuantity += Double.parseDouble(list.get(4));
+            totalSales += Double.parseDouble(list.get(3));
+        }
+
+        JPanel salesDataPanel = createLabelPanel(new Color(242, 238, 214), new Color(202, 202, 202));
+        addLabelsToPanel(salesDataPanel, new String[]{"SL Sản phẩm: " + dataSaleProduct.size(), "", "", String.valueOf((int) totalQuantity), VNString.currency(totalSales)}, 4, 8, new Dimension(200, 30));
+        centerPanel.add(salesDataPanel, "wrap");
+
+        for (List<String> list : dataSaleProduct) {
+            JPanel panel = new JPanel();
+            panel.setLayout(new MigLayout("", "10[]10", ""));
+            panel.setPreferredSize(new Dimension(868, 30));
+            panel.setBackground(Color.WHITE);
+            panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(202, 202, 202)));
+
+            JLabel labelID = new JLabel(list.get(0));
+            labelID.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelID.setPreferredSize(new Dimension(200, 30));
+            panel.add(labelID);
+
+            JLabel labelName = new JLabel(list.get(1));
+            labelName.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelName.setPreferredSize(new Dimension(200, 30));
+            panel.add(labelName);
+
+            JLabel labelQuantity = new JLabel(Objects.equals(list.get(2), "Không") ? " " : list.get(2));
+            labelQuantity.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelQuantity.setPreferredSize(new Dimension(200, 30));
+            panel.add(labelQuantity);
+
+            JLabel labelPrice = new JLabel(list.get(4));
+            labelPrice.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelPrice.setPreferredSize(new Dimension(200, 30));
+            panel.add(labelPrice);
+
+            JLabel labelTotal = new JLabel(VNString.currency(Double.parseDouble(list.get(3))));
+            labelTotal.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelTotal.setPreferredSize(new Dimension(200, 30));
+            labelTotal.setHorizontalAlignment(JLabel.RIGHT);
+            panel.add(labelTotal);
+
+            centerPanel.add(panel, "wrap");
+        }
+
+        content.repaint();
+        content.revalidate();
+//        System.out.println(dataSaleProduct);
+    }
+
+    private void addLabelsToPanel(JPanel panel, String[] labels, int columnRight, int columnCenter, Dimension dimension) {
+        int i = 0;
+        for (String label : labels) {
+            JLabel jLabel = new JLabel(label);
+            jLabel.setFont(new Font("Inter", Font.BOLD, 13));
+            jLabel.setPreferredSize(dimension);
+            if (i == columnRight)
+                jLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+            if (i == columnCenter)
+                jLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            panel.add(jLabel);
+            i++;
+        }
+    }
+
+    private JPanel createLabelPanel(Color background, Color border) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("", "10[]10", ""));
+        panel.setPreferredSize(new Dimension(868, PANEL_HEIGHT));
+        panel.setBackground(background);
+        panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, border));
+        return panel;
     }
 
     private void initTxtSearchName() {
@@ -648,6 +987,45 @@ public class StatisticProductGUI extends JPanel {
                 }
             }
         });
+    }
+
+    private void initTopContent(String tile, Date start, Date end) {
+        JPanel titletTopPanel = new JPanel(new BorderLayout());
+        titletTopPanel.setBackground(Color.WHITE);
+
+        titletTopPanel.setPreferredSize(new Dimension(PANEL_WIDTH, 100));
+        content.add(titletTopPanel, "wrap");
+        // Cập nhật ngày lập
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String formattedDateTime = currentDateTime.format(formatter);
+        JLabel dateLabel = new JLabel("Ngày lập: " + formattedDateTime);
+        dateLabel.setFont(new Font("Inter", Font.PLAIN, 14));
+
+        // Cập nhật ngày bán
+        JLabel dateReportLabel = new JLabel("Từ ngày: " + new SimpleDateFormat("dd-MM-yyyy").format(start) + " đến ngày " + new SimpleDateFormat("dd-MM-yyyy").format(end));
+        dateReportLabel.setFont(new Font("Inter", Font.PLAIN, 14));
+
+        // mặc đinh tiêu đề là báo cáo cuối ngày về bán hàng
+        JLabel titleLabel = new JLabel(tile);
+        titleLabel.setFont(new Font("Inter", Font.BOLD, 18));
+
+        JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        datePanel.setBackground(Color.WHITE);
+        datePanel.add(dateLabel);
+
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        titlePanel.setBackground(Color.WHITE);
+        titlePanel.add(titleLabel);
+
+        JPanel dateReportPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        dateReportPanel.setBackground(Color.WHITE);
+        dateReportPanel.add(dateReportLabel);
+
+        titletTopPanel.add(datePanel, BorderLayout.NORTH);
+        titletTopPanel.add(titlePanel, BorderLayout.CENTER);
+        titletTopPanel.add(dateReportPanel, BorderLayout.SOUTH);
+
     }
 
     private JRadioButton createRadioButton(String text) {

@@ -56,6 +56,8 @@ public class StatisticFinanceGUI extends JPanel {
         jPanel.setBackground(new Color(238, 238, 238));
         scrollPane.setViewportView(jPanel);
 
+        displayType = 0;
+
         RoundedPanel displayTypePanel = new RoundedPanel();
         displayTypePanel.setBackground(new Color(255, 255, 255));
         displayTypePanel.setLayout(new MigLayout("", "10[]10", "10[]10"));
@@ -396,7 +398,7 @@ public class StatisticFinanceGUI extends JPanel {
             double excess = Double.parseDouble(list.get(4)) + Double.parseDouble(list.get(5)) + Double.parseDouble(list.get(6));
             double other = Double.parseDouble(list.get(7)) + Double.parseDouble(list.get(8));
             double profit = sale - excess + other;
-            lists.add(new ModelData("Quý " + list.get(0), profit, sale - excess, other));
+            lists.add(new ModelData("Quý " + list.get(0) + "/" + LocalDate.now().getYear(), profit, sale - excess, other));
 
         }
 
