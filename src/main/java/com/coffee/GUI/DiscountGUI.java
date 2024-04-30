@@ -360,13 +360,6 @@ public class DiscountGUI extends Layout2 {
         if (indexColumn == indexColumnEdit) {
             new EditDiscountGUI(discountBLL.searchDiscounts("id = " + data[indexRow][0]).get(0));
             refresh();
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI] = new SaleGUI(HomeGUI.account);
-                }
-            });
-            thread.start();
         }
     }
 

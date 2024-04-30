@@ -5,6 +5,7 @@ import com.coffee.BLL.ProductBLL;
 import com.coffee.DTO.Material;
 import com.coffee.DTO.Product;
 import com.coffee.GUI.DialogGUI.DialogForm;
+import com.coffee.GUI.HomeGUI;
 import com.coffee.GUI.SaleGUI;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.swing.DataSearch;
@@ -337,15 +338,13 @@ public class EditProductGUI1 extends DialogForm {
         menu.setVisible(false);
 
     }
+
     private void loadSaleGUI() {
         if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
-                    saleGUI.loadCategory();
-                    saleGUI.loadProductRoundPanel();
-                    saleGUI.loadProduct(saleGUI.resultSearch);
+                    Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI] = new SaleGUI(HomeGUI.account);
                 }
             });
             thread.start();

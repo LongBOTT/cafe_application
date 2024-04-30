@@ -569,4 +569,15 @@ public class MySQL {
         }
     }
 
+    public static List<List<String>> getTop3BestStaff() {
+        String query = "SELECT pd.staff_id, pd.hours_amount\n" +
+                "FROM payroll_detail pd JOIN payroll pr ON pd.payroll_id = pr.id\n" +
+                "WHERE pr.`year` = YEAR(NOW()) AND pr.`month` = MONTH(NOW())\n" +
+                "ORDER BY pd.hours_amount DESC LIMIT 3";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -8,6 +8,7 @@ import com.coffee.DTO.Product;
 import com.coffee.DTO.Recipe;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddMaterialGUI;
+import com.coffee.GUI.HomeGUI;
 import com.coffee.GUI.SaleGUI;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.swing.DataSearch;
@@ -1002,10 +1003,7 @@ public class EditProductGUI extends DialogFormDetail_1 {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
-                    saleGUI.loadCategory();
-                    saleGUI.loadProductRoundPanel();
-                    saleGUI.loadProduct(saleGUI.resultSearch);
+                    Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI] = new SaleGUI(HomeGUI.account);
                 }
             });
             thread.start();

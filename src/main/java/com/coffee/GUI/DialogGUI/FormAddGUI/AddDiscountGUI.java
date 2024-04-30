@@ -7,6 +7,7 @@ import com.coffee.DTO.Discount;
 import com.coffee.DTO.Discount_Detail;
 import com.coffee.DTO.Product;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
+import com.coffee.GUI.HomeGUI;
 import com.coffee.GUI.SaleGUI;
 import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
@@ -294,8 +295,8 @@ public class AddDiscountGUI extends DialogFormDetail_1 {
                         updateStatusDicount();
                         if (addDiscount() && addDiscount_Detail()) {
                             JOptionPane.showMessageDialog(null, "Thêm đợt giảm giá thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                            dispose();
                             loadSaleGUI();
+                            dispose();
                         }
                     }
                 } else {
@@ -303,8 +304,8 @@ public class AddDiscountGUI extends DialogFormDetail_1 {
                         updateStatusDicount();
                         if (addDiscount() && addDiscount_Detail()) {
                             JOptionPane.showMessageDialog(null, "Thêm đợt giảm giá thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                            dispose();
                             loadSaleGUI();
+                            dispose();
                         }
                     }
                 }
@@ -916,10 +917,7 @@ public class AddDiscountGUI extends DialogFormDetail_1 {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
-                    saleGUI.loadCategory();
-                    saleGUI.loadProductRoundPanel();
-                    saleGUI.loadProduct(saleGUI.resultSearch);
+                    Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI] = new SaleGUI(HomeGUI.account);
                 }
             });
             thread.start();

@@ -7,6 +7,7 @@ import com.coffee.DTO.Material;
 import com.coffee.DTO.Product;
 import com.coffee.DTO.Recipe;
 import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
+import com.coffee.GUI.HomeGUI;
 import com.coffee.GUI.SaleGUI;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.swing.DataSearch;
@@ -402,7 +403,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
                     JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-              result = addAllProducts();
+                result = addAllProducts();
                 if (!result.getKey()) {
                     JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                     return;
@@ -471,8 +472,8 @@ public class AddProductGUI extends DialogFormDetail_1 {
         }
 
         if (!productList.isEmpty()) {
-            for (Product product: productList) {
-              if (product.getSize().equals(size)) {
+            for (Product product : productList) {
+                if (product.getSize().equals(size)) {
                     product.setPrice(Double.parseDouble(price));
                     return new Pair<>(true, "");
                 }
@@ -480,7 +481,8 @@ public class AddProductGUI extends DialogFormDetail_1 {
         }
         return new Pair<>(true, "");
     }
-    private void updateCapitalPriceProductBySize(){
+
+    private void updateCapitalPriceProductBySize() {
         if (selectedLabel == null) {
             return;
         }
@@ -488,14 +490,15 @@ public class AddProductGUI extends DialogFormDetail_1 {
         String capital_price = txtCapitalPrice.getText();
 
         if (!productList.isEmpty()) {
-            for (Product product: productList) {
-              if (product.getSize().equals(size)) {
+            for (Product product : productList) {
+                if (product.getSize().equals(size)) {
                     product.setCapital_price(Double.parseDouble(capital_price));
                     return;
                 }
             }
         }
     }
+
     private String uploadImage() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -665,14 +668,15 @@ public class AddProductGUI extends DialogFormDetail_1 {
         txtUnit.setText("");
         txtCapitalPrice.setText(Double.toString(capitalPrice));
     }
+
     private void loadPriceBySize(String size) {
         if (!productList.isEmpty()) {
             for (Product product : productList) {
                 if (product.getSize().equals(size)) {
                     String price = product.getPrice().toString();
-                    if(price.equals("0.0")){
+                    if (price.equals("0.0")) {
                         txtPrice.setText("");
-                    }else
+                    } else
                         txtPrice.setText(price);
                     return;
                 }
@@ -686,11 +690,12 @@ public class AddProductGUI extends DialogFormDetail_1 {
             for (Product product : productList) {
                 if (product.getSize().equals(size)) {
                     String capital_price = String.valueOf(product.getCapital_price());
-                    if(capital_price.equals("0.0"))
+                    if (capital_price.equals("0.0"))
                         txtCapitalPrice.setText("");
                     else
-                         txtCapitalPrice.setText(capital_price);
-                    return;                }
+                        txtCapitalPrice.setText(capital_price);
+                    return;
+                }
             }
         }
 
@@ -732,7 +737,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         return label;
     }
 
-    private Pair<Boolean,String> addAllProducts() {
+    private Pair<Boolean, String> addAllProducts() {
         boolean allProductsAdded = true;
         String name = txtNameProduct.getText();
         String category = txtCategory.getText();
@@ -842,15 +847,13 @@ public class AddProductGUI extends DialogFormDetail_1 {
         menu.setVisible(false);
 
     }
+
     private void loadSaleGUI() {
         if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    SaleGUI saleGUI = (SaleGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI];
-                    saleGUI.loadCategory();
-                    saleGUI.loadProductRoundPanel();
-                    saleGUI.loadProduct(saleGUI.resultSearch);
+                    Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI] = new SaleGUI(HomeGUI.account);
                 }
             });
             thread.start();
