@@ -52,7 +52,7 @@ public class StatisticEndOfTheDayGUI extends JPanel {
 
         content = new JPanel();
         content.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 10));
-        content.setPreferredSize(new Dimension(900, 700));
+        content.setPreferredSize(new Dimension(730, 700));
         content.setBackground(new Color(255, 255, 255));
         add(content, BorderLayout.CENTER);
         initTopContent();
@@ -107,6 +107,7 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         scrollPaneDetail = new JScrollPane();
         scrollPaneDetail.setPreferredSize(new Dimension(PANEL_WIDTH, 580)); // Đặt kích thước dọc cho JScrollPane
         scrollPaneDetail.setViewportView(centerPanel);
+        scrollPaneDetail.setBorder(null);
 
         content.add(scrollPaneDetail);
 
@@ -147,8 +148,8 @@ public class StatisticEndOfTheDayGUI extends JPanel {
 
     private JPanel createLabelPanel(Color background, Color border) {
         JPanel panel = new JPanel();
-        panel.setLayout(new MigLayout("", "10[]25[]25[]25[]25[]10", ""));
-        panel.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
+        panel.setLayout(new MigLayout("", "10[]20[]20[]30[]20[]10", ""));
+        panel.setPreferredSize(new Dimension(868, PANEL_HEIGHT));
         panel.setBackground(background);
         panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, border));
         return panel;
@@ -204,8 +205,8 @@ public class StatisticEndOfTheDayGUI extends JPanel {
 
     private JPanel createPanelReport(List<String> keyList, List<List<String>> invoices) {
         JPanel panel = new JPanel();
-        panel.setLayout(new MigLayout("", "10[]25[]25[]25[]25[]10", ""));
-        panel.setPreferredSize(new Dimension(PANEL_WIDTH, 50));
+        panel.setLayout(new MigLayout("", "10[]20[]20[]30[]20[]10", ""));
+        panel.setPreferredSize(new Dimension(868, 50));
         panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(202, 202, 202)));
 
