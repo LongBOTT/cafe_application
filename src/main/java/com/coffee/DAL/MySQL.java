@@ -33,8 +33,8 @@ public class MySQL {
                 }
                 result.add(row);
             }
-            System.out.println(formattedQuery);
-            System.out.println();
+//            System.out.println(formattedQuery);
+//            System.out.println();
         }
         Database.closeConnection(connection);
         return result;
@@ -48,8 +48,8 @@ public class MySQL {
         try (Statement statement = connection.createStatement()) {
             String formattedQuery = formatQuery(query, values);
             numOfRows = statement.executeUpdate(formattedQuery);
-            System.out.println(formattedQuery);
-            System.out.println();
+//            System.out.println(formattedQuery);
+//            System.out.println();
         }
         Database.closeConnection(connection);
         return numOfRows;
@@ -435,7 +435,7 @@ public class MySQL {
     public static List<List<String>> getSale_DiscountByMonth() {
         String query = "SELECT MONTH(rp.invoice_date), SUM(rp.total), SUM(rp.total_discount)\n" +
                 "FROM receipt rp\n" +
-                "WHERE YEAR(rp.invoice_date) = YEAR(NOW())\n" +
+                "WHERE YEAR(rp.invoice_date) = YEAR(NOW()) AND MONTH(rp.invoice_date) <= MONTH(NOW())\n" +
                 "GROUP BY MONTH(rp.invoice_date)\n" +
                 "ORDER BY MONTH(rp.invoice_date) ASC ";
         try {
@@ -449,7 +449,7 @@ public class MySQL {
         String query = "SELECT MONTH(rp.invoice_date), SUM(pro.capital_price * rd.quantity)\n" +
                 "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
                 "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n" +
-                "WHERE YEAR(rp.invoice_date) = YEAR(NOW())\n" +
+                "WHERE YEAR(rp.invoice_date) = YEAR(NOW()) AND MONTH(rp.invoice_date) <= MONTH(NOW())\n" +
                 "GROUP BY MONTH(rp.invoice_date)\n" +
                 "ORDER BY MONTH(rp.invoice_date) ASC";
         try {
@@ -462,7 +462,7 @@ public class MySQL {
     public static List<List<String>> getSalary_Allowance_Bonus_Deduction_FineByMonth() {
         String query = "SELECT pr.`id`, pr.`month`, pr.paid, SUM(pd.allowance_amount), SUM(pd.bonus_amount), SUM(pd.deduction_amount), SUM(pd.fine_amount)\n" +
                 "FROM payroll pr JOIN payroll_detail pd ON pr.id = pd.payroll_id\n" +
-                "WHERE pr.`year` = YEAR(NOW())\n" +
+                "WHERE pr.`year` = YEAR(NOW()) AND pr.`month` <= MONTH(NOW())\n" +
                 "GROUP BY pr.`id`, pr.`month`, pr.paid\n" +
                 "ORDER BY pr.`month` ASC ";
         try {
@@ -473,6 +473,7 @@ public class MySQL {
     }
     public static List<Map.Entry<List<String>, List<List<String>>>> getSalesStatistics(Date date) {
         List<Map.Entry<List<String>, List<List<String>>>> result = new ArrayList<>();
+
 
         // Truy vấn dữ liệu từ bảng receipt và receipt_detail cho ngày được chỉ định
         String sql = "SELECT r.id, r.invoice_date, s.name, rd.quantity, rd.price " +
@@ -591,4 +592,104 @@ public class MySQL {
 
 
     }
+
+    public static List<List<String>> getSale_DiscountByQuarter() {
+        String query = "SELECT QUARTER(rp.invoice_date), SUM(rp.total), SUM(rp.total_discount)\n" +
+                "FROM receipt rp\n" +
+                "WHERE YEAR(rp.invoice_date) = YEAR(NOW()) AND MONTH(rp.invoice_date) <= MONTH(NOW())\n" +
+                "GROUP BY QUARTER(rp.invoice_date)\n" +
+                "ORDER BY QUARTER(rp.invoice_date) ASC ";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getCapitalPriceByQuarter() {
+        String query = "SELECT QUARTER(rp.invoice_date), SUM(pro.capital_price * rd.quantity)\n" +
+                "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
+                "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n" +
+                "WHERE YEAR(rp.invoice_date) = YEAR(NOW()) AND MONTH(rp.invoice_date) <= MONTH(NOW())\n" +
+                "GROUP BY QUARTER(rp.invoice_date)\n" +
+                "ORDER BY QUARTER(rp.invoice_date) ASC ";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getSalary_Allowance_Bonus_Deduction_FineByQuarter() {
+        String query = "SELECT tb2.QUAR, tb2.paid, tb1.allowance, tb1.bonus, tb1.deduction, tb1.fine\n" +
+                "FROM (\n" +
+                "\t\t\t\tSELECT QUARTER(DATE_FORMAT(CONCAT(pr.`year`, \"-\", pr.`month`, \"-1\"), '%Y-%m-%d')) AS QUAR, SUM(pd.allowance_amount) AS allowance, SUM(pd.bonus_amount) AS bonus, SUM(pd.deduction_amount) AS deduction, SUM(pd.fine_amount) AS fine\n" +
+                "\t\t\t\tFROM payroll pr JOIN payroll_detail pd ON pr.id = pd.payroll_id\n" +
+                "\t\t\t\tWHERE pr.`year` = YEAR(NOW()) AND pr.`month` <= MONTH(NOW())\n" +
+                "\t\t\t\tGROUP BY QUARTER(DATE_FORMAT(CONCAT(pr.`year`, \"-\", pr.`month`, \"-1\"), '%Y-%m-%d'))\n" +
+                "\t\t) tb1 JOIN \n" +
+                "\t\t(\n" +
+                "\t\t\t\tSELECT QUARTER(DATE_FORMAT(CONCAT(pr.`year`, \"-\", pr.`month`, \"-1\"), '%Y-%m-%d')) AS QUAR, SUM(pr.paid) AS paid\n" +
+                "\t\t\t\tFROM payroll pr\n" +
+                "\t\t\t\tWHERE pr.`year` = YEAR(NOW()) AND pr.`month` <= MONTH(NOW())\n" +
+                "\t\t\t\tGROUP BY QUARTER(DATE_FORMAT(CONCAT(pr.`year`, \"-\", pr.`month`, \"-1\"), '%Y-%m-%d'))\n" +
+                "\t\t) tb2 ON tb1.QUAR = tb2.QUAR\n" +
+                "ORDER BY tb1.QUAR ASC ";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getSale_DiscountByYear() {
+        String query = "SELECT YEAR(rp.invoice_date), SUM(rp.total), SUM(rp.total_discount)\n" +
+                "FROM receipt rp\n" +
+                "WHERE rp.invoice_date <= NOW()\n" +
+                "GROUP BY YEAR(rp.invoice_date)\n" +
+                "ORDER BY YEAR(rp.invoice_date) ASC ";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getCapitalPriceByYear() {
+        String query = "SELECT YEAR(rp.invoice_date), SUM(pro.capital_price * rd.quantity)\n" +
+                "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
+                "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n" +
+                "WHERE rp.invoice_date <= NOW()\n" +
+                "GROUP BY YEAR(rp.invoice_date)\n" +
+                "ORDER BY YEAR(rp.invoice_date) ASC";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getSalary_Allowance_Bonus_Deduction_FineByYear() {
+        String query = "SELECT tb2.yea, tb2.paid, tb1.allowance, tb1.bonus, tb1.deduction, tb1.fine\n" +
+                "FROM (\n" +
+                "\t\t\t\tSELECT pr.`year` AS yea, SUM(pd.allowance_amount) AS allowance, SUM(pd.bonus_amount) AS bonus, SUM(pd.deduction_amount) AS deduction, SUM(pd.fine_amount) AS fine\n" +
+                "\t\t\t\tFROM payroll pr JOIN payroll_detail pd ON pr.id = pd.payroll_id\n" +
+                "\t\t\t\tWHERE DATE_FORMAT(CONCAT(pr.`year`, \"-\", pr.`month`, \"-1\"), '%Y-%m-%d') <= NOW() \n" +
+                "\t\t\t\tGROUP BY pr.`year`\n" +
+                "\t\t) tb1 JOIN \n" +
+                "\t\t(\n" +
+                "\t\t\t\tSELECT pr.`year` AS yea, SUM(pr.paid) AS paid\n" +
+                "\t\t\t\tFROM payroll pr\n" +
+                "\t\t\t\tWHERE DATE_FORMAT(CONCAT(pr.`year`, \"-\", pr.`month`, \"-1\"), '%Y-%m-%d') <= NOW() \n" +
+                "\t\t\t\tGROUP BY pr.`year`\n" +
+                "\t\t) tb2 ON tb1.yea = tb2.yea\n" +
+                "ORDER BY tb1.yea ASC";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 }
