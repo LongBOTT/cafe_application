@@ -1,5 +1,6 @@
 package com.coffee.GUI;
 
+import com.coffee.DAL.MySQL;
 import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.RoundedPanel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -9,14 +10,19 @@ import raven.datetime.component.date.DateSelectionListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.sql.Date;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StatisticEndOfTheDayGUI extends JPanel {
     private JScrollPane scrollPane;
+    private JScrollPane scrollPaneDetail;
     private DatePicker datePicker;
     private JFormattedTextField editor;
     private JPanel content;
@@ -29,6 +35,7 @@ public class StatisticEndOfTheDayGUI extends JPanel {
     private static final int PANEL_HEIGHT = 40;
     private static final Dimension LABEL_SIZE = new Dimension(150, 30);
     Map<JPanel, Boolean> expandedStateMap = new HashMap<>(); // Biến để theo dõi trạng thái của nút btnDetail
+
     public StatisticEndOfTheDayGUI() {
         setBackground(Color.WHITE);
         setPreferredSize(new Dimension(1000, 700));
@@ -45,7 +52,7 @@ public class StatisticEndOfTheDayGUI extends JPanel {
 
         content = new JPanel();
         content.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 10));
-        content.setPreferredSize(new Dimension(730, 700));
+        content.setPreferredSize(new Dimension(900, 700));
         content.setBackground(new Color(255, 255, 255));
         add(content, BorderLayout.CENTER);
         initTopContent();
@@ -93,11 +100,15 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         titletTopPanel.add(dateReportPanel, BorderLayout.SOUTH);
 
     }
+
     private void initCenterContent() {
-        centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        centerPanel.setPreferredSize(new Dimension(PANEL_WIDTH, 580));
-        content.add(centerPanel);
-        centerPanel.setBackground(Color.WHITE);
+        centerPanel = new JPanel(new MigLayout("", "0[]0", "0[]0")); // Đặt kích thước ngang thành FlowLayout.LEADING
+        centerPanel.setBackground(new Color(255, 255, 255));
+        scrollPaneDetail = new JScrollPane();
+        scrollPaneDetail.setPreferredSize(new Dimension(PANEL_WIDTH, 580)); // Đặt kích thước dọc cho JScrollPane
+        scrollPaneDetail.setViewportView(centerPanel);
+
+        content.add(scrollPaneDetail);
 
         setUpSalesReports();
     }
@@ -107,26 +118,26 @@ public class StatisticEndOfTheDayGUI extends JPanel {
 
         JPanel salesLabelPanel = createLabelPanel(new Color(178, 232, 255), new Color(202, 202, 202));
         addLabelsToPanel(salesLabelPanel, new String[]{"Mã hóa đơn", "Thời gian", "Nhân viên tạo", "SLSP", "Doanh thu"});
-        centerPanel.add(salesLabelPanel);
+        centerPanel.add(salesLabelPanel, "wrap");
 
         JPanel salesDataPanel = createLabelPanel(new Color(242, 238, 214), new Color(202, 202, 202));
         addLabelsToPanel(salesDataPanel, new String[]{"Hóa đơn: 10", "", "", "10", "10,000"});
-        centerPanel.add(salesDataPanel);
-
-        String[][] reportsData = {
-                {"12-12-2021", "12:00", "10", "20,000"},
-                {"13-12-2021", "13:00", "20", "20,000"},
-                {"14-12-2021", "14:00", "30", "20,000"},
-                {"15-12-2021", "15:00", "40", "20,000"},
-                {"16-12-2021", "16:00", "50", "20,000"},
-                // Thêm các dữ liệu khác nếu cần
-        };
+        centerPanel.add(salesDataPanel, "wrap");
+        Date currentDate = new Date(System.currentTimeMillis());
+        List<Map.Entry<List<String>, List<List<String>>>> salesStatistics = MySQL.getSalesStatistics(currentDate);
 
         // Tạo panel báo cáo cho mỗi dòng trong mảng dữ liệu
-        for (String[] data : reportsData) {
-            JPanel reportPanel = createPanelReport(data[0], data[1], data[2], data[3]);
-            expandedStateMap.put(reportPanel, false); // Ban đầu, tất cả các panel đều không mở rộng
-            centerPanel.add(reportPanel);
+
+        for (Map.Entry<List<String>, List<List<String>>> entry : salesStatistics) {
+            List<String> keyList = entry.getKey();
+            List<List<String>> invoices = entry.getValue();
+            if (!keyList.isEmpty() && !invoices.isEmpty()) {
+                // Hiển thị thông tin tổng quan
+                JPanel summaryPanel = createPanelReport(keyList, invoices);
+                expandedStateMap.put(summaryPanel, false); // Ban đầu, tất cả các panel đều không mở rộng
+                centerPanel.add(summaryPanel, "wrap");
+            }
+
         }
 
         centerPanel.repaint();
@@ -136,7 +147,7 @@ public class StatisticEndOfTheDayGUI extends JPanel {
 
     private JPanel createLabelPanel(Color background, Color border) {
         JPanel panel = new JPanel();
-        panel.setLayout(new MigLayout("", "10[]30[]30[]30[]30[]10", ""));
+        panel.setLayout(new MigLayout("", "10[]25[]25[]25[]25[]10", ""));
         panel.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         panel.setBackground(background);
         panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, border));
@@ -150,18 +161,50 @@ public class StatisticEndOfTheDayGUI extends JPanel {
             jLabel.setFont(new Font("Inter", Font.BOLD, 13));
             jLabel.setPreferredSize(LABEL_SIZE);
             jLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            if (i==0)
+            if (i == 0)
                 jLabel.setHorizontalAlignment(SwingConstants.LEFT);
-            if (i==4)
+            if (i == 4)
                 jLabel.setHorizontalAlignment(SwingConstants.RIGHT);
             panel.add(jLabel);
             i++;
         }
     }
 
-    private JPanel createPanelReport(String date, String hour, String quantity, String revenue) {
+    private void addLabelsToPanelDetail(JPanel panel, String[] labels) {
+        int i = 0;
+        for (String label : labels) {
+            JLabel jLabel = new JLabel(label);
+            jLabel.setFont(new Font("Inter", Font.PLAIN, 13));
+            jLabel.setPreferredSize(LABEL_SIZE);
+            jLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            if (i == 0) {
+                jLabel.setHorizontalAlignment(SwingConstants.LEFT);
+                jLabel.setForeground(new Color(33, 113, 188));
+                jLabel.addAncestorListener(new javax.swing.event.AncestorListener() {
+                    @Override
+                    public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                        jLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    }
+
+                    @Override
+                    public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+                    }
+
+                    @Override
+                    public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+                    }
+                });
+            }
+            if (i == 4)
+                jLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+            panel.add(jLabel);
+            i++;
+        }
+    }
+
+    private JPanel createPanelReport(List<String> keyList, List<List<String>> invoices) {
         JPanel panel = new JPanel();
-        panel.setLayout(new MigLayout("", "10[]30[]30[]30[]30[]10", ""));
+        panel.setLayout(new MigLayout("", "10[]25[]25[]25[]25[]10", ""));
         panel.setPreferredSize(new Dimension(PANEL_WIDTH, 50));
         panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(202, 202, 202)));
@@ -179,18 +222,18 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         btnDetail.setContentAreaFilled(false);
         btnDetail.addActionListener(e -> {
             JPanel selectedPanel = (JPanel) btnDetail.getParent().getParent(); // Lấy panel cha của nút
-            togglePanel(btnDetail, selectedPanel);// Kích hoạt chức năng mở rộng/ thu gọn khi nhấn nút
+            togglePanel(btnDetail, selectedPanel, invoices);// Kích hoạt chức năng mở rộng/ thu gọn khi nhấn nút
         });
 
         JPanel panel1 = new JPanel();
         panel1.setBackground(Color.WHITE);
         panel1.setLayout(new BorderLayout());
 
-        JLabel lblDate = new JLabel(date);
+        JLabel lblDate = new JLabel(keyList.get(0));
         lblDate.setFont(new Font("Inter", Font.PLAIN, 13));
         lblDate.setForeground(new Color(33, 160, 223));
 
-        JLabel lblHour = new JLabel(hour);
+        JLabel lblHour = new JLabel(keyList.get(1));
         lblHour.setFont(new Font("Inter", Font.PLAIN, 13));
         lblHour.setForeground(new Color(33, 160, 223));
 
@@ -206,12 +249,12 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         JLabel lbl1 = new JLabel();
         lbl1.setPreferredSize(new Dimension(150, 50));
 
-        JLabel lblQuantity = new JLabel(quantity);
+        JLabel lblQuantity = new JLabel(keyList.get(2));
         lblQuantity.setFont(new Font("Inter", Font.PLAIN, 13));
         lblQuantity.setHorizontalAlignment(SwingConstants.CENTER);
         lblQuantity.setPreferredSize(new Dimension(150, 50));
 
-        JLabel lblRevenue = new JLabel(revenue);
+        JLabel lblRevenue = new JLabel(keyList.get(3));
         lblRevenue.setFont(new Font("Inter", Font.PLAIN, 13));
         lblRevenue.setPreferredSize(new Dimension(150, 50));
         lblRevenue.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -222,17 +265,17 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         panel.add(lblQuantity);
         panel.add(lblRevenue);
 
-       return panel;
+        return panel;
     }
 
 
-    private void togglePanel(JButton btnDetail, JPanel selectedPanel) {
+    private void togglePanel(JButton btnDetail, JPanel selectedPanel, List<List<String>> invoices) {
         boolean isExpanded = expandedStateMap.get(selectedPanel); // Lấy trạng thái mở rộng của panel được chọn
         if (isExpanded) {
             removeDetailPanels(selectedPanel);
             btnDetail.setIcon(new FlatSVGIcon("icon/add-square-svgrepo-com.svg"));
         } else {
-            addDetailPanel(selectedPanel);
+            addDetailPanel(selectedPanel, invoices); // Thêm danh sách hóa đơn khi mở rộng
             btnDetail.setIcon(new FlatSVGIcon("icon/minus-square-svgrepo-com.svg"));
         }
         expandedStateMap.put(selectedPanel, !isExpanded); // Cập nhật trạng thái mở rộng
@@ -240,37 +283,28 @@ public class StatisticEndOfTheDayGUI extends JPanel {
 
     private void removeDetailPanels(JPanel selectedPanel) {
         int selectedIndex = centerPanel.getComponentZOrder(selectedPanel);
-        int nextPanelIndex = centerPanel.getComponentCount();
 
-        // Tìm vị trí của panel cha tiếp theo trong centerPanel
         for (int i = selectedIndex + 1; i < centerPanel.getComponentCount(); i++) {
             Component component = centerPanel.getComponent(i);
-           if (((JPanel) component).getClientProperty("isDetailPanel") == null) {
-                nextPanelIndex = i;
-                break;
-            }
-        }
-
-        Component[] components = centerPanel.getComponents();
-        for (int i = selectedIndex + 1; i < nextPanelIndex; i++) {
-            Component component = centerPanel.getComponent(i);
-            if (component instanceof JPanel && ((JPanel) component).getClientProperty("isDetailPanel") != null) {
+            Boolean isDetailPanel = (Boolean) ((JPanel) component).getClientProperty("isDetailPanel");
+            System.out.println(i);
+            System.out.println(isDetailPanel);
+            if (isDetailPanel != null && isDetailPanel) {
                 centerPanel.remove(component);
-            } else {
-                return; // Kết thúc vòng lặp nếu gặp panel không phải là chi tiết
-            }
+                i--;
+            } else
+                break;
         }
-
         centerPanel.revalidate();
         centerPanel.repaint();
     }
-    private void addDetailPanel(JPanel selectedPanel) {
-        String[] labels = {"HD000001", "12:00", "Nguyen Vam A", "10", "10,000"};
-        JPanel panel = createPanelDetail(labels);
 
-        // Thêm panel chi tiết vào dưới panel được chọn
-        int selectedIndex = centerPanel.getComponentZOrder(selectedPanel);
-        centerPanel.add(panel, selectedIndex + 1);
+    private void addDetailPanel(JPanel selectedPanel, List<List<String>> invoices) {
+        for (List<String> invoiceDetail : invoices) {
+            JPanel panel = createPanelDetail(invoiceDetail.toArray(new String[0]));
+            int selectedIndex = centerPanel.getComponentZOrder(selectedPanel);
+            centerPanel.add(panel, "growx, wrap", selectedIndex + 1);
+        }
         centerPanel.revalidate();
         centerPanel.repaint();
     }
@@ -278,7 +312,7 @@ public class StatisticEndOfTheDayGUI extends JPanel {
     private JPanel createPanelDetail(String[] labels) {
         JPanel panel = createLabelPanel(Color.WHITE, new Color(202, 202, 202));
         panel.putClientProperty("isDetailPanel", true); // Đặt thuộc tính cho panel chi tiết
-        addLabelsToPanel(panel, labels);
+        addLabelsToPanelDetail(panel, labels);
         return panel;
     }
 

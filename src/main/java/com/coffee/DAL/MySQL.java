@@ -3,13 +3,13 @@ package com.coffee.DAL;
 import com.coffee.utils.Database;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.*;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class MySQL {
     public MySQL() {
@@ -141,6 +141,7 @@ public class MySQL {
         Database.closeConnection(connection);
         return result;
     }
+
 
     public static List<List<String>> getSaleProduct(String productName, String size, String productCategory, String... dates) {
         String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price), SUM(rd.quantity)\n" +
@@ -470,5 +471,124 @@ public class MySQL {
             throw new RuntimeException(e);
         }
     }
+    public static List<Map.Entry<List<String>, List<List<String>>>> getSalesStatistics(Date date) {
+        List<Map.Entry<List<String>, List<List<String>>>> result = new ArrayList<>();
 
+        // Truy vấn dữ liệu từ bảng receipt và receipt_detail cho ngày được chỉ định
+        String sql = "SELECT r.id, r.invoice_date, s.name, rd.quantity, rd.price " +
+                "FROM receipt r " +
+                "INNER JOIN receipt_detail rd ON r.id = rd.receipt_id " +
+                "INNER JOIN staff s ON r.staff_id = s.id " +
+                "WHERE DATE(r.invoice_date) = ? " +
+                "ORDER BY r.invoice_date";
+
+        Connection connection = null;
+        try {
+            connection = Database.getConnection();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            // Thiết lập tham số cho ngày
+            statement.setDate(1, date);
+
+            ResultSet rs = statement.executeQuery();
+
+            Map<Integer, Map.Entry<Integer, BigDecimal>> salesData = new HashMap<>(); // Lưu trữ dữ liệu bán hàng theo key (giờ)
+
+            while (rs.next()) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(rs.getTimestamp("invoice_date"));
+                int hour = calendar.get(Calendar.HOUR_OF_DAY); // Lấy giờ trong ngày
+
+                int quantity = rs.getInt("quantity");
+                BigDecimal totalPrice = BigDecimal.valueOf(rs.getDouble("price"));
+
+                Map.Entry<Integer, BigDecimal> data = salesData.getOrDefault(hour, new AbstractMap.SimpleEntry<>(0, BigDecimal.ZERO));
+                salesData.put(hour, new AbstractMap.SimpleEntry<>(data.getKey() + quantity, data.getValue().add(totalPrice)));
+            }
+
+            // Tạo danh sách các cặp key-value từ dữ liệu thống kê
+            for (Map.Entry<Integer, Map.Entry<Integer, BigDecimal>> entry : salesData.entrySet()) {
+                int hour = entry.getKey(); // Key: Giờ
+                int quantity = entry.getValue().getKey(); // Số lượng sản phẩm bán được
+                BigDecimal totalRevenue = entry.getValue().getValue(); // Tổng doanh thu
+
+                // Tạo danh sách các hóa đơn tương ứng với key
+                List<List<String>> invoices = getInvoicesForHour(hour, date);
+
+                // Tạo cặp key-value và thêm vào kết quả
+                List<String> keyList = new ArrayList<>();
+                keyList.add(new SimpleDateFormat("dd/MM/yyyy").format(date)); // Thêm ngày vào key
+                keyList.add(String.format("%02d:00", hour)); // Thêm giờ vào key, Format lại để có dạng HH:00
+                keyList.add(String.valueOf(quantity));
+                keyList.add(String.valueOf(totalRevenue));
+                result.add(new AbstractMap.SimpleEntry<>(keyList, invoices));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return result;
+    }
+
+
+    private static List<List<String>> getInvoicesForHour(int hour, Date date) throws SQLException, IOException {
+        List<List<String>> invoices = new ArrayList<>();
+
+        String sql = "SELECT r.id, r.invoice_date, s.name, rd.quantity, rd.price " +
+                "FROM receipt r " +
+                "INNER JOIN receipt_detail rd ON r.id = rd.receipt_id " +
+                "INNER JOIN staff s ON r.staff_id = s.id " +
+                "WHERE HOUR(r.invoice_date) = ? AND DATE(r.invoice_date) = ? " +
+                "ORDER BY r.invoice_date";
+
+        Connection connection = Database.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, hour);
+            statement.setDate(2, date);
+
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                List<String> invoice = new ArrayList<>();
+                String invoiceId = rs.getString("id");
+                // Kiểm tra mã có ít hơn 6 chữ số không
+                if (invoiceId.length() < 6) {
+                    // Thêm các chữ số 0 vào trước mã hóa đơn để có đủ 6 chữ số
+                    invoiceId = String.format("%06d", Integer.parseInt(invoiceId));
+                }
+                invoice.add("HD" + invoiceId);
+                invoice.add(new SimpleDateFormat("HH:mm").format(rs.getTimestamp("invoice_date")));
+                invoice.add(rs.getString("name"));
+                invoice.add(String.valueOf(rs.getInt("quantity")));
+                invoice.add(String.valueOf(rs.getDouble("price")));
+                invoices.add(invoice);
+            }
+        }
+
+        return invoices;
+    }
+    public static void main(String[] args) throws SQLException, IOException {
+
+
+        Date currentDate = new Date(System.currentTimeMillis());
+
+// Gọi hàm thống kê với ngày hiện tại
+        List<Map.Entry<List<String>, List<List<String>>>> salesStatistics = getSalesStatistics(currentDate);
+        for (Map.Entry<List<String>, List<List<String>>> entry : salesStatistics) {
+            int numberOfInvoices = entry.getKey().size();
+            System.out.println("Key: " + entry.getKey() + ", Number of Invoices: " + numberOfInvoices);
+        }
+            // In kết quả
+            for (Map.Entry<List<String>, List<List<String>>> entry : salesStatistics) {
+                System.out.println("Key: " + entry.getKey());
+                System.out.println("Value: " + entry.getValue());
+                System.out.println("----------------------------------");
+            }
+
+
+    }
 }
