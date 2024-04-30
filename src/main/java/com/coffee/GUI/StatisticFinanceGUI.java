@@ -6,6 +6,7 @@ import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.line_chart.ModelData;
 import com.coffee.GUI.components.line_chart.chart.CurveLineChart;
 import com.coffee.GUI.components.line_chart.chart.ModelLineChart;
+import com.coffee.utils.VNString;
 import net.miginfocom.swing.MigLayout;
 import raven.datetime.component.date.DateEvent;
 import raven.datetime.component.date.DateSelectionListener;
@@ -14,12 +15,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class StatisticFinanceGUI extends JPanel {
@@ -173,6 +176,209 @@ public class StatisticFinanceGUI extends JPanel {
     }
 
     private void byYearReport() {
+        List<List<String>> dataSale_Discount = MySQL.getSale_DiscountByYear();
+        List<List<String>> dataCapitalPrice = MySQL.getCapitalPriceByYear();
+        List<List<String>> dataSalary_Allowance_Bonus_Deduction_Fine = MySQL.getSalary_Allowance_Bonus_Deduction_FineByYear();
+
+        List<Integer> yearList = new ArrayList<>();
+
+        String[] columns = new String[]{" "};
+        // Lặp qua từ tháng 1 đến tháng hiện tại
+        for (List<String> strings : dataSale_Discount) {
+            yearList.add(Integer.parseInt(strings.get(0)));
+            columns = Arrays.copyOf(columns, columns.length + 1);
+            columns[columns.length - 1] = strings.get(0);
+        }
+
+        columns = Arrays.copyOf(columns, columns.length + 1);
+        columns[columns.length - 1] = "Tổng";
+
+        List<List<String>> data = new ArrayList<>();
+
+        for (Integer year : yearList) {
+            List<String> list = new ArrayList<>();
+            list.add(year.toString());
+
+            boolean check = false;
+            double value1 = 0;
+            for (List<String> strings : dataSale_Discount) {
+                if (strings.get(0).equals(year.toString())) {
+                    list.add(strings.get(1));
+                    list.add(strings.get(2));
+                    value1 = Double.parseDouble(strings.get(1)) - Double.parseDouble(strings.get(2));
+                    list.add(String.valueOf(value1));
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+            }
+
+            check = false;
+            double value2 = 0;
+            for (List<String> strings : dataCapitalPrice) {
+                if (strings.get(0).equals(year.toString())) {
+                    list.add(strings.get(1));
+                    value2 = value1 - Double.parseDouble(strings.get(1));
+                    list.add(String.valueOf(value2));
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                list.add("0.0");
+                list.add("0.0");
+            }
+
+            check = false;
+            double value3 = 0;
+            double value4 = 0;
+            double value5 = 0;
+            double value6 = 0;
+            for (List<String> strings : dataSalary_Allowance_Bonus_Deduction_Fine) {
+                if (strings.get(0).equals(year.toString())) {
+                    value3 = Double.parseDouble(strings.get(1)) + Double.parseDouble(strings.get(2)) + Double.parseDouble(strings.get(3));
+                    list.add(String.valueOf(value3));
+                    list.add(strings.get(1));
+                    list.add(strings.get(2));
+                    list.add(strings.get(3));
+                    value4 = value2 - value3;
+                    list.add(String.valueOf(value4));
+
+                    value5 = Double.parseDouble(strings.get(4)) + Double.parseDouble(strings.get(5));
+                    list.add(String.valueOf(value5));
+                    list.add(strings.get(4));
+                    list.add(strings.get(5));
+                    value6 = value4 + value5;
+                    list.add(String.valueOf(value6));
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+            }
+
+            data.add(list);
+        }
+
+        content.removeAll();
+
+        initTopContent("Báo cáo kết quả hoạt động kinh doanh theo năm");
+
+        JScrollPane jScrollPane = new JScrollPane();
+        jScrollPane.setPreferredSize(new Dimension(885, 610));
+        content.add(jScrollPane, "wrap");
+
+        JPanel centerPanel = new JPanel(new MigLayout("", "0[]0", "0[]0"));
+        centerPanel.setBackground(Color.WHITE);
+        jScrollPane.setViewportView(centerPanel);
+
+
+        JPanel salesLabelPanel = createLabelPanel(new Color(178, 232, 255), new Color(202, 202, 202));
+        salesLabelPanel.setPreferredSize(new Dimension(Math.max(885, (120 * columns.length - 1) + 200), 40));
+        addLabelsToPanel(salesLabelPanel, columns, new Dimension(120, 30));
+        centerPanel.add(salesLabelPanel, "wrap");
+
+        List<List<String>> convertData = new ArrayList<>();
+        for (int i = 0; i < 14; i++) {
+            convertData.add(new ArrayList<>());
+        }
+        for (int i = 0; i < data.size(); i++) {  // Duyệt qua hàng
+            for (int j = 1; j < 15; j++) {  // Duyệt qua cột
+                convertData.get(j - 1).add(data.get(i).get(j));
+            }
+        }
+
+        int i = 1;
+        for (List<String> list : convertData) {
+            JPanel panel = new JPanel();
+            panel.setLayout(new MigLayout("", "10[]10", ""));
+            panel.setPreferredSize(new Dimension(Math.max(885, (120 * columns.length - 1) + 200), 30));
+            panel.setBackground(Color.WHITE);
+            panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(202, 202, 202)));
+
+            JLabel label = new JLabel();
+            label.setFont(new Font("Inter", Font.PLAIN, 13));
+            label.setPreferredSize(new Dimension(200, 50));
+            panel.add(label);
+            if (i == 1) {
+                label.setText("Doanh thu bán hàng (1)");
+            }
+            if (i == 2) {
+                label.setText("Chiết khấu hoá đơn (2)");
+            }
+            if (i == 3) {
+                label.setText("Doanh thu thuần (3 = 1-2)");
+            }
+            if (i == 4) {
+                label.setText("Giá vốn sản phẩm (4)");
+            }
+            if (i == 5) {
+                label.setText("Lợi nhuận gộp về bán hàng (5 = 3-4)");
+            }
+            if (i == 6) {
+                label.setText("Chi phí (6)");
+            }
+            if (i == 7) {
+                label.setText("     Tiền lương nhân viên");
+            }
+            if (i == 8) {
+                label.setText("     Tiền phụ cấp");
+            }
+            if (i == 9) {
+                label.setText("     Tiền thưởng");
+            }
+            if (i == 10) {
+                label.setText("Lợi nhuận kinh doanh (7 = 5-6)");
+            }
+            if (i == 11) {
+                label.setText("Thu nhập khác (8)");
+            }
+            if (i == 12) {
+                label.setText("     Tiền thu giảm trừ");
+            }
+            if (i == 13) {
+                label.setText("     Tiền thu phạt");
+            }
+            if (i == 14) {
+                label.setText("Lợi nhuận thuần (9 = 7+8)");
+            }
+            double total = 0;
+            for (String string : list) {
+                total += Double.parseDouble(string);
+
+                JLabel labelValue = new JLabel(VNString.currency(Double.parseDouble(string)));
+                labelValue.setFont(new Font("Inter", Font.PLAIN, 13));
+                labelValue.setPreferredSize(new Dimension(120, 50));
+                labelValue.setHorizontalAlignment(JLabel.RIGHT);
+                panel.add(labelValue);
+            }
+
+            JLabel labelTotal = new JLabel(VNString.currency(total));
+            labelTotal.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelTotal.setHorizontalAlignment(JLabel.RIGHT);
+            labelTotal.setPreferredSize(new Dimension(120, 50));
+            panel.add(labelTotal);
+
+            centerPanel.add(panel, "wrap");
+            System.out.println(list);
+            i++;
+        }
+
+        content.repaint();
+        content.revalidate();
     }
 
     private void byYearChart() {
@@ -288,6 +494,218 @@ public class StatisticFinanceGUI extends JPanel {
     }
 
     private void byQuarterReport() {
+        List<List<String>> dataSale_Discount = MySQL.getSale_DiscountByQuarter();
+        List<List<String>> dataCapitalPrice = MySQL.getCapitalPriceByQuarter();
+        List<List<String>> dataSalary_Allowance_Bonus_Deduction_Fine = MySQL.getSalary_Allowance_Bonus_Deduction_FineByQuarter();
+
+        List<Integer> quarterList = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+
+        // Lặp qua từ tháng 1 đến tháng hiện tại
+        String[] columns = new String[]{" "};
+        for (Month month : Month.values()) {
+            LocalDate monthStart = LocalDate.of(today.getYear(), month, 1);
+            int quarter = (monthStart.getMonthValue() - 1) / 3 + 1;
+
+            // Nếu tháng hiện tại hoặc trước tháng hiện tại, thêm quý vào danh sách
+            if (monthStart.isBefore(today) || monthStart.getMonth() == today.getMonth()) {
+                if (!quarterList.contains(quarter)) {
+                    quarterList.add(quarter);
+                    columns = Arrays.copyOf(columns, columns.length + 1);
+                    columns[columns.length - 1] = "Quý " + quarter + "/" + LocalDate.now().getYear();
+                }
+            }
+        }
+
+        columns = Arrays.copyOf(columns, columns.length + 1);
+        columns[columns.length - 1] = "Tổng";
+
+        List<List<String>> data = new ArrayList<>();
+
+        for (Integer quarter : quarterList) {
+            List<String> list = new ArrayList<>();
+            list.add(quarter.toString());
+
+            boolean check = false;
+            double value1 = 0;
+            for (List<String> strings : dataSale_Discount) {
+                if (strings.get(0).equals(quarter.toString())) {
+                    list.add(strings.get(1));
+                    list.add(strings.get(2));
+                    value1 = Double.parseDouble(strings.get(1)) - Double.parseDouble(strings.get(2));
+                    list.add(String.valueOf(value1));
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+            }
+
+            check = false;
+            double value2 = 0;
+            for (List<String> strings : dataCapitalPrice) {
+                if (strings.get(0).equals(quarter.toString())) {
+                    list.add(strings.get(1));
+                    value2 = value1 - Double.parseDouble(strings.get(1));
+                    list.add(String.valueOf(value2));
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                list.add("0.0");
+                list.add("0.0");
+            }
+
+            check = false;
+            double value3 = 0;
+            double value4 = 0;
+            double value5 = 0;
+            double value6 = 0;
+            for (List<String> strings : dataSalary_Allowance_Bonus_Deduction_Fine) {
+                if (strings.get(0).equals(quarter.toString())) {
+                    value3 = Double.parseDouble(strings.get(1)) + Double.parseDouble(strings.get(2)) + Double.parseDouble(strings.get(3));
+                    list.add(String.valueOf(value3));
+                    list.add(strings.get(1));
+                    list.add(strings.get(2));
+                    list.add(strings.get(3));
+                    value4 = value2 - value3;
+                    list.add(String.valueOf(value4));
+
+                    value5 = Double.parseDouble(strings.get(4)) + Double.parseDouble(strings.get(5));
+                    list.add(String.valueOf(value5));
+                    list.add(strings.get(4));
+                    list.add(strings.get(5));
+                    value6 = value4 + value5;
+                    list.add(String.valueOf(value6));
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+            }
+
+            data.add(list);
+        }
+
+        content.removeAll();
+
+        initTopContent("Báo cáo kết quả hoạt động kinh doanh theo quý");
+
+        JScrollPane jScrollPane = new JScrollPane();
+        jScrollPane.setPreferredSize(new Dimension(885, 610));
+        content.add(jScrollPane, "wrap");
+
+        JPanel centerPanel = new JPanel(new MigLayout("", "0[]0", "0[]0"));
+        centerPanel.setBackground(Color.WHITE);
+        jScrollPane.setViewportView(centerPanel);
+
+
+        JPanel salesLabelPanel = createLabelPanel(new Color(178, 232, 255), new Color(202, 202, 202));
+        salesLabelPanel.setPreferredSize(new Dimension(Math.max(885, (120 * columns.length - 1) + 200), 40));
+        addLabelsToPanel(salesLabelPanel, columns, new Dimension(120, 30));
+        centerPanel.add(salesLabelPanel, "wrap");
+
+        List<List<String>> convertData = new ArrayList<>();
+        for (int i = 0; i < 14; i++) {
+            convertData.add(new ArrayList<>());
+        }
+        for (int i = 0; i < data.size(); i++) {  // Duyệt qua hàng
+            for (int j = 1; j < 15; j++) {  // Duyệt qua cột
+                convertData.get(j - 1).add(data.get(i).get(j));
+            }
+        }
+
+        int i = 1;
+        for (List<String> list : convertData) {
+            JPanel panel = new JPanel();
+            panel.setLayout(new MigLayout("", "10[]10", ""));
+            panel.setPreferredSize(new Dimension(Math.max(885, (120 * columns.length - 1) + 200), 30));
+            panel.setBackground(Color.WHITE);
+            panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(202, 202, 202)));
+
+            JLabel label = new JLabel();
+            label.setFont(new Font("Inter", Font.PLAIN, 13));
+            label.setPreferredSize(new Dimension(200, 50));
+            panel.add(label);
+            if (i == 1) {
+                label.setText("Doanh thu bán hàng (1)");
+            }
+            if (i == 2) {
+                label.setText("Chiết khấu hoá đơn (2)");
+            }
+            if (i == 3) {
+                label.setText("Doanh thu thuần (3 = 1-2)");
+            }
+            if (i == 4) {
+                label.setText("Giá vốn sản phẩm (4)");
+            }
+            if (i == 5) {
+                label.setText("Lợi nhuận gộp về bán hàng (5 = 3-4)");
+            }
+            if (i == 6) {
+                label.setText("Chi phí (6)");
+            }
+            if (i == 7) {
+                label.setText("     Tiền lương nhân viên");
+            }
+            if (i == 8) {
+                label.setText("     Tiền phụ cấp");
+            }
+            if (i == 9) {
+                label.setText("     Tiền thưởng");
+            }
+            if (i == 10) {
+                label.setText("Lợi nhuận kinh doanh (7 = 5-6)");
+            }
+            if (i == 11) {
+                label.setText("Thu nhập khác (8)");
+            }
+            if (i == 12) {
+                label.setText("     Tiền thu giảm trừ");
+            }
+            if (i == 13) {
+                label.setText("     Tiền thu phạt");
+            }
+            if (i == 14) {
+                label.setText("Lợi nhuận thuần (9 = 7+8)");
+            }
+            double total = 0;
+            for (String string : list) {
+                total += Double.parseDouble(string);
+
+                JLabel labelValue = new JLabel(VNString.currency(Double.parseDouble(string)));
+                labelValue.setFont(new Font("Inter", Font.PLAIN, 13));
+                labelValue.setPreferredSize(new Dimension(120, 50));
+                labelValue.setHorizontalAlignment(JLabel.RIGHT);
+                panel.add(labelValue);
+            }
+
+            JLabel labelTotal = new JLabel(VNString.currency(total));
+            labelTotal.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelTotal.setHorizontalAlignment(JLabel.RIGHT);
+            labelTotal.setPreferredSize(new Dimension(120, 50));
+            panel.add(labelTotal);
+
+            centerPanel.add(panel, "wrap");
+            System.out.println(list);
+            i++;
+        }
+
+        content.repaint();
+        content.revalidate();
     }
 
     private void byQuarterChart() {
@@ -412,6 +830,211 @@ public class StatisticFinanceGUI extends JPanel {
     }
 
     private void byMonthReport() {
+        List<List<String>> dataSale_Discount = MySQL.getSale_DiscountByMonth();
+        List<List<String>> dataCapitalPrice = MySQL.getCapitalPriceByMonth();
+        List<List<String>> dataSalary_Allowance_Bonus_Deduction_Fine = MySQL.getSalary_Allowance_Bonus_Deduction_FineByMonth();
+
+        List<Integer> monthList = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        String[] columns = new String[]{" "};
+        // Duyệt qua các tháng từ tháng 1 đến tháng hiện tại
+        for (Month month : Month.values()) {
+            // Kiểm tra xem tháng đó đã qua hay chưa
+            if (month.compareTo(today.getMonth()) <= 0) {
+                monthList.add(month.getValue());
+                columns = Arrays.copyOf(columns, columns.length + 1);
+                columns[columns.length - 1] = month.getValue() + "/" + LocalDate.now().getYear();
+            }
+        }
+        columns = Arrays.copyOf(columns, columns.length + 1);
+        columns[columns.length - 1] = "Tổng";
+
+        List<List<String>> data = new ArrayList<>();
+
+        for (Integer month : monthList) {
+            List<String> list = new ArrayList<>();
+            list.add(month.toString());
+
+            boolean check = false;
+            double value1 = 0;
+            for (List<String> strings : dataSale_Discount) {
+                if (strings.get(0).equals(month.toString())) {
+                    list.add(strings.get(1));
+                    list.add(strings.get(2));
+                    value1 = Double.parseDouble(strings.get(1)) - Double.parseDouble(strings.get(2));
+                    list.add(String.valueOf(value1));
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+            }
+
+            check = false;
+            double value2 = 0;
+            for (List<String> strings : dataCapitalPrice) {
+                if (strings.get(0).equals(month.toString())) {
+                    list.add(strings.get(1));
+                    value2 = value1 - Double.parseDouble(strings.get(1));
+                    list.add(String.valueOf(value2));
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                list.add("0.0");
+                list.add("0.0");
+            }
+
+            check = false;
+            double value3 = 0;
+            double value4 = 0;
+            double value5 = 0;
+            double value6 = 0;
+            for (List<String> strings : dataSalary_Allowance_Bonus_Deduction_Fine) {
+                if (strings.get(1).equals(month.toString())) {
+                    value3 = Double.parseDouble(strings.get(2)) + Double.parseDouble(strings.get(3)) + Double.parseDouble(strings.get(4));
+                    list.add(String.valueOf(value3));
+                    list.add(strings.get(2));
+                    list.add(strings.get(3));
+                    list.add(strings.get(4));
+                    value4 = value2 - value3;
+                    list.add(String.valueOf(value4));
+
+                    value5 = Double.parseDouble(strings.get(5)) + Double.parseDouble(strings.get(6));
+                    list.add(String.valueOf(value5));
+                    list.add(strings.get(5));
+                    list.add(strings.get(6));
+                    value6 = value4 + value5;
+                    list.add(String.valueOf(value6));
+                    check = true;
+                    break;
+                }
+            }
+            if (!check) {
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+                list.add("0.0");
+            }
+
+            data.add(list);
+        }
+
+        content.removeAll();
+
+        initTopContent("Báo cáo kết quả hoạt động kinh doanh theo tháng");
+
+        JScrollPane jScrollPane = new JScrollPane();
+        jScrollPane.setPreferredSize(new Dimension(885, 610));
+        content.add(jScrollPane, "wrap");
+
+        JPanel centerPanel = new JPanel(new MigLayout("", "0[]0", "0[]0"));
+        centerPanel.setBackground(Color.WHITE);
+        jScrollPane.setViewportView(centerPanel);
+
+
+        JPanel salesLabelPanel = createLabelPanel(new Color(178, 232, 255), new Color(202, 202, 202));
+        salesLabelPanel.setPreferredSize(new Dimension(Math.max(885, (120 * columns.length - 1) + 200), 40));
+        addLabelsToPanel(salesLabelPanel, columns, new Dimension(120, 30));
+        centerPanel.add(salesLabelPanel, "wrap");
+
+        List<List<String>> convertData = new ArrayList<>();
+        for (int i = 0; i < 14; i++) {
+            convertData.add(new ArrayList<>());
+        }
+        for (int i = 0; i < data.size(); i++) {  // Duyệt qua hàng
+            for (int j = 1; j < 15; j++) {  // Duyệt qua cột
+                convertData.get(j - 1).add(data.get(i).get(j));
+            }
+        }
+
+        int i = 1;
+        for (List<String> list : convertData) {
+            JPanel panel = new JPanel();
+            panel.setLayout(new MigLayout("", "10[]10", ""));
+            panel.setPreferredSize(new Dimension(Math.max(885, (120 * columns.length - 1) + 200), 30));
+            panel.setBackground(Color.WHITE);
+            panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(202, 202, 202)));
+
+            JLabel label = new JLabel();
+            label.setFont(new Font("Inter", Font.PLAIN, 13));
+            label.setPreferredSize(new Dimension(200, 50));
+            panel.add(label);
+            if (i == 1) {
+                label.setText("Doanh thu bán hàng (1)");
+            }
+            if (i == 2) {
+                label.setText("Chiết khấu hoá đơn (2)");
+            }
+            if (i == 3) {
+                label.setText("Doanh thu thuần (3 = 1-2)");
+            }
+            if (i == 4) {
+                label.setText("Giá vốn sản phẩm (4)");
+            }
+            if (i == 5) {
+                label.setText("Lợi nhuận gộp về bán hàng (5 = 3-4)");
+            }
+            if (i == 6) {
+                label.setText("Chi phí (6)");
+            }
+            if (i == 7) {
+                label.setText("     Tiền lương nhân viên");
+            }
+            if (i == 8) {
+                label.setText("     Tiền phụ cấp");
+            }
+            if (i == 9) {
+                label.setText("     Tiền thưởng");
+            }
+            if (i == 10) {
+                label.setText("Lợi nhuận kinh doanh (7 = 5-6)");
+            }
+            if (i == 11) {
+                label.setText("Thu nhập khác (8)");
+            }
+            if (i == 12) {
+                label.setText("     Tiền thu giảm trừ");
+            }
+            if (i == 13) {
+                label.setText("     Tiền thu phạt");
+            }
+            if (i == 14) {
+                label.setText("Lợi nhuận thuần (9 = 7+8)");
+            }
+            double total = 0;
+            for (String string : list) {
+                total += Double.parseDouble(string);
+
+                JLabel labelValue = new JLabel(VNString.currency(Double.parseDouble(string)));
+                labelValue.setFont(new Font("Inter", Font.PLAIN, 13));
+                labelValue.setPreferredSize(new Dimension(120, 50));
+                labelValue.setHorizontalAlignment(JLabel.RIGHT);
+                panel.add(labelValue);
+            }
+
+            JLabel labelTotal = new JLabel(VNString.currency(total));
+            labelTotal.setFont(new Font("Inter", Font.PLAIN, 13));
+            labelTotal.setHorizontalAlignment(JLabel.RIGHT);
+            labelTotal.setPreferredSize(new Dimension(120, 50));
+            panel.add(labelTotal);
+
+            centerPanel.add(panel, "wrap");
+            System.out.println(list);
+            i++;
+        }
+
+        content.repaint();
+        content.revalidate();
     }
 
     private void byMonthChart() {
@@ -534,5 +1157,60 @@ public class StatisticFinanceGUI extends JPanel {
         JRadioButton radioButton = new JRadioButton(text);
         radioButton.setFont(new Font("Inter", Font.PLAIN, 14));
         return radioButton;
+    }
+
+    private void initTopContent(String tile) {
+        JPanel titletTopPanel = new JPanel(new BorderLayout());
+        titletTopPanel.setBackground(Color.WHITE);
+
+        titletTopPanel.setPreferredSize(new Dimension(885, 70));
+        content.add(titletTopPanel, "wrap");
+        // Cập nhật ngày lập
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String formattedDateTime = currentDateTime.format(formatter);
+        JLabel dateLabel = new JLabel("Ngày lập: " + formattedDateTime);
+        dateLabel.setFont(new Font("Inter", Font.PLAIN, 14));
+
+        // mặc đinh tiêu đề là báo cáo cuối ngày về bán hàng
+        JLabel titleLabel = new JLabel(tile);
+        titleLabel.setFont(new Font("Inter", Font.BOLD, 18));
+
+        JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        datePanel.setBackground(Color.WHITE);
+        datePanel.add(dateLabel);
+
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        titlePanel.setBackground(Color.WHITE);
+        titlePanel.add(titleLabel);
+
+        titletTopPanel.add(datePanel, BorderLayout.NORTH);
+        titletTopPanel.add(titlePanel, BorderLayout.CENTER);
+    }
+
+    private void addLabelsToPanel(JPanel panel, String[] labels, Dimension dimension) {
+        int i = 0;
+        for (String label : labels) {
+            JLabel jLabel = new JLabel(label);
+            jLabel.setFont(new Font("Inter", Font.BOLD, 13));
+
+            if (i != 0) {
+                jLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+                jLabel.setPreferredSize(dimension);
+            } else {
+                jLabel.setPreferredSize(new Dimension(200, 30));
+            }
+            panel.add(jLabel);
+            i++;
+        }
+    }
+
+    private JPanel createLabelPanel(Color background, Color border) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("", "10[]10", ""));
+        panel.setPreferredSize(new Dimension(868, 40));
+        panel.setBackground(background);
+        panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, border));
+        return panel;
     }
 }
