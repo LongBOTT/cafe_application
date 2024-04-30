@@ -16,6 +16,7 @@ import com.coffee.GUI.components.line_chart.chart.CurveLineChart;
 import com.coffee.GUI.components.line_chart.chart.ModelLineChart;
 import com.coffee.GUI.components.pie_chart.ModelPieChart;
 import com.coffee.GUI.components.pie_chart.PieChart;
+import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
@@ -164,11 +165,43 @@ public class StatisticStaffGUI extends JPanel {
         List<Role_Detail> staffSales = new Role_DetailBLL().searchRole_detailsByRole(4, Date.valueOf(LocalDate.now()).toString());
 
         right.removeAll();
+        JPanel jPanel = new JPanel(new MigLayout("", "0[100%]0", ""));
+        jPanel.setBackground(new Color(255, 255, 255));
 
         JLabel jLabelTile1 = new JLabel("Thống kê chức vụ");
         jLabelTile1.setFont(new Font("Inter", Font.BOLD, 17));
         jLabelTile1.setHorizontalAlignment(JLabel.CENTER);
-        right.add(jLabelTile1, BorderLayout.NORTH);
+        jPanel.add(jLabelTile1, "center, wrap, span");
+        right.add(jPanel, BorderLayout.NORTH);
+
+        JPanel jPanelNotice = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        jPanelNotice.setBackground(new Color(255, 255, 255));
+
+        JLabel jLabelAvailable = new JLabel("Quản lý");
+        JPanel jPanelAvailable = new JPanel();
+        jPanelAvailable.setPreferredSize(new Dimension(10, 10));
+        jPanelAvailable.setBackground(new Color(189, 135, 245));
+
+        jPanelNotice.add(jPanelAvailable);
+        jPanelNotice.add(jLabelAvailable);
+
+        JLabel jLabelDone = new JLabel("Nhân viên kho");
+        JPanel jPanelDone = new JPanel();
+        jPanelDone.setPreferredSize(new Dimension(10, 10));
+        jPanelDone.setBackground(new Color(135, 189, 245));
+
+        jPanelNotice.add(jPanelDone);
+        jPanelNotice.add(jLabelDone);
+
+        JLabel jLabelAbsent = new JLabel("Nhân viên bán hàng");
+        JPanel jPanelAbsent = new JPanel();
+        jPanelAbsent.setPreferredSize(new Dimension(10, 10));
+        jPanelAbsent.setBackground(new Color(139, 229, 184));
+
+        jPanelNotice.add(jPanelAbsent);
+        jPanelNotice.add(jLabelAbsent);
+
+        jPanel.add(jPanelNotice, "center, wrap, span");
 
         PieChart pieChart = new PieChart();
         pieChart.setFont(new java.awt.Font("Inter", Font.BOLD, 14));

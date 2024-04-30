@@ -204,6 +204,28 @@ public class MaterialGUI extends Layout2 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
+                    new CheckRemainWearHouse();
+                    refresh();
+                }
+            });
+            FunctionPanel.add(roundedPanel);
+
+            JLabel panel = new JLabel("Kiểm kho");
+            panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+            panel.setForeground(Color.white);
+            panel.setIcon(new FlatSVGIcon("icon/clipboard-tick-svgrepo-com.svg"));
+            roundedPanel.add(panel);
+        }
+
+        if (functions.stream().anyMatch(f -> f.getName().equals("add"))) {
+            RoundedPanel roundedPanel = new RoundedPanel();
+            roundedPanel.setLayout(new GridBagLayout());
+            roundedPanel.setPreferredSize(new Dimension(130, 40));
+            roundedPanel.setBackground(new Color(1, 120, 220));
+            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            roundedPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
                     new AddMaterialGUI();
                     refresh();
                 }
