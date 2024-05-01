@@ -64,8 +64,8 @@ public class StatisticProductGUI extends JPanel {
         datePicker = new DatePicker();
         editor = new JFormattedTextField();
         datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
-        datePicker.setUsePanelOption(true);
         datePicker.setEditor(editor);
+        datePicker.setUsePanelOption(true);
         datePicker.setCloseAfterSelected(true);
         datePicker.setSelectedDateRange(java.sql.Date.valueOf(LocalDate.now()), java.sql.Date.valueOf(LocalDate.now())); // bao loi o day
         datePicker.addDateSelectionListener(new DateSelectionListener() {

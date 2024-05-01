@@ -144,7 +144,7 @@ public class MySQL {
     }
 
     public static List<List<String>> getSaleProduct(String productName, String size, String productCategory, String... dates) {
-        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price), SUM(rd.quantity)\n" +
+        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price_discount), SUM(rd.quantity)\n" +
                 "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
                 "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
         if ((productName != null && size != null) || productCategory != null || dates.length != 0) {
@@ -174,7 +174,7 @@ public class MySQL {
     }
 
     public static List<List<String>> getTop5SaleProduct(String productName, String size, String productCategory, String... dates) {
-        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price), SUM(rd.quantity)\n" +
+        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price_discount), SUM(rd.quantity)\n" +
                 "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
                 "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
         if ((productName != null && size != null) || productCategory != null || dates.length != 0) {
@@ -196,7 +196,7 @@ public class MySQL {
             query += "WHERE " + String.join(" AND ", strings);
         }
         query += "\nGROUP BY pro.id, pro.`name`, pro.size\n" +
-                "ORDER BY SUM(rd.price) DESC LIMIT 5";
+                "ORDER BY SUM(rd.price_discount) DESC LIMIT 5";
         try {
             return executeQueryStatistic(query);
         } catch (SQLException | IOException e) {
@@ -236,7 +236,7 @@ public class MySQL {
     }
 
     public static List<List<String>> getProfitProduct(String productName, String size, String productCategory, String... dates) {
-        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price - pro.capital_price * rd.quantity), SUM(rd.quantity), SUM(rd.price), SUM(pro.capital_price * rd.quantity), SUM(rd.price - pro.capital_price * rd.quantity)/SUM(rd.price)*100\n" +
+        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price_discount - pro.capital_price * rd.quantity), SUM(rd.quantity), SUM(rd.price_discount), SUM(pro.capital_price * rd.quantity), SUM(rd.price_discount - pro.capital_price * rd.quantity)/SUM(rd.price_discount)*100\n" +
                 "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
                 "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
         if ((productName != null && size != null) || productCategory != null || dates.length != 0) {
@@ -266,7 +266,7 @@ public class MySQL {
     }
 
     public static List<List<String>> getTop5ProfitProduct(String productName, String size, String productCategory, String... dates) {
-        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price - pro.capital_price * rd.quantity), SUM(rd.quantity), SUM(rd.price), SUM(pro.capital_price * rd.quantity), SUM(rd.price - pro.capital_price * rd.quantity)/SUM(rd.price)*100\n" +
+        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price_discount - pro.capital_price * rd.quantity), SUM(rd.quantity), SUM(rd.price_discount), SUM(pro.capital_price * rd.quantity), SUM(rd.price_discount - pro.capital_price * rd.quantity)/SUM(rd.price_discount)*100\n" +
                 "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
                 "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
         if ((productName != null && size != null) || productCategory != null || dates.length != 0) {
@@ -288,7 +288,7 @@ public class MySQL {
             query += "WHERE " + String.join(" AND ", strings);
         }
         query += "\nGROUP BY pro.id, pro.`name`, pro.size\n" +
-                "ORDER BY SUM(rd.price - pro.capital_price * rd.quantity) DESC LIMIT 5";
+                "ORDER BY SUM(rd.price_discount - pro.capital_price * rd.quantity) DESC LIMIT 5";
         try {
             return executeQueryStatistic(query);
         } catch (SQLException | IOException e) {
@@ -297,7 +297,7 @@ public class MySQL {
     }
 
     public static List<List<String>> getTop5CapitalizationRate(String productName, String size, String productCategory, String... dates) {
-        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price - pro.capital_price * rd.quantity)/SUM(rd.price)*100\n" +
+        String query = "SELECT pro.id, pro.`name`, pro.size, SUM(rd.price_discount - pro.capital_price * rd.quantity)/SUM(rd.price_discount)*100\n" +
                 "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
                 "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
         if ((productName != null && size != null) || productCategory != null || dates.length != 0) {
@@ -319,7 +319,7 @@ public class MySQL {
             query += "WHERE " + String.join(" AND ", strings);
         }
         query += "\nGROUP BY pro.id, pro.`name`, pro.size\n" +
-                "ORDER BY SUM(rd.price - pro.capital_price * rd.quantity)/SUM(rd.price)*100 DESC LIMIT 5";
+                "ORDER BY SUM(rd.price_discount - pro.capital_price * rd.quantity)/SUM(rd.price_discount)*100 DESC LIMIT 5";
         try {
             return executeQueryStatistic(query);
         } catch (SQLException | IOException e) {

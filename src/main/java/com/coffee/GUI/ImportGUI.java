@@ -81,6 +81,7 @@ public class ImportGUI extends Layout2 {
 
         datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
         datePicker.setEditor(editor);
+        datePicker.setUsePanelOption(true);
         datePicker.setCloseAfterSelected(true);
         datePicker.addDateSelectionListener(new DateSelectionListener() {
             @Override
