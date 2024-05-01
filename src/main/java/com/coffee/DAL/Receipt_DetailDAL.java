@@ -29,7 +29,7 @@ public class Receipt_DetailDAL extends Manager {
                         Double.parseDouble(row.get(3)), // quantity
                         Double.parseDouble(row.get(4)), // price
                         Double.parseDouble(row.get(5)), // reduced_price
-                        row.get(5)
+                        row.get(6)
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in Receipt_DetailDAL.convertToReceipt_Details(): " + e.getMessage());
