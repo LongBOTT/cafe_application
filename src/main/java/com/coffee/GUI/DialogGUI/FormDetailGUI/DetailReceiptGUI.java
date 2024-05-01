@@ -154,6 +154,7 @@ public class DetailReceiptGUI extends DialogFormDetail {
                 PDF.exportReceiptDetialsPDF(receipt, "src/main/resources/ExportPDF");
                 JOptionPane.showMessageDialog(null, "In hoá đơn thành công.",
                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                dispose();
             }
         });
         roundedPanel.add(panel);

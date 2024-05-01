@@ -74,7 +74,7 @@ public class PayrollBLL extends Manager<Payroll> {
                         int lateShifts = 0;
                         int earlyShifts = 0;
 
-                        System.out.println(staff.getName() + "\n");
+                        //System.out.println(staff.getName() + "\n");
                         // tinh ca nghi co phep va khong phep
                         for (Work_Schedule work_schedule : work_scheduleList) {
                             if (work_schedule.getCheck_in().equals("null") && work_schedule.getCheck_out().equals("null")) {
@@ -91,7 +91,7 @@ public class PayrollBLL extends Manager<Payroll> {
                             // tinh luong co dinh
                             salary_amount = roleDetail.getSalary();
 
-                            System.out.println("Luong ngay cong " + VNString.currency(salary_amount));
+                            //System.out.println("Luong ngay cong " + VNString.currency(salary_amount));
                         } else {
                             List<Date> dateList = new ArrayList<>();
                             List<Double> hoursList = new ArrayList<>();
@@ -99,7 +99,7 @@ public class PayrollBLL extends Manager<Payroll> {
                             for (Work_Schedule work_schedule : work_scheduleList) {
                                 if (!work_schedule.getCheck_in().equals("null") && !work_schedule.getCheck_out().equals("null")) {
                                     // ca co di lam
-                                    System.out.println("Ngay :" + work_schedule.getDate() + "\n");
+                                    //System.out.println("Ngay :" + work_schedule.getDate() + "\n");
 
                                     String[] checkinArr, checkoutArr;
                                     double checkin, checkout;
@@ -119,7 +119,7 @@ public class PayrollBLL extends Manager<Payroll> {
                                         dateList.add(work_schedule.getDate());
                                         hoursList.add(Math.abs(checkout - checkin));
                                     }
-                                    System.out.println("Gio lam :" + Math.abs(checkout - checkin) + "\n");
+                                    //System.out.println("Gio lam :" + Math.abs(checkout - checkin) + "\n");
                                 }
                             }
                             for (Double aDouble : hoursList) {
@@ -131,7 +131,7 @@ public class PayrollBLL extends Manager<Payroll> {
 
                             salary_amount = hours_amount * roleDetail.getSalary();
 
-                            System.out.println("Luong ngay cong " + VNString.currency(salary_amount));
+                            //System.out.println("Luong ngay cong " + VNString.currency(salary_amount));
                         }
 
                         // tinh phu cap
@@ -149,20 +149,20 @@ public class PayrollBLL extends Manager<Payroll> {
                                 }
                                 allowance_amount = allowance_amount + (dates.size() * allowance.getAllowance_amount());
 
-                                System.out.println(allowance.getName() + "\n");
-                                System.out.println("So ngay :" + dates.size() + "\n");
-                                System.out.println("Tien phu cap :" + VNString.currency(dates.size() * allowance.getAllowance_amount()) + "\n");
+                                //System.out.println(allowance.getName() + "\n");
+                                //System.out.println("So ngay :" + dates.size() + "\n");
+                                //System.out.println("Tien phu cap :" + VNString.currency(dates.size() * allowance.getAllowance_amount()) + "\n");
                             }
                             // tinh phu cap theo thang
                             if (allowance.getAllowance_type() == 1) {
                                 allowance_amount = allowance_amount + allowance.getAllowance_amount();
 
-                                System.out.println(allowance.getName() + "\n");
-                                System.out.println("Tien phu cap thang " + VNString.currency(allowance.getAllowance_amount()) + "\n");
+                                //System.out.println(allowance.getName() + "\n");
+                                //System.out.println("Tien phu cap thang " + VNString.currency(allowance.getAllowance_amount()) + "\n");
                             }
                         }
 
-                        System.out.println("Tong tien phu cap :" + allowance_amount + "\n");
+                        //System.out.println("Tong tien phu cap :" + allowance_amount + "\n");
 
                         // tinh tien giam tru
                         for (Salary_Format_Deduction salaryFormatDeduction : salaryFormatDeductions) {
@@ -189,8 +189,8 @@ public class PayrollBLL extends Manager<Payroll> {
                                         long minutesLate = ChronoUnit.MINUTES.between(timeShiftStart, checkin);
 
                                         if (minutesLate >= maxMinutesCheckInLate) {
-                                            System.out.println("Ngay di muon " + work_schedule.getDate() + "\n");
-                                            System.out.println("Thoi gian di muon " + minutesLate + "\n");
+                                            //System.out.println("Ngay di muon " + work_schedule.getDate() + "\n");
+                                            //System.out.println("Thoi gian di muon " + minutesLate + "\n");
                                             lateShifts += 1;
                                         }
                                     }
@@ -198,9 +198,9 @@ public class PayrollBLL extends Manager<Payroll> {
 
                                 deduction_amount = deduction_amount + (lateShifts * deduction.getDeduction_amount());
 
-                                System.out.println(deduction.getName() + "\n");
-                                System.out.println("So ca di muon " + lateShifts + "\n");
-                                System.out.println("Tien giam tru di muon " + VNString.currency(lateShifts * deduction.getDeduction_amount()) + "\n");
+                                //System.out.println(deduction.getName() + "\n");
+                                //System.out.println("So ca di muon " + lateShifts + "\n");
+                                //System.out.println("Tien giam tru di muon " + VNString.currency(lateShifts * deduction.getDeduction_amount()) + "\n");
                             }
                             // tinh giam tru ve som
                             if (deduction.getDeduction_type() == 1) {
@@ -224,32 +224,32 @@ public class PayrollBLL extends Manager<Payroll> {
                                         long minutesEarly = ChronoUnit.MINUTES.between(checkout, timeShiftEnd);
 
                                         if (minutesEarly >= maxMinutesCheckOutEarly) {
-                                            System.out.println("Ngay ve som " + work_schedule.getDate() + "\n");
-                                            System.out.println("Thoi gian ve som " + minutesEarly + "\n");
+                                            //System.out.println("Ngay ve som " + work_schedule.getDate() + "\n");
+                                            //System.out.println("Thoi gian ve som " + minutesEarly + "\n");
                                             earlyShifts += 1;
                                         }
                                     }
                                 }
                                 deduction_amount = deduction_amount + (earlyShifts * deduction.getDeduction_amount());
 
-                                System.out.println(deduction.getName() + "\n");
-                                System.out.println("So ca ve som " + lateShifts + "\n");
-                                System.out.println("Tien giam tru ve som " + VNString.currency(earlyShifts * deduction.getDeduction_amount()) + "\n");
+                                //System.out.println(deduction.getName() + "\n");
+                                //System.out.println("So ca ve som " + lateShifts + "\n");
+                                //System.out.println("Tien giam tru ve som " + VNString.currency(earlyShifts * deduction.getDeduction_amount()) + "\n");
                             }
                             // tinh giam tru co dinh
                             if (deduction.getDeduction_type() == 2) {
                                 deduction_amount = deduction_amount + (deduction.getDeduction_amount());
 
-                                System.out.println(deduction.getName() + "\n");
-                                System.out.println("Tien giam tru co dinh " + VNString.currency(deduction.getDeduction_amount()) + "\n");
+                                //System.out.println(deduction.getName() + "\n");
+                                //System.out.println("Tien giam tru co dinh " + VNString.currency(deduction.getDeduction_amount()) + "\n");
                             }
                             // tinh giam tru nghi khong phep
                             if (deduction.getDeduction_type() == 3) {
                                 deduction_amount = deduction_amount + (deduction.getDeduction_amount() * ca_nghi_khong_phep.size());
 
-                                System.out.println(deduction.getName() + "\n");
-                                System.out.println("So ca nghi khong phep " + ca_nghi_khong_phep.size() + "\n");
-                                System.out.println("Tien giam nghi khong phep " + VNString.currency(deduction.getDeduction_amount() * ca_nghi_khong_phep.size()) + "\n");
+                                //System.out.println(deduction.getName() + "\n");
+                                //System.out.println("So ca nghi khong phep " + ca_nghi_khong_phep.size() + "\n");
+                                //System.out.println("Tien giam nghi khong phep " + VNString.currency(deduction.getDeduction_amount() * ca_nghi_khong_phep.size()) + "\n");
                             }
                         }
 
@@ -259,26 +259,26 @@ public class PayrollBLL extends Manager<Payroll> {
                                 List<Work_Schedule_Bonus> work_schedule_bonuses = new Work_Schedule_BonusBLL().searchWork_schedules("work_schedule_id = " + work_schedule.getId());
                                 List<Work_Schedule_Fine> work_schedule_fines = new Work_Schedule_FineBLL().searchWork_schedules("work_schedule_id = " + work_schedule.getId());
 
-                                System.out.println(work_schedule.getDate() + "\n");
+                                //System.out.println(work_schedule.getDate() + "\n");
                                 for (Work_Schedule_Bonus workScheduleBonus : work_schedule_bonuses) {
 
-                                    System.out.println(workScheduleBonus.getBonus_name() + "\n");
-                                    System.out.println("So tien thuong: " + VNString.currency(workScheduleBonus.getBonus_total()) + "\n");
+                                    //System.out.println(workScheduleBonus.getBonus_name() + "\n");
+                                    //System.out.println("So tien thuong: " + VNString.currency(workScheduleBonus.getBonus_total()) + "\n");
                                     bonus_amount += workScheduleBonus.getBonus_total();
                                 }
                                 for (Work_Schedule_Fine workScheduleFine : work_schedule_fines) {
 
-                                    System.out.println(workScheduleFine.getFine_name() + "\n");
-                                    System.out.println("So tien phat: " + VNString.currency(workScheduleFine.getFine_total()) + "\n");
+                                    //System.out.println(workScheduleFine.getFine_name() + "\n");
+                                    //System.out.println("So tien phat: " + VNString.currency(workScheduleFine.getFine_total()) + "\n");
                                     fine_amount += workScheduleFine.getFine_total();
                                 }
                             }
                         }
 
-                        System.out.println("Tong tien thuong: " + VNString.currency(bonus_amount) + "\n");
-                        System.out.println("Tong tien phat: " + VNString.currency(fine_amount) + "\n");
+                        //System.out.println("Tong tien thuong: " + VNString.currency(bonus_amount) + "\n");
+                        //System.out.println("Tong tien phat: " + VNString.currency(fine_amount) + "\n");
 
-                        System.out.println("So tien sau thuong va phat " + VNString.currency(salary_amount) + "\n");
+                        //System.out.println("So tien sau thuong va phat " + VNString.currency(salary_amount) + "\n");
 
                         // tinh luong co dinh
                         if (roleDetail.getType_salary() == 1) {
@@ -316,11 +316,11 @@ public class PayrollBLL extends Manager<Payroll> {
                             }
                             salary_amount = (salary_amount + allowance_amount) / 26.0 * (dates.size() + count) + bonus_amount - fine_amount - deduction_amount; // lương tháng cố định = (lương thoả thuận + phụ cấp)/26 * (số ngày làm + số ngày nghỉ được hưởng lương) - phạt  + thưởng - giảm trừ
 
-                            System.out.println("So tien thuc cua luong co dinh: " + VNString.currency(salary_amount));
+                            //System.out.println("So tien thuc cua luong co dinh: " + VNString.currency(salary_amount));
                             hours_amount = dates.size() + count;
                         } else {
                             salary_amount = salary_amount + allowance_amount + bonus_amount - fine_amount - deduction_amount;
-                            System.out.println("So tien thuc lanh: " + VNString.currency(salary_amount));
+                            //System.out.println("So tien thuc lanh: " + VNString.currency(salary_amount));
                         }
                         Payroll_Detail payrollDetail = new Payroll_Detail(payroll.getId(), staff.getId(), hours_amount, allowance_amount, deduction_amount, bonus_amount, fine_amount, salary_amount, false);
                         payrollDetails.add(payrollDetail);

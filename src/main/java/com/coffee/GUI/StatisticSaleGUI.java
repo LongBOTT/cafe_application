@@ -272,7 +272,7 @@ public class StatisticSaleGUI extends JPanel {
         datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
         datePicker.setEditor(editor);
         datePicker.setCloseAfterSelected(true);
-        datePicker.setSelectedDateRange(LocalDate.now(), LocalDate.now()); // bao loi o day
+        datePicker.setSelectedDateRange(java.sql.Date.valueOf(LocalDate.now()), java.sql.Date.valueOf(LocalDate.now())); // bao loi o day
         datePicker.addDateSelectionListener(new DateSelectionListener() {
             @Override
             public void dateSelected(DateEvent dateEvent) {

@@ -371,7 +371,31 @@ public class SaleGUI extends SalePanel {
 
             Receipt_DetailBLL receiptDetailBLL = new Receipt_DetailBLL();
 
+            if (discountType == 0) {
+                for (Receipt_Detail receipt_detail : receipt_details) {
+                    List<Pair<Double, Double>> list = checkPercentDiscountType0(receipt_detail.getProduct_id(), receipt_detail.getSize());
+                    if (!list.isEmpty()) {
+                        double quantity = 0, percent = 0;
+                        for (Pair<Double, Double> pair : list) {
+                            if (pair.getKey() <= receipt_detail.getQuantity()) {
+                                if (pair.getKey() > quantity) {
+                                    quantity = pair.getKey();
+                                    percent = pair.getValue();
+                                }
+
+                            }
+                        }
+                        receipt_detail.setPrice_discount(receipt_detail.getPrice() * (100 - percent) / 100);
+                    }
+                }
+            } else {
+                for (Receipt_Detail receipt_detail : receipt_details) {
+                    receipt_detail.setPrice_discount(receipt_detail.getPrice_discount());
+                }
+            }
+
             for (Receipt_Detail receipt_detail : receipt_details) {
+
                 receiptDetailBLL.addReceipt_Detail(receipt_detail);
             }
 

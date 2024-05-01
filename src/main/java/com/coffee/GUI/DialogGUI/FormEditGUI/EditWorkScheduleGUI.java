@@ -605,8 +605,6 @@ public class EditWorkScheduleGUI extends DialogForm {
                         loadFinePanel(scrollPane);
                         panel.repaint();
                         panel.revalidate();
-
-                        System.out.println(Arrays.toString(work_schedule_fines.toArray()));
                     }
 
                 }
@@ -754,8 +752,6 @@ public class EditWorkScheduleGUI extends DialogForm {
                     loadFinePanel(scrollPane);
                     panel.repaint();
                     panel.revalidate();
-
-                    System.out.println(Arrays.toString(work_schedule_fines.toArray()));
                 }
             }
         });

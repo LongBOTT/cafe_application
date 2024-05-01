@@ -10,6 +10,7 @@ public class Receipt_Detail {
     private double price;
     private double reduced_price;
     private String notice;
+    private double price_discount;
 
     public Receipt_Detail() {
     }
@@ -78,6 +79,14 @@ public class Receipt_Detail {
 
     public void setNotice(String notice) {
         this.notice = notice;
+    }
+
+    public double getPrice_discount() {
+        return price_discount;
+    }
+
+    public void setPrice_discount(double price_discount) {
+        this.price_discount = price_discount;
     }
 
     @Override

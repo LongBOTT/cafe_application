@@ -17,6 +17,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -73,6 +74,7 @@ public class ReceiptGUI extends Layout2 {
 
         datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
         datePicker.setEditor(editor);
+        datePicker.setUsePanelOption(true);
         datePicker.setCloseAfterSelected(true);
         datePicker.addDateSelectionListener(new DateSelectionListener() {
             @Override
@@ -201,7 +203,7 @@ public class ReceiptGUI extends Layout2 {
                 receiptList.removeIf(receipt -> !staffIDList.contains(receipt.getStaff_id()));
             }
             if (datePicker.getDateSQL_Between() != null) {
-                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 Date startDate = datePicker.getDateSQL_Between()[0];
                 Date endDate = datePicker.getDateSQL_Between()[1];
                 if (startDate.after(endDate)) {
@@ -209,7 +211,7 @@ public class ReceiptGUI extends Layout2 {
                             "Lỗi", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                receiptList.removeIf(receipt -> (receipt.getInvoice_date().isBefore(LocalDateTime.parse(startDate.toString(), myFormatObj)) || receipt.getInvoice_date().isAfter(LocalDateTime.parse(endDate.toString(), myFormatObj))));
+                receiptList.removeIf(receipt -> (receipt.getInvoice_date().toLocalDate().isBefore(LocalDate.parse(startDate.toString(), myFormatObj)) || receipt.getInvoice_date().toLocalDate().isAfter(LocalDate.parse(endDate.toString(), myFormatObj))));
             }
             loadDataTable(receiptBLL.getData(receiptList));
         }

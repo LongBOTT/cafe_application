@@ -45,7 +45,9 @@ public class StatisticEndOfTheDayGUI extends JPanel {
     private static final int PANEL_HEIGHT = 40;
     private static final Dimension LABEL_SIZE = new Dimension(150, 30);
     Map<JPanel, Boolean> expandedStateMap = new HashMap<>(); // Biến để theo dõi trạng thái của nút btnDetail
+
     Map<JPanel, Boolean> expandedStateMapProduct = new HashMap<>();
+
 
     public StatisticEndOfTheDayGUI() {
         setBackground(Color.WHITE);
@@ -111,6 +113,8 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         titletTopPanel.add(dateReportPanel, BorderLayout.SOUTH);
 
     }
+
+
 
     private void initCenterContent() {
         centerPanel = new JPanel(new MigLayout("", "0[]0", "0[]0"));
@@ -554,6 +558,7 @@ public class StatisticEndOfTheDayGUI extends JPanel {
 
         for (int i = selectedIndex + 1; i < centerPanel.getComponentCount(); i++) {
             Component component = centerPanel.getComponent(i);
+
             Boolean isDetailPanel = (Boolean) ((JPanel) component).getClientProperty("isDetailPanel");
             if (isDetailPanel != null && isDetailPanel) {
                 centerPanel.remove(component);
@@ -563,6 +568,8 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         centerPanel.revalidate();
         centerPanel.repaint();
     }
+
+
 
     private void addDetailPanel(JPanel selectedPanel, List<List<String>> invoices) {
         for (List<String> invoiceDetail : invoices) {
@@ -667,8 +674,9 @@ public class StatisticEndOfTheDayGUI extends JPanel {
 
         datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
         datePicker.setEditor(editor);
+        datePicker.setUsePanelOption(true);
         datePicker.setCloseAfterSelected(true);
-        datePicker.setSelectedDateRange(LocalDate.now(), LocalDate.now()); // bao loi o day
+        datePicker.setSelectedDateRange(java.sql.Date.valueOf(LocalDate.now()), java.sql.Date.valueOf(LocalDate.now())); // bao loi o day
         datePicker.addDateSelectionListener(new DateSelectionListener() {
             @Override
             public void dateSelected(DateEvent dateEvent) {

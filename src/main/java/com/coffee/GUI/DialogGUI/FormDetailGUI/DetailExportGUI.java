@@ -131,7 +131,7 @@ public class DetailExportGUI extends DialogFormDetail {
                 PDF.exportBillDetailsPDF(export, "src/main/resources/ExportPDF");
                 JOptionPane.showMessageDialog(null, "In phiếu xuất thành công.",
                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-
+                dispose();
             }
         });
         roundedPanel.add(panel);

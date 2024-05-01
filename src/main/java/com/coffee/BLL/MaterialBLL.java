@@ -85,6 +85,13 @@ public class MaterialBLL extends Manager<Material> {
         return new Pair<>(true, "Cập nhật nguyên liệu thành công.");
     }
 
+    public Pair<Boolean, String> updateMaterial(Material material) {
+        if (materialDAL.updateMaterial(material) == 0)
+            return new Pair<>(false, "Cập nhật nguyên liệu không thành công.");
+
+        return new Pair<>(true, "Cập nhật nguyên liệu thành công.");
+    }
+
     public Pair<Boolean, String> deleteMaterial(Material material) {
         Pair<Boolean, String> result;
 

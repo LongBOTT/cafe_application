@@ -6,6 +6,7 @@ import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.main.Cafe_Application;
+import com.coffee.utils.PDF;
 import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
@@ -346,15 +347,15 @@ public class DetailPayroll_DetailGUI extends DialogForm {
 
         }
 
-        System.out.println("gio cong" + Arrays.toString(hoursObjectList.toArray()));
-        System.out.println("tro cap" + Arrays.toString(allowanceObjectList.toArray()));
-        System.out.println("di tre" + Arrays.toString(lateObjectList.toArray()));
-        System.out.println("ve som" + Arrays.toString(earlyObjectList.toArray()));
-        System.out.println("giam tru mac dinh" + Arrays.toString(defaultDeductionObjectList.toArray()));
-        System.out.println("co phep" + Arrays.toString(absentObjectList1.toArray()));
-        System.out.println("khong phep" + Arrays.toString(absentObjectList2.toArray()));
-        System.out.println("thuong" + Arrays.toString(bonusObjectList.toArray()));
-        System.out.println("phat" + Arrays.toString(fineObjectList.toArray()));
+//        System.out.println("gio cong" + Arrays.toString(hoursObjectList.toArray()));
+//        System.out.println("tro cap" + Arrays.toString(allowanceObjectList.toArray()));
+//        System.out.println("di tre" + Arrays.toString(lateObjectList.toArray()));
+//        System.out.println("ve som" + Arrays.toString(earlyObjectList.toArray()));
+//        System.out.println("giam tru mac dinh" + Arrays.toString(defaultDeductionObjectList.toArray()));
+//        System.out.println("co phep" + Arrays.toString(absentObjectList1.toArray()));
+//        System.out.println("khong phep" + Arrays.toString(absentObjectList2.toArray()));
+//        System.out.println("thuong" + Arrays.toString(bonusObjectList.toArray()));
+//        System.out.println("phat" + Arrays.toString(fineObjectList.toArray()));
 
         initInfoPanel(infoPanel);
         if (roleDetail.getType_salary() == 2)
@@ -367,6 +368,29 @@ public class DetailPayroll_DetailGUI extends DialogForm {
         initAbsent2Panel(absentPanel2);
         initBonusPanel(bonusPanel);
         initFinePanel(finePanel);
+
+        RoundedPanel roundedPanel = new RoundedPanel();
+        roundedPanel.setLayout(new GridBagLayout());
+        roundedPanel.setPreferredSize(new Dimension(150, 40));
+        roundedPanel.setBackground(new Color(1, 120, 220));
+        roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        containerButton.add(roundedPanel);
+
+        JLabel panel = new JLabel("In phiếu lương");
+        panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        panel.setForeground(Color.white);
+        panel.setIcon(new FlatSVGIcon("icon/print.svg"));
+        roundedPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+                PDF.exportPayrollDetailPDF(payroll, payrollDetail, "src/main/resources/ExportPDF");
+                JOptionPane.showMessageDialog(null, "In phiếu lương thành công.",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                dispose();
+            }
+        });
+        roundedPanel.add(panel);
     }
 
     private void initHoursPanel(JScrollPane hoursPanel) {
