@@ -1,6 +1,7 @@
 package com.coffee.DAL;
 
 import com.coffee.utils.Database;
+import javafx.util.Pair;
 
 import java.io.IOException;
 import java.sql.*;
@@ -579,5 +580,62 @@ public class MySQL {
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static List<List<String>> getSaleCategory(String start, String end) {
+        String query = "SELECT pro.category, SUM(rd.quantity), SUM(rd.price)\n" +
+                "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
+                "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
+        query += "WHERE '" + start + "' <= DATE(rp.invoice_date) AND DATE(rp.invoice_date) <= '" + end + "'\n";
+        query += "GROUP BY pro.category\n";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getSaleProductEndOfDay(String start, String end) {
+        String query = "SELECT pro.id, pro.`name`, SUM(rd.quantity), SUM(rd.price)\n" +
+                "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
+                "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
+        query += "WHERE '" + start + "' <= DATE(rp.invoice_date) AND DATE(rp.invoice_date) <= '" + end + "'\n";
+        query += "GROUP BY pro.id, pro.`name`\n";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getReceiptByProductEndOfDay(String productName, String start, String end) {
+        String query = "SELECT rp.id, rp.invoice_date, rd.quantity, rd.price\n" +
+                "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
+                "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
+        query += "WHERE '" + start + "' <= DATE(rp.invoice_date) AND DATE(rp.invoice_date) <= '" + end + "' AND pro.`name` = '" + productName + "'\n";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<Pair<List<String>, List<List<String>>>> getProductEndOfDay(String start, String end) {
+        List<Pair<List<String>, List<List<String>>>> pairList = new ArrayList<>();
+
+        for (List<String> stringListKey : getSaleProductEndOfDay(start, end)) {
+            List<List<String>> stringListValue = getReceiptByProductEndOfDay(stringListKey.get(1), start, end);
+            pairList.add(new Pair<>(stringListKey, stringListValue));
+        }
+
+        return pairList;
+    }
+
+    public static void main(String[] args) {
+        for (Pair<List<String>, List<List<String>>> pair : getProductEndOfDay("2023-04-01", "2023-04-01")) {
+            System.out.println(Arrays.toString(pair.getKey().toArray()));
+            System.out.println(Arrays.toString(pair.getValue().toArray()));
+        }
+
     }
 }
