@@ -545,7 +545,6 @@ public class PDF {
             return false;
         }
 
-        List<Payroll_Detail> payrollDetails = new Payroll_DetailBLL().searchPayroll_Details("payroll_id = " + payroll.getId());
         File file = new File(getFileNameDate(path, "PayRoll_Detail", java.sql.Date.valueOf(LocalDate.now())));
         PDF pdf = new PDF(6, 20F, 180F, 30F);
 

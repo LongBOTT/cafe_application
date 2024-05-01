@@ -347,15 +347,15 @@ public class DetailPayroll_DetailGUI extends DialogForm {
 
         }
 
-        System.out.println("gio cong" + Arrays.toString(hoursObjectList.toArray()));
-        System.out.println("tro cap" + Arrays.toString(allowanceObjectList.toArray()));
-        System.out.println("di tre" + Arrays.toString(lateObjectList.toArray()));
-        System.out.println("ve som" + Arrays.toString(earlyObjectList.toArray()));
-        System.out.println("giam tru mac dinh" + Arrays.toString(defaultDeductionObjectList.toArray()));
-        System.out.println("co phep" + Arrays.toString(absentObjectList1.toArray()));
-        System.out.println("khong phep" + Arrays.toString(absentObjectList2.toArray()));
-        System.out.println("thuong" + Arrays.toString(bonusObjectList.toArray()));
-        System.out.println("phat" + Arrays.toString(fineObjectList.toArray()));
+//        System.out.println("gio cong" + Arrays.toString(hoursObjectList.toArray()));
+//        System.out.println("tro cap" + Arrays.toString(allowanceObjectList.toArray()));
+//        System.out.println("di tre" + Arrays.toString(lateObjectList.toArray()));
+//        System.out.println("ve som" + Arrays.toString(earlyObjectList.toArray()));
+//        System.out.println("giam tru mac dinh" + Arrays.toString(defaultDeductionObjectList.toArray()));
+//        System.out.println("co phep" + Arrays.toString(absentObjectList1.toArray()));
+//        System.out.println("khong phep" + Arrays.toString(absentObjectList2.toArray()));
+//        System.out.println("thuong" + Arrays.toString(bonusObjectList.toArray()));
+//        System.out.println("phat" + Arrays.toString(fineObjectList.toArray()));
 
         initInfoPanel(infoPanel);
         if (roleDetail.getType_salary() == 2)
