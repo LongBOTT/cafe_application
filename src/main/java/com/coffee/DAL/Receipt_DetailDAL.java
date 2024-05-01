@@ -14,7 +14,9 @@ public class Receipt_DetailDAL extends Manager {
                         "product_id",
                         "size",
                         "quantity",
-                        "price", "notice"));
+                        "price",
+                        "reduced_price",
+                        "notice"));
     }
 
     public List<Receipt_Detail> convertToReceipt_Details(List<List<String>> data) {
@@ -26,6 +28,7 @@ public class Receipt_DetailDAL extends Manager {
                         row.get(2), // size
                         Double.parseDouble(row.get(3)), // quantity
                         Double.parseDouble(row.get(4)), // price
+                        Double.parseDouble(row.get(5)), // reduced_price
                         row.get(5)
                 );
             } catch (Exception e) {
@@ -42,6 +45,7 @@ public class Receipt_DetailDAL extends Manager {
                     receipt_detail.getSize(),
                     receipt_detail.getQuantity(),
                     receipt_detail.getPrice(),
+                    receipt_detail.getReduced_price(),
                     receipt_detail.getNotice()
             );
         } catch (SQLException | IOException e) {

@@ -8,6 +8,7 @@ import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailReceiptGUI;
 import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.RoundedPanel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 import raven.datetime.component.date.DateEvent;
 import raven.datetime.component.date.DateSelectionListener;
@@ -44,6 +45,7 @@ public class StatisticEndOfTheDayGUI extends JPanel {
     private static final int PANEL_HEIGHT = 40;
     private static final Dimension LABEL_SIZE = new Dimension(150, 30);
     Map<JPanel, Boolean> expandedStateMap = new HashMap<>(); // Biến để theo dõi trạng thái của nút btnDetail
+    Map<JPanel, Boolean> expandedStateMapProduct = new HashMap<>();
 
     public StatisticEndOfTheDayGUI() {
         setBackground(Color.WHITE);
@@ -216,8 +218,8 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         addLabelsToPanel(salesLabelPanel, new String[]{"Mã hàng", "Tên hàng", "SLSP", "Giá trị niêm yết", "Doanh thu", "Chênh lệch"}, 5,new Font("Inter", Font.BOLD, 13));
         centerPanel.add(salesLabelPanel, "wrap");
 
-        Date currentDate = new Date(System.currentTimeMillis());
-        List<Map.Entry<List<String>, List<List<String>>>> productsStatistics = MySQL.getproductsStatistics(currentDate);
+
+        List<Pair<List<String>, List<List<String>>>>   productsStatistics = MySQL.getProductEndOfDay("2023-04-01", "2023-04-01");
 
         JPanel salesDataPanel = createLabelPanel(new Color(242, 238, 214), new MigLayout("", "10[]20[]20[]20[]20[]20[]10", ""));
         addLabelsToPanel(salesDataPanel, new String[]{"Sl mặt hàng: 3", "", "4", "180,000", "172,000", "8000"}, 5,new Font("Inter", Font.BOLD, 13));
@@ -243,17 +245,15 @@ public class StatisticEndOfTheDayGUI extends JPanel {
 //        centerPanel.add(salesDataPanel, "wrap");
 //
 //
-//        // Tạo panel báo cáo cho mỗi dòng trong mảng dữ liệu
-//        for (Map.Entry<List<String>, List<List<String>>> entry : productsStatistics) {
-//            List<String> keyList = entry.getKey();
-//            List<List<String>> invoices = entry.getValue();
-//            if (!keyList.isEmpty() && !invoices.isEmpty()) {
-////                // Hiển thị thông tin tổng quan
-//        JPanel summaryPanel = createPanelReport(keyList, invoices);
-//                expandedStateMap.put(summaryPanel, false); // Ban đầu, tất cả các panel đều không mở rộng
-//                centerPanel.add(summaryPanel, "wrap");
-//            }
-//        }
+    for (Pair<List<String>, List<List<String>>> list : productsStatistics) {
+        List<String> keyList = list.getKey();
+        List<List<String>> invoices = list.getValue();
+        if (!keyList.isEmpty() && !invoices.isEmpty()) {
+            JPanel summaryPanel = createPanelProduct(keyList, invoices);
+            expandedStateMapProduct.put(summaryPanel, false); // Ban đầu, tất cả các panel đều không mở rộng
+            centerPanel.add(summaryPanel, "wrap");
+        }
+}
 
         centerPanel.repaint();
         centerPanel.revalidate();
@@ -491,7 +491,7 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         btnDetail.setContentAreaFilled(false);
         btnDetail.addActionListener(e -> {
             JPanel selectedPanel = (JPanel) btnDetail.getParent().getParent(); // Lấy panel cha của nút
-            togglePanel(btnDetail, selectedPanel, invoices);// Kích hoạt chức năng mở rộng/ thu gọn khi nhấn nút
+            togglePanel1(btnDetail, selectedPanel, invoices);// Kích hoạt chức năng mở rộng/ thu gọn khi nhấn nút
         });
 
 
@@ -512,17 +512,8 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         lblQuantity.setHorizontalAlignment(SwingConstants.CENTER);
         lblQuantity.setPreferredSize(new Dimension(150, 50));
 
-        JLabel lbl_listed_value = new JLabel(keyList.get(3));
-        lbl_listed_value.setFont(new Font("Inter", Font.PLAIN, 13));
-        lbl_listed_value.setHorizontalAlignment(SwingConstants.CENTER);
-        lbl_listed_value.setPreferredSize(new Dimension(150, 50));
 
-        JLabel lblRevenue = new JLabel(keyList.get(4));
-        lblRevenue.setFont(new Font("Inter", Font.PLAIN, 13));
-        lblRevenue.setHorizontalAlignment(SwingConstants.CENTER);
-        lblRevenue.setPreferredSize(new Dimension(150, 50));
-
-        JLabel lblDifference = new JLabel(keyList.get(5));
+        JLabel lblDifference = new JLabel(keyList.get(3));
         lblDifference.setFont(new Font("Inter", Font.PLAIN, 13));
         lblDifference.setPreferredSize(new Dimension(150, 50));
         lblDifference.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -530,8 +521,6 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         panel.add(containerBtn);
         panel.add(lblName);
         panel.add(lblQuantity);
-        panel.add(lbl_listed_value);
-        panel.add(lblRevenue);
         panel.add(lblDifference);
 
         return panel;
@@ -548,6 +537,17 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         }
         expandedStateMap.put(selectedPanel, !isExpanded); // Cập nhật trạng thái mở rộng
     }
+    private void togglePanel1(JButton btnDetail, JPanel selectedPanel, List<List<String>> invoices) {
+        boolean isExpanded = expandedStateMapProduct.get(selectedPanel); // Lấy trạng thái mở rộng của panel được chọn
+        if (isExpanded) {
+            removeDetailPanels(selectedPanel);
+            btnDetail.setIcon(new FlatSVGIcon("icon/add-square-svgrepo-com.svg"));
+        } else {
+            addDetailPanel(selectedPanel, invoices); // Thêm danh sách hóa đơn khi mở rộng
+            btnDetail.setIcon(new FlatSVGIcon("icon/minus-square-svgrepo-com.svg"));
+        }
+        expandedStateMapProduct.put(selectedPanel, !isExpanded); // Cập nhật trạng thái mở rộng
+    }
 
     private void removeDetailPanels(JPanel selectedPanel) {
         int selectedIndex = centerPanel.getComponentZOrder(selectedPanel);
@@ -555,8 +555,6 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         for (int i = selectedIndex + 1; i < centerPanel.getComponentCount(); i++) {
             Component component = centerPanel.getComponent(i);
             Boolean isDetailPanel = (Boolean) ((JPanel) component).getClientProperty("isDetailPanel");
-            System.out.println(i);
-            System.out.println(isDetailPanel);
             if (isDetailPanel != null && isDetailPanel) {
                 centerPanel.remove(component);
                 i--;

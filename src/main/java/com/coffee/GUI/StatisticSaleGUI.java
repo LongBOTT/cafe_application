@@ -1,5 +1,6 @@
 package com.coffee.GUI;
 
+import com.coffee.DAL.MySQL;
 import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.RoundedPanel;
 import net.miginfocom.swing.MigLayout;
@@ -8,8 +9,15 @@ import raven.datetime.component.date.DateSelectionListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class StatisticSaleGUI extends JPanel {
@@ -21,12 +29,13 @@ public class StatisticSaleGUI extends JPanel {
 
     private JLabel dateLabel;
     private JLabel titleLabel;
-
+    private JScrollPane scrollPaneDetail;
     private JPanel centerPanel;
     private static final int PANEL_WIDTH = 885;
     private static final int PANEL_HEIGHT = 40;
     private static final Dimension LABEL_SIZE = new Dimension(150, 30);
     Map<JPanel, Boolean> expandedStateMap = new HashMap<>(); // Biến để theo dõi trạng thái của nút btnDetail
+
     public StatisticSaleGUI() {
         setBackground(Color.WHITE);
         setPreferredSize(new Dimension(1000, 700));
@@ -42,11 +51,134 @@ public class StatisticSaleGUI extends JPanel {
         initRightBartEndOfDayPanel();
 
         content = new JPanel();
-        content.setLayout(new FlowLayout(FlowLayout.LEFT));
+        content.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 10));
         content.setPreferredSize(new Dimension(730, 700));
-        content.setBackground(new Color(238, 238, 238));
+        content.setBackground(new Color(255, 255, 255));
         add(content, BorderLayout.CENTER);
+        initTopContent();
+        initCenterContent();
+
     }
+
+    private void initTopContent() {
+        JPanel titletTopPanel = new JPanel(new BorderLayout());
+        titletTopPanel.setBackground(Color.WHITE);
+
+        titletTopPanel.setPreferredSize(new Dimension(885, 100));
+        content.add(titletTopPanel);
+        // Cập nhật ngày lập
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String formattedDateTime = currentDateTime.format(formatter);
+        dateLabel = new JLabel("Ngày lập: " + formattedDateTime);
+        dateLabel.setFont(new Font("Inter", Font.PLAIN, 14));
+
+        // Cập nhật ngày bán
+        LocalDateTime currentDate = LocalDateTime.now().toLocalDate().atStartOfDay();
+        String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        JLabel dateReportLabel = new JLabel("Ngày bán: " + formattedDate);
+        dateReportLabel.setFont(new Font("Inter", Font.PLAIN, 14));
+
+        // mặc đinh tiêu đề là báo cáo cuối ngày về bán hàng
+        titleLabel = new JLabel("Báo cáo cuối ngày về bán hàng");
+        titleLabel.setFont(new Font("Inter", Font.BOLD, 18));
+
+        JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        datePanel.setBackground(Color.WHITE);
+        datePanel.add(dateLabel);
+
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        titlePanel.setBackground(Color.WHITE);
+        titlePanel.add(titleLabel);
+
+        JPanel dateReportPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        dateReportPanel.setBackground(Color.WHITE);
+        dateReportPanel.add(dateReportLabel);
+
+        titletTopPanel.add(datePanel, BorderLayout.NORTH);
+        titletTopPanel.add(titlePanel, BorderLayout.CENTER);
+        titletTopPanel.add(dateReportPanel, BorderLayout.SOUTH);
+
+    }
+
+    private void initCenterContent() {
+        centerPanel = new JPanel(new MigLayout("", "0[]0", "0[]0"));
+        centerPanel.setBackground(new Color(255, 255, 255));
+        scrollPaneDetail = new JScrollPane();
+        scrollPaneDetail.setPreferredSize(new Dimension(PANEL_WIDTH, 580));
+        scrollPaneDetail.setViewportView(centerPanel);
+        scrollPaneDetail.setBorder(null);
+
+        content.add(scrollPaneDetail);
+        // mặc đinh sẽ hiển thị báo cáo cuối ngày về bán hàng
+//        setUpSalesReports();
+
+    }
+
+    private JPanel createLabelPanel(Color background, LayoutManager layoutManager) {
+        JPanel panel = new JPanel();
+        panel.setLayout(layoutManager);
+        panel.setPreferredSize(new Dimension(868, PANEL_HEIGHT));
+        panel.setBackground(background);
+        panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(202, 202, 202)));
+        return panel;
+    }
+
+    private void addLabelsToPanel(JPanel panel, String[] labels, int customRight, Font font) {
+        int i = 0;
+        for (String label : labels) {
+            JLabel jLabel = new JLabel(label);
+            jLabel.setFont(font);
+            jLabel.setPreferredSize(LABEL_SIZE);
+            jLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            if (i == 0) jLabel.setHorizontalAlignment(SwingConstants.LEFT);
+            if (i == customRight) jLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+            panel.add(jLabel);
+            i++;
+        }
+    }
+
+
+    private void setUpProduct() {
+        centerPanel.removeAll();
+        JPanel salesLabelPanel = createLabelPanel(new Color(178, 232, 255), new MigLayout("", "10[]20[]20[]20[]20[]10", ""));
+        addLabelsToPanel(salesLabelPanel, new String[]{"Nhóm hàng", "Số lượng bán", "", "", "Doanh thu"}, 4, new Font("Inter", Font.BOLD, 13));
+        centerPanel.add(salesLabelPanel, "wrap");
+
+        String start = "2024-01-01";
+        String end = "2024-12-31";
+        List<List<String>> saleCategories = MySQL.getSaleCategory(start, end);
+
+
+        JPanel salesDataPanel = createLabelPanel(new Color(242, 238, 214), new MigLayout("", "10[]20[]20[]20[]20[]20[]10", ""));
+
+        long quantity_Category = saleCategories.size();
+        double quantity_Product = 0;
+        BigDecimal revenue = BigDecimal.ZERO;
+
+        for (List<String> saleCategory : saleCategories) {
+            quantity_Product += Double.parseDouble(saleCategory.get(1));
+            revenue = revenue.add(new BigDecimal(saleCategory.get(2)));
+        }
+
+        String formattedNumberQuantity = NumberFormat.getNumberInstance(Locale.US).format(quantity_Product);
+        String formattedNumberRevenue = NumberFormat.getNumberInstance(Locale.US).format(revenue);
+        addLabelsToPanel(salesDataPanel, new String[]{"Sl nhóm hàng: "+ quantity_Category,formattedNumberQuantity, "","", formattedNumberRevenue, }, 4, new Font("Inter", Font.BOLD, 13));
+        centerPanel.add(salesDataPanel, "wrap");
+
+        for(List<String> saleCategory : saleCategories) {
+            JPanel salesDataPanel1 = createLabelPanel(new Color(255, 255, 255), new MigLayout("", "10[]20[]20[]20[]20[]10", ""));
+            double saleProductNumber = Double.parseDouble(saleCategory.get(1));
+            String formattedNumber = NumberFormat.getNumberInstance(Locale.US).format(saleProductNumber);
+            double revenueDetail = Double.parseDouble(saleCategory.get(2));
+            String formattedNumber1 = NumberFormat.getNumberInstance(Locale.US).format(revenueDetail);
+            addLabelsToPanel(salesDataPanel1, new String[]{saleCategory.get(0), formattedNumber, "", "", formattedNumber1}, 4, new Font("Inter", Font.PLAIN, 13));
+            centerPanel.add(salesDataPanel1, "wrap");
+        }
+        centerPanel.repaint();
+        centerPanel.revalidate();
+    }
+
 
     private void initRightBartEndOfDayPanel() {
         JPanel jPanel = new JPanel(new MigLayout("", "5[]5", "10[]10"));
@@ -117,6 +249,7 @@ public class StatisticSaleGUI extends JPanel {
             // Kiểm tra nếu thể loại được chọn
             if (categoryRadioButton.isSelected()) {
                 updateDisplayType("Báo cáo");
+                setUpProduct();
             }
         });
 
@@ -193,11 +326,13 @@ public class StatisticSaleGUI extends JPanel {
         displayTypePanel.revalidate();
 
     }
+
     private JRadioButton createRadioButton(String text) {
         JRadioButton radioButton = new JRadioButton(text);
         radioButton.setFont(new Font("Inter", Font.PLAIN, 14));
         return radioButton;
     }
+
     private RoundedPanel createRoundedPanel(LayoutManager layoutManager, int width, int height) {
         RoundedPanel panel = new RoundedPanel();
         panel.setLayout(layoutManager);
