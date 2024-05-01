@@ -129,7 +129,7 @@ public class StatisticSaleGUI extends JPanel {
         datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
         datePicker.setEditor(editor);
         datePicker.setCloseAfterSelected(true);
-        datePicker.setSelectedDateRange(LocalDate.now(), LocalDate.now()); // bao loi o day
+        datePicker.setSelectedDateRange(java.sql.Date.valueOf(LocalDate.now()), java.sql.Date.valueOf(LocalDate.now())); // bao loi o day
         datePicker.addDateSelectionListener(new DateSelectionListener() {
             @Override
             public void dateSelected(DateEvent dateEvent) {
@@ -183,11 +183,13 @@ public class StatisticSaleGUI extends JPanel {
         displayTypePanel.revalidate();
 
     }
+
     private JRadioButton createRadioButton(String text) {
         JRadioButton radioButton = new JRadioButton(text);
         radioButton.setFont(new Font("Inter", Font.PLAIN, 14));
         return radioButton;
     }
+
     private RoundedPanel createRoundedPanel(LayoutManager layoutManager, int width, int height) {
         RoundedPanel panel = new RoundedPanel();
         panel.setLayout(layoutManager);

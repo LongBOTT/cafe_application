@@ -124,7 +124,6 @@ public class PDF {
     }
 
 
-
     public void addTableWorkSchedule(List<String[]> data, float fontSize, float startLine, float firstRow, float[] columns) {
         int rows = data.size();
 
@@ -357,7 +356,7 @@ public class PDF {
         int staffId = receipt.getStaff_id();
         List<Staff> staff = new StaffBLL().searchStaffs("id = '" + staffId + "'");
         pdf.addTextAt(" Tên Nhân Viên : " + staff.get(0).getName(), 0.5F, 4, pdf.italicFont, 20);
-        pdf.addTextAt(" Ngày Tạo : " + receipt.getInvoice_date(), 0.5F, 5, pdf.italicFont, 20);
+        pdf.addTextAt(" Ngày Tạo : " + receipt.getInvoice_date().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")), 0.5F, 5, pdf.italicFont, 20);
 
         List<String[]> tableData = new ArrayList<>();
 
@@ -538,7 +537,7 @@ public class PDF {
         return true;
     }
 
-    public static boolean exportPayrollDetailPDF(Payroll payroll, String path) {
+    public static boolean exportPayrollDetailPDF(Payroll payroll, Payroll_Detail payrollDetail, String path) {
         try {
             Files.createDirectories(Paths.get(path));
         } catch (IOException e) {
@@ -546,67 +545,55 @@ public class PDF {
             return false;
         }
 
-        List<Payroll_Detail> payrollDetails = new Payroll_DetailBLL().searchPayroll_Details("payroll_id = " + payroll.getId() );
+        List<Payroll_Detail> payrollDetails = new Payroll_DetailBLL().searchPayroll_Details("payroll_id = " + payroll.getId());
         File file = new File(getFileNameDate(path, "PayRoll_Detail", java.sql.Date.valueOf(LocalDate.now())));
         PDF pdf = new PDF(6, 20F, 180F, 30F);
 
-        pdf.addTextAt("BẢNG LƯƠNG CHI TIẾT THÁNG  " +payroll.getMonth() +"/" + payroll.getYear(), 2.2F, 2, pdf.boldFont, 25);
+        pdf.addTextAt("BẢNG LƯƠNG CHI TIẾT THÁNG  " + payroll.getMonth() + "/" + payroll.getYear(), 2.2F, 2, pdf.boldFont, 25);
 
-        pdf.addTextAt(" Mã Nhân Viên     :   " + payrollDetails.get(0).getStaff_id(), 0.5F,  4, pdf.italicFont, 20);
+        pdf.addTextAt(" Mã Nhân Viên     :   " + payrollDetail.getStaff_id(), 0.5F, 4, pdf.italicFont, 20);
 
-        Staff staff = new StaffBLL().searchStaffs("id = " + payrollDetails.get(0).getStaff_id()).get(0);
+        Staff staff = new StaffBLL().searchStaffs("id = " + payrollDetail.getStaff_id()).get(0);
 
-        pdf.addTextAt(" Tên Nhân Viên    :  " + staff.getName(), 0.5F,  5, pdf.italicFont, 20);
+        pdf.addTextAt(" Tên Nhân Viên    :  " + staff.getName(), 0.5F, 5, pdf.italicFont, 20);
 
-        Role_Detail role_detail = new Role_DetailBLL().searchRole_detailsByStaff(payrollDetails.get(0).getStaff_id()).get(0);
+        Role_Detail role_detail = new Role_DetailBLL().searchRole_detailsByStaff(payrollDetail.getStaff_id()).get(0);
         Role role = new RoleBLL().searchRoles("id = " + role_detail.getRole_id()).get(0);
-        pdf.addTextAt(" Chức Vụ          :    " + role.getName(), 0.5F,  6, pdf.italicFont, 20);
+        pdf.addTextAt(" Chức Vụ          :    " + role.getName(), 0.5F, 6, pdf.italicFont, 20);
 
         pdf.addTextAt(" Lương Chính Thức :    " + VNString.currency(role_detail.getSalary()) + (role_detail.getType_salary() == 1 ? " /kỳ lương" : " /giờ"),
-                0.5F,  7, pdf.italicFont, 20);
+                0.5F, 7, pdf.italicFont, 20);
 
         List<String[]> tableData1 = new ArrayList<>();
         List<String[]> tableData2 = new ArrayList<>();
         List<String[]> tableData3 = new ArrayList<>();
 
 
-        for (Payroll_Detail payrollDetail : payrollDetails) {
-            if (payrollDetail.getStaff_id() == 2) { // note
-                String[] data = new String[2];
-                data[0] = "Tổng Phụ Cấp                  :   " + VNString.currency(payrollDetail.getAllowance_amount());
-                data[1] = "Tổng Giảm Trừ               :   " + VNString.currency(payrollDetail.getDeduction_amount());
+        String[] data1 = new String[2];
+        data1[0] = "Tổng Phụ Cấp                  :   " + VNString.currency(payrollDetail.getAllowance_amount());
+        data1[1] = "Tổng Giảm Trừ               :   " + VNString.currency(payrollDetail.getDeduction_amount());
 
-                tableData1.add(data);
-            }
-        }
-        pdf.addTable(tableData1, 16F, 9F, 9.6F, new float[]{0.5F, 2.5F,5F});
-        for (Payroll_Detail payrollDetail : payrollDetails) {
-            if (payrollDetail.getStaff_id() == 2) { // note
-                String[] data = new String[2];
-                data[0] = "Tổng Thưởng                   :   " + VNString.currency(payrollDetail.getBonus_amount());
-                data[1] = "Tổng Phạt Vi Phạm       :   " + VNString.currency(payrollDetail.getFine_amount());
+        tableData1.add(data1);
+        pdf.addTable(tableData1, 16F, 9F, 9.6F, new float[]{0.5F, 2.5F, 5F});
+        String[] data2 = new String[2];
+        data2[0] = "Tổng Thưởng                   :   " + VNString.currency(payrollDetail.getBonus_amount());
+        data2[1] = "Tổng Phạt Vi Phạm       :   " + VNString.currency(payrollDetail.getFine_amount());
 
-                tableData2.add(data);
-            }
-        }
-        pdf.addTable(tableData2, 16F, 10F, 10.6F, new float[]{0.5F, 2.5F,5F});
+        tableData2.add(data2);
+        pdf.addTable(tableData2, 16F, 10F, 10.6F, new float[]{0.5F, 2.5F, 5F});
 
-        for (Payroll_Detail payrollDetail : payrollDetails) {
-            if (payrollDetail.getStaff_id() == 2) { // note
-                String[] data = new String[2];
+        String[] data3 = new String[2];
 
-                if (role_detail.getType_salary() == 2)
-                    data[0] = "Giờ Công Thực Tế           :   " + String.format("%.2f", payrollDetail.getHours_amount()) + " giờ";
-                else
-                    data[0] = "Giờ Công Thực Tế           :   " + String.valueOf(payrollDetail.getHours_amount()).split("\\.")[0] + " ngày";
-                data[1] = "Thực Lãnh                       :   " + VNString.currency(payrollDetail.getSalary_amount());
+        if (role_detail.getType_salary() == 2)
+            data3[0] = "Giờ Công Thực Tế           :   " + String.format("%.2f", payrollDetail.getHours_amount()) + " giờ";
+        else
+            data3[0] = "Giờ Công Thực Tế           :   " + String.valueOf(payrollDetail.getHours_amount()).split("\\.")[0] + " ngày";
+        data3[1] = "Thực Lãnh                       :   " + VNString.currency(payrollDetail.getSalary_amount());
 
-                tableData3.add(data);
-            }
-        }
-        pdf.addTable(tableData3, 16F, 11F, 11.6F, new float[]{0.5F, 2.5F,5F});
+        tableData3.add(data3);
+        pdf.addTable(tableData3, 16F, 11F, 11.6F, new float[]{0.5F, 2.5F, 5F});
 
-        pdf.addTextAt("Trạng Thái          :    " + (payrollDetails.get(0).isStatus() ? "Đã trả lương ✔" : "Tạm tính"), 0.5F, 14, pdf.italicFont, 20);
+        pdf.addTextAt("Trạng Thái          :    " + (payrollDetail.isStatus() ? "Đã trả lương" : "Tạm tính"), 0.5F, 14, pdf.italicFont, 20);
 
 
         pdf.closeDocument(file);
@@ -880,7 +867,7 @@ public class PDF {
 //            PDF.importBillDetailsPDF(importNotes.get(0),"C:\\Users\\MI\\OneDrive\\Documents\\GitHub\\cafe_application\\src\\main\\java\\com\\coffee\\Export" );
 //
 
-       // PDF.exportWorkSchedulePDF(java.sql.Date.valueOf("2024-03-11"), java.sql.Date.valueOf("2024-03-17"), "src/main/resources/ExportPDF");
+        // PDF.exportWorkSchedulePDF(java.sql.Date.valueOf("2024-03-11"), java.sql.Date.valueOf("2024-03-17"), "src/main/resources/ExportPDF");
 
 //        List<Payroll> payrolls = new PayrollBLL().searchPayrolls();
 //        PDF.exportPayrollDetailPDF(payrolls.get(0), "src/main/resources/ExportPDF");

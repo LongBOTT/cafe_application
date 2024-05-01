@@ -29,6 +29,7 @@ public class StatisticEndOfTheDayGUI extends JPanel {
     private static final int PANEL_HEIGHT = 40;
     private static final Dimension LABEL_SIZE = new Dimension(150, 30);
     Map<JPanel, Boolean> expandedStateMap = new HashMap<>(); // Biến để theo dõi trạng thái của nút btnDetail
+
     public StatisticEndOfTheDayGUI() {
         setBackground(Color.WHITE);
         setPreferredSize(new Dimension(1000, 700));
@@ -93,6 +94,7 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         titletTopPanel.add(dateReportPanel, BorderLayout.SOUTH);
 
     }
+
     private void initCenterContent() {
         centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         centerPanel.setPreferredSize(new Dimension(PANEL_WIDTH, 580));
@@ -150,9 +152,9 @@ public class StatisticEndOfTheDayGUI extends JPanel {
             jLabel.setFont(new Font("Inter", Font.BOLD, 13));
             jLabel.setPreferredSize(LABEL_SIZE);
             jLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            if (i==0)
+            if (i == 0)
                 jLabel.setHorizontalAlignment(SwingConstants.LEFT);
-            if (i==4)
+            if (i == 4)
                 jLabel.setHorizontalAlignment(SwingConstants.RIGHT);
             panel.add(jLabel);
             i++;
@@ -222,7 +224,7 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         panel.add(lblQuantity);
         panel.add(lblRevenue);
 
-       return panel;
+        return panel;
     }
 
 
@@ -245,7 +247,7 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         // Tìm vị trí của panel cha tiếp theo trong centerPanel
         for (int i = selectedIndex + 1; i < centerPanel.getComponentCount(); i++) {
             Component component = centerPanel.getComponent(i);
-           if (((JPanel) component).getClientProperty("isDetailPanel") == null) {
+            if (((JPanel) component).getClientProperty("isDetailPanel") == null) {
                 nextPanelIndex = i;
                 break;
             }
@@ -264,6 +266,7 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         centerPanel.revalidate();
         centerPanel.repaint();
     }
+
     private void addDetailPanel(JPanel selectedPanel) {
         String[] labels = {"HD000001", "12:00", "Nguyen Vam A", "10", "10,000"};
         JPanel panel = createPanelDetail(labels);
@@ -372,7 +375,7 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
         datePicker.setEditor(editor);
         datePicker.setCloseAfterSelected(true);
-        datePicker.setSelectedDateRange(LocalDate.now(), LocalDate.now()); // bao loi o day
+        datePicker.setSelectedDateRange(java.sql.Date.valueOf(LocalDate.now()), java.sql.Date.valueOf(LocalDate.now())); // bao loi o day
         datePicker.addDateSelectionListener(new DateSelectionListener() {
             @Override
             public void dateSelected(DateEvent dateEvent) {

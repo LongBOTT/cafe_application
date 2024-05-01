@@ -44,15 +44,14 @@ public class Cafe_Application {
         UIManager.put("TitlePane.iconSize", new Dimension(25, 25));
         UIManager.put("TitlePane.iconMargins", new Insets(3, 5, 0, 20));
         UIManager.put("TabbedPane.tabAreaInsets", new Insets(0, 0, 0, 0));
-//        UIManager.put("TabbedPane.tabInsets", new Insets(20, 20, 20, 20));
 
-//        Thread thread = new Thread(() -> homeGUI = new HomeGUI());
-//        thread.start();
-//        loginGUI = new LoginGUI();
-//        loginGUI.setVisible(true);
+        Thread thread = new Thread(() -> homeGUI = new HomeGUI());
+        thread.start();
+        loginGUI = new LoginGUI();
+        loginGUI.setVisible(true);
 
 
-        new CheckRemainWearHouse();
+//        new CheckRemainWearHouse();
 
 //        new EditStaffGUI(new StaffBLL().searchStaffs("id = 2").get(0));
 //        new EditWorkScheduleGUI(new Work_ScheduleBLL().searchWork_schedules("id = 55").get(0));

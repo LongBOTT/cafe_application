@@ -86,9 +86,8 @@ public class DatePicker extends raven.datetime.component.date.DatePicker {
         super.setSelectedDate(LocalDate.parse(date.toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 
-    @Override
-    public void setSelectedDateRange(LocalDate from, LocalDate to) {
-        super.setSelectedDateRange(from, to);
+    public void setSelectedDateRange(Date from, Date to) {
+        super.setSelectedDateRange(LocalDate.parse(from.toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd")), LocalDate.parse(to.toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 
     @Override
@@ -1877,5 +1876,5 @@ public class DatePicker extends raven.datetime.component.date.DatePicker {
         return null;
     }
 
-    
+
 }

@@ -6,6 +6,7 @@ import com.coffee.GUI.DialogGUI.DialogForm;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.main.Cafe_Application;
+import com.coffee.utils.PDF;
 import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
@@ -367,6 +368,29 @@ public class DetailPayroll_DetailGUI extends DialogForm {
         initAbsent2Panel(absentPanel2);
         initBonusPanel(bonusPanel);
         initFinePanel(finePanel);
+
+        RoundedPanel roundedPanel = new RoundedPanel();
+        roundedPanel.setLayout(new GridBagLayout());
+        roundedPanel.setPreferredSize(new Dimension(150, 40));
+        roundedPanel.setBackground(new Color(1, 120, 220));
+        roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        containerButton.add(roundedPanel);
+
+        JLabel panel = new JLabel("In phiếu lương");
+        panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        panel.setForeground(Color.white);
+        panel.setIcon(new FlatSVGIcon("icon/print.svg"));
+        roundedPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+                PDF.exportPayrollDetailPDF(payroll, payrollDetail, "src/main/resources/ExportPDF");
+                JOptionPane.showMessageDialog(null, "In phiếu lương thành công.",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                dispose();
+            }
+        });
+        roundedPanel.add(panel);
     }
 
     private void initHoursPanel(JScrollPane hoursPanel) {

@@ -136,8 +136,8 @@ public class MySQL {
                 }
                 result.add(row);
             }
-            System.out.println(query);
-            System.out.println();
+//            System.out.println(query);
+//            System.out.println();
         }
         Database.closeConnection(connection);
         return result;
