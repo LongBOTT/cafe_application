@@ -1,6 +1,7 @@
 package com.coffee.DAL;
 
 import com.coffee.utils.Database;
+import javafx.util.Pair;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -693,33 +694,33 @@ public class MySQL {
         return result;
     }
 
-    public static void main(String[] args) throws SQLException, IOException {
-
-
-//        Date currentDate = new Date(System.currentTimeMillis());
+//    public static void main(String[] args) throws SQLException, IOException {
 //
-//// Gọi hàm thống kê với ngày hiện tại
-//        List<Map.Entry<List<String>, List<List<String>>>> salesStatistics = getSalesStatistics(currentDate);
-//        for (Map.Entry<List<String>, List<List<String>>> entry : salesStatistics) {
-//            int numberOfInvoices = entry.getKey().size();
-//            System.out.println("Key: " + entry.getKey() + ", Number of Invoices: " + numberOfInvoices);
+//
+////        Date currentDate = new Date(System.currentTimeMillis());
+////
+////// Gọi hàm thống kê với ngày hiện tại
+////        List<Map.Entry<List<String>, List<List<String>>>> salesStatistics = getSalesStatistics(currentDate);
+////        for (Map.Entry<List<String>, List<List<String>>> entry : salesStatistics) {
+////            int numberOfInvoices = entry.getKey().size();
+////            System.out.println("Key: " + entry.getKey() + ", Number of Invoices: " + numberOfInvoices);
+////        }
+////            // In kết quả
+////            for (Map.Entry<List<String>, List<List<String>>> entry : salesStatistics) {
+////                System.out.println("Key: " + entry.getKey());
+////                System.out.println("Value: " + entry.getValue());
+////                System.out.println("----------------------------------");
+////            }
+//        Date currentDate = new Date(System.currentTimeMillis());
+//        List<List<String>> result = getExpenseIncomeData(currentDate);
+//
+//        // In kết quả
+//        for (List<String> row : result) {
+//            System.out.println(row);
 //        }
-//            // In kết quả
-//            for (Map.Entry<List<String>, List<List<String>>> entry : salesStatistics) {
-//                System.out.println("Key: " + entry.getKey());
-//                System.out.println("Value: " + entry.getValue());
-//                System.out.println("----------------------------------");
-//            }
-        Date currentDate = new Date(System.currentTimeMillis());
-        List<List<String>> result = getExpenseIncomeData(currentDate);
-
-        // In kết quả
-        for (List<String> row : result) {
-            System.out.println(row);
-        }
-
-
-    }
+//
+//
+//    }
 
     public static List<List<String>> getSale_DiscountByQuarter() {
         String query = "SELECT QUARTER(rp.invoice_date), SUM(rp.total), SUM(rp.total_discount)\n" +
@@ -819,8 +820,102 @@ public class MySQL {
         }
     }
 
+    public static List<List<String>> getTop3BestStaff() {
+        String query = "SELECT pd.staff_id, pd.hours_amount\n" +
+                "FROM payroll_detail pd JOIN payroll pr ON pd.payroll_id = pr.id\n" +
+                "WHERE pr.`year` = YEAR(NOW()) AND pr.`month` = MONTH(NOW())\n" +
+                "ORDER BY pd.hours_amount DESC LIMIT 3";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    public static List<List<String>> getSaleCategory(String start, String end) {
+        String query = "SELECT pro.category, SUM(rd.quantity), SUM(rd.price)\n" +
+                "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
+                "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
+        query += "WHERE '" + start + "' <= DATE(rp.invoice_date) AND DATE(rp.invoice_date) <= '" + end + "'\n";
+        query += "GROUP BY pro.category\n";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    public static List<List<String>> getSaleProductEndOfDay(String start, String end) {
+        String query = "SELECT pro.id, pro.`name`, SUM(rd.quantity), SUM(rd.price)\n" +
+                "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
+                "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
+        query += "WHERE '" + start + "' <= DATE(rp.invoice_date) AND DATE(rp.invoice_date) <= '" + end + "'\n";
+        query += "GROUP BY pro.id, pro.`name`\n";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+//public static List<List<String>> getSaleProductEndOfDay(String start, String end) {
+//        String query = "SELECT rd.product_id, pro.name, rd.size, rd.quantity, rd.price, ";
+//        query += "pro.price AS GiaTriNiemYet, ";
+//        query += "SUM(rd.quantity * rd.price) AS DoanhThu, ";
+//        query += "(SUM(rd.quantity * rd.price) - (SUM(rd.quantity) * pro.price)) AS ChenhLech ";
+//        query += "FROM receipt_detail rd ";
+//        query += "JOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size ";
+//        query += "JOIN receipt rp ON rp.id = rd.receipt_id ";
+//        query += "LEFT JOIN discount_detail dd ON rp.discount_id = dd.discount_id AND rd.product_id = dd.product_id AND rd.size = dd.Size ";
+//        query += "WHERE DATE(rp.invoice_date) BETWEEN '" + start + "' AND '" + end + "' ";
+//        query += "GROUP BY rd.product_id, pro.name, rd.size";
+//
+//    try {
+//        return executeQueryStatistic(query);
+//    } catch (SQLException | IOException e) {
+//        throw new RuntimeException(e);
+//    }
+//}
+    public static List<List<String>> getReceiptByProductEndOfDay(String productName, String start, String end) {
+        String query = "SELECT rp.id, rp.invoice_date, rd.quantity, rd.price\n" +
+                "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
+                "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
+        query += "WHERE '" + start + "' <= DATE(rp.invoice_date) AND DATE(rp.invoice_date) <= '" + end + "' AND pro.`name` = '" + productName + "'\n";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<Pair<List<String>, List<List<String>>>> getProductEndOfDay(String start, String end) {
+        List<Pair<List<String>, List<List<String>>>> pairList = new ArrayList<>();
+
+        for (List<String> stringListKey : getSaleProductEndOfDay(start, end)) {
+            List<List<String>> stringListValue = getReceiptByProductEndOfDay(stringListKey.get(1), start, end);
+            pairList.add(new Pair<>(stringListKey, stringListValue));
+        }
+
+        return pairList;
+    }
+
+    public static void main(String[] args) {
+        for (Pair<List<String>, List<List<String>>> pair : getProductEndOfDay("2024-05-01", "2024-05-02")) {
+            System.out.println(Arrays.toString(pair.getKey().toArray()));
+            System.out.println(Arrays.toString(pair.getValue().toArray()));
+        }
+//        String start = "2024-01-01";
+//        String end = "2024-12-31";
+//        List<List<String>> saleCategories = getSaleCategory(start, end);
+//
+//        // In kết quả ra terminal
+//        printSaleCategory(saleCategories);
+    }
+    public static void printSaleCategory(List<List<String>> saleCategories) {
+        System.out.println("Category\tQuantity\tTotal Price");
+        for (List<String> category : saleCategories) {
+            System.out.printf("%s\t%s\t%s\n", category.get(0), category.get(1), category.get(2));
+        }
+    }
 
 
 }

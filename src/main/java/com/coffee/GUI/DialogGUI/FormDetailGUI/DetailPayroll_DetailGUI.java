@@ -1123,6 +1123,7 @@ public class DetailPayroll_DetailGUI extends DialogForm {
         infoPanel.setLayout(new MigLayout("", "20[]20", "20[]20"));
         infoPanel.setPreferredSize(new Dimension(1000, 600));
         infoPanel.setBackground(Color.white);
+
         for (String string : new String[]{"Mã nhân viên", "Họ tên", "Chức vụ", "Lương chính thức", "Tổng phụ cấp", "Tổng giảm trừ", "Tổng thưởng", "Tổng phạt vi phạm", "Giờ công thực tế", "Thực lãnh", "Trạng thái"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));

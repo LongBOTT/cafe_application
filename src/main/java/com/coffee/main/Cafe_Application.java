@@ -2,6 +2,7 @@ package com.coffee.main;
 
 import com.coffee.BLL.*;
 import com.coffee.DTO.*;
+import com.coffee.GUI.CheckRemainWearHouse;
 import com.coffee.GUI.HomeGUI;
 import com.coffee.GUI.LoginGUI;
 
@@ -45,10 +46,13 @@ public class Cafe_Application {
         UIManager.put("TabbedPane.tabAreaInsets", new Insets(0, 0, 0, 0));
 //        UIManager.put("TabbedPane.tabInsets", new Insets(20, 20, 20, 20));
 
-        Thread thread = new Thread(() -> homeGUI = new HomeGUI());
-        thread.start();
-        loginGUI = new LoginGUI();
-        loginGUI.setVisible(true);
+//        Thread thread = new Thread(() -> homeGUI = new HomeGUI());
+//        thread.start();
+//        loginGUI = new LoginGUI();
+//        loginGUI.setVisible(true);
+
+
+        new CheckRemainWearHouse();
 
 //        new EditStaffGUI(new StaffBLL().searchStaffs("id = 2").get(0));
 //        new EditWorkScheduleGUI(new Work_ScheduleBLL().searchWork_schedules("id = 55").get(0));

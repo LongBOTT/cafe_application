@@ -4,6 +4,8 @@ import com.coffee.GUI.components.RoundedPanel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 
 public class StatisticGUI extends RoundedPanel {
@@ -32,6 +34,16 @@ public class StatisticGUI extends RoundedPanel {
         jTabbedPane.addTab("Tài Chính", new FlatSVGIcon("icon/statistic-graph-chart-growth-finance-svgrepo-com.svg"), statisticFinanceGUI);
         add(jTabbedPane, BorderLayout.CENTER);
 
+        jTabbedPane.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (jTabbedPane.getSelectedIndex() == 2) {
+                    statisticStaffGUI.loadBarChart();
+                    statisticStaffGUI.loadPieChart();
+                    statisticStaffGUI.loadLineChart();
+                }
+            }
+        });
     }
 
 
