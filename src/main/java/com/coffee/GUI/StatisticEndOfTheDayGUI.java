@@ -1,6 +1,10 @@
 package com.coffee.GUI;
 
+import com.coffee.BLL.Import_NoteBLL;
+import com.coffee.BLL.ReceiptBLL;
 import com.coffee.DAL.MySQL;
+import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailImportGUI;
+import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailReceiptGUI;
 import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.RoundedPanel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -10,14 +14,19 @@ import raven.datetime.component.date.DateSelectionListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class StatisticEndOfTheDayGUI extends JPanel {
@@ -102,33 +111,51 @@ public class StatisticEndOfTheDayGUI extends JPanel {
     }
 
     private void initCenterContent() {
-        centerPanel = new JPanel(new MigLayout("", "0[]0", "0[]0")); // Đặt kích thước ngang thành FlowLayout.LEADING
+        centerPanel = new JPanel(new MigLayout("", "0[]0", "0[]0"));
         centerPanel.setBackground(new Color(255, 255, 255));
         scrollPaneDetail = new JScrollPane();
-        scrollPaneDetail.setPreferredSize(new Dimension(PANEL_WIDTH, 580)); // Đặt kích thước dọc cho JScrollPane
+        scrollPaneDetail.setPreferredSize(new Dimension(PANEL_WIDTH, 580));
         scrollPaneDetail.setViewportView(centerPanel);
         scrollPaneDetail.setBorder(null);
 
         content.add(scrollPaneDetail);
-
+        // mặc đinh sẽ hiển thị báo cáo cuối ngày về bán hàng
         setUpSalesReports();
     }
 
     private void setUpSalesReports() {
         centerPanel.removeAll();
 
-        JPanel salesLabelPanel = createLabelPanel(new Color(178, 232, 255), new Color(202, 202, 202));
-        addLabelsToPanel(salesLabelPanel, new String[]{"Mã hóa đơn", "Thời gian", "Nhân viên tạo", "SLSP", "Doanh thu"});
+        JPanel salesLabelPanel = createLabelPanel(new Color(178, 232, 255), new MigLayout("", "10[]20[]20[]30[]20[]10", ""));
+        addLabelsToPanel(salesLabelPanel, new String[]{"Mã hóa đơn", "Thời gian", "Nhân viên tạo", "SLSP", "Doanh thu",}, 4,new Font("Inter", Font.BOLD, 13));
         centerPanel.add(salesLabelPanel, "wrap");
 
-        JPanel salesDataPanel = createLabelPanel(new Color(242, 238, 214), new Color(202, 202, 202));
-        addLabelsToPanel(salesDataPanel, new String[]{"Hóa đơn: 10", "", "", "10", "10,000"});
-        centerPanel.add(salesDataPanel, "wrap");
         Date currentDate = new Date(System.currentTimeMillis());
         List<Map.Entry<List<String>, List<List<String>>>> salesStatistics = MySQL.getSalesStatistics(currentDate);
 
-        // Tạo panel báo cáo cho mỗi dòng trong mảng dữ liệu
+        JPanel salesDataPanel = createLabelPanel(new Color(242, 238, 214), new MigLayout("", "10[]20[]20[]30[]20[]10", ""));
+        // Tính toán số lượng hóa đơn, tổng số lượng sản phẩm và tổng doanh thu từ salesStatistics
+        long totalInvoices = 0;
+        long totalQuantity = 0;
+        BigDecimal totalRevenue = BigDecimal.ZERO;
 
+        for (Map.Entry<List<String>, List<List<String>>> entry : salesStatistics) {
+            List<String> hour = entry.getKey();
+            List<List<String>> invoices = entry.getValue();
+            totalInvoices += invoices.size(); // Số lượng hóa đơn trong 1 giờ
+            long quantity = Long.parseLong(hour.get(2)); // sô lượng sản phẩm trong 1 giờ
+            BigDecimal revenue = new BigDecimal(hour.get(3).replace(",", "")); // doanh thu trong 1 giờ
+            totalQuantity += quantity;
+            totalRevenue = totalRevenue.add(revenue);
+        }
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+        String formattedRevenue = numberFormat.format(totalRevenue); // format kiểu tiền tệ theo hàng nghìn
+
+        addLabelsToPanel(salesDataPanel, new String[]{"Hóa đơn: " + totalInvoices, "", "", totalQuantity + "", formattedRevenue}, 4,new Font("Inter", Font.BOLD, 13));
+        centerPanel.add(salesDataPanel, "wrap");
+
+
+        // Tạo panel báo cáo cho mỗi dòng trong mảng dữ liệu
         for (Map.Entry<List<String>, List<List<String>>> entry : salesStatistics) {
             List<String> keyList = entry.getKey();
             List<List<String>> invoices = entry.getValue();
@@ -138,7 +165,6 @@ public class StatisticEndOfTheDayGUI extends JPanel {
                 expandedStateMap.put(summaryPanel, false); // Ban đầu, tất cả các panel đều không mở rộng
                 centerPanel.add(summaryPanel, "wrap");
             }
-
         }
 
         centerPanel.repaint();
@@ -146,26 +172,181 @@ public class StatisticEndOfTheDayGUI extends JPanel {
 
     }
 
-    private JPanel createLabelPanel(Color background, Color border) {
+    private void setUpMonthlyReport() {
+        centerPanel.removeAll();
+
+        JPanel salesLabelPanel = createLabelPanel(new Color(178, 232, 255), new MigLayout("", "10[]20[]20[]20[]20[]10", ""));
+        addLabelsToPanel(salesLabelPanel, new String[]{"Mã chứng từ", "Loại chi", "Người tạo", "Thời gian", "Thu/Chi"}, 4,new Font("Inter", Font.BOLD, 13));
+        centerPanel.add(salesLabelPanel, "wrap");
+        Date currentDate = new Date(System.currentTimeMillis());
+
+        List<List<String>> monthlyStatistics = MySQL.getExpenseIncomeData(currentDate);
+        int totalInvoices = 0;
+        BigDecimal totalRevenue = BigDecimal.ZERO;
+
+        for (List<String> row : monthlyStatistics) {
+            String id = row.get(0);
+            BigDecimal amount = new BigDecimal(row.get(4).replaceAll(",", ""));
+
+            if (id.startsWith("HD")) {
+                totalRevenue = totalRevenue.add(amount);
+            } else {
+                totalRevenue = totalRevenue.add(amount);// lý do cộng là vì nó đang là âm sẳn rồi nên cộng tức là trừ
+            }
+            totalInvoices++;
+        }
+        JPanel salesDataPanel = createLabelPanel(new Color(242, 238, 214), new MigLayout("", "10[]20[]20[]20[]20[]10", ""));
+        addLabelsToPanel(salesDataPanel, new String[]{"Số lượng phiếu: " + totalInvoices, "", "", "", NumberFormat.getNumberInstance(Locale.US).format(totalRevenue)}, 4,new Font("Inter", Font.BOLD, 13));
+        centerPanel.add(salesDataPanel, "wrap");
+
+
+        for (List<String> row : monthlyStatistics) {
+            JPanel panel = createLabelPanelMon(Color.WHITE, new MigLayout("", "10[]20[]20[]40[]0[]10", ""));
+            addLabelsToPanelDetailMonthly(panel, row.toArray(new String[0]));
+            centerPanel.add(panel, "wrap");
+        }
+
+        centerPanel.repaint();
+        centerPanel.revalidate();
+    }
+
+    private void setUpProduct() {
+        centerPanel.removeAll();
+        JPanel salesLabelPanel = createLabelPanel(new Color(178, 232, 255), new MigLayout("", "10[]20[]20[]20[]20[]20[]10", ""));
+        addLabelsToPanel(salesLabelPanel, new String[]{"Mã hàng", "Tên hàng", "SLSP", "Giá trị niêm yết", "Doanh thu", "Chênh lệch"}, 5,new Font("Inter", Font.BOLD, 13));
+        centerPanel.add(salesLabelPanel, "wrap");
+
+        Date currentDate = new Date(System.currentTimeMillis());
+        List<Map.Entry<List<String>, List<List<String>>>> productsStatistics = MySQL.getproductsStatistics(currentDate);
+
+        JPanel salesDataPanel = createLabelPanel(new Color(242, 238, 214), new MigLayout("", "10[]20[]20[]20[]20[]20[]10", ""));
+        addLabelsToPanel(salesDataPanel, new String[]{"Sl mặt hàng: 3", "", "4", "180,000", "172,000", "8000"}, 5,new Font("Inter", Font.BOLD, 13));
+        centerPanel.add(salesDataPanel, "wrap");
+        // Tính toán số lượng hóa đơn, tổng số lượng sản phẩm và tổng doanh thu từ salesStatistics
+//        long totalInvoices = 0;
+//        long totalQuantity = 0;
+//        BigDecimal totalRevenue = BigDecimal.ZERO;
+//
+//        for (Map.Entry<List<String>, List<List<String>>> entry : productsStatistics) {
+//            List<String> hour = entry.getKey();
+//            List<List<String>> invoices = entry.getValue();
+//            totalInvoices += invoices.size(); // Số lượng hóa đơn trong 1 giờ
+//            long quantity = Long.parseLong(hour.get(2)); // sô lượng sản phẩm trong 1 giờ
+//            BigDecimal revenue = new BigDecimal(hour.get(3).replace(",", "")); // doanh thu trong 1 giờ
+//            totalQuantity += quantity;
+//            totalRevenue = totalRevenue.add(revenue);
+//        }
+//        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+//        String formattedRevenue = numberFormat.format(totalRevenue); // format kiểu tiền tệ theo hàng nghìn
+//
+//        addLabelsToPanel(salesDataPanel, new String[]{"Hóa đơn: " + totalInvoices, "", "", totalQuantity + "", formattedRevenue}, 4);
+//        centerPanel.add(salesDataPanel, "wrap");
+//
+//
+//        // Tạo panel báo cáo cho mỗi dòng trong mảng dữ liệu
+//        for (Map.Entry<List<String>, List<List<String>>> entry : productsStatistics) {
+//            List<String> keyList = entry.getKey();
+//            List<List<String>> invoices = entry.getValue();
+//            if (!keyList.isEmpty() && !invoices.isEmpty()) {
+////                // Hiển thị thông tin tổng quan
+//        JPanel summaryPanel = createPanelReport(keyList, invoices);
+//                expandedStateMap.put(summaryPanel, false); // Ban đầu, tất cả các panel đều không mở rộng
+//                centerPanel.add(summaryPanel, "wrap");
+//            }
+//        }
+
+        centerPanel.repaint();
+        centerPanel.revalidate();
+    }
+
+
+    private JPanel createLabelPanel(Color background, LayoutManager layoutManager) {
         JPanel panel = new JPanel();
-        panel.setLayout(new MigLayout("", "10[]20[]20[]30[]20[]10", ""));
+        panel.setLayout(layoutManager);
         panel.setPreferredSize(new Dimension(868, PANEL_HEIGHT));
         panel.setBackground(background);
-        panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, border));
+        panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(202, 202, 202)));
         return panel;
     }
 
-    private void addLabelsToPanel(JPanel panel, String[] labels) {
+    private JPanel createLabelPanelMon(Color background, LayoutManager layoutManager) {
+        JPanel panel = new JPanel();
+        panel.setLayout(layoutManager);
+        panel.setPreferredSize(new Dimension(868, PANEL_HEIGHT));
+        panel.setBackground(background);
+        panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(202, 202, 202)));
+        return panel;
+    }
+
+    private void addLabelsToPanel(JPanel panel, String[] labels, int customRight,Font font) {
         int i = 0;
         for (String label : labels) {
             JLabel jLabel = new JLabel(label);
-            jLabel.setFont(new Font("Inter", Font.BOLD, 13));
+            jLabel.setFont(font);
             jLabel.setPreferredSize(LABEL_SIZE);
             jLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            if (i == 0)
+            if (i == 0) jLabel.setHorizontalAlignment(SwingConstants.LEFT);
+            if (i == customRight) jLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+            panel.add(jLabel);
+            i++;
+        }
+    }
+
+    private void addLabelsToPanelDetailMonthly(JPanel panel, String[] labels) {
+        int i = 0;
+        for (String label : labels) {
+            JLabel jLabel = new JLabel(label);
+            jLabel.setFont(new Font("Inter", Font.PLAIN, 13));
+            jLabel.setPreferredSize(LABEL_SIZE);
+            jLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+            if (i == 0) {
                 jLabel.setHorizontalAlignment(SwingConstants.LEFT);
-            if (i == 4)
+                jLabel.setForeground(new Color(33, 113, 188));
+                jLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+                jLabel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        String labelText = jLabel.getText();
+                        if (labelText.startsWith("HD")) {
+                            String numberText = labelText.substring(2); // Cắt bỏ "HD" từ chuỗi
+                            try {
+                                int invoiceNumber = Integer.parseInt(numberText);
+                                new DetailReceiptGUI(new ReceiptBLL().searchReceipts("id = " + invoiceNumber).get(0));
+                            } catch (NumberFormatException ex) {
+                                System.out.println("Lỗi: không thể chuyển đổi thành số nguyên");
+                            }
+                        }
+                        if (labelText.startsWith("PN")) {
+                            String numberText = labelText.substring(2); // Cắt bỏ "HD" từ chuỗi
+                            try {
+                                int importNumber = Integer.parseInt(numberText);
+                                new DetailImportGUI(new Import_NoteBLL().searchImport("id = " + importNumber).get(0));
+                            } catch (NumberFormatException ex) {
+                                System.out.println("Lỗi: không thể chuyển đổi thành số nguyên");
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        jLabel.setForeground(new Color(100, 157, 204));
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        jLabel.setForeground(new Color(33, 113, 188));
+                    }
+                });
+            }
+
+            if (i == 4) {
+//                String formattedRevenue = NumberFormat.getNumberInstance(Locale.US).format(new BigDecimal(label));
+//                jLabel.setText(formattedRevenue);
                 jLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+            }
+
             panel.add(jLabel);
             i++;
         }
@@ -178,30 +359,50 @@ public class StatisticEndOfTheDayGUI extends JPanel {
             jLabel.setFont(new Font("Inter", Font.PLAIN, 13));
             jLabel.setPreferredSize(LABEL_SIZE);
             jLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
             if (i == 0) {
                 jLabel.setHorizontalAlignment(SwingConstants.LEFT);
                 jLabel.setForeground(new Color(33, 113, 188));
-                jLabel.addAncestorListener(new javax.swing.event.AncestorListener() {
+                jLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+                jLabel.addMouseListener(new MouseAdapter() {
                     @Override
-                    public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-                        jLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    public void mouseClicked(MouseEvent e) {
+                        String labelText = jLabel.getText();
+                        if (labelText.startsWith("HD")) {
+                            String numberText = labelText.substring(2); // Cắt bỏ "HD" từ chuỗi
+                            try {
+                                int invoiceNumber = Integer.parseInt(numberText);
+                                new DetailReceiptGUI(new ReceiptBLL().searchReceipts("id = " + invoiceNumber).get(0));
+                            } catch (NumberFormatException ex) {
+                                System.out.println("Lỗi: không thể chuyển đổi thành số nguyên");
+                            }
+                        }
                     }
 
                     @Override
-                    public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+                    public void mouseEntered(MouseEvent e) {
+                        jLabel.setForeground(new Color(100, 157, 204));
                     }
 
                     @Override
-                    public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+                    public void mouseExited(MouseEvent e) {
+                        jLabel.setForeground(new Color(33, 113, 188));
                     }
                 });
             }
-            if (i == 4)
+
+            if (i == 4) {
+                String formattedRevenue = NumberFormat.getNumberInstance(Locale.US).format(new BigDecimal(label));
+                jLabel.setText(formattedRevenue);
                 jLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+            }
+
             panel.add(jLabel);
             i++;
         }
     }
+
 
     private JPanel createPanelReport(List<String> keyList, List<List<String>> invoices) {
         JPanel panel = new JPanel();
@@ -255,7 +456,8 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         lblQuantity.setHorizontalAlignment(SwingConstants.CENTER);
         lblQuantity.setPreferredSize(new Dimension(150, 50));
 
-        JLabel lblRevenue = new JLabel(keyList.get(3));
+        String formattedRevenue = NumberFormat.getNumberInstance(Locale.US).format(new BigDecimal(keyList.get(3)));
+        JLabel lblRevenue = new JLabel(formattedRevenue);
         lblRevenue.setFont(new Font("Inter", Font.PLAIN, 13));
         lblRevenue.setPreferredSize(new Dimension(150, 50));
         lblRevenue.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -269,6 +471,71 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         return panel;
     }
 
+    private JPanel createPanelProduct(List<String> keyList, List<List<String>> invoices) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("", "10[]20[]20[]20[]20[]20[]10", ""));
+        panel.setPreferredSize(new Dimension(868, 50));
+        panel.setBackground(Color.WHITE);
+        panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(202, 202, 202)));
+
+        JPanel containerBtn = new JPanel();
+        containerBtn.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        containerBtn.setPreferredSize(new Dimension(150, 30));
+        containerBtn.setBackground(Color.WHITE);
+
+        JButton btnDetail = new JButton();
+        btnDetail.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnDetail.setIcon(new FlatSVGIcon("icon/add-square-svgrepo-com.svg")); // Đặt biểu tượng ban đầu
+        btnDetail.setBorderPainted(false);
+        btnDetail.setFocusPainted(false);
+        btnDetail.setContentAreaFilled(false);
+        btnDetail.addActionListener(e -> {
+            JPanel selectedPanel = (JPanel) btnDetail.getParent().getParent(); // Lấy panel cha của nút
+            togglePanel(btnDetail, selectedPanel, invoices);// Kích hoạt chức năng mở rộng/ thu gọn khi nhấn nút
+        });
+
+
+        JLabel lblProductID = new JLabel(keyList.get(0));
+        lblProductID.setFont(new Font("Inter", Font.PLAIN, 13));
+        lblProductID.setForeground(new Color(33, 160, 223));
+
+        JLabel lblName = new JLabel(keyList.get(1));
+        lblName.setFont(new Font("Inter", Font.PLAIN, 13));
+        lblName.setForeground(new Color(33, 160, 223));
+
+
+        containerBtn.add(btnDetail);
+        containerBtn.add(lblProductID);
+
+        JLabel lblQuantity = new JLabel(keyList.get(2));
+        lblQuantity.setFont(new Font("Inter", Font.PLAIN, 13));
+        lblQuantity.setHorizontalAlignment(SwingConstants.CENTER);
+        lblQuantity.setPreferredSize(new Dimension(150, 50));
+
+        JLabel lbl_listed_value = new JLabel(keyList.get(3));
+        lbl_listed_value.setFont(new Font("Inter", Font.PLAIN, 13));
+        lbl_listed_value.setHorizontalAlignment(SwingConstants.CENTER);
+        lbl_listed_value.setPreferredSize(new Dimension(150, 50));
+
+        JLabel lblRevenue = new JLabel(keyList.get(4));
+        lblRevenue.setFont(new Font("Inter", Font.PLAIN, 13));
+        lblRevenue.setHorizontalAlignment(SwingConstants.CENTER);
+        lblRevenue.setPreferredSize(new Dimension(150, 50));
+
+        JLabel lblDifference = new JLabel(keyList.get(5));
+        lblDifference.setFont(new Font("Inter", Font.PLAIN, 13));
+        lblDifference.setPreferredSize(new Dimension(150, 50));
+        lblDifference.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        panel.add(containerBtn);
+        panel.add(lblName);
+        panel.add(lblQuantity);
+        panel.add(lbl_listed_value);
+        panel.add(lblRevenue);
+        panel.add(lblDifference);
+
+        return panel;
+    }
 
     private void togglePanel(JButton btnDetail, JPanel selectedPanel, List<List<String>> invoices) {
         boolean isExpanded = expandedStateMap.get(selectedPanel); // Lấy trạng thái mở rộng của panel được chọn
@@ -293,8 +560,7 @@ public class StatisticEndOfTheDayGUI extends JPanel {
             if (isDetailPanel != null && isDetailPanel) {
                 centerPanel.remove(component);
                 i--;
-            } else
-                break;
+            } else break;
         }
         centerPanel.revalidate();
         centerPanel.repaint();
@@ -311,7 +577,7 @@ public class StatisticEndOfTheDayGUI extends JPanel {
     }
 
     private JPanel createPanelDetail(String[] labels) {
-        JPanel panel = createLabelPanel(Color.WHITE, new Color(202, 202, 202));
+        JPanel panel = createLabelPanel(Color.WHITE, new MigLayout("", "10[]20[]20[]30[]20[]10", ""));
         panel.putClientProperty("isDetailPanel", true); // Đặt thuộc tính cho panel chi tiết
         addLabelsToPanelDetail(panel, labels);
         return panel;
@@ -348,18 +614,18 @@ public class StatisticEndOfTheDayGUI extends JPanel {
         JRadioButton sellRadioButton = createRadioButton("Bán hàng");
         JRadioButton revenueAndExpenditureRadioButton = createRadioButton("Thu chi");
         JRadioButton productRadioButton = createRadioButton("Hàng hóa");
-        JRadioButton syntheticRadioButton = createRadioButton("Tổng hợp");
+
 
         ButtonGroup btnGroupConcerns = new ButtonGroup();
         btnGroupConcerns.add(sellRadioButton);
         btnGroupConcerns.add(revenueAndExpenditureRadioButton);
         btnGroupConcerns.add(productRadioButton);
-        btnGroupConcerns.add(syntheticRadioButton);
+
 
         concernsPanel.add(sellRadioButton, "wrap");
         concernsPanel.add(revenueAndExpenditureRadioButton, "wrap");
         concernsPanel.add(productRadioButton, "wrap");
-        concernsPanel.add(syntheticRadioButton, "wrap");
+
 
         // mặc định khi chọn vào tab bán hàng sẽ chọn tiêu chí bán hàng đầu tiên là mặc định
         sellRadioButton.setSelected(true);
@@ -369,27 +635,24 @@ public class StatisticEndOfTheDayGUI extends JPanel {
             // Kiểm tra nếu bán hàng  được chọn
             if (sellRadioButton.isSelected()) {
                 titleLabel.setText("Báo cáo cuối ngày về bán hàng");
+                setUpSalesReports();
             }
         });
         revenueAndExpenditureRadioButton.addActionListener(e -> {
             // Kiểm tra nếu thu chi được chọn
             if (revenueAndExpenditureRadioButton.isSelected()) {
                 titleLabel.setText("Báo cáo cuối ngày về thu chi");
+                setUpMonthlyReport(); // Hiển thị báo cáo cuối ngày về thu chi
             }
         });
         productRadioButton.addActionListener(e -> {
             // Kiểm tra nếu hàng hóa được chọn
             if (productRadioButton.isSelected()) {
                 titleLabel.setText("Báo cáo cuối ngày về hàng hóa");
+                setUpProduct();
             }
         });
 
-        syntheticRadioButton.addActionListener(e -> {
-            // Kiểm tra nếu tổng hợp được chọn
-            if (syntheticRadioButton.isSelected()) {
-                titleLabel.setText("Báo cáo cuối ngày tổng hợp");
-            }
-        });
 
         RoundedPanel timePanel = new RoundedPanel();
 

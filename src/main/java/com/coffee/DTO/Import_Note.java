@@ -3,19 +3,19 @@ package com.coffee.DTO;
 import com.coffee.utils.VNString;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Import_Note {
     private int id;
     private int staff_id;
     private BigDecimal total;
-    private Date received_date;
+    private LocalDateTime received_date;
 
     public Import_Note() {
     }
 
-    public Import_Note(int id, int staff_id, BigDecimal total, Date received_date) {
+    public Import_Note(int id, int staff_id, BigDecimal total, LocalDateTime received_date) {
         this.id = id;
         this.staff_id = staff_id;
         this.total = total;
@@ -46,11 +46,11 @@ public class Import_Note {
         this.total = total;
     }
 
-    public Date getReceived_date() {
+    public LocalDateTime getReceived_date() {
         return received_date;
     }
 
-    public void setReceived_date(Date received_date) {
+    public void setReceived_date(LocalDateTime received_date) {
         this.received_date = received_date;
     }
 
@@ -59,6 +59,6 @@ public class Import_Note {
         return id + " | " +
                 staff_id + " | " +
                 VNString.currency(Double.parseDouble(total.toString())) + " | " +
-                new SimpleDateFormat("dd/MM/yyyy").format(received_date);
+                received_date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
     }
 }

@@ -25,6 +25,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.List;
 
@@ -301,7 +303,11 @@ public class ImportGUI extends Layout2 {
                             "Lỗi", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                import_noteList.removeIf(import_note -> (import_note.getReceived_date().before(startDate) || import_note.getReceived_date().after(endDate)));
+                LocalDateTime startDateTime = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                LocalDateTime endDateTime = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+                import_noteList.removeIf(import_note -> (import_note.getReceived_date().isBefore(startDateTime) || import_note.getReceived_date().isAfter(endDateTime)));
+
 
             }
             loadDataTable(importNoteBLL.getData(import_noteList));

@@ -26,6 +26,8 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.List;
 
@@ -217,7 +219,12 @@ public class DetailMaterialGUI extends DialogFormDetail {
             Date endDate = datePicker.getDateSQL_Between()[1];
             for (Shipment shipment : shipmentBLL.findShipmentsBy(Map.of("material_id", material.getId()))) {
                 Import_Note importNote = new Import_NoteBLL().findImportBy(Map.of("id", shipment.getImport_id())).get(0);
-                if (importNote.getReceived_date().after(startDate) && importNote.getReceived_date().before(endDate)) {
+
+                LocalDateTime startDateTime = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                LocalDateTime endDateTime = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+
+                if (importNote.getReceived_date().isAfter(startDateTime) && importNote.getReceived_date().isBefore(endDateTime)) {
                     shipmentList.add(shipment);
                 }
             }

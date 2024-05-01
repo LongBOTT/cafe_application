@@ -9,6 +9,8 @@ import raven.datetime.component.date.DateSelectionListener;
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 public class StatisticSaleGUI extends JPanel {
     private JScrollPane scrollPane;
@@ -17,6 +19,14 @@ public class StatisticSaleGUI extends JPanel {
     private JPanel content;
     private RoundedPanel displayTypePanel;
 
+    private JLabel dateLabel;
+    private JLabel titleLabel;
+
+    private JPanel centerPanel;
+    private static final int PANEL_WIDTH = 885;
+    private static final int PANEL_HEIGHT = 40;
+    private static final Dimension LABEL_SIZE = new Dimension(150, 30);
+    Map<JPanel, Boolean> expandedStateMap = new HashMap<>(); // Biến để theo dõi trạng thái của nút btnDetail
     public StatisticSaleGUI() {
         setBackground(Color.WHITE);
         setPreferredSize(new Dimension(1000, 700));

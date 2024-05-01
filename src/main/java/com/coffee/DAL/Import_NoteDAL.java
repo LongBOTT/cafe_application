@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class Import_NoteDAL extends Manager {
                         Integer.parseInt(row.get(0)),
                         Integer.parseInt(row.get(1)),
                         BigDecimal.valueOf(Double.parseDouble(row.get(2))),
-                        Date.valueOf(row.get(3))
+                        LocalDateTime.parse(row.get(3))
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in Import_NoteDAL.convertToImport_Note(): " + e.getMessage());

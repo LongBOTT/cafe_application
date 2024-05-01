@@ -33,6 +33,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -127,7 +128,7 @@ public class AddImportGUI extends DialogFormDetail {
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
             if (string.trim().equals("Ngày Nhập")) {
-                import_note.setReceived_date(Date.valueOf(LocalDate.now()));
+                import_note.setReceived_date(LocalDateTime.now());
                 textField.setText(import_note.getReceived_date().toString());
             }
             if (string.trim().equals("Mã Phiếu Nhập")) {

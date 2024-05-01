@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class AddImportFromExcel {
@@ -149,6 +150,7 @@ public class AddImportFromExcel {
         shipment.setMfg((Date) rowData.get("mfg"));
         shipment.setExp((Date) rowData.get("exp"));
         shipment.setQuantity((int) rowData.get("quantity"));
+        shipment.setRemain((int) rowData.get("quantity"));
         return shipment;
     }
 
@@ -170,7 +172,7 @@ public class AddImportFromExcel {
             import_note.setId(i);
             import_note.setStaff_id((HomeGUI.staff.getId()));
             import_note.setTotal(BigDecimal.valueOf(0));
-            import_note.setReceived_date(java.sql.Date.valueOf(LocalDate.now()));
+            import_note.setReceived_date(LocalDateTime.now());
             import_notes.add(import_note);
         }
 

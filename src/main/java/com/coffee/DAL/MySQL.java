@@ -474,6 +474,109 @@ public class MySQL {
     public static List<Map.Entry<List<String>, List<List<String>>>> getSalesStatistics(Date date) {
         List<Map.Entry<List<String>, List<List<String>>>> result = new ArrayList<>();
 
+        // Truy vấn dữ liệu từ bảng receipt và receipt_detail cho ngày được chỉ định
+        String sql = "SELECT r.id, r.invoice_date, s.name, rd.quantity, rd.price " +
+                "FROM receipt r " +
+                "INNER JOIN receipt_detail rd ON r.id = rd.receipt_id " +
+                "INNER JOIN staff s ON r.staff_id = s.id " +
+                "WHERE DATE(r.invoice_date) = ? " +
+                "ORDER BY r.invoice_date";
+
+        Connection connection = null;
+        try {
+            connection = Database.getConnection();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            // Thiết lập tham số cho ngày
+            statement.setDate(1, date);
+
+            ResultSet rs = statement.executeQuery();
+
+            Map<Integer, Map.Entry<Integer, BigDecimal>> salesData = new HashMap<>(); // Lưu trữ dữ liệu bán hàng theo key (giờ)
+
+            while (rs.next()) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(rs.getTimestamp("invoice_date"));
+                int hour = calendar.get(Calendar.HOUR_OF_DAY); // Lấy giờ trong ngày
+
+                int quantity = rs.getInt("quantity");
+                BigDecimal totalPrice = BigDecimal.valueOf(rs.getDouble("price"));
+
+                Map.Entry<Integer, BigDecimal> data = salesData.getOrDefault(hour, new AbstractMap.SimpleEntry<>(0, BigDecimal.ZERO));
+                salesData.put(hour, new AbstractMap.SimpleEntry<>(data.getKey() + quantity, data.getValue().add(totalPrice)));
+            }
+
+            // Tạo danh sách các cặp key-value từ dữ liệu thống kê
+            for (Map.Entry<Integer, Map.Entry<Integer, BigDecimal>> entry : salesData.entrySet()) {
+                int hour = entry.getKey(); // Key: Giờ
+                int quantity = entry.getValue().getKey(); // Số lượng sản phẩm bán được
+                BigDecimal totalRevenue = entry.getValue().getValue(); // Tổng doanh thu
+
+                // Tạo danh sách các hóa đơn tương ứng với key
+                List<List<String>> invoices = getInvoicesForHour(hour, date);
+
+                // Tạo cặp key-value và thêm vào kết quả
+                List<String> keyList = new ArrayList<>();
+                keyList.add(new SimpleDateFormat("dd/MM/yyyy").format(date)); // Thêm ngày vào key
+                keyList.add(String.format("%02d:00", hour)); // Thêm giờ vào key, Format lại để có dạng HH:00
+                keyList.add(String.valueOf(quantity));
+                keyList.add(String.valueOf(totalRevenue));
+                result.add(new AbstractMap.SimpleEntry<>(keyList, invoices));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return result;
+    }
+
+    private static List<List<String>> getInvoicesForHour(int hour, Date date)  {
+        List<List<String>> invoices = new ArrayList<>();
+
+        String sql = "SELECT r.id, r.invoice_date, s.name, rd.quantity, rd.price " +
+                "FROM receipt r " +
+                "INNER JOIN receipt_detail rd ON r.id = rd.receipt_id " +
+                "INNER JOIN staff s ON r.staff_id = s.id " +
+                "WHERE HOUR(r.invoice_date) = ? AND DATE(r.invoice_date) = ? " +
+                "ORDER BY r.invoice_date";
+
+        Connection connection = null;
+        try {
+            connection = Database.getConnection();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, hour);
+            statement.setDate(2, date);
+
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                List<String> invoice = new ArrayList<>();
+                String invoiceId = rs.getString("id");
+                // Kiểm tra mã có ít hơn 6 chữ số không
+                if (invoiceId.length() < 6) {
+                    // Thêm các chữ số 0 vào trước mã hóa đơn để có đủ 6 chữ số
+                    invoiceId = String.format("%06d", Integer.parseInt(invoiceId));
+                }
+                invoice.add("HD" + invoiceId);
+                invoice.add(new SimpleDateFormat("HH:mm").format(rs.getTimestamp("invoice_date")));
+                invoice.add(rs.getString("name"));
+                invoice.add(String.valueOf(rs.getInt("quantity")));
+                invoice.add(String.valueOf(rs.getDouble("price")));
+                invoices.add(invoice);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return invoices;
+    }
+    public static List<Map.Entry<List<String>, List<List<String>>>> getproductsStatistics(Date date) {
+        List<Map.Entry<List<String>, List<List<String>>>> result = new ArrayList<>();
 
         // Truy vấn dữ liệu từ bảng receipt và receipt_detail cho ngày được chỉ định
         String sql = "SELECT r.id, r.invoice_date, s.name, rd.quantity, rd.price " +
@@ -528,67 +631,92 @@ public class MySQL {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+
+        return result;
+    }
+    public static List<List<String>> getExpenseIncomeData(Date date) {
+        List<List<String>> result = new ArrayList<>();
+        String query = "SELECT CONCAT('PN', LPAD(i.id, 6, '0')) AS `Mã chứng từ`, " +
+                " nv.name AS `Người tạo`, " +
+                " i.received_date AS `Thời gian`, " +
+                " CONCAT('-', FORMAT(i.total, 0)) AS `Thu chi`, " +
+                " 'Chi tiền trả NCC' AS `Loại` " +
+                "FROM import_note i " +
+                "JOIN staff nv ON i.staff_id = nv.id " +
+                "WHERE DATE(i.received_date) = ? " +
+                "UNION ALL " +
+                "SELECT CONCAT('HD', LPAD(r.id, 6, '0')) AS `Mã chứng từ`, " +
+                " nv.name AS `Người tạo`, " +
+                " r.invoice_date AS `Thời gian`, " +
+                " FORMAT(r.total, 0) AS `Thu chi`, " +
+                " 'Thu tiền khách trả' AS `Loại` " +
+                "FROM receipt r " +
+                "JOIN staff nv ON r.staff_id = nv.id " +
+                "WHERE DATE(r.invoice_date) = ? " +
+                "ORDER BY `Thời gian` DESC";
+
+        Connection connection = null;
+        try {
+            connection = Database.getConnection();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setDate(1, new java.sql.Date(date.getTime()));
+            stmt.setDate(2, new java.sql.Date(date.getTime()));
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    List<String> row = new ArrayList<>();
+                    row.add(rs.getString("Mã chứng từ"));
+                    row.add(rs.getString("Loại"));
+                    row.add(rs.getString("Người tạo"));
+                    row.add(rs.getString("Thời gian"));
+                    row.add(rs.getString("Thu chi"));
+                    result.add(row);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         return result;
     }
 
-
-    private static List<List<String>> getInvoicesForHour(int hour, Date date) throws SQLException, IOException {
-        List<List<String>> invoices = new ArrayList<>();
-
-        String sql = "SELECT r.id, r.invoice_date, s.name, rd.quantity, rd.price " +
-                "FROM receipt r " +
-                "INNER JOIN receipt_detail rd ON r.id = rd.receipt_id " +
-                "INNER JOIN staff s ON r.staff_id = s.id " +
-                "WHERE HOUR(r.invoice_date) = ? AND DATE(r.invoice_date) = ? " +
-                "ORDER BY r.invoice_date";
-
-        Connection connection = Database.getConnection();
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, hour);
-            statement.setDate(2, date);
-
-            ResultSet rs = statement.executeQuery();
-
-            while (rs.next()) {
-                List<String> invoice = new ArrayList<>();
-                String invoiceId = rs.getString("id");
-                // Kiểm tra mã có ít hơn 6 chữ số không
-                if (invoiceId.length() < 6) {
-                    // Thêm các chữ số 0 vào trước mã hóa đơn để có đủ 6 chữ số
-                    invoiceId = String.format("%06d", Integer.parseInt(invoiceId));
-                }
-                invoice.add("HD" + invoiceId);
-                invoice.add(new SimpleDateFormat("HH:mm").format(rs.getTimestamp("invoice_date")));
-                invoice.add(rs.getString("name"));
-                invoice.add(String.valueOf(rs.getInt("quantity")));
-                invoice.add(String.valueOf(rs.getDouble("price")));
-                invoices.add(invoice);
-            }
-        }
-
-        return invoices;
-    }
     public static void main(String[] args) throws SQLException, IOException {
 
 
+//        Date currentDate = new Date(System.currentTimeMillis());
+//
+//// Gọi hàm thống kê với ngày hiện tại
+//        List<Map.Entry<List<String>, List<List<String>>>> salesStatistics = getSalesStatistics(currentDate);
+//        for (Map.Entry<List<String>, List<List<String>>> entry : salesStatistics) {
+//            int numberOfInvoices = entry.getKey().size();
+//            System.out.println("Key: " + entry.getKey() + ", Number of Invoices: " + numberOfInvoices);
+//        }
+//            // In kết quả
+//            for (Map.Entry<List<String>, List<List<String>>> entry : salesStatistics) {
+//                System.out.println("Key: " + entry.getKey());
+//                System.out.println("Value: " + entry.getValue());
+//                System.out.println("----------------------------------");
+//            }
         Date currentDate = new Date(System.currentTimeMillis());
+        List<List<String>> result = getExpenseIncomeData(currentDate);
 
-// Gọi hàm thống kê với ngày hiện tại
-        List<Map.Entry<List<String>, List<List<String>>>> salesStatistics = getSalesStatistics(currentDate);
-        for (Map.Entry<List<String>, List<List<String>>> entry : salesStatistics) {
-            int numberOfInvoices = entry.getKey().size();
-            System.out.println("Key: " + entry.getKey() + ", Number of Invoices: " + numberOfInvoices);
+        // In kết quả
+        for (List<String> row : result) {
+            System.out.println(row);
         }
-            // In kết quả
-            for (Map.Entry<List<String>, List<List<String>>> entry : salesStatistics) {
-                System.out.println("Key: " + entry.getKey());
-                System.out.println("Value: " + entry.getValue());
-                System.out.println("----------------------------------");
-            }
 
 
     }
@@ -692,4 +820,8 @@ public class MySQL {
     }
 
 
+
+
+
 }
+
