@@ -130,7 +130,7 @@ public class DetailImportGUI extends DialogFormDetail {
             @Override
             public void mousePressed(MouseEvent e) {
 
-                PDF.importBillDetailsPDF(import_note, "src/main/resources/ExportPDF");
+                PDF.exportImportDetailsPDF(import_note, "src/main/resources/ExportPDF");
                 JOptionPane.showMessageDialog(null, "In phiếu nhập thành công.",
                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 dispose();

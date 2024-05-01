@@ -128,7 +128,7 @@ public class DetailExportGUI extends DialogFormDetail {
             @Override
             public void mousePressed(MouseEvent e) {
 
-                PDF.exportBillDetailsPDF(export, "src/main/resources/ExportPDF");
+                PDF.exportExportDetailsPDF(export, "src/main/resources/ExportPDF");
                 JOptionPane.showMessageDialog(null, "In phiếu xuất thành công.",
                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 dispose();

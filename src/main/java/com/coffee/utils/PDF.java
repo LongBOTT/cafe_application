@@ -194,7 +194,7 @@ public class PDF {
     }
 
 
-    public static boolean exportBillDetailsPDF(Export_Note exportNote, String path) {
+    public static boolean exportExportDetailsPDF(Export_Note exportNote, String path) {
         try {
             Files.createDirectories(Paths.get(path));
         } catch (IOException e) {
@@ -203,10 +203,10 @@ public class PDF {
         }
 
         List<Export_Detail> exports = new Export_DetailBLL().searchExport("export_id = " + exportNote.getId());
-        File file = new File(getFileNameDate(path, "Bill_Details", java.sql.Date.valueOf(LocalDate.now())));
+        File file = new File(getFileNameDate(path, "Export_Details", java.sql.Date.valueOf(LocalDate.now())));
         PDF pdf = new PDF(8, 12 + exports.size(), 125F, exports.size() + 40F);
 
-        pdf.addTextAt("BẢNG HÓA ĐƠN", 3.3F, 2, pdf.boldFont, 25);
+        pdf.addTextAt("BẢNG CHI TIẾT PHIẾU XUẤT", 3.3F, 2, pdf.boldFont, 25);
         pdf.addTextAt(" Mã Phiếu Xuất : " + exportNote.getId(), 0.5F, 3, pdf.italicFont, 20);
 
         int staffId = exportNote.getStaff_id();
@@ -249,7 +249,7 @@ public class PDF {
         return true;
     }
 
-    public static boolean importBillDetailsPDF(Import_Note importNote, String path) {
+    public static boolean exportImportDetailsPDF(Import_Note importNote, String path) {
         try {
             Files.createDirectories(Paths.get(path));
         } catch (IOException e) {
@@ -258,17 +258,17 @@ public class PDF {
         }
 
         List<Shipment> shipments = new ShipmentBLL().searchShipments("import_id = " + importNote.getId());
-        File file = new File(getFileNameDate(path, "Bill_Details", java.sql.Date.valueOf(LocalDate.now())));
+        File file = new File(getFileNameDate(path, "Import_Details", java.sql.Date.valueOf(LocalDate.now())));
         PDF pdf = new PDF(8, 12 + shipments.size(), 180F, shipments.size() + 40F);
 
-        pdf.addTextAt("BẢNG CHI TIẾT HÓA ĐƠN", 3.3F, 2, pdf.boldFont, 25);
+        pdf.addTextAt("BẢNG CHI TIẾT PHIẾU NHẬP", 3.3F, 2, pdf.boldFont, 25);
         pdf.addTextAt(" Mã Phiếu Nhập : " + importNote.getId(), 0.5F, 3, pdf.italicFont, 20);
 
         int staffId = importNote.getStaff_id();
         List<Staff> staff = new StaffBLL().searchStaffs("id = '" + staffId + "'");
 
         pdf.addTextAt(" Tên Nhân Viên : " + staff.get(0).getName(), 0.5F, 4, pdf.italicFont, 20);
-        pdf.addTextAt(" Ngày Nhập : " + importNote.getReceived_date(), 0.5F, 5, pdf.italicFont, 20);
+        pdf.addTextAt(" Ngày Nhập : " + importNote.getReceived_date().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")), 0.5F, 5, pdf.italicFont, 20);
 //            pdf.addTextAt("Từ ngày " + from + " đến ngày " + to, 2.5F,4, pdf.italicFont, 20);
 
         List<String[]> tableData = new ArrayList<>();
@@ -297,7 +297,7 @@ public class PDF {
             tableData.add(data);
         }
 
-        pdf.addTable(tableData, 16F, 6.5F, 7.1F, new float[]{0.5F, 1F, 2.2F, 3.2F, 4F, 4.8F, 5.6F, 6.3F});
+        pdf.addTable(tableData, 16F, 6.5F, 7.1F, new float[]{0.5F, 1F, 2.2F, 4F, 5F, 6F, 7F, 8F});
 
         String formattedTotal = NumberFormat.getCurrencyInstance(new Locale("vi", "VN")).format(importNote.getTotal());
         pdf.addTextAt(" Tổng tiền: " + formattedTotal, 0.5F, shipments.size() + 10, pdf.italicFont, 20);
@@ -380,7 +380,7 @@ public class PDF {
             tableData.add(data);
         }
 
-        pdf.addTable(tableData, 16F, 6.5F, 7.1F, new float[]{0.5F, 1.5F, 2.5F, 3.5F, 4.5F, 7.0F});
+        pdf.addTable(tableData, 16F, 6.5F, 7.1F, new float[]{0.5F, 2F, 3F, 4F, 5F, 7.0F});
 
         pdf.addTextAt(" Tổng Cộng: " + VNString.currency(receipt.getTotal_price()), 0.5F, receipts.size() + 9, pdf.italicFont, 20);
         if (receipt.getDiscount_id() == 0)
@@ -439,13 +439,13 @@ public class PDF {
             System.out.println(e.getMessage());
             return false;
         }
-        File file = new File(getFileNameDate(path, "Import_Note", java.sql.Date.valueOf(LocalDate.now())));
+        File file = new File(getFileNameDate(path, "Export_Note", java.sql.Date.valueOf(LocalDate.now())));
         PDF pdf = new PDF(6, 10 + objects.length, 167F, 30F);
-        pdf.addTextAt("BẢNG PHIẾU NHẬP HÀNG", 2.2F, 2, pdf.boldFont, 25);
+        pdf.addTextAt("BẢNG PHIẾU XUẤT HÀNG", 2.2F, 2, pdf.boldFont, 25);
 
         List<String[]> tableData = new ArrayList<>();
         tableData.add(List.of(
-                "Mã Phiếu Nhập ",
+                "Mã Phiếu Xuất ",
                 "Nhân Viên",
                 "Tổng Tiền ",
                 "Ngày Xuất ").toArray(new String[0]));
@@ -473,7 +473,7 @@ public class PDF {
             System.out.println(e.getMessage());
             return false;
         }
-        File file = new File(getFileNameDate(path, "Export_Note", java.sql.Date.valueOf(LocalDate.now())));
+        File file = new File(getFileNameDate(path, "Import_Note", java.sql.Date.valueOf(LocalDate.now())));
         PDF pdf = new PDF(6, 10 + objects.length, 167F, 30F);
         pdf.addTextAt("BẢNG PHIẾU NHẬP HÀNG", 2.2F, 2, pdf.boldFont, 25);
 
@@ -482,7 +482,7 @@ public class PDF {
                 "Mã Phiếu Nhập ",
                 "Nhân Viên",
                 " Tổng Tiền ",
-                "Ngày Xuất ").toArray(new String[0]));
+                "Ngày Nhập ").toArray(new String[0]));
 
         for (int i = 0; i < objects.length; i++) {
             String[] data = new String[4];
