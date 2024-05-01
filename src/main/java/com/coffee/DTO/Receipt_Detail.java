@@ -8,20 +8,18 @@ public class Receipt_Detail {
     private String size;
     private double quantity;
     private double price;
-    private double reduced_price;
     private String notice;
     private double price_discount;
 
     public Receipt_Detail() {
     }
 
-    public Receipt_Detail(int receipt_id, int product_id, String size, double quantity, double price, double reduced_price,String notice) {
+    public Receipt_Detail(int receipt_id, int product_id, String size, double quantity, double price, String notice) {
         this.receipt_id = receipt_id;
         this.product_id = product_id;
         this.size = size;
         this.quantity = quantity;
         this.price = price;
-        this.reduced_price = reduced_price;
         this.notice = notice;
     }
 
@@ -65,14 +63,6 @@ public class Receipt_Detail {
         this.price = price;
     }
 
-    public double getReduced_price() {
-        return reduced_price;
-    }
-
-    public void setReduced_price(double reduced_price) {
-        this.reduced_price = reduced_price;
-    }
-
     public String getNotice() {
         return notice;
     }
@@ -96,7 +86,6 @@ public class Receipt_Detail {
                 size + " | " +
                 quantity + " | " +
                 VNString.currency(price) + " | " +
-                VNString.currency(reduced_price) + " | " +
                 notice;
     }
 }

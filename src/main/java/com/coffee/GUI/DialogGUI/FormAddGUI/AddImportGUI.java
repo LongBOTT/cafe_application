@@ -34,6 +34,7 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -129,7 +130,7 @@ public class AddImportGUI extends DialogFormDetail {
             textField.setBackground(new Color(245, 246, 250));
             if (string.trim().equals("Ngày Nhập")) {
                 import_note.setReceived_date(LocalDateTime.now());
-                textField.setText(import_note.getReceived_date().toString());
+                textField.setText(import_note.getReceived_date().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
             }
             if (string.trim().equals("Mã Phiếu Nhập")) {
                 import_note.setId(import_NoteBLL.getAutoID(import_NoteBLL.searchImport()));

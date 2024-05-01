@@ -25,8 +25,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -297,6 +299,7 @@ public class ImportGUI extends Layout2 {
                 import_noteList.removeIf(import_note -> !staffIDList.contains(import_note.getStaff_id()));
             }
             if (datePicker.getDateSQL_Between() != null) {
+                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 Date startDate = datePicker.getDateSQL_Between()[0];
                 Date endDate = datePicker.getDateSQL_Between()[1];
                 if (startDate.after(endDate)) {
@@ -304,10 +307,7 @@ public class ImportGUI extends Layout2 {
                             "Lỗi", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                LocalDateTime startDateTime = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-                LocalDateTime endDateTime = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-
-                import_noteList.removeIf(import_note -> (import_note.getReceived_date().isBefore(startDateTime) || import_note.getReceived_date().isAfter(endDateTime)));
+                import_noteList.removeIf(import_note -> (import_note.getReceived_date().toLocalDate().isBefore(LocalDate.parse(startDate.toString(), myFormatObj)) || import_note.getReceived_date().toLocalDate().isAfter(LocalDate.parse(endDate.toString(), myFormatObj))));
 
 
             }

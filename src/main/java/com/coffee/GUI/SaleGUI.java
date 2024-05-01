@@ -343,7 +343,7 @@ public class SaleGUI extends SalePanel {
                     }
 
                     if (!checkExist) {
-                        Receipt_Detail newReceipt_detail = new Receipt_Detail(receipt.getId(), product.getId(), product.getSize(), Double.parseDouble(receiptDetail.get(2).toString()), Double.parseDouble(receiptDetail.get(3).toString()), total,notice);
+                        Receipt_Detail newReceipt_detail = new Receipt_Detail(receipt.getId(), product.getId(), product.getSize(), Double.parseDouble(receiptDetail.get(2).toString()), Double.parseDouble(receiptDetail.get(3).toString()), notice);
                         receipt_details.add(newReceipt_detail);
                     }
                 } else {
@@ -362,7 +362,7 @@ public class SaleGUI extends SalePanel {
                     }
 
                     if (!checkExist) {
-                        Receipt_Detail newReceipt_detail = new Receipt_Detail(receipt.getId(), product.getId(), product.getSize(), Double.parseDouble(receiptDetail.get(2).toString()), Double.parseDouble(receiptDetail.get(3).toString()), total," ");
+                        Receipt_Detail newReceipt_detail = new Receipt_Detail(receipt.getId(), product.getId(), product.getSize(), Double.parseDouble(receiptDetail.get(2).toString()), Double.parseDouble(receiptDetail.get(3).toString()), " ");
                         receipt_details.add(newReceipt_detail);
                     }
                 }

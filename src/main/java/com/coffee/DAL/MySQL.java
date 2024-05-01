@@ -338,7 +338,7 @@ public class MySQL {
             strings[strings.length - 1] = "ma.name = '" + materialName + "'";
         }
         strings = Arrays.copyOf(strings, strings.length + 1);
-        strings[strings.length - 1] = "im.received_date >= '" + start + "' AND im.received_date <= '" + end + "'";
+        strings[strings.length - 1] = "DATE(im.received_date) >= '" + start + "' AND DATE(im.received_date) <= '" + end + "'";
         query += "WHERE " + String.join(" AND ", strings);
         query += "\nGROUP BY ma.id, ma.`name`";
         try {
@@ -379,7 +379,7 @@ public class MySQL {
             strings[strings.length - 1] = "ma.name = '" + materialName + "'";
         }
         strings = Arrays.copyOf(strings, strings.length + 1);
-        strings[strings.length - 1] = "im.received_date >= '" + start + "' AND im.received_date <= '" + end + "'";
+        strings[strings.length - 1] = "DATE(im.received_date) >= '" + start + "' AND DATE(im.received_date) <= '" + end + "'";
         query += "WHERE " + String.join(" AND ", strings);
         query += "\nGROUP BY ma.id, ma.`name`\n";
         query += "ORDER BY SUM(sm.quantity) DESC LIMIT 5\n";
@@ -472,6 +472,7 @@ public class MySQL {
             throw new RuntimeException(e);
         }
     }
+
     public static List<Map.Entry<List<String>, List<List<String>>>> getSalesStatistics(Date date) {
         List<Map.Entry<List<String>, List<List<String>>>> result = new ArrayList<>();
 
@@ -533,7 +534,7 @@ public class MySQL {
         return result;
     }
 
-    private static List<List<String>> getInvoicesForHour(int hour, Date date)  {
+    private static List<List<String>> getInvoicesForHour(int hour, Date date) {
         List<List<String>> invoices = new ArrayList<>();
 
         String sql = "SELECT r.id, r.invoice_date, s.name, rd.quantity, rd.price " +
@@ -576,6 +577,7 @@ public class MySQL {
 
         return invoices;
     }
+
     public static List<Map.Entry<List<String>, List<List<String>>>> getproductsStatistics(Date date) {
         List<Map.Entry<List<String>, List<List<String>>>> result = new ArrayList<>();
 
@@ -636,6 +638,7 @@ public class MySQL {
 
         return result;
     }
+
     public static List<List<String>> getExpenseIncomeData(Date date) {
         List<List<String>> result = new ArrayList<>();
         String query = "SELECT CONCAT('PN', LPAD(i.id, 6, '0')) AS `Mã chứng từ`, " +
@@ -857,7 +860,8 @@ public class MySQL {
             throw new RuntimeException(e);
         }
     }
-//public static List<List<String>> getSaleProductEndOfDay(String start, String end) {
+
+    //public static List<List<String>> getSaleProductEndOfDay(String start, String end) {
 //        String query = "SELECT rd.product_id, pro.name, rd.size, rd.quantity, rd.price, ";
 //        query += "pro.price AS GiaTriNiemYet, ";
 //        query += "SUM(rd.quantity * rd.price) AS DoanhThu, ";
@@ -910,6 +914,7 @@ public class MySQL {
 //        // In kết quả ra terminal
 //        printSaleCategory(saleCategories);
     }
+
     public static void printSaleCategory(List<List<String>> saleCategories) {
         System.out.println("Category\tQuantity\tTotal Price");
         for (List<String> category : saleCategories) {
