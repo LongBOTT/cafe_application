@@ -827,7 +827,7 @@ public class MySQL {
         return pairList;
     }
     public static List<List<String>> getSalesStatistics(String start, String end) {
-        String query = "SELECT DATE(rp.invoice_date), SUM(rd.quantity), SUM(rp.total_price), SUM(rp.total), SUM(rp.total_discount) ";
+        String query = "SELECT DATE(rp.invoice_date), SUM(rd.quantity), SUM(rd.price), SUM(rd.price_discount), SUM(rd.price) - SUM(rd.price_discount) ";
         query += "FROM receipt rp ";
         query += "INNER JOIN receipt_detail rd ON rp.id = rd.receipt_id ";
         query += "WHERE DATE(rp.invoice_date) BETWEEN '" + start + "' AND '" + end + "' ";
@@ -841,7 +841,7 @@ public class MySQL {
         }
     }
     public static List<List<String>> getSalesDay(String date) {
-        String query = "SELECT rp.id, DATE_FORMAT(rp.invoice_date, '%H:%i'), s.name, SUM(rd.quantity), SUM(rp.total_price), SUM(rp.total), SUM(rp.total_discount) ";
+        String query = "SELECT rp.id, DATE_FORMAT(rp.invoice_date, '%H:%i'), s.name, SUM(rd.quantity), SUM(rd.price), SUM(rd.price_discount), SUM(rd.price)- SUM(rd.price_discount) ";
         query += "FROM receipt rp ";
         query += "INNER JOIN receipt_detail rd ON rp.id = rd.receipt_id ";
         query += "INNER JOIN staff s ON rp.staff_id = s.id ";
