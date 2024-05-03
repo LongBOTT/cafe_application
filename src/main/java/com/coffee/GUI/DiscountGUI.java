@@ -1,6 +1,7 @@
 package com.coffee.GUI;
 
 import com.coffee.BLL.DiscountBLL;
+import com.coffee.DTO.Discount;
 import com.coffee.DTO.Function;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddDiscountGUI;
 import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailDiscountGUI;

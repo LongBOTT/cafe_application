@@ -252,7 +252,7 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
                     dispose();
                     loadSaleGUI();
                 } else {
-                    JOptionPane.showMessageDialog(null, result.getValue());
+                    JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
 
             }

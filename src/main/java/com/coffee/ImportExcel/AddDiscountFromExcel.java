@@ -10,6 +10,7 @@ import javafx.util.Pair;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -100,7 +101,7 @@ public class AddDiscountFromExcel {
         for (Pair<Discount, List<Discount_Detail>> discountData : discountDatas) {
             Discount discount = discountData.getKey();
             List<Discount_Detail> details = discountData.getValue();
-
+            updateStatusDicount();// trước khi thêm mã giảm giá mới cần tắt tất cả các mã giảm giá đang áp dụng
             discountBLL.addDiscount(discount);
 
             for (Discount_Detail detail : details) {
@@ -108,7 +109,18 @@ public class AddDiscountFromExcel {
             }
         }
     }
+    private void updateStatusDicount() {
+        List<Discount> discountList = discountBLL.searchDiscounts("status =0");
 
+        for (Discount discount : discountList) {
+            discount.setStatus(true);
+            Pair<Boolean, String> result = discountBLL.updateStatusDiscount(discount);
+            if (!result.getKey()) {
+                JOptionPane.showMessageDialog(null, result.getValue(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
     public Pair<List<Discount>, String> readDiscountsFromExcel(Sheet sheet) {
         List<Discount> discounts = new ArrayList<>();
         StringBuilder errorAll = new StringBuilder();
