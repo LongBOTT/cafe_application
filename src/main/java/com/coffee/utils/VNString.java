@@ -43,7 +43,13 @@ public class VNString {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(locale);
         return formatter.format(money);
     }
+    public static double parseCurrency(String currencyString) {
+        String cleanedString = currencyString.replaceAll("[^\\d]", "");
 
+        double result = Double.parseDouble(cleanedString);
+
+        return result;
+    }
     public static boolean containsUnicode(String str) {
         return str.chars().anyMatch(c -> c >= 128);
     }

@@ -17,6 +17,7 @@ import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.coffee.main.Cafe_Application;
+import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -88,8 +89,15 @@ public class AddProductGUI extends DialogFormDetail_1 {
                 txtSearch.setText(data.getText());
                 Material material = materialBLL.findMaterialsBy(Map.of("name", data.getText())).get(0);
                 materialID = material.getId();
-                txtUnit.setText(material.getUnit());
-                System.out.println("Click Item : " + data.getText());
+                String unit = material.getUnit();
+                if (unit.equals("kg")) {
+                    txtUnit.setText("g");
+                } else if (unit.equals("lít")) {
+                    txtUnit.setText("ml");
+                } else {
+                    txtUnit.setText(unit);
+                }
+
             }
 
             @Override
@@ -193,9 +201,10 @@ public class AddProductGUI extends DialogFormDetail_1 {
                         label.setBackground(new Color(59, 130, 198));
                         label.setForeground(Color.WHITE);
                         selectedLabel = label;
-                        loadRecipeBySize(selectedSize);
                         loadPriceBySize(selectedSize);
+                        ;
                         loadCapitalPriceBySize(selectedSize);
+                        loadRecipeBySize(selectedSize);
 
                     }
                 });
@@ -222,22 +231,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
         });
         txtCapitalPrice = new MyTextFieldUnderLine();
         txtCapitalPrice.setFocusable(false);
-        txtCapitalPrice.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                updateCapitalPriceProductBySize();
-            }
 
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                updateCapitalPriceProductBySize();
-            }
-        });
         containerAtributeProduct.add(lblName);
         containerAtributeProduct.add(txtNameProduct, "wrap");
 
@@ -482,22 +476,6 @@ public class AddProductGUI extends DialogFormDetail_1 {
         return new Pair<>(true, "");
     }
 
-    private void updateCapitalPriceProductBySize() {
-        if (selectedLabel == null) {
-            return;
-        }
-        String size = selectedLabel.getText();
-        String capital_price = txtCapitalPrice.getText();
-
-        if (!productList.isEmpty()) {
-            for (Product product : productList) {
-                if (product.getSize().equals(size)) {
-                    product.setCapital_price(Double.parseDouble(capital_price));
-                    return;
-                }
-            }
-        }
-    }
 
     private String uploadImage() {
         JFileChooser fileChooser = new JFileChooser();
@@ -575,10 +553,10 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
         Material material = materialBLL.findMaterialsBy(Map.of("id", materialID)).get(0);
         String materialName = material.getName();
-        String materialPrice = String.valueOf(material.getUnit_price());
-        double materialPriceD = material.getUnit_price();
+        String materialPrice = VNString.currency(material.getUnit_price() / 1000);
+        double materialPriceD = material.getUnit_price() / 1000;
         double totalAmount = materialPriceD * Double.parseDouble(quantity);
-        Object[] rowData = {materialID, materialName, unit, materialPrice, Double.parseDouble(quantity), totalAmount, iconRemove};
+        Object[] rowData = {materialID, materialName, unit, materialPrice, Double.parseDouble(quantity), VNString.currency(totalAmount), iconRemove};
 
         model.addRow(rowData);
 
@@ -586,11 +564,11 @@ public class AddProductGUI extends DialogFormDetail_1 {
         txtQuantity.setText("");
         txtUnit.setText("");
         if (txtCapitalPrice.getText().isEmpty()) {
-            txtCapitalPrice.setText(materialPrice);
+            txtCapitalPrice.setText(VNString.currency(totalAmount));
 
         } else {
-            double capitalPrice = Double.parseDouble(txtCapitalPrice.getText());
-            txtCapitalPrice.setText(String.valueOf(capitalPrice + totalAmount));
+            double capitalPrice = VNString.parseCurrency(txtCapitalPrice.getText());
+            txtCapitalPrice.setText(VNString.currency(capitalPrice + totalAmount));
         }
     }
 
@@ -606,9 +584,9 @@ public class AddProductGUI extends DialogFormDetail_1 {
                 Iterator<Recipe> iterator = recipeList.iterator();
                 String labelText = selectedLabel.getText();
                 int id = (int) model.getValueAt(indexRow, 0);
-                double totalAmount = (double) model.getValueAt(indexRow, 5);
-                double capitalPrice = Double.parseDouble(txtCapitalPrice.getText());
-                txtCapitalPrice.setText(String.valueOf(capitalPrice - totalAmount));
+                double totalAmount = VNString.parseCurrency(model.getValueAt(indexRow, 5).toString());
+                double capitalPrice = VNString.parseCurrency(txtCapitalPrice.getText());
+                txtCapitalPrice.setText(VNString.currency(capitalPrice - totalAmount));
                 while (iterator.hasNext()) {
                     Recipe recipe = iterator.next();
                     if (recipe.getProduct_id() == productID && recipe.getMaterial_id() == id && recipe.getSize().equals(labelText)) {
@@ -647,26 +625,34 @@ public class AddProductGUI extends DialogFormDetail_1 {
 
     private void loadRecipeBySize(String size) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
-        model.setRowCount(0);
         double capitalPrice = 0.0;
         for (Recipe recipe : recipeList) {
             if (recipe.getSize().equals(size)) {
                 Material material = materialBLL.findMaterialsBy(Map.of("id", recipe.getMaterial_id())).get(0);
-                String materialName = material.getName();
-                String materialPrice = String.valueOf(material.getUnit_price());
-
-                double materialPriceD = material.getUnit_price();
+                String materialPrice = VNString.currency(material.getUnit_price() / 1000);
+                double materialPriceD = material.getUnit_price() / 1000;
                 double totalAmount = materialPriceD * recipe.getQuantity();
-                Object[] rowData = {recipe.getMaterial_id(), materialName, recipe.getUnit(), materialPrice, recipe.getQuantity(), totalAmount, iconRemove};
-
-                model.addRow(rowData);
                 capitalPrice += totalAmount;
             }
         }
         txtSearch.setText("");
         txtQuantity.setText("");
         txtUnit.setText("");
-        txtCapitalPrice.setText(Double.toString(capitalPrice));
+        txtCapitalPrice.setText(VNString.currency(capitalPrice));
+    }
+
+    private double SetCapitalBySize(String size) {
+        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+        double capitalPrice = 0.0;
+        for (Recipe recipe : recipeList) {
+            if (recipe.getSize().equals(size)) {
+                Material material = materialBLL.findMaterialsBy(Map.of("id", recipe.getMaterial_id())).get(0);
+                double materialPriceD = material.getUnit_price() / 1000;
+                double totalAmount = materialPriceD * recipe.getQuantity();
+                capitalPrice += totalAmount;
+            }
+        }
+        return capitalPrice;
     }
 
     private void loadPriceBySize(String size) {
@@ -677,7 +663,7 @@ public class AddProductGUI extends DialogFormDetail_1 {
                     if (price.equals("0.0")) {
                         txtPrice.setText("");
                     } else
-                        txtPrice.setText(price);
+                        txtPrice.setText(VNString.currency(product.getPrice()));
                     return;
                 }
             }
@@ -690,10 +676,11 @@ public class AddProductGUI extends DialogFormDetail_1 {
             for (Product product : productList) {
                 if (product.getSize().equals(size)) {
                     String capital_price = String.valueOf(product.getCapital_price());
+
                     if (capital_price.equals("0.0"))
                         txtCapitalPrice.setText("");
                     else
-                        txtCapitalPrice.setText(capital_price);
+                        txtCapitalPrice.setText(VNString.currency(product.getCapital_price()));
                     return;
                 }
             }
@@ -754,7 +741,10 @@ public class AddProductGUI extends DialogFormDetail_1 {
             product.setName(name);
             product.setCategory(category);
             product.setImage(imageProduct);
+            double capitalPrice = SetCapitalBySize(product.getSize());
+            product.setCapital_price(capitalPrice);
             result = productBLL.addProduct(product);
+
             if (!result.getKey()) {
                 allProductsAdded = false;
                 JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);

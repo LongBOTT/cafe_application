@@ -473,171 +473,6 @@ public class MySQL {
         }
     }
 
-    public static List<Map.Entry<List<String>, List<List<String>>>> getSalesStatistics(Date date) {
-        List<Map.Entry<List<String>, List<List<String>>>> result = new ArrayList<>();
-
-        // Truy vấn dữ liệu từ bảng receipt và receipt_detail cho ngày được chỉ định
-        String sql = "SELECT r.id, r.invoice_date, s.name, rd.quantity, rd.price " +
-                "FROM receipt r " +
-                "INNER JOIN receipt_detail rd ON r.id = rd.receipt_id " +
-                "INNER JOIN staff s ON r.staff_id = s.id " +
-                "WHERE DATE(r.invoice_date) = ? " +
-                "ORDER BY r.invoice_date";
-
-        Connection connection = null;
-        try {
-            connection = Database.getConnection();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            // Thiết lập tham số cho ngày
-            statement.setDate(1, date);
-
-            ResultSet rs = statement.executeQuery();
-
-            Map<Integer, Map.Entry<Integer, BigDecimal>> salesData = new HashMap<>(); // Lưu trữ dữ liệu bán hàng theo key (giờ)
-
-            while (rs.next()) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(rs.getTimestamp("invoice_date"));
-                int hour = calendar.get(Calendar.HOUR_OF_DAY); // Lấy giờ trong ngày
-
-                int quantity = rs.getInt("quantity");
-                BigDecimal totalPrice = BigDecimal.valueOf(rs.getDouble("price"));
-
-                Map.Entry<Integer, BigDecimal> data = salesData.getOrDefault(hour, new AbstractMap.SimpleEntry<>(0, BigDecimal.ZERO));
-                salesData.put(hour, new AbstractMap.SimpleEntry<>(data.getKey() + quantity, data.getValue().add(totalPrice)));
-            }
-
-            // Tạo danh sách các cặp key-value từ dữ liệu thống kê
-            for (Map.Entry<Integer, Map.Entry<Integer, BigDecimal>> entry : salesData.entrySet()) {
-                int hour = entry.getKey(); // Key: Giờ
-                int quantity = entry.getValue().getKey(); // Số lượng sản phẩm bán được
-                BigDecimal totalRevenue = entry.getValue().getValue(); // Tổng doanh thu
-
-                // Tạo danh sách các hóa đơn tương ứng với key
-                List<List<String>> invoices = getInvoicesForHour(hour, date);
-
-                // Tạo cặp key-value và thêm vào kết quả
-                List<String> keyList = new ArrayList<>();
-                keyList.add(new SimpleDateFormat("dd/MM/yyyy").format(date)); // Thêm ngày vào key
-                keyList.add(String.format("%02d:00", hour)); // Thêm giờ vào key, Format lại để có dạng HH:00
-                keyList.add(String.valueOf(quantity));
-                keyList.add(String.valueOf(totalRevenue));
-                result.add(new AbstractMap.SimpleEntry<>(keyList, invoices));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return result;
-    }
-
-    private static List<List<String>> getInvoicesForHour(int hour, Date date) {
-        List<List<String>> invoices = new ArrayList<>();
-
-        String sql = "SELECT r.id, r.invoice_date, s.name, rd.quantity, rd.price " +
-                "FROM receipt r " +
-                "INNER JOIN receipt_detail rd ON r.id = rd.receipt_id " +
-                "INNER JOIN staff s ON r.staff_id = s.id " +
-                "WHERE HOUR(r.invoice_date) = ? AND DATE(r.invoice_date) = ? " +
-                "ORDER BY r.invoice_date";
-
-        Connection connection = null;
-        try {
-            connection = Database.getConnection();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, hour);
-            statement.setDate(2, date);
-
-            ResultSet rs = statement.executeQuery();
-
-            while (rs.next()) {
-                List<String> invoice = new ArrayList<>();
-                String invoiceId = rs.getString("id");
-                // Kiểm tra mã có ít hơn 6 chữ số không
-                if (invoiceId.length() < 6) {
-                    // Thêm các chữ số 0 vào trước mã hóa đơn để có đủ 6 chữ số
-                    invoiceId = String.format("%06d", Integer.parseInt(invoiceId));
-                }
-                invoice.add("HD" + invoiceId);
-                invoice.add(new SimpleDateFormat("HH:mm").format(rs.getTimestamp("invoice_date")));
-                invoice.add(rs.getString("name"));
-                invoice.add(String.valueOf(rs.getInt("quantity")));
-                invoice.add(String.valueOf(rs.getDouble("price")));
-                invoices.add(invoice);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return invoices;
-    }
-
-    public static List<Map.Entry<List<String>, List<List<String>>>> getproductsStatistics(Date date) {
-        List<Map.Entry<List<String>, List<List<String>>>> result = new ArrayList<>();
-
-        // Truy vấn dữ liệu từ bảng receipt và receipt_detail cho ngày được chỉ định
-        String sql = "SELECT r.id, r.invoice_date, s.name, rd.quantity, rd.price " +
-                "FROM receipt r " +
-                "INNER JOIN receipt_detail rd ON r.id = rd.receipt_id " +
-                "INNER JOIN staff s ON r.staff_id = s.id " +
-                "WHERE DATE(r.invoice_date) = ? " +
-                "ORDER BY r.invoice_date";
-
-        Connection connection = null;
-        try {
-            connection = Database.getConnection();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            // Thiết lập tham số cho ngày
-            statement.setDate(1, date);
-
-            ResultSet rs = statement.executeQuery();
-
-            Map<Integer, Map.Entry<Integer, BigDecimal>> salesData = new HashMap<>(); // Lưu trữ dữ liệu bán hàng theo key (giờ)
-
-            while (rs.next()) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(rs.getTimestamp("invoice_date"));
-                int hour = calendar.get(Calendar.HOUR_OF_DAY); // Lấy giờ trong ngày
-
-                int quantity = rs.getInt("quantity");
-                BigDecimal totalPrice = BigDecimal.valueOf(rs.getDouble("price"));
-
-                Map.Entry<Integer, BigDecimal> data = salesData.getOrDefault(hour, new AbstractMap.SimpleEntry<>(0, BigDecimal.ZERO));
-                salesData.put(hour, new AbstractMap.SimpleEntry<>(data.getKey() + quantity, data.getValue().add(totalPrice)));
-            }
-
-            // Tạo danh sách các cặp key-value từ dữ liệu thống kê
-            for (Map.Entry<Integer, Map.Entry<Integer, BigDecimal>> entry : salesData.entrySet()) {
-                int hour = entry.getKey(); // Key: Giờ
-                int quantity = entry.getValue().getKey(); // Số lượng sản phẩm bán được
-                BigDecimal totalRevenue = entry.getValue().getValue(); // Tổng doanh thu
-
-                // Tạo danh sách các hóa đơn tương ứng với key
-                List<List<String>> invoices = getInvoicesForHour(hour, date);
-
-                // Tạo cặp key-value và thêm vào kết quả
-                List<String> keyList = new ArrayList<>();
-                keyList.add(new SimpleDateFormat("dd/MM/yyyy").format(date)); // Thêm ngày vào key
-                keyList.add(String.format("%02d:00", hour)); // Thêm giờ vào key, Format lại để có dạng HH:00
-                keyList.add(String.valueOf(quantity));
-                keyList.add(String.valueOf(totalRevenue));
-                result.add(new AbstractMap.SimpleEntry<>(keyList, invoices));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return result;
-    }
 
     public static List<List<String>> getExpenseIncomeData(Date date) {
         List<List<String>> result = new ArrayList<>();
@@ -697,33 +532,6 @@ public class MySQL {
         return result;
     }
 
-//    public static void main(String[] args) throws SQLException, IOException {
-//
-//
-////        Date currentDate = new Date(System.currentTimeMillis());
-////
-////// Gọi hàm thống kê với ngày hiện tại
-////        List<Map.Entry<List<String>, List<List<String>>>> salesStatistics = getSalesStatistics(currentDate);
-////        for (Map.Entry<List<String>, List<List<String>>> entry : salesStatistics) {
-////            int numberOfInvoices = entry.getKey().size();
-////            System.out.println("Key: " + entry.getKey() + ", Number of Invoices: " + numberOfInvoices);
-////        }
-////            // In kết quả
-////            for (Map.Entry<List<String>, List<List<String>>> entry : salesStatistics) {
-////                System.out.println("Key: " + entry.getKey());
-////                System.out.println("Value: " + entry.getValue());
-////                System.out.println("----------------------------------");
-////            }
-//        Date currentDate = new Date(System.currentTimeMillis());
-//        List<List<String>> result = getExpenseIncomeData(currentDate);
-//
-//        // In kết quả
-//        for (List<String> row : result) {
-//            System.out.println(row);
-//        }
-//
-//
-//    }
 
     public static List<List<String>> getSale_DiscountByQuarter() {
         String query = "SELECT QUARTER(rp.invoice_date), SUM(rp.total), SUM(rp.total_discount)\n" +
@@ -848,12 +656,19 @@ public class MySQL {
         }
     }
 
+
     public static List<List<String>> getSaleProductEndOfDay(String start, String end) {
-        String query = "SELECT pro.id, pro.`name`, SUM(rd.quantity), SUM(rd.price)\n" +
-                "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
-                "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
-        query += "WHERE '" + start + "' <= DATE(rp.invoice_date) AND DATE(rp.invoice_date) <= '" + end + "'\n";
-        query += "GROUP BY pro.id, pro.`name`\n";
+        String query = "SELECT rd.product_id, pro.name, SUM(rd.quantity),  ";
+        query += "Sum(rd.price) AS GiaTriNiemYet, ";
+        query += "SUM(rd.price_discount) AS DoanhThu, ";
+        query += "SUM(rd.price_discount) - Sum(rd.price)  AS ChenhLech ";
+        query += "FROM receipt_detail rd ";
+        query += "JOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size ";
+        query += "JOIN receipt rp ON rp.id = rd.receipt_id ";
+        query += "LEFT JOIN discount_detail dd ON rp.discount_id = dd.discount_id AND rd.product_id = dd.product_id AND rd.size = dd.Size ";
+        query += "WHERE DATE(rp.invoice_date) BETWEEN '" + start + "' AND '" + end + "' ";
+        query += "GROUP BY rd.product_id, pro.name, rd.size";
+
         try {
             return executeQueryStatistic(query);
         } catch (SQLException | IOException e) {
@@ -861,26 +676,8 @@ public class MySQL {
         }
     }
 
-    //public static List<List<String>> getSaleProductEndOfDay(String start, String end) {
-//        String query = "SELECT rd.product_id, pro.name, rd.size, rd.quantity, rd.price, ";
-//        query += "pro.price AS GiaTriNiemYet, ";
-//        query += "SUM(rd.quantity * rd.price) AS DoanhThu, ";
-//        query += "(SUM(rd.quantity * rd.price) - (SUM(rd.quantity) * pro.price)) AS ChenhLech ";
-//        query += "FROM receipt_detail rd ";
-//        query += "JOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size ";
-//        query += "JOIN receipt rp ON rp.id = rd.receipt_id ";
-//        query += "LEFT JOIN discount_detail dd ON rp.discount_id = dd.discount_id AND rd.product_id = dd.product_id AND rd.size = dd.Size ";
-//        query += "WHERE DATE(rp.invoice_date) BETWEEN '" + start + "' AND '" + end + "' ";
-//        query += "GROUP BY rd.product_id, pro.name, rd.size";
-//
-//    try {
-//        return executeQueryStatistic(query);
-//    } catch (SQLException | IOException e) {
-//        throw new RuntimeException(e);
-//    }
-//}
     public static List<List<String>> getReceiptByProductEndOfDay(String productName, String start, String end) {
-        String query = "SELECT rp.id, rp.invoice_date, rd.quantity, rd.price\n" +
+        String query = "SELECT rp.id, DATE_FORMAT(rp.invoice_date, '%Y-%m-%d %H:%i'), rd.quantity, rd.price,rd.price_discount,rd.price-rd.price_discount\n" +
                 "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
                 "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
         query += "WHERE '" + start + "' <= DATE(rp.invoice_date) AND DATE(rp.invoice_date) <= '" + end + "' AND pro.`name` = '" + productName + "'\n";
@@ -902,8 +699,112 @@ public class MySQL {
         return pairList;
     }
 
+
+    public static List<List<String>> getSaleTime(String start, String end) {
+        String query = "SELECT  DATE(rp.invoice_date),Count(*) AS SoLuongDonBan,  ";
+        query += "Sum(rp.total_price) AS TongTienHang, ";
+        query += "SUM(rp.total_discount) AS GiamGiaHD, ";
+        query += "SUM(rp.total) AS DoanhThu ";
+        query += "FROM receipt rp ";
+        query += "WHERE DATE(rp.invoice_date) BETWEEN '" + start + "' AND '" + end + "' ";
+        query += "GROUP BY  DATE(rp.invoice_date)";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getReceiptByDate(String date) {
+        String query = "SELECT rp.id, DATE_FORMAT(rp.invoice_date, '%H:%i'), rp.total_price, rp.total_discount, rp.total\n";
+        query += "FROM receipt rp \n";
+        query += "WHERE DATE('" + date + "') = DATE(rp.invoice_date) \n";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //
+    public static List<Pair<List<String>, List<List<String>>>> getSalesTime(String start, String end) {
+        List<Pair<List<String>, List<List<String>>>> pairList = new ArrayList<>();
+
+        for (List<String> stringListKey : getSaleTime(start, end)) {
+            List<List<String>> stringListValue = getReceiptByDate(stringListKey.get(0));
+            pairList.add(new Pair<>(stringListKey, stringListValue));
+        }
+
+        return pairList;
+    }
+
+
+    public static List<Pair<List<String>, List<List<String>>>> getSalesProfit(String start, String end) {
+        List<Pair<List<String>, List<List<String>>>> pairList = new ArrayList<>();
+
+        for (List<String> stringListKey : getProfitInvoice(start, end)) {
+            List<List<String>> stringListValue = getProfitPerInvoice(stringListKey.get(0));
+            pairList.add(new Pair<>(stringListKey, stringListValue));
+        }
+
+        return pairList;
+    }
+
+    public static List<List<String>> getProfitPerInvoice(String date) {
+        String query = "SELECT rp.id,DATE_FORMAT(rp.invoice_date, '%H:%i'), ";
+        query += "SUM(rp.total_price) AS TongTienHang, ";
+        query += "SUM(rp.total_discount) AS GiamGiaHD, ";
+        query += "SUM(rp.total) AS DoanhThu, ";
+        query += "SUM(rd.quantity * pro.capital_price) As TongGiaVon, ";
+        query += "SUM(rp.total) - SUM(rd.quantity * pro.capital_price) AS LoiNhuan ";
+        query += "FROM receipt rp JOIN receipt_detail rd on rp.id = rd.receipt_id JOIN product pro on pro.id = rd.product_id and pro.size = rd.size \n";
+        query += "WHERE DATE('" + date + "') = DATE(rp.invoice_date) \n";
+        query += "GROUP BY rp.id,DATE(rp.invoice_date)";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getProfitInvoice(String start, String end) {
+        String query = "SELECT DATE(rp.invoice_date), ";
+        query += "SUM(rp.total_price) AS TongTienHang, ";
+        query += "SUM(rp.total_discount) AS GiamGiaHD, ";
+        query += "SUM(rp.total) AS DoanhThu, ";
+        query += "SUM(rd.quantity * pro.capital_price) As TongGiaVon, ";
+        query += "SUM(rp.total) - SUM(rd.quantity * pro.capital_price) AS LoiNhuan ";
+        query += "FROM receipt rp JOIN receipt_detail rd on rp.id = rd.receipt_id JOIN product pro on pro.id = rd.product_id and pro.size = rd.size ";
+        query += "WHERE DATE(rp.invoice_date) BETWEEN '" + start + "' AND '" + end + "' ";
+        query += "GROUP BY DATE(rp.invoice_date)";
+
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getInvoiceDiscount(String start, String end) {
+        String query = "SELECT rp.id, DATE(rp.invoice_date), ";
+        query += "rp.total_price AS TongTienHang, ";
+        query += "rp.total_discount AS GiamGiaHD, ";
+        query += "CASE WHEN d.type = 0 THEN 'Giảm theo sản phẩm' ELSE 'Giảm theo hóa đơn' END AS LoaiGiamGia ";
+        query += "FROM receipt rp ";
+        query += "LEFT JOIN discount d ON rp.discount_id = d.id ";
+        query += "WHERE DATE(rp.invoice_date) BETWEEN '" + start + "' AND '" + end + "' ";
+        query += "AND rp.discount_id <> 0 ";
+        query += "AND rp.total_discount <> 0";
+
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void main(String[] args) {
-        for (Pair<List<String>, List<List<String>>> pair : getProductEndOfDay("2024-05-01", "2024-05-02")) {
+        for (Pair<List<String>, List<List<String>>> pair : getSalesProfit("2024-05-01", "2024-05-02")) {
             System.out.println(Arrays.toString(pair.getKey().toArray()));
             System.out.println(Arrays.toString(pair.getValue().toArray()));
         }
@@ -913,6 +814,44 @@ public class MySQL {
 //
 //        // In kết quả ra terminal
 //        printSaleCategory(saleCategories);
+    }
+    public static List<Pair<List<String>, List<List<String>>>> getSalesEndOFDay(String start, String end) {
+        List<Pair<List<String>, List<List<String>>>> pairList = new ArrayList<>();
+
+        for (List<String> stringListKey : getSalesStatistics(start, end)) {
+            List<List<String>> stringListValue = getSalesDay(stringListKey.get(0));
+            pairList.add(new Pair<>(stringListKey, stringListValue));
+        }
+
+        return pairList;
+    }
+    public static List<List<String>> getSalesStatistics(String start, String end) {
+        String query = "SELECT DATE(rp.invoice_date), SUM(rd.quantity), SUM(rp.total_price), SUM(rp.total), SUM(rp.total_discount) ";
+        query += "FROM receipt rp ";
+        query += "INNER JOIN receipt_detail rd ON rp.id = rd.receipt_id ";
+        query += "WHERE DATE(rp.invoice_date) BETWEEN '" + start + "' AND '" + end + "' ";
+        query += "GROUP BY DATE(rp.invoice_date) ";
+
+
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static List<List<String>> getSalesDay(String date) {
+        String query = "SELECT rp.id, DATE_FORMAT(rp.invoice_date, '%H:%i'), s.name, SUM(rd.quantity), SUM(rp.total_price), SUM(rp.total), SUM(rp.total_discount) ";
+        query += "FROM receipt rp ";
+        query += "INNER JOIN receipt_detail rd ON rp.id = rd.receipt_id ";
+        query += "INNER JOIN staff s ON rp.staff_id = s.id ";
+        query += "WHERE DATE(rp.invoice_date) = DATE('" + date + "') ";
+        query += "GROUP BY rp.id, s.name, DATE(rp.invoice_date)";
+
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void printSaleCategory(List<List<String>> saleCategories) {

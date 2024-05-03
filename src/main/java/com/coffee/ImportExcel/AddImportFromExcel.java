@@ -65,7 +65,7 @@ public class AddImportFromExcel {
     }
 
     private void process(List<Pair<Import_Note, List<Shipment>>> pair) {
-        int import_id = shipmentBLL.getAutoID(shipmentBLL.searchShipments());
+        int import_id = import_NoteBLL.getAutoID(import_NoteBLL.searchImport());
         int shipment_id = shipmentBLL.getAutoID(shipmentBLL.searchShipments());
         for (Pair<Import_Note, List<Shipment>> p : pair) {
             Import_Note import_note = p.getKey();

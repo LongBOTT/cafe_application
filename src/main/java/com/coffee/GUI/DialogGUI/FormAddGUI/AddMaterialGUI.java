@@ -67,7 +67,7 @@ public class AddMaterialGUI extends DialogForm {
                 listUnit.setFont((new Font("Public Sans", Font.PLAIN, 14)));
                 listUnit.setBackground(new Color(245, 246, 250));
 
-                String[] units = {"Chọn đơn vị", "kg", "g", "ml", "túi", "cái", "trái", "hạt"};
+                String[] units = {"Chọn đơn vị", "kg", "lít", "cái"};
 
                 for (String unit : units) {
                     listUnit.addItem(unit);
