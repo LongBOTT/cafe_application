@@ -658,16 +658,16 @@ public class MySQL {
 
 
     public static List<List<String>> getSaleProductEndOfDay(String start, String end) {
-        String query = "SELECT rd.product_id, pro.name, SUM(rd.quantity),  ";
+        String query = "SELECT pro.id, pro.name, SUM(rd.quantity),  ";
         query += "Sum(rd.price) AS GiaTriNiemYet, ";
         query += "SUM(rd.price_discount) AS DoanhThu, ";
         query += "SUM(rd.price_discount) - Sum(rd.price)  AS ChenhLech ";
         query += "FROM receipt_detail rd ";
         query += "JOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size ";
         query += "JOIN receipt rp ON rp.id = rd.receipt_id ";
-        query += "LEFT JOIN discount_detail dd ON rp.discount_id = dd.discount_id AND rd.product_id = dd.product_id AND rd.size = dd.Size ";
+        query += "LEFT JOIN discount_detail dd ON rp.discount_id = dd.discount_id AND rd.product_id = dd.product_id AND rd.size = dd.size ";
         query += "WHERE DATE(rp.invoice_date) BETWEEN '" + start + "' AND '" + end + "' ";
-        query += "GROUP BY rd.product_id, pro.name, rd.size";
+        query += "GROUP BY pro.id, pro.name";
 
         try {
             return executeQueryStatistic(query);
@@ -677,10 +677,11 @@ public class MySQL {
     }
 
     public static List<List<String>> getReceiptByProductEndOfDay(String productName, String start, String end) {
-        String query = "SELECT rp.id, DATE_FORMAT(rp.invoice_date, '%Y-%m-%d %H:%i'), rd.quantity, rd.price,rd.price_discount,rd.price-rd.price_discount\n" +
+        String query = "SELECT rp.id, DATE_FORMAT(rp.invoice_date, '%Y-%m-%d %H:%i'), SUM(rd.quantity), SUM(rd.price),Sum(rd.price_discount),Sum(rd.price-rd.price_discount)\n" +
                 "FROM receipt rp JOIN receipt_detail rd ON rp.id = rd.receipt_id\n" +
                 "\t\t\t\t\t\t\t\tJOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size\n";
         query += "WHERE '" + start + "' <= DATE(rp.invoice_date) AND DATE(rp.invoice_date) <= '" + end + "' AND pro.`name` = '" + productName + "'\n";
+        query += "GROUP BY rp.id";
         try {
             return executeQueryStatistic(query);
         } catch (SQLException | IOException e) {
