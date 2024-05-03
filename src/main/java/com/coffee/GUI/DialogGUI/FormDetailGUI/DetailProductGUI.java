@@ -229,8 +229,8 @@ public class DetailProductGUI extends DialogFormDetail_1 {
             if (recipe.getSize().equals(size)) {
                 Material material = materialBLL.findMaterialsBy(Map.of("id", recipe.getMaterial_id())).get(0);
                 String materialName = material.getName();
-                String materialPrice = VNString.currency(material.getUnit_price());
-                double materialPriceD = material.getUnit_price();
+                String materialPrice = VNString.currency(material.getUnit_price()/1000);
+                double materialPriceD = material.getUnit_price()/1000;
                 double totalAmount = materialPriceD * recipe.getQuantity();
                 Object[] rowData = {recipe.getMaterial_id(), materialName, recipe.getUnit(), materialPrice, recipe.getQuantity(), VNString.currency(totalAmount)};
                 model.addRow(rowData);
