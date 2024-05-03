@@ -753,11 +753,11 @@ public class MySQL {
 
     public static List<List<String>> getProfitPerInvoice(String date) {
         String query = "SELECT rp.id,DATE_FORMAT(rp.invoice_date, '%H:%i'), ";
-        query += "SUM(rp.total_price) AS TongTienHang, ";
-        query += "SUM(rp.total_discount) AS GiamGiaHD, ";
-        query += "SUM(rp.total) AS DoanhThu, ";
+        query += "SUM(rd.price) AS TongTienHang, ";
+        query += "SUM(rd.price) - SUM(rd.price_discount) AS GiamGiaHD, ";
+        query += "SUM(rd.price_discount) AS DoanhThu, ";
         query += "SUM(rd.quantity * pro.capital_price) As TongGiaVon, ";
-        query += "SUM(rp.total) - SUM(rd.quantity * pro.capital_price) AS LoiNhuan ";
+        query += "SUM(rd.price_discount) - SUM(rd.quantity * pro.capital_price) AS LoiNhuan ";
         query += "FROM receipt rp JOIN receipt_detail rd on rp.id = rd.receipt_id JOIN product pro on pro.id = rd.product_id and pro.size = rd.size \n";
         query += "WHERE DATE('" + date + "') = DATE(rp.invoice_date) \n";
         query += "GROUP BY rp.id,DATE(rp.invoice_date)";
