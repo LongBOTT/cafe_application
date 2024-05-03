@@ -71,7 +71,7 @@ public class EditMaterialGUI extends DialogForm {
                 listUnit.setPreferredSize(new Dimension(1000, 30));
                 listUnit.setFont((new Font("Public Sans", Font.PLAIN, 14)));
                 listUnit.setBackground(new Color(245, 246, 250));
-                String[] units = {"kg", "g", "ml", "túi", "cái", "hạt", "trái"};
+                String[] units = {"kg", "lít", "cái"};
 
                 for (String unit : units) {
                     listUnit.addItem(unit);

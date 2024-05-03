@@ -390,7 +390,7 @@ public class SaleGUI extends SalePanel {
                 }
             } else {
                 for (Receipt_Detail receipt_detail : receipt_details) {
-                    receipt_detail.setPrice_discount(receipt_detail.getPrice_discount());
+                    receipt_detail.setPrice_discount(receipt_detail.getPrice());
                 }
             }
 
