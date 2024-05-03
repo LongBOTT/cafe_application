@@ -482,7 +482,6 @@ public class StatisticEndOfTheDayGUI extends JPanel {
             jLabel.setFont(new Font("Inter", Font.PLAIN, 13));
             jLabel.setPreferredSize(LABEL_SIZE);
             jLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
             if (i == 0) {
                 if (!label.startsWith("HD")) {
                     int invoiceNumber = Integer.parseInt(label);
@@ -519,8 +518,8 @@ public class StatisticEndOfTheDayGUI extends JPanel {
                     }
                 });
             }
-            if (i == 1) {
-                jLabel.setPreferredSize(new Dimension(140, 50));
+            if (i == 2) {
+                jLabel.setPreferredSize(new Dimension(160, 50));
             }
             if (i == 3) {
                 String formattedQuantity = NumberFormat.getNumberInstance(Locale.US).format(new BigDecimal(label));
