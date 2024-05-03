@@ -3,12 +3,9 @@ package com.coffee.GUI.DialogGUI.FormAddGUI;
 
 import com.coffee.BLL.MaterialBLL;
 import com.coffee.BLL.ProductBLL;
-import com.coffee.BLL.RecipeBLL;
 import com.coffee.DTO.Material;
 import com.coffee.DTO.Product;
-import com.coffee.DTO.Recipe;
 import com.coffee.GUI.DialogGUI.DialogForm;
-import com.coffee.GUI.DialogGUI.DialogFormDetail_1;
 import com.coffee.GUI.HomeGUI;
 import com.coffee.GUI.SaleGUI;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
@@ -35,7 +32,6 @@ import java.nio.file.StandardCopyOption;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -264,9 +260,25 @@ public class AddProductGUI1 extends DialogForm {
         String capital_price = txtCapitalPrice.getText();
 
         Pair<Boolean, String> result;
+        result = productBLL.validateName(product_name);
+        if (!result.getKey()) {
+            error += result.getValue() + "\n";
+        }
+        result = productBLL.validateCategory(category);
+        if (!result.getKey()) {
+            error += result.getValue() + "\n";
+        }
         result = productBLL.validatePrice(price, "Giá bán");
         if (!result.getKey()) {
             error += result.getValue() + "\n";
+        }
+        List<Product> proList = productBLL.searchProducts("name = '" + product_name + "'", "deleted = 0");
+        if(!proList.isEmpty()){
+            error += "Sản phẩm đã tồn tại trong hệ thống\n";
+        }
+        List<Material> materialList = materialBLL.searchMaterials("name = '" + product_name + "'","sell = 1", "deleted = 0");
+        if(materialList.isEmpty()){
+            error += "Nguyên liệu này không tồn tại trong kho\n";
         }
 
         if (error.isEmpty()) {
@@ -311,8 +323,15 @@ public class AddProductGUI1 extends DialogForm {
     private List<DataSearch> search(String text) {
         List<DataSearch> list = new ArrayList<>();
 
-        List<Material> materials = materialBLL.findMaterialsBySell("name", text, true);
-        for (Material m : materials) {
+        List<Material> materials1 = materialBLL.findMaterialsBySell("name", text, true);
+        List<Material> materials2 = new ArrayList<>();
+        for (Material m : materials1) {
+              List<Product> products = productBLL.searchProducts("name = '" + m.getName()+"'");
+              if(products.isEmpty()){
+                  materials2.add(m);
+              }
+        }
+        for (Material m : materials2) {
             if (list.size() == 7) {
                 break;
             }

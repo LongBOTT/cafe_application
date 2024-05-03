@@ -10,6 +10,7 @@ import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
+import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
 
@@ -215,8 +216,8 @@ public class DetailProductGUI extends DialogFormDetail_1 {
                 double capital_price = product.getCapital_price();
                 txtNameProduct.setText(name);
                 txtCategory.setText(category);
-                txtPrice.setText(Double.toString(price));
-                txtCapitalPrice.setText(Double.toString(capital_price));
+                txtPrice.setText(VNString.currency(price));
+                txtCapitalPrice.setText(VNString.currency(capital_price));
                 loadRecipeBySize(size);
             }
         }
@@ -228,10 +229,10 @@ public class DetailProductGUI extends DialogFormDetail_1 {
             if (recipe.getSize().equals(size)) {
                 Material material = materialBLL.findMaterialsBy(Map.of("id", recipe.getMaterial_id())).get(0);
                 String materialName = material.getName();
-                String materialPrice = String.valueOf(material.getUnit_price());
+                String materialPrice = VNString.currency(material.getUnit_price());
                 double materialPriceD = material.getUnit_price();
                 double totalAmount = materialPriceD * recipe.getQuantity();
-                Object[] rowData = {recipe.getMaterial_id(), materialName, recipe.getUnit(), materialPrice, recipe.getQuantity(), totalAmount};
+                Object[] rowData = {recipe.getMaterial_id(), materialName, recipe.getUnit(), materialPrice, recipe.getQuantity(), VNString.currency(totalAmount)};
                 model.addRow(rowData);
             }
         }

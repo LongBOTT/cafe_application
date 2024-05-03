@@ -443,16 +443,23 @@ public class ProductGUI extends Layout3 {
         int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá sản phẩm?",
                 "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
         if (choice == 1) {
+            boolean check = true;
             for (Product product : products) {
                 Pair<Boolean, String> result = productBLL.deleteProduct(product);
-                if (result.getKey()) {
-                    JOptionPane.showMessageDialog(null, result.getValue(),
-                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                    refresh();
-                } else {
-                    JOptionPane.showMessageDialog(null, result.getValue(),
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                if(!result.getKey()){
+                    check = false;
+                    break;
                 }
+            }
+            if (check) {
+                JOptionPane.showMessageDialog(null, "Xoá sản phẩm thành công",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                refresh();
+                loadSaleGUI();
+            }
+            else{
+                JOptionPane.showMessageDialog(null, "Xoá sản phẩm thất bại",
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
             }
         }
 
