@@ -770,11 +770,11 @@ public class MySQL {
 
     public static List<List<String>> getProfitInvoice(String start, String end) {
         String query = "SELECT DATE(rp.invoice_date), ";
-        query += "SUM(rp.total_price) AS TongTienHang, ";
-        query += "SUM(rp.total_discount) AS GiamGiaHD, ";
-        query += "SUM(rp.total) AS DoanhThu, ";
+        query += "SUM(rd.price) AS TongTienHang, ";
+        query += "SUM(rd.price) - SUM(rd.price_discount) AS GiamGiaHD, ";
+        query += "SUM(rd.price_discount) AS DoanhThu, ";
         query += "SUM(rd.quantity * pro.capital_price) As TongGiaVon, ";
-        query += "SUM(rp.total) - SUM(rd.quantity * pro.capital_price) AS LoiNhuan ";
+        query += "SUM(rd.price_discount) - SUM(rd.quantity * pro.capital_price) AS LoiNhuan ";
         query += "FROM receipt rp JOIN receipt_detail rd on rp.id = rd.receipt_id JOIN product pro on pro.id = rd.product_id and pro.size = rd.size ";
         query += "WHERE DATE(rp.invoice_date) BETWEEN '" + start + "' AND '" + end + "' ";
         query += "GROUP BY DATE(rp.invoice_date)";
