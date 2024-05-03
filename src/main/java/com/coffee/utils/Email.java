@@ -1,6 +1,7 @@
 package com.coffee.utils;
 
 //import com.supermarket.main.Mini_supermarketManagement;
+
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -14,8 +15,9 @@ public class Email {
         int max = 999999;
         return Integer.toString((int) ((Math.random() * (max - min)) + min));
     }
+
     public static void sendOTP(String toEmail, String emailSubject, String emailBody) {
-        String email ="colong30082003@gmail.com";
+        String email = "colong30082003@gmail.com";
         String password = "thplhvvpcfrtkboj";
         String host = "smtp.gmail.com";
         String port = "587";
@@ -38,7 +40,7 @@ public class Email {
             message.setFrom(new InternetAddress(email));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
             message.setSubject(emailSubject, "utf-8");
-            message.setText(emailBody, "utf-8");
+            message.setContent(emailBody, "text/html; charset=utf-8");
             Transport.send(message);
             System.out.println("Email sent successfully.");
         } catch (MessagingException e) {

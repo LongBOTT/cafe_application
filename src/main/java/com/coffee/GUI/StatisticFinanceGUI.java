@@ -267,7 +267,7 @@ public class StatisticFinanceGUI extends JPanel {
                 list.add("0.0");
                 list.add("0.0");
                 list.add("0.0");
-                list.add("0.0");
+                list.add(String.valueOf(value2));
             }
 
             data.add(list);
@@ -310,7 +310,7 @@ public class StatisticFinanceGUI extends JPanel {
             panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(202, 202, 202)));
 
             JLabel label = new JLabel();
-            label.setFont(new Font("Inter", Font.PLAIN, 13));
+            label.setFont(new Font("Inter", Font.BOLD, 13));
             label.setPreferredSize(new Dimension(200, 50));
             panel.add(label);
             if (i == 1) {
@@ -326,7 +326,7 @@ public class StatisticFinanceGUI extends JPanel {
                 label.setText("Giá vốn sản phẩm (4)");
             }
             if (i == 5) {
-                label.setText("Lợi nhuận gộp về bán hàng (5 = 3-4)");
+                label.setText("Lợi nhuận gộp bán hàng (5 = 3-4)");
             }
             if (i == 6) {
                 label.setText("Chi phí (6)");
@@ -594,7 +594,7 @@ public class StatisticFinanceGUI extends JPanel {
                 list.add("0.0");
                 list.add("0.0");
                 list.add("0.0");
-                list.add("0.0");
+                list.add(String.valueOf(value2));
             }
 
             data.add(list);
@@ -637,7 +637,7 @@ public class StatisticFinanceGUI extends JPanel {
             panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(202, 202, 202)));
 
             JLabel label = new JLabel();
-            label.setFont(new Font("Inter", Font.PLAIN, 13));
+            label.setFont(new Font("Inter", Font.BOLD, 13));
             label.setPreferredSize(new Dimension(200, 50));
             panel.add(label);
             if (i == 1) {
@@ -653,7 +653,7 @@ public class StatisticFinanceGUI extends JPanel {
                 label.setText("Giá vốn sản phẩm (4)");
             }
             if (i == 5) {
-                label.setText("Lợi nhuận gộp về bán hàng (5 = 3-4)");
+                label.setText("Lợi nhuận gộp bán hàng (5 = 3-4)");
             }
             if (i == 6) {
                 label.setText("Chi phí (6)");
@@ -923,7 +923,7 @@ public class StatisticFinanceGUI extends JPanel {
                 list.add("0.0");
                 list.add("0.0");
                 list.add("0.0");
-                list.add("0.0");
+                list.add(String.valueOf(value2));
             }
 
             data.add(list);
@@ -966,7 +966,7 @@ public class StatisticFinanceGUI extends JPanel {
             panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(202, 202, 202)));
 
             JLabel label = new JLabel();
-            label.setFont(new Font("Inter", Font.PLAIN, 13));
+            label.setFont(new Font("Inter", Font.BOLD, 13));
             label.setPreferredSize(new Dimension(200, 50));
             panel.add(label);
             if (i == 1) {
@@ -982,7 +982,7 @@ public class StatisticFinanceGUI extends JPanel {
                 label.setText("Giá vốn sản phẩm (4)");
             }
             if (i == 5) {
-                label.setText("Lợi nhuận gộp về bán hàng (5 = 3-4)");
+                label.setText("Lợi nhuận gộp bán hàng (5 = 3-4)");
             }
             if (i == 6) {
                 label.setText("Chi phí (6)");

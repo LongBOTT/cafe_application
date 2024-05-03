@@ -11,6 +11,7 @@ import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.coffee.main.Cafe_Application;
+import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
 import raven.datetime.component.date.DateEvent;
@@ -26,8 +27,10 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -123,7 +126,7 @@ public class DetailMaterialGUI extends DialogFormDetail {
                 continue;
             }
             if (string.trim().equals("Giá Vốn")) {
-                textField.setText(String.valueOf(material.getUnit_price()));
+                textField.setText(VNString.currency(material.getUnit_price()));
                 contenttop.add(textField, "wrap");
             }
 
@@ -218,14 +221,12 @@ public class DetailMaterialGUI extends DialogFormDetail {
         if (datePicker.getDateSQL_Between() != null) {
             Date startDate = datePicker.getDateSQL_Between()[0];
             Date endDate = datePicker.getDateSQL_Between()[1];
+            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
             for (Shipment shipment : shipmentBLL.findShipmentsBy(Map.of("material_id", material.getId()))) {
                 Import_Note importNote = new Import_NoteBLL().findImportBy(Map.of("id", shipment.getImport_id())).get(0);
 
-                LocalDateTime startDateTime = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-                LocalDateTime endDateTime = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-
-
-                if (importNote.getReceived_date().isAfter(startDateTime) && importNote.getReceived_date().isBefore(endDateTime)) {
+                if (importNote.getReceived_date().toLocalDate().isAfter(LocalDate.parse(startDate.toString(), myFormatObj)) && importNote.getReceived_date().toLocalDate().isBefore(LocalDate.parse(endDate.toString(), myFormatObj))) {
                     shipmentList.add(shipment);
                 }
             }

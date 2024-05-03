@@ -169,15 +169,15 @@ public class StaffBLL extends Manager<Staff> {
             return new Pair<>(true, "Số căn cước công dân của nhân viên đã tồn tại.");
         }
 
-        staffs = staffDAL.searchStaffs("phone = '" + newStaff.getPhone() + "'", "deleted = 0");
-        if (!staffs.isEmpty()) {
-            return new Pair<>(true, "Số điện thoại nhân viên đã tồn tại.");
-        }
-
-        staffs = staffDAL.searchStaffs("email = '" + newStaff.getEmail() + "'", "deleted = 0");
-        if (!staffs.isEmpty()) {
-            return new Pair<>(true, "Email nhân viên đã tồn tại.");
-        }
+//        staffs = staffDAL.searchStaffs("phone = '" + newStaff.getPhone() + "'", "deleted = 0");
+//        if (!staffs.isEmpty()) {
+//            return new Pair<>(true, "Số điện thoại nhân viên đã tồn tại.");
+//        }
+//
+//        staffs = staffDAL.searchStaffs("email = '" + newStaff.getEmail() + "'", "deleted = 0");
+//        if (!staffs.isEmpty()) {
+//            return new Pair<>(true, "Email nhân viên đã tồn tại.");
+//        }
         return new Pair<>(false, "");
     }
 

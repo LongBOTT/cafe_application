@@ -49,8 +49,8 @@ public class MySQL {
         try (Statement statement = connection.createStatement()) {
             String formattedQuery = formatQuery(query, values);
             numOfRows = statement.executeUpdate(formattedQuery);
-//            System.out.println(formattedQuery);
-//            System.out.println();
+            System.out.println(formattedQuery);
+            System.out.println();
         }
         Database.closeConnection(connection);
         return numOfRows;
@@ -816,6 +816,7 @@ public class MySQL {
 //        // In kết quả ra terminal
 //        printSaleCategory(saleCategories);
     }
+
     public static List<Pair<List<String>, List<List<String>>>> getSalesEndOFDay(String start, String end) {
         List<Pair<List<String>, List<List<String>>>> pairList = new ArrayList<>();
 
@@ -826,6 +827,7 @@ public class MySQL {
 
         return pairList;
     }
+
     public static List<List<String>> getSalesStatistics(String start, String end) {
         String query = "SELECT DATE(rp.invoice_date), SUM(rd.quantity), SUM(rd.price), SUM(rd.price_discount), SUM(rd.price) - SUM(rd.price_discount) ";
         query += "FROM receipt rp ";
@@ -840,6 +842,7 @@ public class MySQL {
             throw new RuntimeException(e);
         }
     }
+
     public static List<List<String>> getSalesDay(String date) {
         String query = "SELECT rp.id, DATE_FORMAT(rp.invoice_date, '%H:%i'), s.name, SUM(rd.quantity), SUM(rd.price), SUM(rd.price_discount), SUM(rd.price)- SUM(rd.price_discount) ";
         query += "FROM receipt rp ";
