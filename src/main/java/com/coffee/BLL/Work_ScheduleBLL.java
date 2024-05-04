@@ -47,10 +47,13 @@ public class Work_ScheduleBLL extends Manager<Work_Schedule> {
     }
 
     public Pair<Boolean, String> updateTimekeepng(int staff_id, java.util.Date date, int shift, String checkin, String checkout) {
-        if (work_scheduleDAL.updateChamCong(staff_id, date, shift, checkin, checkout) == 0)
-            return new Pair<>(false, "Cập nhật chấm công thất bại");
+        if (Objects.equals(searchWork_schedules("staff_id = " + staff_id, "date = '" + date + "'", "shift = " + shift).get(0).getNotice(), "Không")) {
+            if (work_scheduleDAL.updateChamCong(staff_id, date, shift, checkin, checkout) == 0)
+                return new Pair<>(false, "Cập nhật chấm công thất bại");
 
-        return new Pair<>(true, "Cập nhật chấm công thành công .");
+            return new Pair<>(true, "Cập nhật chấm công thành công .");
+        }
+        return new Pair<>(false, "Cập nhật chấm công thất bại");
     }
 
     public Pair<Boolean, String> deleteWork_schedule(Work_Schedule work_schedule) {

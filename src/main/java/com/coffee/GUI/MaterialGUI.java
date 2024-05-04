@@ -8,6 +8,7 @@ import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailMaterialGUI;
 import com.coffee.GUI.DialogGUI.FormEditGUI.EditMaterialGUI;
 import com.coffee.GUI.components.*;
 
+import com.coffee.ImportExcel.AddImportFromExcel;
 import com.coffee.ImportExcel.AddMaterialFromExcel;
 import com.coffee.utils.PDF;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -274,6 +275,43 @@ public class MaterialGUI extends Layout2 {
                 }
             });
         }
+
+        if (functions.stream().anyMatch(f -> f.getName().equals("excel"))) {
+            RoundedPanel roundedPanel = new RoundedPanel();
+            roundedPanel.setLayout(new GridBagLayout());
+            roundedPanel.setPreferredSize(new Dimension(130, 40));
+            roundedPanel.setBackground(new Color(1, 120, 220));
+            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            roundedPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    File file = chooseExcelFile(null);
+                    if (file != null) {
+                        Pair<Boolean, String> result;
+                        try {
+                            result = new AddMaterialFromExcel().addMaterialFromExcel(file);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        if (!result.getKey()) {
+                            JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Thêm nguyên liệu thành công",
+                                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            refresh();
+                        }
+                    }
+                }
+            });
+            FunctionPanel.add(roundedPanel);
+
+            JLabel panel = new JLabel("Nhập Excel");
+            panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+            panel.setForeground(Color.white);
+            panel.setIcon(new FlatSVGIcon("icon/import.svg"));
+            roundedPanel.add(panel);
+        }
+
         if (functions.stream().anyMatch(f -> f.getName().equals("pdf"))) {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new GridBagLayout());

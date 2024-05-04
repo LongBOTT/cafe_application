@@ -60,13 +60,13 @@ public class Cafe_Application {
 
 ///       tao du lieu random cho hoa don
 
-
+//
 //        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//        LocalDateTime start = LocalDateTime.of(2023, 1, 1, 0, 0);
-//        LocalDateTime end = LocalDateTime.of(2024, 5, 7, 0, 0);
+//        LocalDateTime start = LocalDateTime.of(2024, 2, 6, 0, 0);
+//        LocalDateTime end = LocalDateTime.of(2024, 5, 6, 0, 0);
 //
 //        List<Product> productList = new ProductBLL().searchProducts("deleted = 0");
-//        int id = 1;
+//        int id = 4003;
 //        while (!start.equals(end)) {
 //            for (int j = 0; j < 10; j++) {
 //                Random random = new Random();
@@ -103,7 +103,7 @@ public class Cafe_Application {
 //                    receipt_detail.setQuantity(quantity);
 //                    receipt_detail.setPrice(quantity * product.getPrice());
 //                    receipt_detail.setNotice(" ");
-//
+//                    receipt_detail.setPrice_discount(receipt_detail.getPrice());
 //                    total += receipt_detail.getPrice();
 //                    receipt_details.add(receipt_detail);
 //                }
@@ -136,8 +136,8 @@ public class Cafe_Application {
 //        }
 
         // tao du lieu nhap
-//        LocalDate start = LocalDate.of(2023, 1, 7);
-//        LocalDate end = LocalDate.of(2024, 6, 7);
+//        LocalDate start = LocalDate.of(2023, 1, 6);
+//        LocalDate end = LocalDate.of(2024, 6, 6);
 //
 //        List<Material> materialList = new MaterialBLL().searchMaterials("deleted = 0");
 //        List<Supplier> supplierList = new SupplierBLL().searchSuppliers("deleted = 0");
@@ -149,7 +149,7 @@ public class Cafe_Application {
 //            for (int j = 0; j < 5; j++) {
 //                Random random = new Random();
 //
-//                Date received_date = java.sql.Date.valueOf(start);
+////                Date received_date = java.sql.Date.valueOf(start);
 //
 //                List<Material> randomMaterials = new ArrayList<>();
 //                for (int i = 0; i < 5; i++) {
@@ -162,7 +162,9 @@ public class Cafe_Application {
 //                }
 //
 //                int staffId = 4;
-//                Import_Note importNote = new Import_Note(id, staffId, new BigDecimal(0), received_date);
+//
+//                LocalDateTime invoice_date = start.atStartOfDay();
+//                Import_Note importNote = new Import_Note(id, staffId, new BigDecimal(0), invoice_date);
 //
 //                double total = 0;
 //                List<Shipment> shipmentList = new ArrayList<>();

@@ -2,8 +2,10 @@ package com.coffee.GUI.DialogGUI.FormAddGUI;
 
 
 import com.coffee.BLL.Leave_Of_Absence_FormBLL;
+import com.coffee.BLL.Work_ScheduleBLL;
 import com.coffee.DTO.Leave_Of_Absence_Form;
 import com.coffee.DTO.Staff;
+import com.coffee.DTO.Work_Schedule;
 import com.coffee.GUI.Leave_Of_Absence_FormGUI;
 import com.coffee.GUI.MaterialGUI;
 import com.coffee.GUI.components.DatePicker;
@@ -204,7 +206,7 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
         }
 
         if (datePicker.getDateSQL_Single().before(java.sql.Date.valueOf(LocalDate.now()))) {
-            JOptionPane.showMessageDialog(null, "Ngày nghỉ không được trước ngày hiện tại.",
+            JOptionPane.showMessageDialog(null, "Không được tạo đơn nghỉ phép trước ngày hiện tại.",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -241,6 +243,17 @@ public class AddLeave_Of_Absence_FormGUI extends JDialog {
         shifts = String.join(", ", string);
 
         Leave_Of_Absence_Form leaveOfAbsenceForm = new Leave_Of_Absence_Form(id, staff_id, date, date_off, shifts, reason, 0);
+
+        String[] shiftsIntegers = leaveOfAbsenceForm.getShifts().split(", ");
+        for (String s : shiftsIntegers) {
+            List<Work_Schedule> work_schedules = new Work_ScheduleBLL().searchWork_schedules("staff_id = " + leaveOfAbsenceForm.getStaff_id(), "date ='" + leaveOfAbsenceForm.getDate_off() + "'", "shift = " + s);
+            if (work_schedules.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Nhân viên không có lịch làm việc vào ngày " + leaveOfAbsenceForm.getDate_off() + ", ca " + s,
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+        }
 
         result = leaveOfAbsenceFormBLL.addLeave_Of_Absence_Form(leaveOfAbsenceForm);
 
