@@ -1,11 +1,8 @@
 package com.coffee.ImportExcel;
 
-import com.coffee.BLL.MaterialBLL;
-import com.coffee.BLL.ProductBLL;
-import com.coffee.BLL.RecipeBLL;
-import com.coffee.DTO.Material;
-import com.coffee.DTO.Product;
-import com.coffee.DTO.Recipe;
+import com.coffee.BLL.*;
+import com.coffee.DTO.*;
+import com.coffee.GUI.HomeGUI;
 import javafx.util.Pair;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -13,39 +10,37 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class AddExportFromExcel {
 
-    private final ProductBLL productBLL = new ProductBLL();
-    private final RecipeBLL recipeBLL = new RecipeBLL();
     private final MaterialBLL materialBLL = new MaterialBLL();
-    public Pair<Boolean, String> AddProductFromExcell(File file) throws IOException {
-        List<Product> products;
-        List<Recipe> recipes;
+
+    private final Export_DetailBLL export_detailBLL = new Export_DetailBLL();
+    private ShipmentBLL shipmentBLL = new ShipmentBLL();
+    private Export_NoteBLL export_NoteBLL = new Export_NoteBLL();
+
+    public Pair<Boolean, String> addExportFromExcel(File file) throws IOException {
+        List<Export_Detail> exportDetailList;
         StringBuilder errorAll = new StringBuilder();
-        try (FileInputStream fis = new FileInputStream(file);
-             Workbook workbook = new XSSFWorkbook(fis)) {
+        try (FileInputStream fis = new FileInputStream(file); Workbook workbook = new XSSFWorkbook(fis)) {
 
             Sheet sheet1 = workbook.getSheetAt(0);
-            Sheet sheet2 = workbook.getSheetAt(1);
 
-            Pair<List<Product>, String> productsResult = reeadProductFromExcel(sheet1);
-            products = productsResult.getKey();
-            errorAll.append(productsResult.getValue());
+            Pair<List<Export_Detail>, String> export_detailResult = readExportDetailFromExcel(sheet1);
+            exportDetailList = export_detailResult.getKey();
+            errorAll.append(export_detailResult.getValue());
 
-            Pair<List<Recipe>, String> recipesResult = readRecipeFromExcel(sheet2);
-            recipes = recipesResult.getKey();
-            errorAll.append(recipesResult.getValue());
-
-            List<Pair<Product, List<Recipe>>> productDatas = new ArrayList<>();
             if (errorAll.isEmpty()) {
-                productDatas = processAndValidateData(products, recipes, errorAll);
-            }
-
-            // Thêm dữ liệu vào cơ sở dữ liệu nếu không có lỗi
-            if (errorAll.isEmpty()) {
-                addToDatabase(productDatas);
+                List<Pair<Export_Note, List<Export_Detail>>> pair = createExportNoteAndExportDetail(exportDetailList);
+                process(pair);
+                System.out.println(pair);
+                addTodatabase(pair);
             } else {
                 return new Pair<>(false, errorAll.toString());
             }
@@ -57,76 +52,32 @@ public class AddExportFromExcel {
 
     }
 
-    private List<Pair<Product, List<Recipe>>> processAndValidateData(List<Product> products, List<Recipe> recipes, StringBuilder errorAll) {
-        List<Pair<Product, List<Recipe>>> productDatas = new ArrayList<>();
-        int id = productBLL.getAutoID(productBLL.searchProducts());
-
-        // Lọc và cập nhật id cho các công thức theo product
-        for (Product product : products) {
-            List<Recipe> recipes_of_product = new ArrayList<>();
-
-            if (!product.getSize().equals("Không")) {
-                for (int i = 0; i < recipes.size(); i++) {
-                    if (recipes.get(i).getProduct_id() == product.getId()) {
-                        recipes.get(i).setProduct_id(id);
-                        recipes_of_product.add(recipes.get(i));
-                        recipes.remove(i);
-                        i--;
-                    }
-                }
-
-                // Kiểm tra xem product có nguyên liệu thành phần hay không
-                if (recipes_of_product.isEmpty()) {
-                    errorAll.append("Mã sản phẩm ").append(product.getId()).append(" chưa có nguyên liệu thành phần.\n");
-                }
-                else{
-                    // nếu có nguyên liệu thành phần thì update giá vốn của sản phẩm lại vì lúc đầu trong file excel ta nhập tạm là 0
-                    Double capital_price =  UpdateCapital_Price(recipes_of_product);
-                    product.setCapital_price(capital_price);
-                }
-
+    private void addTodatabase(List<Pair<Export_Note, List<Export_Detail>>> pair) {
+        for (Pair<Export_Note, List<Export_Detail>> p : pair) {
+            Export_Note export_note = p.getKey();
+            List<Export_Detail> export_details = p.getValue();
+            export_NoteBLL.addExport_Note(export_note);
+            for (Export_Detail export_detail : export_details) {
+                export_detailBLL.addExport_Detail(export_detail);
             }
-            product.setId(id);
-            id += 1;
-
-            productDatas.add(new Pair<>(product, recipes_of_product));
-        }
-
-        // Kiểm tra xem có nguyên liệu thành phần nào mà  không có product_id tương ứng với product_id bên sheet1 không
-        if (!recipes.isEmpty()) {
-            recipes.forEach(recipe -> errorAll.append("Mã sản phẩm").append(recipe.getProduct_id()).append(" không tồn tại trong sheet sản phẩm .\n"));
-
-        }
-        return productDatas;
-    }
-    private Double UpdateCapital_Price( List<Recipe> recipes_of_product){
-        double product_price = 0.0;
-        for(Recipe recipe : recipes_of_product){
-            Material material = materialBLL.searchMaterials("id  ='" +  recipe.getMaterial_id() + "'").get(0);
-            double material_price = material.getUnit_price();
-            double quantity = recipe.getQuantity();
-            double price_temp = material_price*quantity;
-            product_price+=price_temp;
-        }
-        return product_price;
-    }
-    private void addToDatabase(List<Pair<Product, List<Recipe>>> productsData) {
-        // Duyệt qua danh sách sản phẩm và công thức của từng sản phẩm để thêm vào database
-        for (Pair<Product, List<Recipe>> productData : productsData) {
-            Product product = productData.getKey();
-            List<Recipe> recipe_of_product = productData.getValue();
-
-            productBLL.addProduct(product);
-
-            if (!recipe_of_product.isEmpty())
-                for (Recipe recipe : recipe_of_product)
-                    recipeBLL.addRecipe(recipe);
-
         }
     }
 
-    private Pair<List<Product>, String> reeadProductFromExcel(Sheet sheet) {
-        List<Product> products = new ArrayList<>();
+
+
+    private BigDecimal UpdateTotal(List<Export_Detail> export_details_of_export) {
+        BigDecimal total = BigDecimal.valueOf(0.0);
+        for (Export_Detail export_detail : export_details_of_export) {
+            Shipment shipment = shipmentBLL.searchShipments("id = " + export_detail.getShipment_id()).get(0);
+            System.out.println("Danh sách lô hàng: " + shipment);
+            Material material = materialBLL.searchMaterials("id  =" + shipment.getMaterial_id()).get(0);
+            total = total.add(BigDecimal.valueOf(material.getUnit_price() * export_detail.getQuantity()));
+        }
+        return total;
+    }
+
+    private Pair<List<Export_Detail>, String> readExportDetailFromExcel(Sheet sheet) {
+        List<Export_Detail> exportDetailList = new ArrayList<>();
         StringBuilder errorAll = new StringBuilder();
 
         Iterator<Row> iterator = sheet.iterator();
@@ -135,189 +86,122 @@ public class AddExportFromExcel {
             iterator.next(); // Bỏ qua dòng tiêu đề
         }
 
+        // duyệt và kiểm tra từng dòng trong file để tạo ra list shipment
         while (iterator.hasNext()) {
             Row currentRow = iterator.next();
             if (currentRow.getPhysicalNumberOfCells() > 0) {
                 int rowNum = currentRow.getRowNum() + 1; // Số dòng bắt đầu từ 1
                 StringBuilder errorRow = new StringBuilder();
-                Map<String, Object> rowData = processProductRowData(currentRow);
-
-                validateAttributeProduct(rowData, errorRow);
+                Map<String, Object> rowData = readExportDetailRowData(currentRow);
+                validateAttributeExportDetail(rowData, errorRow);
+                // nếu sau khi qua hàm validateAttributes mà errorRow vẫn rỗng
+                // thì tức là không có lỗi về định dạng đầu vào thì sẽ tạo đối tượng  và và thêm vào list
                 if (errorRow.isEmpty()) {
-                    Product product = createProduct(rowData);
-                    products.add(product);
+                    Export_Detail export_detail = createExportDetail(rowData);
+                    exportDetailList.add(export_detail);
                 } else {
-                    if(errorAll.isEmpty())
-                        errorAll.append("Lỗi ở sheet Sản phẩm ").append(":\n").append(" - Dòng").append(rowNum).append(":\n").append(errorRow).append("\n");
-                    else
-                        errorAll.append(" - Dòng").append(rowNum).append(":\n").append(errorRow).append("\n");
+                    errorAll.append(" - Dòng").append(rowNum).append(":\n").append(errorRow).append("\n");
                 }
             }
         }
+
+        // nếu tất cả các dòng đều không có lỗi thì check lô hàng có bị trùng nhau không
         if (errorAll.isEmpty()) {
-            return new Pair<>(products, "");
+            checkForDuplicates(exportDetailList, errorAll);
         }
-        return new Pair<>(products, errorAll.toString());
+        if (errorAll.isEmpty()) {
+            return new Pair<>(exportDetailList, "");
+        }
+        return new Pair<>(exportDetailList, errorAll.toString());
+    }
+    private void process(List<Pair<Export_Note, List<Export_Detail>>> pair) {
+        int export_id = export_NoteBLL.getAutoID(export_NoteBLL.searchExport_Note());
+        for (Pair<Export_Note, List<Export_Detail>> p : pair) {
+            Export_Note export_note = p.getKey();
+            export_note.setId(export_id++);
+            List<Export_Detail> export_details = p.getValue();
+            BigDecimal total = UpdateTotal(export_details);
+            export_note.setTotal(total);
+        for(Export_Detail export_detail : export_details)
+            export_detail.setExport_id(export_note.getId());
+        }
+    }
+    private List<Pair<Export_Note, List<Export_Detail>>> createExportNoteAndExportDetail(List<Export_Detail> exportDetailList) {
+        List<Pair<Export_Note, List<Export_Detail>>> pair = new ArrayList<>();
+        List<Export_Note> export_notes = create_ListExportNote_from_ListExportDetail(exportDetailList);
+        for (Export_Note export_note : export_notes) {
+            List<Export_Detail> export_detail_of_export_note = new ArrayList<>();
+            for (Export_Detail export_detail : exportDetailList)
+                if (export_detail.getExport_id() == export_note.getId())
+                    export_detail_of_export_note.add(export_detail);
+            pair.add(new Pair<>(export_note, export_detail_of_export_note));
+        }
+        return pair;
     }
 
-    private Map<String, Object> processProductRowData(Row row) {
+    private Export_Detail createExportDetail(Map<String, Object> rowData) {
+        Export_Detail exportDetail = new Export_Detail();
+        exportDetail.setExport_id((int) rowData.get("export_id"));
+        exportDetail.setShipment_id((int) rowData.get("shipment_id"));
+        exportDetail.setQuantity((int) rowData.get("quantity"));
+        exportDetail.setReason((String) rowData.get("Reason"));
+        return exportDetail;
+    }
+
+    public List<Integer> getUniqueExportID(List<Export_Detail> export_details) {
+        Set<Integer> uniqueExportID = new HashSet<>();
+        for (Export_Detail export_detail: export_details) {
+            uniqueExportID.add(export_detail.getExport_id());
+        }
+        return new ArrayList<>(uniqueExportID);
+    }
+
+    private List<Export_Note> create_ListExportNote_from_ListExportDetail(List<Export_Detail> export_details) {
+        List<Integer> uniqueExportList = getUniqueExportID(export_details);
+        List<Export_Note> export_notes = new ArrayList<>();
+        for (Integer i : uniqueExportList) {
+            Export_Note export_note = new Export_Note();
+            export_note.setId(i);
+            export_note.setStaff_id((HomeGUI.staff.getId()));
+            export_note.setTotal(BigDecimal.valueOf(0));
+            export_note.setInvoice_date(java.sql.Date.valueOf(LocalDate.now()));
+            export_notes.add(export_note);
+        }
+
+        return export_notes;
+    }
+
+
+    private Map<String, Object> readExportDetailRowData(Row currentRow) {
         Map<String, Object> rowData = new HashMap<>();
-        for (Cell cell : row) {
-            int columnIndex = cell.getColumnIndex() + 1; // Số cột bắt đầu từ 1
+        for (Cell cell : currentRow) {
+            int columnIndex = cell.getColumnIndex() + 1;
 
             switch (columnIndex) {
-                case 1: // ID
+                case 1: // mã phiếu xuất
                     if (cell.getCellType() == CellType.NUMERIC) {
-                        rowData.put("id", (int) cell.getNumericCellValue());
+                        rowData.put("export_id", (int) cell.getNumericCellValue());
                     }
                     break;
-                case 2: // Name
-                    if (cell.getCellType() == CellType.STRING) {
-                        rowData.put("name", cell.getStringCellValue());
-                    }
-                    break;
-                case 3: // Category
-                    if (cell.getCellType() == CellType.STRING) {
-                        rowData.put("category", cell.getStringCellValue());
-                    }
-                    break;
-                case 4: // Size
-                    if (cell.getCellType() == CellType.STRING) {
-                        rowData.put("size", cell.getStringCellValue());
-                    }
-                    break;
-                case 5: //Giá vốn
+                case 2: // mã lô
                     if (cell.getCellType() == CellType.NUMERIC) {
-                        rowData.put("capital_price", cell.getNumericCellValue());
-                    } else if (cell.getCellType() == CellType.BLANK) {
-                        rowData.put("capital_price", 0);
+                        rowData.put("shipment_id", (int) cell.getNumericCellValue());
                     }
                     break;
-                case 6: //Giá bán
-                    if (cell.getCellType() == CellType.NUMERIC) {
-                        rowData.put("price", cell.getNumericCellValue());
-                    }
-                    break;
-                case 7: //Image
-                    if (cell.getCellType() == CellType.STRING) {
-                        rowData.put("image", cell.getStringCellValue());
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        return rowData;
-    }
-
-    private void validateAttributeProduct(Map<String, Object> rowData, StringBuilder errorRow) {
-        if (!rowData.containsKey("id") || rowData.get("id") == null) {
-            errorRow.append("Mã sản phẩm không hợp lệ.\n");
-        }
-
-        if (!rowData.containsKey("name") || rowData.get("name") == null || ((String) rowData.get("name")).isEmpty()) {
-            errorRow.append("Tên sản phẩm không hợp lệ.\n");
-        }
-        if (!rowData.containsKey("category") || rowData.get("category") == null || ((String) rowData.get("category")).isEmpty()) {
-            errorRow.append("Thể loại không hợp lệ.\n");
-        }
-
-        if (!rowData.containsKey("size") || rowData.get("size") == null)
-            errorRow.append("Định dạng của cột size phải là kiểu chuỗi\n");
-        else {
-            String size = (String) rowData.get("size");
-            List<String> validSizes = Arrays.asList("S", "M", "L","Không");
-            if (!validSizes.contains(size) ) {
-                errorRow.append("Size phải là S, M, L hoặc Không .\n");
-            }
-        }
-
-        if (!rowData.containsKey("price") || rowData.get("price") == null) {
-            errorRow.append("Giá bán không hợp lệ.\n");
-        }
-
-        //check xem sản phẩm có có tồn tại không
-        if(errorRow.isEmpty()){
-            String name = (String) rowData.get("name");
-            String size = (String) rowData.get("size");
-            List<Product> products = productBLL.searchProducts("name = '" + name + "'", "size = '" + size + "'");
-            if (!products.isEmpty()) {
-                errorRow.append("Sản phẩm đã tồn tại.");
-            }
-        }
-
-    }
-
-    private Product createProduct(Map<String, Object> rowData) {
-        Integer id = (Integer) rowData.get("id");
-        String name = (String) rowData.get("name");
-        String size = (String) rowData.get("size");
-        String category = (String) rowData.get("category");
-        Double capital_price = (Double) rowData.get("capital_price");
-        Double price = (Double) rowData.get("price");
-        String image = (String) rowData.get("image");
-
-        return new Product(id, name, size, category, capital_price, price, image, false);
-    }
-
-
-    private Pair<List<Recipe>, String> readRecipeFromExcel(Sheet sheet) {
-        List<Recipe> recipes = new ArrayList<>();
-        StringBuilder errorAll = new StringBuilder();
-
-        // Bỏ qua dòng tiêu đề
-        Iterator<Row> iterator = sheet.iterator();
-        if (iterator.hasNext()) {
-            iterator.next();
-        }
-        int rowNum = 1;
-        while (iterator.hasNext()) {
-            Row currentRow = iterator.next();
-            rowNum++;
-
-            Map<String, Object> rowData = processRecipeRowData(currentRow);
-            StringBuilder errorRow = new StringBuilder();
-
-            validateAttributesRecipe(rowData, errorRow);
-
-            if (errorRow.isEmpty()) {
-                Recipe recipe = createRecipe(rowData);
-                recipes.add(recipe);
-            } else {
-                errorAll.append("Lỗi ở Sheet chi tiết giảm giá ").append(":\n Dòng").append(rowNum).append(":\n").append(errorRow).append("\n");
-            }
-        }
-
-        // kiểm tra xem có nguyện liệu nào được thêm 2 lần với cùng 1 sản phẩm không
-        checkForDuplicates(recipes,errorAll);
-
-        return new Pair<>(recipes, errorAll.toString());
-    }
-
-    private Map<String, Object> processRecipeRowData(Row row) {
-        Map<String, Object> rowData = new HashMap<>();
-        for (Cell cell : row) {
-            int columnIndex = cell.getColumnIndex() + 1; // Số cột bắt đầu từ 1
-
-            switch (columnIndex) {
-                case 1: // product_id
-                    if (cell.getCellType() == CellType.NUMERIC) {
-                        rowData.put("product_id", (int) cell.getNumericCellValue());
-                    }
-                    break;
-                case 2: // material_id
+                case 3: // tên nguyên liệu
                     if (cell.getCellType() == CellType.STRING) {
                         rowData.put("material_name", cell.getStringCellValue());
                     }
                     break;
-                case 3: //size
-                    if (cell.getCellType() == CellType.STRING) {
-                        rowData.put("size", cell.getStringCellValue());
+
+                case 4: // số lượng
+                    if (cell.getCellType() == CellType.NUMERIC) {
+                        rowData.put("quantity", (int) cell.getNumericCellValue());
                     }
                     break;
-                case 4: // quantity
-                    if (cell.getCellType() == CellType.NUMERIC) {
-                        rowData.put("quantity", cell.getNumericCellValue());
+                case 5: // lý do
+                    if (cell.getCellType() == CellType.STRING) {
+                        rowData.put("Reason", cell.getStringCellValue());
                     }
                     break;
 
@@ -325,73 +209,80 @@ public class AddExportFromExcel {
                     break;
             }
         }
+
         return rowData;
     }
 
-    private void validateAttributesRecipe(Map<String, Object> rowData, StringBuilder errorRow) {
-        if (!rowData.containsKey("product_id") || rowData.get("product_id") == null)
-            errorRow.append("Mã sản phẩm không hợp lệ.\n");
-
-        if (!rowData.containsKey("material_name") || rowData.get("material_name") == null || ((String) rowData.get("material_name")).isEmpty()) {
-            errorRow.append("Tên nguyên liệu không hợp lệ.\n");
-        } else {
+    private void validateAttributeExportDetail(Map<String, Object> rowData, StringBuilder errorRow) {
+        if (!rowData.containsKey("export_id") || rowData.get("export_id") == null) {
+            errorRow.append("Mã phiếu xuất bắt buộc phải là số nguyên.\n");
+        }
+        if (!rowData.containsKey("shipment_id") || rowData.get("shipment_id") == null) {
+            errorRow.append("Mã lô bắt buộc phải là số nguyên.\n");
+        }
+        if (!rowData.containsKey("material_name") || rowData.get("material_name") == null) {
+            errorRow.append("Tên nguyên liệu bắt buộc phải là kiểu chuỗi và không được để trống .\n");
+        }
+        if (!rowData.containsKey("quantity") || rowData.get("quantity") == null) {
+            errorRow.append("Số lượng bắt buộc phải là số nguyên.\n");
+        }
+        if (!rowData.containsKey("Reason") || rowData.get("Reason") == null) {
+            errorRow.append("Lý do bắt buộc phải là kiểu chuỗi và không được để trống .\n");
+        }
+        if (errorRow.isEmpty()) {
+            int shipment_id = (int) rowData.get("shipment_id");
+            List<Shipment> shipments = shipmentBLL.searchShipments("id = " + shipment_id);
+            if (shipments.isEmpty())
+                errorRow.append("Mã lô hàng không tồn tại trong hệ thống .\n");
+        }
+        if (errorRow.isEmpty()) {
             String material_name = (String) rowData.get("material_name");
-
-            List<Material> materials = new MaterialBLL().searchMaterials("name  ='" + material_name + "'");
-            if (materials.isEmpty()) errorRow.append("Tên nguyên liệu không tồn tại trong hệ thống.\n");
-            else { // nếu tìm thấy tên nguyên liệu thì tạo  id và đơn vị của nguyên liệu đó
-                rowData.put("material_id", materials.get(0).getId());
-                rowData.put("unit", materials.get(0).getUnit());
-            }
-
-        }
-
-        if (!rowData.containsKey("size") || rowData.get("size") == null)
-            errorRow.append("Định dạng của cột size phải là kiểu chuỗi\n");
-        else {
-            String size = (String) rowData.get("size");
-            List<String> validSizes = Arrays.asList("S", "M", "L");
-
-            if (!validSizes.contains(size)) {
-                errorRow.append("Size phải là S, M, L.\n");
+            List<Material> materials = materialBLL.searchMaterials("name = '" + material_name + "'");
+            if (materials.isEmpty())
+                errorRow.append("Tên nguyên liệu không tồn tại trong hệ thống .\n");
+            else {
+                int material_id = materials.get(0).getId();
+                List<Shipment> shipments = shipmentBLL.searchShipments("id = " + rowData.get("shipment_id"), "material_id = " + material_id);
+                if (shipments.isEmpty())
+                    errorRow.append(material_name).append(" không thuộc lô hàng này .\n");
+                else
+                    rowData.put("material_id", materials.get(0).getId());
             }
         }
+        if (errorRow.isEmpty()) {
+            List<Shipment> shipments = shipmentBLL.searchShipments("id = " + rowData.get("shipment_id"));
+            double remain = shipments.get(0).getRemain();
+            if (remain <= 0)
+                errorRow.append("Lô này đã hết hàng .\n");
+            else if (remain < (int) rowData.get("quantity"))
+                errorRow.append("Số lượng xuất vượt quá số lượng tồn trong lô hàng .\n");
+        }
+        if (errorRow.isEmpty()) {
+            String reason = (String) rowData.get("Reason");
+            if (!(reason.equals("Bán") || !reason.equals("Hủy")))
+                errorRow.append("Lý do phài là Bán hoặc Hủy .\n");
+        }
 
-        if (!rowData.containsKey("quantity") || rowData.get("quantity") == null || (Double) rowData.get("quantity") < 0)
-            errorRow.append("Số lượng không hợp lệ.\n");
+
     }
 
-    private Recipe createRecipe(Map<String, Object> rowData) {
-        Integer product_id = (Integer) rowData.get("product_id");
-        Integer material_id = (Integer) rowData.get("material_id");
-        Double quantity = (Double) rowData.get("quantity");
-        String size = (String) rowData.get("size");
-        String unit = (String) rowData.get("unit");
+    private boolean isDuplicate(Export_Detail shipment1, Export_Detail shipment2) {
+        return shipment1.getShipment_id() == (shipment2.getShipment_id())
+                && shipment1.getExport_id() == (shipment2.getExport_id());
 
-        return new Recipe(product_id, material_id, quantity, size, unit);
     }
 
-
-    private boolean isDuplicate(Recipe recipe1, Recipe recipe2) {
-        // nếu mã sản phẩm và mã size bằng nhau thì check xem nguyên liệu có trùng nhau không
-        if (recipe1.getProduct_id() == recipe2.getProduct_id() && recipe1.getSize().equals(recipe2.getSize()))
-            return recipe1.getMaterial_id() == recipe2.getMaterial_id();
-        return false;
-    }
-
-    private void checkForDuplicates(List<Recipe> recipes, StringBuilder errorAll) {
-        for (int i = 0; i < recipes.size(); i++) {
-            Recipe recipe1 = recipes.get(i);
-            for (int j = i + 1; j < recipes.size(); j++) {
-                Recipe recipe2 = recipes.get(j);
-                if (isDuplicate(recipe1, recipe2))
-                    if (errorAll.isEmpty())
-                        errorAll.append("- Lỗi sheet Công thức \n").append("- Dòng ").append(i + 2).append(" bị trùng nguyên liệu với dòng ").append(j + 2).append("\n");
-                    else
-                        errorAll.append("- Dòng ").append(i + 2).append(" bị trùng nguyên liệu với dòng ").append(j + 2).append("\n");
+    // check xem giữa các dòng trong file excel có nhân viên bị  trùng lịch làm việc không
+    private void checkForDuplicates(List<Export_Detail> shipments, StringBuilder errorAll) {
+        for (int i = 0; i < shipments.size(); i++) {
+            Export_Detail shipment1 = shipments.get(i);
+            for (int j = i + 1; j < shipments.size(); j++) {
+                Export_Detail shipment2 = shipments.get(j);
+                if (isDuplicate(shipment1, shipment2)) {
+                    errorAll.append("- Dòng ").append(i + 2).append("Lô hàng trùng với dòng ").append(j + 2).append("\n");
+                }
             }
         }
     }
-
 
 }

@@ -108,8 +108,8 @@ public class AddImportFromExcel {
                 StringBuilder errorRow = new StringBuilder();
                 Map<String, Object> rowData = readShipmentRowData(currentRow);
                 validateAttributeShipment(rowData, errorRow);
-                // nếu sau khi qua hàm validateAttributeWork_schedule mà errorRow vẫn rỗng
-                // thì tức là không có lỗi về định dạng đầu vào thì sẽ tạo đối tượng work_schedule và và thêm vào list
+                // nếu sau khi qua hàm validateAttributes mà errorRow vẫn rỗng
+                // thì tức là không có lỗi về định dạng đầu vào thì sẽ tạo đối tượng  và và thêm vào list
                 if (errorRow.isEmpty()) {
                     Shipment shipment = createShipmet(rowData);
                     shipments.add(shipment);
