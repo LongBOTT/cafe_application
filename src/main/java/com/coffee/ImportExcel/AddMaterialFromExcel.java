@@ -146,6 +146,11 @@ public class AddMaterialFromExcel {
 
         if (material.getUnit() == null) {
             errorRow.append("Đơn vị bắt buộc phải là kiểu chuỗi và không được để trống .\n");
+        }else{
+            String unit = material.getUnit();
+            if(!(unit.equals("kg")|| unit.equals("lít")||unit.equals("cái"))){
+                errorRow.append("Đơn vị phải là kg, lít hoặc cái\n");
+            }
         }
         if (material.getUnit_price() == null) {
             errorRow.append("Giá vốn bắt buộc phải là kiểu số và không được để trống\n");

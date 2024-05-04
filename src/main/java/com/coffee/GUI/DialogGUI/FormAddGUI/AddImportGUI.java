@@ -9,6 +9,7 @@ import com.coffee.GUI.CreateWorkScheduleGUI;
 import com.coffee.GUI.DialogGUI.DialogFormDetail;
 import com.coffee.GUI.HomeGUI;
 import com.coffee.GUI.MaterialGUI;
+import com.coffee.GUI.SaleGUI;
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.DatePicker;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
@@ -353,6 +354,7 @@ public class AddImportGUI extends DialogFormDetail {
                 MaterialGUI materialGUI = (MaterialGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModuleMaterialGUI];
                 materialGUI.refresh();
             }
+            loadSaleGUI();
         } else {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -532,5 +534,17 @@ public class AddImportGUI extends DialogFormDetail {
         }
         menu.setVisible(false);
 
+    }
+
+    private void loadSaleGUI() {
+        if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI] = new SaleGUI(HomeGUI.account);
+                }
+            });
+            thread.start();
+        }
     }
 }

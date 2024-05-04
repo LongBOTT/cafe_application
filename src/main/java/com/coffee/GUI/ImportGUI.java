@@ -8,6 +8,7 @@ import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailImportGUI;
 
 import com.coffee.GUI.components.*;
 
+import com.coffee.main.Cafe_Application;
 import com.coffee.utils.PDF;
 import com.coffee.ImportExcel.AddImportFromExcel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -200,6 +201,7 @@ public class ImportGUI extends Layout2 {
                             JOptionPane.showMessageDialog(null, "Thêm phiếu nhập thành công",
                                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                             refresh();
+                            loadSaleGUI();
                         }
                     }
                 }
@@ -312,6 +314,18 @@ public class ImportGUI extends Layout2 {
 
             }
             loadDataTable(importNoteBLL.getData(import_noteList));
+        }
+    }
+
+    private void loadSaleGUI() {
+        if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI] = new SaleGUI(HomeGUI.account);
+                }
+            });
+            thread.start();
         }
     }
 }

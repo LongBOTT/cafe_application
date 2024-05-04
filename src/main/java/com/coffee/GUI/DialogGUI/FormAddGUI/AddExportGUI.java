@@ -408,7 +408,7 @@ public class AddExportGUI extends DialogFormDetail {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
 
             int material_id = Integer.parseInt(data[i][1].toString());
-            Material material = new MaterialBLL().findMaterialsBy(Map.of("id", material_id)).get(0);
+            Material material = new MaterialBLL().searchMaterials("id = " + material_id).get(0);
             data[i][1] = "<html>" + material.getName() + "</html>";
 
             int supplier_id = Integer.parseInt(data[i][2].toString());

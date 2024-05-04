@@ -373,12 +373,12 @@ public class ChangePasswordGUI extends JDialog {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập email đúng định dạng");
             return;
         }
-        List<Staff> foundStaffs = new StaffBLL().searchStaffs("[email] = '" + email + "'");
+        List<Staff> foundStaffs = new StaffBLL().searchStaffs("email = '" + email + "'");
         if (foundStaffs.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Không tìm thấy tài khoản.");
             return;
         }
-        List<Account> foundAccounts = new AccountBLL().searchAccounts("[staff_id] = " + foundStaffs.get(0).getId());
+        List<Account> foundAccounts = new AccountBLL().searchAccounts("staff_id = " + foundStaffs.get(0).getId());
         if (foundAccounts.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Không tìm thấy tài khoản.");
             return;

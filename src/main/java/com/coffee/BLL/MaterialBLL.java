@@ -145,7 +145,7 @@ public class MaterialBLL extends Manager<Material> {
     public Pair<Boolean, String> validateName(String name) {
         if (name == null || name.isBlank())
             return new Pair<>(false, "Tên nguyên liệu không  được để trống.");
-        List<Material> materials = materialDAL.searchMaterials("name = '" + name + "'");
+        List<Material> materials = materialDAL.searchMaterials("name = '" + name + "'", "deleted = 0");
         if (!materials.isEmpty()) {
             return new Pair<>(false, "Nguyên liệu đã tồn tại.");
         }
