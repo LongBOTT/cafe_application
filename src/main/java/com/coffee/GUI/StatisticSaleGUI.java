@@ -35,7 +35,7 @@ public class StatisticSaleGUI extends JPanel {
     private RoundedPanel displayTypePanel;
 
     private JLabel dateLabel;
-    private JLabel titleLabel;
+    private JLabel titleLabel = new JLabel();
     JLabel dateReportLabel;
     private JScrollPane scrollPaneDetail;
     private JPanel centerPanel;
@@ -231,7 +231,7 @@ public class StatisticSaleGUI extends JPanel {
         updateTitle((Date) start, (Date) end);
 
         // mặc đinh tiêu đề là báo cáo cuối ngày về bán hàng
-        titleLabel = new JLabel("Báo cáo bán hàng theo thời gian");
+        titleLabel .setText("Báo cáo bán hàng theo thời gian");
         titleLabel.setFont(new Font("Inter", Font.BOLD, 18));
 
         JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -333,6 +333,7 @@ public class StatisticSaleGUI extends JPanel {
         }
 
         assert start != null;
+        titleLabel.setText("Báo cáo bán hàng theo thời gian");
         updateTitle((Date) start, (Date) end);
         centerPanel.removeAll();
         JPanel salesLabelPanel = createLabelPanel(new Color(178, 232, 255), new MigLayout("", "10[]20[]20[]20[]20[]10", ""));
@@ -397,6 +398,7 @@ public class StatisticSaleGUI extends JPanel {
         }
 
         assert start != null;
+        titleLabel.setText("Báo cáo bán hàng theo lợi nhuân");
         updateTitle((Date) start, (Date) end);
         centerPanel.removeAll();
         JPanel salesLabelPanel = createLabelPanel(new Color(178, 232, 255), new MigLayout("", "10[]20[]20[]20[]20[]10", ""));
@@ -465,6 +467,7 @@ public class StatisticSaleGUI extends JPanel {
             end = datePicker.getDateSQL_Between()[1];
         }
         updateTitle((Date) start, (Date) end);
+        titleLabel.setText("Báo cáo bán hàng theo giảm giá HĐ");
         assert start != null;
         centerPanel.removeAll();
         JPanel salesLabelPanel = createLabelPanel(new Color(178, 232, 255), new MigLayout("", "10[]20[]20[]20[]20[]10", ""));
@@ -519,6 +522,7 @@ public class StatisticSaleGUI extends JPanel {
 
         assert start != null;
         updateTitle((Date) start, (Date) end);
+        titleLabel .setText("Báo cáo bán hàng theo nhóm hàng hóa");
         centerPanel.removeAll();
         JPanel salesLabelPanel = createLabelPanel(new Color(178, 232, 255), new MigLayout("", "10[]20[]20[]20[]20[]10", ""));
         addLabelsToPanel(salesLabelPanel, new String[]{"Nhóm hàng", "Số lượng bán", "", "", "Doanh thu"}, 4, new Font("Inter", Font.BOLD, 13));
@@ -1062,6 +1066,7 @@ public class StatisticSaleGUI extends JPanel {
     }
 
     private void updateTitle(Date start, Date end) {
+
         if (start != null && end != null) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
             String formattedStartDate = dateFormat.format(start);
