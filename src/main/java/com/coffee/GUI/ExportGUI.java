@@ -14,6 +14,7 @@ import com.coffee.GUI.components.*;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.coffee.ImportExcel.AddExportFromExcel;
 import com.coffee.ImportExcel.AddImportFromExcel;
+import com.coffee.main.Cafe_Application;
 import com.coffee.utils.PDF;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
@@ -201,6 +202,10 @@ public class ExportGUI extends Layout2 {
                             JOptionPane.showMessageDialog(null, "Thêm phiếu xuất  thành công",
                                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                             refresh();
+                            if (Cafe_Application.homeGUI.indexModuleMaterialGUI != -1) {
+                                MaterialGUI materialGUI = (MaterialGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModuleMaterialGUI];
+                                materialGUI.refresh();
+                            }
                         }
                     }
                 }

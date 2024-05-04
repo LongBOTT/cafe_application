@@ -18,6 +18,7 @@ import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.GUI.components.RoundedScrollPane;
 import com.coffee.main.Cafe_Application;
+import com.coffee.utils.Resource;
 import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
@@ -558,13 +559,8 @@ public class EditProductGUI extends DialogFormDetail_1 {
     }
 
     private String uploadImage() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-
-        int result = fileChooser.showOpenDialog(this);
-
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
+        File selectedFile = Resource.chooseProductImageFile(this);
+        if (selectedFile != null) {
             String imageFile = "SP" + product_id + ".svg";
             String imageName = "SP" + product_id;
             java.nio.file.Path destinationPath = Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "image", "Product", imageFile);
@@ -578,7 +574,6 @@ public class EditProductGUI extends DialogFormDetail_1 {
                 Image newImg = image.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
                 icon = new ImageIcon(newImg);
                 lblImage.setIcon(icon);
-
                 return imageName;
             } catch (IOException e) {
                 e.printStackTrace();

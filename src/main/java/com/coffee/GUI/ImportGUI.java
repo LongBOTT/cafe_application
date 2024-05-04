@@ -202,6 +202,10 @@ public class ImportGUI extends Layout2 {
                                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                             refresh();
                             loadSaleGUI();
+                            if (Cafe_Application.homeGUI.indexModuleMaterialGUI != -1) {
+                                MaterialGUI materialGUI = (MaterialGUI) Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexModuleMaterialGUI];
+                                materialGUI.refresh();
+                            }
                         }
                     }
                 }

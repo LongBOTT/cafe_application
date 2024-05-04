@@ -142,4 +142,14 @@ public class Resource {
             return null;
         }
     }
+    public static File chooseProductImageFile(Component parent) {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File("src/main/resources/image/Product"));
+        int result = fileChooser.showOpenDialog(parent);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            return fileChooser.getSelectedFile();
+        } else {
+            return null;
+        }
+    }
 }

@@ -244,7 +244,7 @@ public class AddExportFromExcel {
                 int material_id = materials.get(0).getId();
                 List<Shipment> shipments = shipmentBLL.searchShipments("id = " + rowData.get("shipment_id"), "material_id = " + material_id);
                 if (shipments.isEmpty())
-                    errorRow.append(material_name).append(" không thuộc lô hàng này .\n");
+                    errorRow.append(material_name).append(" không thuộc lô hàng ").append((int) rowData.get("shipment_id")).append(" .\n");
                 else
                     rowData.put("material_id", materials.get(0).getId());
             }
@@ -253,7 +253,7 @@ public class AddExportFromExcel {
             List<Shipment> shipments = shipmentBLL.searchShipments("id = " + rowData.get("shipment_id"));
             double remain = shipments.get(0).getRemain();
             if (remain <= 0)
-                errorRow.append("Lô này đã hết hàng .\n");
+                errorRow.append("Lô "+ rowData.get("shipment_id") +" đã hết hàng .\n");
             else if (remain < (int) rowData.get("quantity"))
                 errorRow.append("Số lượng xuất vượt quá số lượng tồn trong lô hàng .\n");
         }

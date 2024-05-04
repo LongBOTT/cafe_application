@@ -216,6 +216,7 @@ public class DiscountGUI extends Layout2 {
                         } else {
                             JOptionPane.showMessageDialog(null, "Thêm chương trình giảm giá thành công",
                                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            loadSaleGUI();
                             refresh();
                         }
                     }
@@ -362,6 +363,17 @@ public class DiscountGUI extends Layout2 {
         if (indexColumn == indexColumnEdit) {
             new EditDiscountGUI(discountBLL.searchDiscounts("id = " + data[indexRow][0]).get(0));
             refresh();
+        }
+    }
+    private void loadSaleGUI() {
+        if (Cafe_Application.homeGUI.indexSaleGUI != -1) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Cafe_Application.homeGUI.allPanelModules[Cafe_Application.homeGUI.indexSaleGUI] = new SaleGUI(HomeGUI.account);
+                }
+            });
+            thread.start();
         }
     }
 

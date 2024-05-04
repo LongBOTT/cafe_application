@@ -13,6 +13,7 @@ import com.coffee.GUI.components.swing.EventClick;
 import com.coffee.GUI.components.swing.PanelSearch;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.main.Cafe_Application;
+import com.coffee.utils.Resource;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -220,13 +221,8 @@ public class EditProductGUI1 extends DialogForm {
 
 
     private String uploadImage() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-
-        int result = fileChooser.showOpenDialog(this);
-
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
+        File selectedFile = Resource.chooseProductImageFile(this);
+        if (selectedFile != null) {
 
             String imageFile = "SP" + product_id + ".svg";
             String imageName = "SP" + product_id;

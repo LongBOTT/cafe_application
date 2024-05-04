@@ -11,6 +11,7 @@ import com.coffee.GUI.SaleGUI;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
 import com.coffee.GUI.components.RoundedPanel;
 import com.coffee.main.Cafe_Application;
+import com.coffee.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -19,6 +20,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
@@ -299,9 +301,9 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
         for (Discount_Detail discount_detail : list_discount_detail) {
             RoundedPanel panel = createPanel_Bill(containerBillTypeContent);
             JTextField txtTotalBill = (JTextField) panel.getComponent(1);
-            txtTotalBill.setText(discount_detail.getDiscountBill() + "");
+            txtTotalBill.setText(NumberFormat.getNumberInstance(Locale.US).format(discount_detail.getDiscountBill()));
             JTextField txtReduction = (JTextField) panel.getComponent(3);
-            txtReduction.setText(discount_detail.getPercent() + "");
+            txtReduction.setText(NumberFormat.getNumberInstance(Locale.US).format(discount_detail.getPercent()));
         }
     }
 
@@ -388,8 +390,8 @@ public class EditDiscountGUI extends DialogFormDetail_1 {
                 RoundedPanel Panel_Discount_Detail_Product = createPanel_Discount_Detail_Product(contaierDiscountProduct);
                 JTextField txtQuantity = (JTextField) Panel_Discount_Detail_Product.getComponent(1);
                 JTextField txtValue = (JTextField) Panel_Discount_Detail_Product.getComponent(3);
-                txtQuantity.setText(String.valueOf(d.getQuantity()));
-                txtValue.setText(String.valueOf(d.getPercent()));
+                txtQuantity.setText(NumberFormat.getNumberInstance(Locale.US).format(d.getQuantity() ));
+                txtValue.setText(NumberFormat.getNumberInstance(Locale.US).format(d.getPercent() ));
             }
 
             RoundedPanel containerbtnAddRow = createContaierBtnAddRow(contaierDiscountProduct);
