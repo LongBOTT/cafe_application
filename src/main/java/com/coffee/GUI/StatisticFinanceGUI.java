@@ -263,7 +263,7 @@ public class StatisticFinanceGUI extends JPanel {
                 list.add("0.0");
                 list.add("0.0");
                 list.add("0.0");
-                list.add("0.0");
+                list.add(String.valueOf(value2));
                 list.add("0.0");
                 list.add("0.0");
                 list.add("0.0");
@@ -590,7 +590,7 @@ public class StatisticFinanceGUI extends JPanel {
                 list.add("0.0");
                 list.add("0.0");
                 list.add("0.0");
-                list.add("0.0");
+                list.add(String.valueOf(value2));
                 list.add("0.0");
                 list.add("0.0");
                 list.add("0.0");
@@ -919,7 +919,7 @@ public class StatisticFinanceGUI extends JPanel {
                 list.add("0.0");
                 list.add("0.0");
                 list.add("0.0");
-                list.add("0.0");
+                list.add(String.valueOf(value2));
                 list.add("0.0");
                 list.add("0.0");
                 list.add("0.0");
