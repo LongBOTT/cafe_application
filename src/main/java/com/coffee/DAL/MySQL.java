@@ -434,7 +434,7 @@ public class MySQL {
     }
 
     public static List<List<String>> getSale_DiscountByMonth() {
-        String query = "SELECT MONTH(rp.invoice_date), SUM(rp.total), SUM(rp.total_discount)\n" +
+        String query = "SELECT MONTH(rp.invoice_date), SUM(rp.total_price), SUM(rp.total_discount)\n" +
                 "FROM receipt rp\n" +
                 "WHERE YEAR(rp.invoice_date) = YEAR(NOW()) AND MONTH(rp.invoice_date) <= MONTH(NOW())\n" +
                 "GROUP BY MONTH(rp.invoice_date)\n" +
@@ -534,7 +534,7 @@ public class MySQL {
 
 
     public static List<List<String>> getSale_DiscountByQuarter() {
-        String query = "SELECT QUARTER(rp.invoice_date), SUM(rp.total), SUM(rp.total_discount)\n" +
+        String query = "SELECT QUARTER(rp.invoice_date), SUM(rp.total_price), SUM(rp.total_discount)\n" +
                 "FROM receipt rp\n" +
                 "WHERE YEAR(rp.invoice_date) = YEAR(NOW()) AND MONTH(rp.invoice_date) <= MONTH(NOW())\n" +
                 "GROUP BY QUARTER(rp.invoice_date)\n" +
@@ -583,7 +583,7 @@ public class MySQL {
     }
 
     public static List<List<String>> getSale_DiscountByYear() {
-        String query = "SELECT YEAR(rp.invoice_date), SUM(rp.total), SUM(rp.total_discount)\n" +
+        String query = "SELECT YEAR(rp.invoice_date), SUM(rp.total_price), SUM(rp.total_discount)\n" +
                 "FROM receipt rp\n" +
                 "WHERE rp.invoice_date <= NOW()\n" +
                 "GROUP BY YEAR(rp.invoice_date)\n" +
