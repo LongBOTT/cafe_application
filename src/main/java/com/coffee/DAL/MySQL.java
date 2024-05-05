@@ -665,7 +665,6 @@ public class MySQL {
         query += "FROM receipt_detail rd ";
         query += "JOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size ";
         query += "JOIN receipt rp ON rp.id = rd.receipt_id ";
-        query += "LEFT JOIN discount_detail dd ON rp.discount_id = dd.discount_id AND rd.product_id = dd.product_id AND rd.size = dd.size ";
         query += "WHERE DATE(rp.invoice_date) BETWEEN '" + start + "' AND '" + end + "' ";
         query += "GROUP BY pro.id, pro.name";
 
