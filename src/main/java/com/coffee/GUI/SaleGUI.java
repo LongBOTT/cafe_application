@@ -370,7 +370,9 @@ public class SaleGUI extends SalePanel {
             }
 
             Receipt_DetailBLL receiptDetailBLL = new Receipt_DetailBLL();
-
+            for (Receipt_Detail receipt_detail : receipt_details) {
+                receipt_detail.setPrice_discount(receipt_detail.getPrice());
+            }
             if (discountType == 0) {
                 for (Receipt_Detail receipt_detail : receipt_details) {
                     List<Pair<Double, Double>> list = checkPercentDiscountType0(receipt_detail.getProduct_id(), receipt_detail.getSize());
@@ -387,10 +389,6 @@ public class SaleGUI extends SalePanel {
                         }
                         receipt_detail.setPrice_discount(receipt_detail.getPrice() * (100 - percent) / 100);
                     }
-                }
-            } else {
-                for (Receipt_Detail receipt_detail : receipt_details) {
-                    receipt_detail.setPrice_discount(receipt_detail.getPrice());
                 }
             }
 

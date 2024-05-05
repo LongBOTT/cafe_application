@@ -661,13 +661,13 @@ public class MySQL {
         String query = "SELECT pro.id, pro.name, SUM(rd.quantity),  ";
         query += "Sum(rd.price) AS GiaTriNiemYet, ";
         query += "SUM(rd.price_discount) AS DoanhThu, ";
-        query += "SUM(rd.price_discount) - Sum(rd.price)  AS ChenhLech ";
+        query += " Sum(rd.price) - Sum(rd.price_discount)  AS ChenhLech ";
         query += "FROM receipt_detail rd ";
         query += "JOIN product pro ON pro.id = rd.product_id AND pro.size = rd.size ";
         query += "JOIN receipt rp ON rp.id = rd.receipt_id ";
-        query += "LEFT JOIN discount_detail dd ON rp.discount_id = dd.discount_id AND rd.product_id = dd.product_id AND rd.size = dd.size ";
         query += "WHERE DATE(rp.invoice_date) BETWEEN '" + start + "' AND '" + end + "' ";
         query += "GROUP BY pro.id, pro.name";
+
 
         try {
             return executeQueryStatistic(query);
@@ -820,20 +820,58 @@ public class MySQL {
     public static List<Pair<List<String>, List<List<String>>>> getSalesEndOFDay(String start, String end) {
         List<Pair<List<String>, List<List<String>>>> pairList = new ArrayList<>();
 
+        List<List<String>> quantityLists = getSalesStatisticsQuantity(start, end);
         for (List<String> stringListKey : getSalesStatistics(start, end)) {
             List<List<String>> stringListValue = getSalesDay(stringListKey.get(0));
-            pairList.add(new Pair<>(stringListKey, stringListValue));
+            List<String> stringListKeyQuantity = new ArrayList<>();
+            stringListKeyQuantity.add(stringListKey.get(0));
+            for (List<String> stringListQuantity : quantityLists) {
+                if (stringListKey.get(0).equals(stringListQuantity.get(0))) {
+                    stringListKeyQuantity.add(stringListQuantity.get(1));
+                    break;
+                }
+            }
+            stringListKeyQuantity.add(stringListKey.get(1));
+            stringListKeyQuantity.add(stringListKey.get(2));
+            stringListKeyQuantity.add(stringListKey.get(3));
+            pairList.add(new Pair<>(stringListKeyQuantity, stringListValue));
         }
 
         return pairList;
     }
 
+    //    public static List<List<String>> getSalesStatistics(String start, String end) {
+//        String query = "SELECT DATE(rp.invoice_date), SUM(rd.quantity), SUM(rd.price), SUM(rd.price_discount), SUM(rd.price) - SUM(rd.price_discount) ";
+//        query += "FROM receipt rp ";
+//        query += "INNER JOIN receipt_detail rd ON rp.id = rd.receipt_id ";
+//        query += "WHERE DATE(rp.invoice_date) BETWEEN '" + start + "' AND '" + end + "' ";
+//        query += "GROUP BY DATE(rp.invoice_date) ";
+//
+//
+//        try {
+//            return executeQueryStatistic(query);
+//        } catch (SQLException | IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
     public static List<List<String>> getSalesStatistics(String start, String end) {
-        String query = "SELECT DATE(rp.invoice_date), SUM(rd.quantity), SUM(rd.price), SUM(rd.price_discount), SUM(rd.price) - SUM(rd.price_discount) ";
+        String query = "SELECT DATE(rp.invoice_date), SUM(rp.total_price), SUM(rp.total),SUM(rp.total_discount) ";
+        query += "FROM receipt rp ";
+        query += "WHERE DATE(rp.invoice_date) BETWEEN '" + start + "' AND '" + end + "' ";
+        query += "GROUP BY DATE(rp.invoice_date)";
+        try {
+            return executeQueryStatistic(query);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<List<String>> getSalesStatisticsQuantity(String start, String end) {
+        String query = "SELECT DATE(rp.invoice_date), SUM(rd.quantity) ";
         query += "FROM receipt rp ";
         query += "INNER JOIN receipt_detail rd ON rp.id = rd.receipt_id ";
         query += "WHERE DATE(rp.invoice_date) BETWEEN '" + start + "' AND '" + end + "' ";
-        query += "GROUP BY DATE(rp.invoice_date) ";
+        query += "GROUP BY DATE(rp.invoice_date)";
 
 
         try {
@@ -844,12 +882,12 @@ public class MySQL {
     }
 
     public static List<List<String>> getSalesDay(String date) {
-        String query = "SELECT rp.id, DATE_FORMAT(rp.invoice_date, '%H:%i'), s.name, SUM(rd.quantity), SUM(rd.price), SUM(rd.price_discount), SUM(rd.price)- SUM(rd.price_discount) ";
+        String query = "SELECT rp.id, DATE_FORMAT(rp.invoice_date, '%H:%i'), s.name, SUM(rd.quantity),rp.total_price, rp.total,rp.total_discount ";
         query += "FROM receipt rp ";
         query += "INNER JOIN receipt_detail rd ON rp.id = rd.receipt_id ";
         query += "INNER JOIN staff s ON rp.staff_id = s.id ";
         query += "WHERE DATE(rp.invoice_date) = DATE('" + date + "') ";
-        query += "GROUP BY rp.id, s.name, DATE(rp.invoice_date)";
+        query += "GROUP BY rp.id, s.name, DATE(rp.invoice_date),rp.total_price, rp.total,rp.total_discount";
 
         try {
             return executeQueryStatistic(query);
