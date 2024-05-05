@@ -5,6 +5,8 @@ import com.coffee.DTO.*;
 import com.coffee.GUI.CreateWorkScheduleGUI;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddRoleGUI;
 import com.coffee.GUI.DialogGUI.FormAddGUI.AddSalary_FormatGUI;
+import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailPayroll_DetailGUI;
+import com.coffee.GUI.DialogGUI.FormDetailGUI.DetailStaffGUI;
 import com.coffee.GUI.HomeGUI;
 import com.coffee.GUI.components.DataTable;
 import com.coffee.GUI.components.MyTextFieldUnderLine;
@@ -35,6 +37,8 @@ public class EditStaffGUI extends JDialog {
     private JScrollPane scrollPane;
     private JComboBox<String> jComboBoxSalary_format = new JComboBox<>();
     public static boolean addSalary_Format = false;
+    private DataTable dataTable;
+    private Object[][] data;
 
     public EditStaffGUI(Staff staff) {
         super((Frame) null, "", true);
@@ -94,7 +98,7 @@ public class EditStaffGUI extends JDialog {
     }
 
     private void initPayrollPanel() {
-        DataTable dataTable = new DataTable(new Object[0][0], new String[]{"Mã Phiếu", "Kỳ Làm Việc", "Thực Lãnh", "Trạng thái"});
+        dataTable = new DataTable(new Object[0][0], new String[]{"Mã Phiếu", "Kỳ Làm Việc", "Thực Lãnh", "Trạng thái", "Xem"}, e -> selectFunction(), true, false, false, 4);
         JScrollPane scrollPane1 = new JScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane1.setPreferredSize(new Dimension(800, 400));
 
@@ -108,7 +112,7 @@ public class EditStaffGUI extends JDialog {
             return;
         }
 
-        Object[][] data = new Object[objects.length][4];
+        data = new Object[objects.length][5];
 
         for (int i = 0; i < objects.length; i++) {
             data[i][0] = objects[i][0];
@@ -117,11 +121,22 @@ public class EditStaffGUI extends JDialog {
             data[i][2] = objects[i][3];
 
             data[i][3] = Boolean.parseBoolean(objects[i][4].toString()) ? "Đã trả" : "Tạm tính";
+            JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
+            data[i][4] = iconDetail;
         }
 
         for (Object[] object : data) {
             model.addRow(object);
         }
+    }
+
+    private void selectFunction() {
+        int indexRow = dataTable.getSelectedRow();
+        int indexColumn = dataTable.getSelectedColumn();
+
+        if (indexColumn == 4)
+            new DetailPayroll_DetailGUI(new Payroll_DetailBLL().searchPayroll_Details("payroll_id = " + data[indexRow][0], "staff_id = " + staff.getId()).get(0), new PayrollBLL().searchPayrolls("id = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+
     }
 
     private void initConfigSalaryPanel() {
