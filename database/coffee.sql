@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 03, 2024 at 10:43 PM
+-- Generation Time: May 05, 2024 at 05:52 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -248,8 +248,6 @@ INSERT INTO `decentralization` (`role_id`, `module_id`, `function_id`) VALUES
 (3, 2, 4),
 (3, 2, 5),
 (3, 2, 6),
-(3, 7, 1),
-(3, 7, 6),
 (3, 8, 1),
 (3, 8, 2),
 (3, 8, 5),
