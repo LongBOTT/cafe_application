@@ -104,7 +104,7 @@ public class InfoGUI extends InfoPanel {
             }
             if (string.equals("Giới Tính")) {
                 boolean gender = staff.isGender();
-                String gender1 = gender ? "Nam" : "Nữ";
+                String gender1 = !gender ? "Nam" : "Nữ";
                 JLabel jLabel = new JLabel(gender1);
                 jLabel.setFont(new Font("Lexend", Font.PLAIN, 14));
                 InfoStaffPanel.add(jLabel, "wrap");
