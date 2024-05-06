@@ -269,7 +269,7 @@ public class DetailMaterialGUI extends DialogFormDetail {
 
             int import_id = Integer.parseInt(data[i][3].toString());
             Import_Note importNote = new Import_NoteBLL().findImportBy(Map.of("id", import_id)).get(0);
-            data[i][1] = importNote.getReceived_date();
+            data[i][1] = importNote.getReceived_date().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
 
             int supplier_id = Integer.parseInt(data[i][2].toString());
             data[i][2] = "<html>" + new SupplierBLL().findSuppliersBy(Map.of("id", supplier_id)).get(0).getName() + "</html>";

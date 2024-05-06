@@ -72,7 +72,7 @@ public class Payroll_DetailBLL extends Manager<Payroll_Detail> {
 
     public Pair<Boolean, String> exists(Payroll_Detail payroll_Detail) {
         List<Payroll_Detail> payroll_Details = findPayroll_DetailsBy(Map.of(
-                "payroll_id", payroll_Detail.getStaff_id(),
+                "payroll_id", payroll_Detail.getPayroll_id(),
                 "staff_id", payroll_Detail.getStaff_id()
         ));
 
